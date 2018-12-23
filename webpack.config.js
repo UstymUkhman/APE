@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const env = require('yargs').argv.env;
 const minimize = webpack.optimize.minimize;
 
+const libraryName = 'SWAGE';
+
 let plugins = [
     new webpack.ProvidePlugin({
       'THREE': 'THREE'
@@ -11,9 +13,9 @@ let plugins = [
 
 if (env === 'build') {
   plugins.push(minimize);
-  outputFile = 'bundle.min.js';
+  outputFile = libraryName + '.min.js';
 } else {
-  outputFile = 'bundle.js';
+  outputFile = libraryName + '.js';
 }
 
 module.exports = {
@@ -24,9 +26,9 @@ module.exports = {
   output: {
     path: __dirname + '/build',
     filename: outputFile,
+    library: libraryName,
     umdNamedDefine: true,
-    libraryTarget: 'umd',
-    library: 'SWAGE'
+    libraryTarget: 'umd'
   },
 
   module: {

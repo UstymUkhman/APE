@@ -13,7 +13,9 @@
  |
  */
 module.exports = {
-    "ui": { "port": 8000 },
+    "ui": {
+        "port": 8000
+    },
     "files": ['build'],
     "watchOptions": {},
     "server": './build',

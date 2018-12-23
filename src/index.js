@@ -1,5 +1,7 @@
 import Swage from './Swage.js';
 
-console.log(Swage);
-
-export default Swage;
+export default class SWAGE {
+  static init() {
+    return new Swage();
+  }
+};
