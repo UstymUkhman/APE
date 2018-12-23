@@ -1,0 +1,18 @@
+# Logs
+logs
+*.log
+
+# Animation files
+*.fbx
+
+# Dependency directory
+node_modules
+
+# Compiled source files
+build/*.js
+build/*.map
+
+# Some common IDE working directories
+.idea
+.vscode
+*.sublime-workspace
