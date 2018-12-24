@@ -12,6 +12,8 @@
     "serve": "browser-sync start --config bs-config.js"
   },
   "dependencies": {
+    "ammo.js": "kripken/ammo.js",
+    "mobile-detect": "^1.4.3",
     "three": "^0.99.0",
     "three-fbx-loader": "^1.0.3",
     "three-orbit-controls": "^82.1.0"
