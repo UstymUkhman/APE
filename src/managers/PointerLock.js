@@ -5,8 +5,6 @@ import Logger from 'utils/Logger';
 
 export default class PointerLock {
   /*
-   * Creates PointerLock Manager
-   *
    * @param {DOM Element} container - which locks mouse pointer
    * @param {function} [onLocked] - callback when the pointer is locked
    * @param {function} [onExit] - callback when the pointer is unlocked
@@ -48,7 +46,7 @@ export default class PointerLock {
   }
 
   /*
-   * Add PointerLockChange & PointerLockError events listeners
+   * Add PointerLockChange & PointerLockError event listeners
    */
   addPointerLockListeners () {
     document.addEventListener('pointerlockchange', this._onPointerLockChange, false);
@@ -72,7 +70,7 @@ export default class PointerLock {
   }
 
   /*
-   * Request PointerLock and Exit PointerLock events
+   * requestPointerLock and exitPointerLock events
    */
   onPointerLock () {
     if (!this.isLocked()) {
@@ -105,21 +103,28 @@ export default class PointerLock {
 
   /*
    * Check if mouse pointer is currently locked
-   *
    * @returns {boolean}
    */
   isLocked () {
-    const lockElement = document.pointerLockElement || document.mozPointerLockElement;
-    return this.container === lockElement;
+    return !!document.pointerLockElement || !!document.mozPointerLockElement;
+  }
+
+  /*
+   * Remove all event listeners and destroy all references
+   */
+  destroy () {
+    this.removePointerLockListeners();
+    this.container = null;
+    this.onLock = null;
+    this.onExit = null;
   }
 
   /*
    * Check if bowser can handle Fullscreen API
    * and PointerLock API in single event
-   *
    * @returns {boolean}
    */
-  static isLockOnly () {
+  static get isLockOnly () {
     return Platform.safari || Platform.edge || Platform.firefox;
   }
 }
