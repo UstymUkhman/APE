@@ -4,8 +4,17 @@ import Platform from 'utils/PlatformDetector';
 import Logger from 'utils/Logger';
 
 export default class PointerLock {
-  constructor (container) {
+  /*
+   * Creates PointerLock Manager
+   *
+   * @param {DOM Element} container - which locks mouse pointer
+   * @param {function} [onLocked] - callback when the pointer is locked
+   * @param {function} [onExit] - callback when the pointer is unlocked
+   */
+  constructor (container, onLocked = null, onExit = null) {
     this.container = container;
+    this.onLock = onLocked;
+    this.onExit = onExit;
     this.init();
   }
 
@@ -26,7 +35,7 @@ export default class PointerLock {
     if (requestPointerLock) {
       this._onPointerLockChange = this.onPointerLockChange.bind(this);
       this._onPointerLockError = this.onPointerLockError.bind(this);
-      this.lockPointer = this.onPointerLock.bind(this);
+      this.togglePointerLock = this.onPointerLock.bind(this);
 
       this.container.requestPointerLock = requestPointerLock;
       this.addPointerLockListeners();
@@ -62,16 +71,29 @@ export default class PointerLock {
     document.removeEventListener('webkitpointerlockerror', this._onPointerLockError, false);
   }
 
+  /*
+   * Request PointerLock and Exit PointerLock events
+   */
   onPointerLock () {
-    this.container.requestPointerLock();
+    if (!this.isLocked()) {
+      this.container.requestPointerLock();
+    } else {
+      document.exitPointerLock();
+    }
   }
 
   /*
-   * Handle PointerLockChange event
+   * Handle PointerLockChange event callbacks
    */
   onPointerLockChange (event) {
-    // console.log('change', this, this.container);
-    console.log('pointerlockchange', document.pointerLockElement, document.mozPointerLockElement);
+    const isLocked = this.isLocked();
+    Logger.log(`PointerLock API: mouse cursor is ${isLocked ? 'locked' : 'unlocked'}.`);
+
+    if (isLocked && this.onLock) {
+      this.onLock();
+    } else if (this.onExit) {
+      this.onExit();
+    }
   }
 
   /*
@@ -83,6 +105,7 @@ export default class PointerLock {
 
   /*
    * Check if mouse pointer is currently locked
+   *
    * @returns {boolean}
    */
   isLocked () {
@@ -93,6 +116,7 @@ export default class PointerLock {
   /*
    * Check if bowser can handle Fullscreen API
    * and PointerLock API in single event
+   *
    * @returns {boolean}
    */
   static isLockOnly () {
