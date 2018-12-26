@@ -1,3 +1,5 @@
+// Platform detection utils
+
 import MobileDetect from 'mobile-detect';
 
 const IE11 = !!/Trident.*rv:11\./i.test(navigator.userAgent);

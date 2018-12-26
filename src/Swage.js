@@ -1,5 +1,5 @@
 export default class Swage {
-  constructor() {
+  constructor () {
     console.log('🎮 Hello SWAGE! 🎉');
   }
 }
