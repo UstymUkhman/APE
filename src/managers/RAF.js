@@ -4,7 +4,7 @@ class RAF {
   /*
    * Create RAF Manager on import
    */
-  constructor() {
+  constructor () {
     this.update = this.update.bind(this);
     this.listeners = [];
     this.frame = null;
@@ -14,7 +14,7 @@ class RAF {
   /*
    * Add new function to call every frame
    */
-  add(listener) {
+  add (listener) {
     if (this.listeners.indexOf(listener) < 0) {
       this.listeners.push(listener);
     }
@@ -23,7 +23,7 @@ class RAF {
   /*
    * Update all functions every frame
    */
-  update() {
+  update () {
     this.listeners.forEach((listener) => { listener(); });
     this.frame = requestAnimationFrame(this.update);
   }
@@ -31,7 +31,7 @@ class RAF {
   /*
    * Remove passed function from being called every frame
    */
-  remove(listener) {
+  remove (listener) {
     const index = this.listeners.indexOf(listener);
     if (index > -1) this.listeners.splice(index, 1);
     if (!this.listeners.length) this.cancel();
@@ -40,7 +40,7 @@ class RAF {
   /*
    * Remove all functions and stop requestAnimationFrame loop
    */
-  cancel() {
+  cancel () {
     cancelAnimationFrame(this.frame);
     this.listeners = [];
   }
