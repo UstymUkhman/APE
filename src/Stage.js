@@ -1,5 +1,7 @@
 import RAF from 'managers/RAF';
 import * as THREE from 'three/src/Three.js';
+
+require('three/examples/js/loaders/FBXLoader.js');
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 const WHITE = 0xFFFFFF;
@@ -7,7 +9,7 @@ const BLACK = 0x000000;
 const GRAY = 0xA0A0A0;
 
 export default class Stage {
-  constructor (container = window) {
+  constructor (container = document.body) {
     this.container = container;
     this.setSize();
 
@@ -15,6 +17,7 @@ export default class Stage {
     this.createGround();
     this.createLights();
     this.createCamera();
+    this.createModel();
 
     this.createRenderer();
     this.createControls();
@@ -70,10 +73,27 @@ export default class Stage {
     this.camera.position.set(100, 200, 300);
   }
 
-  createControls () {
-    this.controls = new OrbitControls(this.camera);
-    this.controls.target.set(0, 100, 0);
-    this.controls.update();
+  createModel () {
+    const loader = new THREE.FBXLoader();
+    this.clock = new THREE.Clock();
+    this.mixers = [];
+
+    loader.load('./animations/Samba Dancing.fbx', (fbx) => {
+      fbx.mixer = new THREE.AnimationMixer(fbx);
+      this.mixers.push(fbx.mixer);
+
+      const action = fbx.mixer.clipAction(fbx.animations[0]);
+      action.play();
+
+      fbx.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      this.scene.add(fbx);
+    });
   }
 
   createRenderer () {
@@ -82,11 +102,13 @@ export default class Stage {
     this.renderer.setSize(this.width, this.height);
     this.renderer.shadowMap.enabled = true;
 
-    if (this.container !== window) {
-      this.container.appendChild(this.renderer.domElement);
-    } else {
-      document.body.appendChild(this.renderer.domElement);
-    }
+    this.container.appendChild(this.renderer.domElement);
+  }
+
+  createControls () {
+    this.controls = new OrbitControls(this.camera);
+    this.controls.target.set(0, 100, 0);
+    this.controls.update();
   }
 
   createEvents () {
@@ -94,6 +116,12 @@ export default class Stage {
   }
 
   render () {
+    if (this.mixers.length) {
+      for (let i = 0; i < this.mixers.length; i++) {
+        this.mixers[i].update(this.clock.getDelta());
+      }
+    }
+
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -105,8 +133,8 @@ export default class Stage {
   }
 
   setSize () {
-    this.height = this.container.innerHeight || this.container.offsetHeight;
-    this.width = this.container.innerWidth || this.container.offsetWidth;
+    this.height = this.container.offsetHeight;
+    this.width = this.container.offsetWidth;
     this.ratio = this.width / this.height;
   }
 }

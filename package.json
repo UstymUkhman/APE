@@ -16,7 +16,6 @@
     "animejs": "^2.2.0",
     "mobile-detect": "^1.4.3",
     "three": "^0.99.0",
-    "three-fbx-loader": "^1.0.3",
     "three-orbit-controls": "^82.1.0"
   },
   "devDependencies": {
