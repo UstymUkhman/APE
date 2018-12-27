@@ -1,7 +1,6 @@
 import RAF from 'managers/RAF';
 import * as THREE from 'three/src/Three.js';
-
-require('three/examples/js/loaders/FBXLoader.js');
+import FBXAnimation from 'managers/FBXAnimation';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 const WHITE = 0xFFFFFF;
@@ -17,7 +16,7 @@ export default class Stage {
     this.createGround();
     this.createLights();
     this.createCamera();
-    this.createModel();
+    this.createAnimation();
 
     this.createRenderer();
     this.createControls();
@@ -73,27 +72,20 @@ export default class Stage {
     this.camera.position.set(100, 200, 300);
   }
 
-  createModel () {
-    const loader = new THREE.FBXLoader();
-    this.clock = new THREE.Clock();
-    this.mixers = [];
-
-    loader.load('./animations/Samba Dancing.fbx', (fbx) => {
-      fbx.mixer = new THREE.AnimationMixer(fbx);
-      this.mixers.push(fbx.mixer);
-
-      const action = fbx.mixer.clipAction(fbx.animations[0]);
-      action.play();
-
-      fbx.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-
+  createAnimation () {
+    this.fbx = new FBXAnimation('./animations/Samba Dancing.fbx', (fbx) => {
       this.scene.add(fbx);
     });
+
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(10, 10, 10),
+      new THREE.MeshBasicMaterial({
+        color: BLACK
+      })
+    );
+
+    this.fbx.animate(cube.position, 'z', 135);
+    this.scene.add(cube);
   }
 
   createRenderer () {
@@ -113,15 +105,17 @@ export default class Stage {
 
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
+    document.addEventListener('click', () => {
+      if (this.fbx.isPlaying()) {
+        this.fbx.pause();
+      } else {
+        this.fbx.play();
+      }
+    });
   }
 
   render () {
-    if (this.mixers.length) {
-      for (let i = 0; i < this.mixers.length; i++) {
-        this.mixers[i].update(this.clock.getDelta());
-      }
-    }
-
+    this.fbx.update();
     this.renderer.render(this.scene, this.camera);
   }
 
