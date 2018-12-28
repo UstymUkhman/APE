@@ -73,13 +73,48 @@ export default class Stage {
   }
 
   createAnimation () {
-    this.fbx = new FBXAnimations({
+    this.fbx = new FBXAnimations([{
+      loop: true,
+      play: true,
       name: 'samba',
       path: './animations/Dancing.fbx',
       onLoad: (fbx) => {
+        // fbx.name = 'samba';
+        this.dancing = fbx;
         this.scene.add(fbx);
-      }
-    });
+      },
+
+      onLoop: (event) => {
+        console.log(this.dancing);
+        // debugger;
+
+        const action = this.dancing.mixer.clipAction(this.dancing.animations[2]);
+        event.action.fadeOut(1);
+        action.fadeIn(1);
+        action.play();
+        // event.action.crossFadeTo(action, 1);
+      } // ,
+
+      // onEnd: (event) => {
+      //   const selectedObject = this.scene.getObjectByName('walking');
+      //   selectedObject.visible = true;
+      //   this.dancing.visible = false;
+      //   // event.action.fadeOut(1);
+      //   this.walking.fadeIn(1);
+      //   this.fbx.play('walk');
+      // }
+    }, {
+      // loop: true,
+      // play: true,
+      name: 'walk',
+      path: './animations/Walking.fbx' // ,
+      // onLoad: (fbx, action) => {
+      //   fbx.name = 'walking';
+      //   fbx.visible = false;
+      //   this.scene.add(fbx);
+      //   this.walking = action;
+      // }
+    }]);
 
     // const cube = new THREE.Mesh(
     //   new THREE.BoxGeometry(10, 10, 10),

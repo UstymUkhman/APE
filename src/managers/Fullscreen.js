@@ -128,7 +128,7 @@ export default class Fullscreen {
    */
   onFullscreenChange (event) {
     const isFullscreen = this.isFullscreen();
-    Logger.log(`Fullscreen API: ${isFullscreen ? 'entered in' : 'exited from'} fullscreen mode.`);
+    Logger.info(`Fullscreen API: ${isFullscreen ? 'entered in' : 'exited from'} fullscreen mode.`);
 
     if (isFullscreen && this.onEnter) {
       this.onEnter();

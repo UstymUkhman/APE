@@ -85,7 +85,7 @@ export default class PointerLock {
    */
   onPointerLockChange (event) {
     const isLocked = this.isLocked();
-    Logger.log(`PointerLock API: mouse cursor is ${isLocked ? 'locked' : 'unlocked'}.`);
+    Logger.info(`PointerLock API: mouse cursor is ${isLocked ? 'locked' : 'unlocked'}.`);
 
     if (isLocked && this.onLock) {
       this.onLock();

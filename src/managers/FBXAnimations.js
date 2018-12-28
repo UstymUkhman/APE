@@ -1,5 +1,6 @@
 // FBXAnimations Manager
 
+import Logger from 'utils/Logger';
 import isArray from 'lodash/isArray';
 import findIndex from 'lodash/findIndex';
 
@@ -14,6 +15,7 @@ export default class FBXAnimations {
     this.settings = [];
     this.actions = [];
     this.mixers = [];
+    this.clips = [];
 
     for (let a in animations) {
       animations[a].loop = animations[a].loop || THREE.LoopOnce;
@@ -32,23 +34,60 @@ export default class FBXAnimations {
   onLoad (settings, fbx) {
     fbx.mixer = new THREE.AnimationMixer(fbx);
 
+    if (settings.name === 'walk') {
+      this.clips.push(fbx.animations[0]);
+      this.clips.push(fbx.animations[1]);
+    }
+
     const action = fbx.mixer.clipAction(fbx.animations[0]);
     const duration = fbx.animations[0].duration * 1000;
     const speed = duration / action.timeScale;
 
-    action.clampWhenFinished = true;
-    action.setLoop(settings.loop);
+    // console.log(fbx.animations);
+
     action.name = settings.name;
+
+    if (settings.loop !== true) {
+      action.clampWhenFinished = true;
+      action.setLoop(settings.loop);
+    }
 
     this.mixers.push(fbx.mixer);
     this.actions.push(action);
 
+    if (settings.name === 'samba' && this.clips.length) {
+      fbx.animations.push(this.clips[0]);
+      fbx.animations.push(this.clips[1]);
+
+      const act = fbx.mixer.clipAction(this.clips[0]);
+
+      act.name = '__walk';
+
+      if (settings.loop !== true) {
+        act.clampWhenFinished = true;
+        act.setLoop(settings.loop);
+      }
+
+      this.actions.push(act);
+    }
+
     this.settings.push({
       isPlaying: settings.play,
+      onLoop: settings.onLoop,
+      onEnd: settings.onEnd,
+      loop: settings.loop,
       name: settings.name,
       duration: duration,
       speed: speed
     });
+
+    if (typeof settings.onLoop === 'function') {
+      fbx.mixer.addEventListener('loop', this.onAnimationLoop.bind(this));
+    }
+
+    if (typeof settings.onEnd === 'function') {
+      fbx.mixer.addEventListener('finished', this.onAnimationEnd.bind(this));
+    }
 
     if (typeof settings.onLoad === 'function') {
       settings.onLoad(fbx, action);
@@ -68,11 +107,19 @@ export default class FBXAnimations {
     }
   }
 
-  setDuration (name, duration) {
+  enable (name) {
     const index = this.getAnimationIndex(name);
 
-    this.settings[index].speed = duration / this.actions[index].timeScale;
-    this.actions[index].setDuration(duration);
+    this.settings[index].isPlaying = false;
+    this.actions[index].enabled = true;
+    this.actions[index].paused = true;
+  }
+
+  disable (name) {
+    const index = this.getAnimationIndex(name);
+
+    this.actions[index].enabled = false;
+    this.stop(name);
   }
 
   play (name) {
@@ -109,6 +156,44 @@ export default class FBXAnimations {
   isPlaying (name) {
     const index = this.getAnimationIndex(name);
     return this.settings[index].isPlaying;
+  }
+
+  setDuration (name, duration) {
+    const index = this.getAnimationIndex(name);
+
+    this.settings[index].speed = duration / this.actions[index].timeScale;
+    this.actions[index].setDuration(duration);
+  }
+
+  setRepetitions (name, repetitions) {
+    const index = this.getAnimationIndex(name);
+    this.actions[index].repetitions = repetitions;
+  }
+
+  onAnimationLoop (event) {
+    const name = event.action.name;
+    const index = this.getAnimationIndex(name);
+
+    Logger.info(`FBXAnimations Manager: \"${name}\" animation restarted loop with callback.`);
+
+    if (this.settings[index] && typeof this.settings[index].onLoop === 'function') {
+      this.settings[index].onLoop(event);
+    }
+  }
+
+  onAnimationEnd (event) {
+    const name = event.action.name;
+    const index = this.getAnimationIndex(name);
+
+    Logger.info(`FBXAnimations Manager: \"${name}\" animation ended with callback.`);
+
+    // if (this.settings[index].loop === THREE.LoopOnce) {
+    //   this.stop(name);
+    // }
+
+    if (typeof this.settings[index].onEnd === 'function') {
+      this.settings[index].onEnd(event);
+    }
   }
 
   update () {

@@ -1,13 +1,13 @@
 // Console logger utils
 
 export default class Logger {
-  static log () {
+  static info () {
     const message = Logger.getMessage(arguments);
 
     if (typeof message === 'object') {
-      console.log(message[0], message[1]);
+      console.info(message[0], message[1]);
     } else {
-      console.log(message);
+      console.info(message);
     }
   }
 
