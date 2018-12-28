@@ -1,6 +1,6 @@
 import RAF from 'managers/RAF';
 import * as THREE from 'three/src/Three.js';
-import FBXAnimation from 'managers/FBXAnimation';
+import FBXAnimations from 'managers/FBXAnimations';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 const WHITE = 0xFFFFFF;
@@ -73,19 +73,23 @@ export default class Stage {
   }
 
   createAnimation () {
-    this.fbx = new FBXAnimation('./animations/Samba Dancing.fbx', (fbx) => {
-      this.scene.add(fbx);
+    this.fbx = new FBXAnimations({
+      name: 'samba',
+      path: './animations/Dancing.fbx',
+      onLoad: (fbx) => {
+        this.scene.add(fbx);
+      }
     });
 
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(10, 10, 10),
-      new THREE.MeshBasicMaterial({
-        color: BLACK
-      })
-    );
+    // const cube = new THREE.Mesh(
+    //   new THREE.BoxGeometry(10, 10, 10),
+    //   new THREE.MeshBasicMaterial({
+    //     color: BLACK
+    //   })
+    // );
 
-    this.fbx.animate(cube.position, 'z', 135);
-    this.scene.add(cube);
+    // this.fbx.animate(cube.position, 'z', 135);
+    // this.scene.add(cube);
   }
 
   createRenderer () {
@@ -106,10 +110,10 @@ export default class Stage {
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
     document.addEventListener('click', () => {
-      if (this.fbx.isPlaying()) {
-        this.fbx.pause();
+      if (this.fbx.isPlaying('samba')) {
+        this.fbx.pause('samba');
       } else {
-        this.fbx.play();
+        this.fbx.play('samba');
       }
     });
   }
