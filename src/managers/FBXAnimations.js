@@ -10,12 +10,16 @@ export default class FBXAnimations {
   constructor (fbxAnimations) {
     const animations = isArray(fbxAnimations) ? fbxAnimations : [fbxAnimations];
     const loader = new THREE.FBXLoader();
-    this.clock = new THREE.Clock();
 
+    this.total = animations.length;
+    this.clock = new THREE.Clock();
+    this.mixer = null;
+    this.loaded = 0;
+    this.fbx = null;
+
+    this.animations = [];
     this.settings = [];
     this.actions = [];
-    this.mixers = [];
-    this.clips = [];
 
     for (let a in animations) {
       animations[a].loop = animations[a].loop || THREE.LoopOnce;
@@ -34,41 +38,27 @@ export default class FBXAnimations {
   onLoad (settings, fbx) {
     fbx.mixer = new THREE.AnimationMixer(fbx);
 
-    if (settings.name === 'walk') {
-      this.clips.push(fbx.animations[0]);
-      this.clips.push(fbx.animations[1]);
-    }
-
     const action = fbx.mixer.clipAction(fbx.animations[0]);
     const duration = fbx.animations[0].duration * 1000;
     const speed = duration / action.timeScale;
-
-    // console.log(fbx.animations);
-
-    action.name = settings.name;
 
     if (settings.loop !== true) {
       action.clampWhenFinished = true;
       action.setLoop(settings.loop);
     }
 
-    this.mixers.push(fbx.mixer);
+    this.animations.push(fbx.animations[0]);
+    action.name = settings.name;
     this.actions.push(action);
+    this.loaded++;
 
-    if (settings.name === 'samba' && this.clips.length) {
-      fbx.animations.push(this.clips[0]);
-      fbx.animations.push(this.clips[1]);
+    if (this.loaded === this.total) {
+      this.fbx.animations = this.animations;
+    }
 
-      const act = fbx.mixer.clipAction(this.clips[0]);
-
-      act.name = '__walk';
-
-      if (settings.loop !== true) {
-        act.clampWhenFinished = true;
-        act.setLoop(settings.loop);
-      }
-
-      this.actions.push(act);
+    if (this.loaded === 1) {
+      this.mixer = fbx.mixer;
+      this.fbx = fbx;
     }
 
     this.settings.push({
@@ -82,19 +72,19 @@ export default class FBXAnimations {
     });
 
     if (typeof settings.onLoop === 'function') {
-      fbx.mixer.addEventListener('loop', this.onAnimationLoop.bind(this));
+      this.fbx.mixer.addEventListener('loop', this.onAnimationLoop.bind(this));
     }
 
     if (typeof settings.onEnd === 'function') {
-      fbx.mixer.addEventListener('finished', this.onAnimationEnd.bind(this));
+      this.fbx.mixer.addEventListener('finished', this.onAnimationEnd.bind(this));
     }
 
     if (typeof settings.onLoad === 'function') {
-      settings.onLoad(fbx, action);
+      settings.onLoad(this.fbx, action);
     }
 
     if (settings.shadows) {
-      fbx.traverse((child) => {
+      this.fbx.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
@@ -197,12 +187,8 @@ export default class FBXAnimations {
   }
 
   update () {
-    const delta = this.clock.getDelta();
-
-    for (let m in this.mixers) {
-      if (this.settings[m].isPlaying) {
-        this.mixers[m].update(delta);
-      }
+    if (this.mixer) {
+      this.mixer.update(this.clock.getDelta());
     }
   }
 
