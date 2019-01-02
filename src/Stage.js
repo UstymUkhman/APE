@@ -1,4 +1,6 @@
+// import anime from 'animejs';
 import RAF from 'managers/RAF';
+
 import * as THREE from 'three/src/Three.js';
 import FBXAnimations from 'managers/FBXAnimations';
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -69,29 +71,57 @@ export default class Stage {
 
   createCamera () {
     this.camera = new THREE.PerspectiveCamera(45, this.ratio, 1, 2000);
-    this.camera.position.set(100, 200, 300);
+    this.camera.position.set(100, 200, 500);
   }
 
   createAnimation () {
-    this.fbx = new FBXAnimations([{
-      loop: true,
+    this.steps = 0;
+
+    this.fbxAnimation = new FBXAnimations([{
+      path: './animations/Punching.fbx',
       name: 'punching',
-      path: './animations/Punching.fbx'
+      loop: true
     }, {
-      play: true,
-      name: 'walk',
       path: './animations/Walking.fbx',
+      name: 'walk',
+      loop: true,
+      play: true,
 
       onLoad: (fbx, action) => {
-        this.mesh = fbx;
         this.scene.add(fbx);
+        this.fbx = fbx;
+      },
+
+      onLoop: (event) => {
+        this.steps++;
+
+        this.fbx.position.z = this.steps * 135;
+
+        if (this.steps === 5) {
+          this.fbxAnimation.pause('walk');
+        }
+
+        // anime({
+        //   targets: this.fbx.position,
+        //   easing: 'linear',
+        //   duration: 500,
+        //   z: 135.0
+        // });
       },
 
       onEnd: (event) => {
-        const action = this.mesh.mixer.clipAction(this.mesh.animations[1]);
-        event.action.fadeOut(1);
-        action.fadeIn(1);
-        action.play();
+        // const action = this.fbx.mixer.clipAction(this.fbx.animations[1]);
+
+        // event.action.fadeOut(0.5);
+        // action.fadeIn(0.5);
+        // action.play();
+
+        // anime({
+        //   targets: this.fbx.position,
+        //   easing: 'linear',
+        //   duration: 500,
+        //   z: 135.0
+        // });
       }
     }]);
 
@@ -102,7 +132,6 @@ export default class Stage {
     //   })
     // );
 
-    // this.fbx.animate(cube.position, 'z', 135);
     // this.scene.add(cube);
   }
 
@@ -126,7 +155,7 @@ export default class Stage {
   }
 
   render () {
-    this.fbx.update();
+    this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }
 

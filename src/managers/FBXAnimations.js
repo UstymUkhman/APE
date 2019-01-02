@@ -1,6 +1,5 @@
 // FBXAnimations Manager
 
-import Logger from 'utils/Logger';
 import isArray from 'lodash/isArray';
 import findIndex from 'lodash/findIndex';
 
@@ -11,15 +10,16 @@ export default class FBXAnimations {
     const animations = isArray(fbxAnimations) ? fbxAnimations : [fbxAnimations];
     const loader = new THREE.FBXLoader();
 
-    this.total = animations.length;
+    this.totalAnimations = animations.length;
     this.clock = new THREE.Clock();
-    this.mixer = null;
-    this.loaded = 0;
-    this.fbx = null;
+    this.loadedAnimations = 0;
 
     this.animations = [];
     this.settings = [];
     this.actions = [];
+
+    this.mixer = null;
+    this.fbx = null;
 
     for (let a in animations) {
       animations[a].loop = animations[a].loop || THREE.LoopOnce;
@@ -37,9 +37,10 @@ export default class FBXAnimations {
 
   onLoad (settings, fbx) {
     fbx.mixer = new THREE.AnimationMixer(fbx);
+    const animation = fbx.animations[0];
 
-    const action = fbx.mixer.clipAction(fbx.animations[0]);
-    const duration = fbx.animations[0].duration * 1000;
+    const action = fbx.mixer.clipAction(animation);
+    const duration = animation.duration * 1000;
     const speed = duration / action.timeScale;
 
     if (settings.loop !== true) {
@@ -47,16 +48,16 @@ export default class FBXAnimations {
       action.setLoop(settings.loop);
     }
 
-    this.animations.push(fbx.animations[0]);
+    this.animations.push(animation);
     action.name = settings.name;
     this.actions.push(action);
-    this.loaded++;
+    this.loadedAnimations++;
 
-    if (this.loaded === this.total) {
+    if (this.loadedAnimations === this.totalAnimations) {
       this.fbx.animations = this.animations;
     }
 
-    if (this.loaded === 1) {
+    if (this.loadedAnimations === 1) {
       this.mixer = fbx.mixer;
       this.fbx = fbx;
     }
@@ -71,16 +72,16 @@ export default class FBXAnimations {
       speed: speed
     });
 
+    if (typeof settings.onLoad === 'function') {
+      settings.onLoad(this.fbx, action);
+    }
+
     if (typeof settings.onLoop === 'function') {
-      this.fbx.mixer.addEventListener('loop', this.onAnimationLoop.bind(this));
+      this.mixer.addEventListener('loop', this.onAnimationLoop.bind(this));
     }
 
     if (typeof settings.onEnd === 'function') {
-      this.fbx.mixer.addEventListener('finished', this.onAnimationEnd.bind(this));
-    }
-
-    if (typeof settings.onLoad === 'function') {
-      settings.onLoad(this.fbx, action);
+      this.mixer.addEventListener('finished', this.onAnimationEnd.bind(this));
     }
 
     if (settings.shadows) {
@@ -97,28 +98,50 @@ export default class FBXAnimations {
     }
   }
 
-  enable (name) {
+  onAnimationLoop (event) {
+    const name = event.action.name;
+    const index = this.getAnimationIndex(name);
+
+    if (typeof this.settings[index].onLoop === 'function') {
+      this.settings[index].onLoop(event);
+    }
+  }
+
+  onAnimationEnd (event) {
+    const name = event.action.name;
+    const index = this.getAnimationIndex(name);
+
+    // if (this.settings[index].loop === THREE.LoopOnce) {
+    //   this.stop(name);
+    // }
+
+    if (typeof this.settings[index].onEnd === 'function') {
+      this.settings[index].onEnd(event);
+    }
+  }
+
+  /* enable (name) {
     const index = this.getAnimationIndex(name);
 
     this.settings[index].isPlaying = false;
     this.actions[index].enabled = true;
     this.actions[index].paused = true;
-  }
+  } */
 
-  disable (name) {
+  /* disable (name) {
     const index = this.getAnimationIndex(name);
 
     this.actions[index].enabled = false;
     this.stop(name);
-  }
+  } */
 
-  play (name) {
+  /* play (name) {
     const index = this.getAnimationIndex(name);
 
     this.settings[index].isPlaying = true;
     this.actions[index].paused = false;
     this.actions[index].play();
-  }
+  } */
 
   pause (name, stop = false) {
     const index = this.getAnimationIndex(name);
@@ -131,65 +154,43 @@ export default class FBXAnimations {
     }
   }
 
-  stop (name) {
+  /* stop (name) {
     this.pause(name, true);
-  }
+  } */
 
-  stopAll () {
+  /* stopAll () {
     for (let s in this.settings) {
       this.settings[s].isPlaying = false;
       this.actions[s].paused = true;
       this.actions[s].stop();
     }
-  }
+  } */
 
-  isPlaying (name) {
+  /* isPlaying (name) {
     const index = this.getAnimationIndex(name);
     return this.settings[index].isPlaying;
-  }
+  } */
 
-  setDuration (name, duration) {
+  /* setDuration (name, duration) {
     const index = this.getAnimationIndex(name);
 
     this.settings[index].speed = duration / this.actions[index].timeScale;
     this.actions[index].setDuration(duration);
-  }
+  } */
 
-  setRepetitions (name, repetitions) {
+  /* setRepetitions (name, repetitions) {
     const index = this.getAnimationIndex(name);
     this.actions[index].repetitions = repetitions;
-  }
-
-  onAnimationLoop (event) {
-    const name = event.action.name;
-    const index = this.getAnimationIndex(name);
-
-    Logger.info(`FBXAnimations Manager: \"${name}\" animation restarted loop with callback.`);
-
-    if (this.settings[index] && typeof this.settings[index].onLoop === 'function') {
-      this.settings[index].onLoop(event);
-    }
-  }
-
-  onAnimationEnd (event) {
-    const name = event.action.name;
-    const index = this.getAnimationIndex(name);
-
-    Logger.info(`FBXAnimations Manager: \"${name}\" animation ended with callback.`);
-
-    // if (this.settings[index].loop === THREE.LoopOnce) {
-    //   this.stop(name);
-    // }
-
-    if (typeof this.settings[index].onEnd === 'function') {
-      this.settings[index].onEnd(event);
-    }
-  }
+  } */
 
   update () {
     if (this.mixer) {
       this.mixer.update(this.clock.getDelta());
     }
+  }
+
+  getAnimationModel (name) {
+    return this.fbx;
   }
 
   getAnimationIndex (name) {
