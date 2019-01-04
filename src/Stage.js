@@ -13,13 +13,13 @@ import { HemisphereLight } from 'three/src/lights/HemisphereLight';
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 
-import ThreeOrbitControls from 'three-orbit-controls';
-
+// import ThreeOrbitControls from 'three-orbit-controls';
 import FBXAnimations from 'managers/FBXAnimations';
+import FirstPerson from 'controls/FirstPerson';
 import RAF from 'managers/RAF';
 // import anime from 'animejs';
 
-const OrbitControls = ThreeOrbitControls(THREE);
+// const OrbitControls = ThreeOrbitControls(THREE);
 
 const WHITE = 0xFFFFFF;
 const BLACK = 0x000000;
@@ -35,7 +35,7 @@ export default class Stage {
     this.createGround();
     this.createLights();
     this.createCamera();
-    this.createAnimation();
+    // this.createAnimation();
 
     // this.createRaycaster();
     this.createRenderer();
@@ -89,7 +89,7 @@ export default class Stage {
 
   createCamera () {
     this.camera = new PerspectiveCamera(45, this.ratio, 1, 2000);
-    this.camera.position.set(100, 200, 500);
+    // this.camera.position.set(100, 200, 500);
   }
 
   createAnimation () {
@@ -158,14 +158,18 @@ export default class Stage {
   }
 
   createControls () {
-    this.controls = new OrbitControls(this.camera);
-    this.controls.target.set(0, 100, 0);
-    this.controls.update();
+    this.controls = new FirstPerson(this.camera, this.container);
+    this.scene.add(this.controls.yawObject);
+    this.controls.verticalLock = 0.5;
+
+    // this.controls = new OrbitControls(this.camera);
+    // this.controls.target.set(0, 100, 0);
+    // this.controls.update();
   }
 
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
-    // this.container.addEventListener('mousemove', this.onMouseMove.bind(this), false);
+    this.container.addEventListener('click', this.controls.enable, false);
   }
 
   // onMouseMove (event) {
@@ -195,7 +199,7 @@ export default class Stage {
   // }
 
   render () {
-    this.fbxAnimation.update();
+    // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }
 

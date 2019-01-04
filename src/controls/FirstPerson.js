@@ -3,55 +3,78 @@
 // Based on three.js PointerLockControls:
 // https://threejs.org/examples/js/controls/PointerLockControls.js
 
-// import { Object3D } from '@three/core/Object3D'
-// import { Vector3 } from '@three/math/Vector3'
-// import { Euler } from '@three/math/Euler'
+import { Object3D } from 'three/src/core/Object3D';
+import { Vector3 } from 'three/src/math/Vector3';
+import { Euler } from 'three/src/math/Euler';
 
-// export default class FirstPerson {
-//   constructor (camera, height = 10) {
-//     this.rotation = new Euler(0, 0, 0, 'YXZ')
-//     this.direction = new Vector3(0, 0, -1)
-//     this.pitchObject = new Object3D()
-//     this.yawObject = new Object3D()
+import PointerLock from 'managers/PointerLock';
 
-//     this.PI_2 = Math.PI / 2
-//     this.enabled = false
+const PI_2 = Math.PI / 2;
 
-//     this.pitchObject.add(camera)
-//     this.yawObject.position.y = height
-//     this.yawObject.add(this.pitchObject)
+export default class FirstPerson {
+  constructor (camera, container, height = 10) {
+    this.rotation = new Euler(0, 0, 0, 'YXZ');
+    this.direction = new Vector3(0, 0, -1);
 
-//     this._onMouseMove = this.onMouseMove.bind(this)
-//     document.addEventListener('mousemove', this._onMouseMove, false)
-//   }
+    this.pitch = new Object3D();
+    this.yaw = new Object3D();
 
-//   onMouseMove (event) {
-//     if (!this.enabled) return
+    this.yaw.position.y = height;
+    this.verticalLock = PI_2;
+    this.enabled = false;
+    this.speed = 0.002;
 
-//     const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0
-//     const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0
+    this.pitch.add(camera);
+    this.yaw.add(this.pitch);
 
-//     this.yawObject.rotation.y -= movementX * 0.002
-//     this.pitchObject.rotation.x -= movementY * 0.002
-//     this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2, this.pitchObject.rotation.x))
+    this.enable = () => this.pointer.togglePointerLock();
+    this.disable = () => this.pointer.togglePointerLock();
 
-//     if (this.pitchObject.rotation.x < -0.5) {
-//       this.pitchObject.rotation.x = -0.5
-//     }
-//   }
+    document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
+    this.pointer = new PointerLock(container, this.onEnabled.bind(this), this.onDisabled.bind(this));
+  }
 
-//   getDirection (way) {
-//     this.rotation.set(this.pitchObject.rotation.x, this.yawObject.rotation.y, 0)
-//     way.copy(this.direction).applyEuler(this.rotation)
-//     return way
-//   }
+  onMouseMove (event) {
+    if (!this.enabled) return;
 
-//   getObject () {
-//     return this.yawObject
-//   }
+    const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-//   dispose () {
-//     document.removeEventListener('mousemove', this._onMouseMove, false)
-//     this.enabled = false
-//   }
-// }
+    this.yaw.rotation.y -= movementX * this.speed;
+    this.pitch.rotation.x -= movementY * this.speed;
+    this.pitch.rotation.x = Math.max(-this.verticalLock, Math.min(this.verticalLock, this.pitch.rotation.x));
+  }
+
+  onEnabled () {
+    this.enabled = true;
+
+    if (this.activated) {
+      this.activated();
+    }
+  }
+
+  onDisabled () {
+    this.enabled = false;
+
+    if (this.deactivated) {
+      this.deactivated();
+    }
+  }
+
+  get currentDirection () {
+    const currentDirection = new Vector3().normalize();
+
+    this.rotation.set(this.pitch.rotation.x, this.yaw.rotation.y, 0);
+    currentDirection.copy(this.direction).applyEuler(this.rotation);
+    return currentDirection;
+  }
+
+  get yawObject () {
+    return this.yaw;
+  }
+
+  destroy () {
+    document.removeEventListener('mousemove', this.onMouseMove.bind(this), false);
+    this.enabled = false;
+  }
+}
