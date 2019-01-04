@@ -1,12 +1,14 @@
 // FBXAnimations Manager
 
-import findIndex from 'lodash/findIndex';
+import { Clock } from 'three/src/core/Clock';
+
 import FBXAnimation from 'core/FBXAnimation';
+import findIndex from 'lodash/findIndex';
 
 export default class FBXAnimations {
   constructor (animations) {
     this.totalAnimations = animations.length;
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
 
     this.loadedAnimations = 0;
     this.animations = [];

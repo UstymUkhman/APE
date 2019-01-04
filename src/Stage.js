@@ -200,6 +200,7 @@ export default class Stage {
 
   render () {
     // this.fbxAnimation.update();
+    this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
 
