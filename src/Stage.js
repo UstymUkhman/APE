@@ -21,6 +21,9 @@ import RAF from 'managers/RAF';
 
 // const OrbitControls = ThreeOrbitControls(THREE);
 
+import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+
 const WHITE = 0xFFFFFF;
 const BLACK = 0x000000;
 const GRAY = 0xA0A0A0;
@@ -36,6 +39,8 @@ export default class Stage {
     this.createLights();
     this.createCamera();
     // this.createAnimation();
+
+    // this.createObjects();
 
     // this.createRaycaster();
     this.createRenderer();
@@ -141,6 +146,33 @@ export default class Stage {
     // );
 
     // this.scene.add(cube);
+  }
+
+  createObjects () {
+    this.boxes = [];
+
+    const cube = new Mesh(
+      new BoxGeometry(20, 20, 20),
+      new MeshBasicMaterial({
+        color: BLACK
+      })
+    );
+
+    cube.position.set(20, 0, 10);
+
+    const cube2 = cube.clone();
+    cube2.position.set(-20, 0, -10);
+
+    const cube3 = cube2.clone();
+    cube3.position.y = 20;
+
+    this.scene.add(cube);
+    this.scene.add(cube2);
+    this.scene.add(cube3);
+
+    this.boxes.push(cube);
+    this.boxes.push(cube2);
+    this.boxes.push(cube3);
   }
 
   createRaycaster () {

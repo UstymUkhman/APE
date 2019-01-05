@@ -3,6 +3,7 @@
 // Based on three.js PointerLockControls:
 // https://threejs.org/examples/js/controls/PointerLockControls.js
 
+// import { Raycaster } from 'three/src/core/Raycaster';
 import { Object3D } from 'three/src/core/Object3D';
 import { Clock } from 'three/src/core/Clock';
 
@@ -16,6 +17,7 @@ const PI_2 = Math.PI / 2;
 
 export default class FirstPerson {
   constructor (camera, container, height = 10) {
+    // this.raycaster = new Raycaster(new Vector3(), new Vector3(0, -1, 0), 0, height);
     this.rotation = new Euler(0, 0, 0, 'YXZ');
     this.direction = new Vector3(0, 0, -1);
     this.velocity = new Vector3();
@@ -138,9 +140,13 @@ export default class FirstPerson {
     return this.yaw;
   }
 
-  update () {
+  update (/* objects */) {
     const delta = this.clock.getDelta();
     if (!this.enabled) return;
+
+    // Set correct y position when on object:
+    /* this.raycaster.ray.origin.copy(this.yaw.position);
+    this.raycaster.ray.origin.y -= this.normalHeight; */
 
     let x = 0;
     let y = 0;
@@ -154,6 +160,11 @@ export default class FirstPerson {
     if (this.move.forward) z = controls.forward.step * -delta;
     if (this.move.right) x = controls.right.step * delta;
     if (this.move.left) x = controls.left.step * -delta;
+
+    // Set correct y position when on object:
+    /* if (this.raycaster.intersectObjects(objects).length) {
+      this.velocity.y = Math.max(0, this.velocity.y);
+    } */
 
     this.velocity.x += x * this.move.run;
     this.velocity.z += z * this.move.run;

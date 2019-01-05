@@ -12,6 +12,9 @@ node_modules
 build/*.js
 build/*.map
 
+# Leave external JS library:
+!build/inflate.min.js
+
 # Common IDE working directories:
 .idea
 .vscode
