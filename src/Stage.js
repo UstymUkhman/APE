@@ -3,7 +3,7 @@ import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
 
 import { Mesh } from 'three/src/objects/Mesh';
-import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
+// import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
@@ -16,6 +16,7 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 // import ThreeOrbitControls from 'three-orbit-controls';
 import FBXAnimations from 'managers/FBXAnimations';
 import FirstPerson from 'controls/FirstPerson';
+import Physics from 'managers/Physics';
 import RAF from 'managers/RAF';
 // import anime from 'animejs';
 
@@ -30,6 +31,7 @@ const GRAY = 0xA0A0A0;
 
 export default class Stage {
   constructor (container = document.body) {
+    this.physics = new Physics();
     this.container = container;
     this.fbx = null;
     this.setSize();
@@ -40,7 +42,7 @@ export default class Stage {
     this.createCamera();
     // this.createAnimation();
 
-    // this.createObjects();
+    this.createObjects();
 
     // this.createRaycaster();
     this.createRenderer();
@@ -58,7 +60,7 @@ export default class Stage {
 
   createGround () {
     const ground = new Mesh(
-      new PlaneBufferGeometry(2000, 2000),
+      new BoxGeometry(2000, 1, 2000, 1, 1, 1),
       new MeshPhongMaterial({
         depthWrite: false,
         color: 0x999999
@@ -66,12 +68,14 @@ export default class Stage {
     );
 
     ground.rotation.x = -Math.PI / 2;
+    this.physics.initGround(ground);
     ground.receiveShadow = true;
-    this.scene.add(ground);
 
     const grid = new GridHelper(2000, 20, BLACK, BLACK);
     grid.material.transparent = true;
     grid.material.opacity = 0.2;
+
+    this.scene.add(ground);
     this.scene.add(grid);
   }
 
@@ -149,8 +153,6 @@ export default class Stage {
   }
 
   createObjects () {
-    this.boxes = [];
-
     const cube = new Mesh(
       new BoxGeometry(20, 20, 20),
       new MeshBasicMaterial({
@@ -158,21 +160,25 @@ export default class Stage {
       })
     );
 
-    cube.position.set(20, 0, 10);
+    cube.position.set(20, 100, -200);
 
     const cube2 = cube.clone();
-    cube2.position.set(-20, 0, -10);
+    cube2.position.set(-20, 100, -150);
 
     const cube3 = cube2.clone();
     cube3.position.y = 20;
 
+    this.physics.addBoxBody(cube, 5);
+    this.physics.addBoxBody(cube2, 5);
+    this.physics.addBoxBody(cube3, 5);
+
+    cube.castShadow = true;
+    cube2.castShadow = true;
+    cube3.castShadow = true;
+
     this.scene.add(cube);
     this.scene.add(cube2);
     this.scene.add(cube3);
-
-    this.boxes.push(cube);
-    this.boxes.push(cube2);
-    this.boxes.push(cube3);
   }
 
   createRaycaster () {
@@ -231,8 +237,9 @@ export default class Stage {
   // }
 
   render () {
-    // this.fbxAnimation.update();
+    this.physics.update();
     this.controls.update();
+    // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }
 
