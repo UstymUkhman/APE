@@ -1,6 +1,7 @@
 // https://en.blender.org/uploads/9/95/Dev-Physics-bullet-documentation.pdf
+// https://github.com/lo-th/Ammo.lab/blob/gh-pages/src/ammo/rigidBody.js
 
-import { Quaternion } from 'three/src/math/Quaternion';
+// import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Clock } from 'three/src/core/Clock';
 
@@ -10,7 +11,7 @@ const GRAVITY = -9.81;
 const DISABLE_DEACTIVATION = 4.0;
 
 // const ZERO_VECTOR3 = new Vector3(0.0, 0.0, 0.0);
-const ZERO_QUATERNION = new Quaternion(0.0, 0.0, 0.0, 1.0);
+// const ZERO_QUATERNION = new Quaternion(0.0, 0.0, 0.0, 1.0);
 
 export default class Physics {
   constructor () {
@@ -48,9 +49,14 @@ export default class Physics {
     // this.closestRayResultCallback = new this.Ammo.ClosestRayResultCallback(this.tempVRayOrigin, this.tempVRayDest);
   }
 
-  initGround (ground) {
-    this.addBoxBody(ground, 0.0, 2.5);
-    this.rigidBodies = this.rigidBodies.slice(0, -1);
+  addPlaneBody (mesh, mass = 0.0, friction = 2.5) {
+    // Convert X-axis rotation from
+    // THREE.js to Z-axis rotation in Ammo.js:
+    const z = mesh.rotation.x / -Math.PI * 2.0;
+    const rotation = new this.Ammo.btVector3(0.0, 0.0, z);
+
+    const plane = new this.Ammo.btStaticPlaneShape(rotation, 0.0);
+    this.addRigidBody(plane, mesh, mass, friction);
   }
 
   addBoxBody (mesh, mass, friction = 1.0, margin = 0.04) {
@@ -63,45 +69,42 @@ export default class Physics {
     this.addRigidBody(box, mesh, mass, friction);
   }
 
+  addCylinderBody (mesh, mass, friction = 1.0) {
+    const size = mesh.geometry.parameters;
+    const cylinder = new this.Ammo.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
+    this.addRigidBody(cylinder, mesh, mass, friction);
+  }
+
+  addCapsuleBody (mesh, mass, friction = 1.0) {
+    const size = mesh.geometry.parameters;
+    const capsule = new this.Ammo.btCapsuleShape(size.width, size.height / 2.0);
+    this.addRigidBody(capsule, mesh, mass, friction);
+  }
+
+  addConeBody (mesh, mass, friction = 1.0) {
+    const size = mesh.geometry.parameters;
+    const cone = new this.Ammo.btConeShape(size.width, size.height / 2.0);
+    this.addRigidBody(cone, mesh, mass, friction);
+  }
+
   addSphereBody (mesh, mass, friction = 1.0) {
     const size = mesh.geometry.parameters;
     const sphere = new this.Ammo.btSphereShape(size.width / 2.0);
     this.addRigidBody(sphere, mesh, mass, friction);
   }
 
-  // Not tested:
-  addCapsuleBody (mesh, mass, friction = 1.0) {
-    const size = mesh.geometry.parameters;
-    const capsule = new this.Ammo.btCapsuleShape(size.height / 2.0);
-    this.addRigidBody(capsule, mesh, mass, friction);
-  }
-
-  // Not tested:
-  addCylinderBody (mesh, mass, friction = 1.0) {
-    const size = mesh.geometry.parameters;
-    const cylinder = new this.Ammo.btCylinderShape(size.height / 2.0);
-    this.addRigidBody(cylinder, mesh, mass, friction);
-  }
-
-  // Not tested:
-  addConeBody (mesh, mass, friction = 1.0) {
-    const size = mesh.geometry.parameters;
-    const cone = new this.Ammo.btConeShape(size.height / 2.0);
-    this.addRigidBody(cone, mesh, mass, friction);
-  }
-
   addRigidBody (body, mesh, mass, friction) {
-    mesh.userData.physicsBody = this.initRigidBody(body, mesh.position, mass, friction);
-    mesh.quaternion.copy(ZERO_QUATERNION);
+    mesh.userData.physicsBody = this.initRigidBody(body, mesh.position, mesh.quaternion, mass, friction);
+    mesh.quaternion.copy(mesh.quaternion);
     mesh.position.copy(mesh.position);
     this.rigidBodies.push(mesh);
   }
 
-  initRigidBody (shape, position, mass, friction) {
+  initRigidBody (shape, position, quaternion, mass, friction) {
     const transform = new this.Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(new this.Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(new this.Ammo.btQuaternion(ZERO_QUATERNION.x, ZERO_QUATERNION.y, ZERO_QUATERNION.z, ZERO_QUATERNION.w));
+    transform.setRotation(new this.Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
 
     const defaultInertia = new this.Ammo.btVector3(0.0, 0.0, 0.0);
     const motion = new this.Ammo.btDefaultMotionState(transform);

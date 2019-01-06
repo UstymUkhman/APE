@@ -16,7 +16,7 @@ import PointerLock from 'managers/PointerLock';
 const PI_2 = Math.PI / 2;
 
 export default class FirstPerson {
-  constructor (camera, container, height = 10) {
+  constructor (camera, container, height = 1.75) {
     // this.raycaster = new Raycaster(new Vector3(), new Vector3(0, -1, 0), 0, height);
     this.rotation = new Euler(0, 0, 0, 'YXZ');
     this.direction = new Vector3(0, 0, -1);

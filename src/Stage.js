@@ -3,7 +3,7 @@ import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
 
 import { Mesh } from 'three/src/objects/Mesh';
-// import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
+import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
@@ -13,14 +13,17 @@ import { HemisphereLight } from 'three/src/lights/HemisphereLight';
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 
-// import ThreeOrbitControls from 'three-orbit-controls';
+// import { Raycaster } from 'three/src/core/Raycaster';
+// import { Vector3 } from 'three/src/math/Vector3';
+
+import ThreeOrbitControls from 'three-orbit-controls';
 import FBXAnimations from 'managers/FBXAnimations';
-import FirstPerson from 'controls/FirstPerson';
+// import FirstPerson from 'controls/FirstPerson';
 import Physics from 'managers/Physics';
 import RAF from 'managers/RAF';
 // import anime from 'animejs';
 
-// const OrbitControls = ThreeOrbitControls(THREE);
+const OrbitControls = ThreeOrbitControls(THREE);
 
 import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
@@ -43,6 +46,7 @@ export default class Stage {
     // this.createAnimation();
 
     this.createObjects();
+    // this.createPlayer();
 
     // this.createRaycaster();
     this.createRenderer();
@@ -55,23 +59,23 @@ export default class Stage {
   createScene () {
     this.scene = new Scene();
     this.scene.background = new Color(GRAY);
-    this.scene.fog = new Fog(GRAY, 500, 1000);
+    this.scene.fog = new Fog(GRAY, 50, 100);
   }
 
   createGround () {
     const ground = new Mesh(
-      new BoxGeometry(2000, 1, 2000, 1, 1, 1),
+      new PlaneBufferGeometry(500, 500),
       new MeshPhongMaterial({
         depthWrite: false,
-        color: 0x999999
+        color: 0x888888
       })
     );
 
-    ground.rotation.x = -Math.PI / 2;
-    this.physics.initGround(ground);
     ground.receiveShadow = true;
+    ground.rotateX(-Math.PI / 2);
+    this.physics.addPlaneBody(ground);
 
-    const grid = new GridHelper(2000, 20, BLACK, BLACK);
+    const grid = new GridHelper(500, 50, BLACK, BLACK);
     grid.material.transparent = true;
     grid.material.opacity = 0.2;
 
@@ -83,22 +87,23 @@ export default class Stage {
     const hemisphere = new HemisphereLight(WHITE, 0x444444);
     const directional = new DirectionalLight(WHITE);
 
-    directional.position.set(0, 200, 100);
-    hemisphere.position.set(0, 200, 0);
-
     directional.shadow.camera.bottom = -100;
     directional.shadow.camera.right = 120;
     directional.shadow.camera.left = -120;
     directional.shadow.camera.top = 180;
     directional.castShadow = true;
 
+    directional.position.set(0, 10, 10);
+    hemisphere.position.set(0, 10, 0);
+
     this.scene.add(directional);
     this.scene.add(hemisphere);
   }
 
   createCamera () {
-    this.camera = new PerspectiveCamera(45, this.ratio, 1, 2000);
-    // this.camera.position.set(100, 200, 500);
+    this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
+    this.camera.position.set(5, 5, -50);
+    this.camera.lookAt(0, 0, 0);
   }
 
   createAnimation () {
@@ -154,16 +159,16 @@ export default class Stage {
 
   createObjects () {
     const cube = new Mesh(
-      new BoxGeometry(20, 20, 20),
+      new BoxGeometry(1, 1, 1),
       new MeshBasicMaterial({
         color: BLACK
       })
     );
 
-    cube.position.set(20, 100, -200);
+    cube.position.set(0, 10, 0);
 
     const cube2 = cube.clone();
-    cube2.position.set(-20, 100, -150);
+    cube2.position.set(-2, 10, -5);
 
     const cube3 = cube2.clone();
     cube3.position.y = 20;
@@ -181,10 +186,24 @@ export default class Stage {
     this.scene.add(cube3);
   }
 
-  createRaycaster () {
-    // this.raycaster = new Raycaster();
-    // this.mouseVector = new Vector3();
+  createPlayer () {
+    const player = new Mesh(
+      new BoxGeometry(0.5, 1.75, 0.5),
+      new MeshBasicMaterial({
+        color: BLACK
+      })
+    );
+
+    player.name = 'Player';
+    player.position.y = 0.875;
+    this.physics.addBoxBody(player, 75);
+    this.scene.add(player);
   }
+
+  // createRaycaster () {
+  //   this.raycaster = new Raycaster();
+  //   this.mouseVector = new Vector3();
+  // }
 
   createRenderer () {
     this.renderer = new WebGLRenderer({ antialias: true });
@@ -196,18 +215,19 @@ export default class Stage {
   }
 
   createControls () {
-    this.controls = new FirstPerson(this.camera, this.container);
-    this.scene.add(this.controls.yawObject);
-    this.controls.verticalLock = 0.5;
+    // this.controls = new FirstPerson(this.camera, this.container);
+    // this.scene.add(this.controls.yawObject);
+    // this.controls.verticalLock = 0.5;
 
-    // this.controls = new OrbitControls(this.camera);
-    // this.controls.target.set(0, 100, 0);
-    // this.controls.update();
+    this.controls = new OrbitControls(this.camera);
+    this.controls.target.set(-10, -10, 25);
+    this.controls.update();
   }
 
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
-    this.container.addEventListener('click', this.controls.enable, false);
+    // this.container.addEventListener('click', this.controls.enable, false);
+    // this.container.addEventListener('mousemove', this.onMouseMove.bind(this), false);
   }
 
   // onMouseMove (event) {
@@ -216,7 +236,7 @@ export default class Stage {
   //   const intersects = this.getIntersects(event.layerX, event.layerY);
 
   //   if (intersects.length > 0) {
-  //     var res = intersects.filter(function (res) {
+  //     const res = intersects.filter(function (res) {
   //       return res && res.object;
   //     })[0];
 
@@ -233,7 +253,7 @@ export default class Stage {
   //   this.mouseVector.set(x, y, 0.5);
   //   this.raycaster.setFromCamera(this.mouseVector, this.camera);
 
-  //   return this.raycaster.intersectObject(this.fbx, true);
+  //   return this.raycaster.intersectObjects(this.scene.children);
   // }
 
   render () {
