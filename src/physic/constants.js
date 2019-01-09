@@ -5,6 +5,13 @@ import { Vector3 } from 'three/src/math/Vector3';
 export const GRAVITY = -9.81;
 export const ZERO_MASS = 0.0;
 
+// Rigid Body constants:
+export const MARGIN = 0.04;
+export const FRICTION = 0.5;
+export const RESTITUTION = 0.0;
+export const LINEAR_DAMPING = 0.0;
+export const ANGULAR_DAMPING = 0.0;
+
 // Collision constants:
 export const STATIC_COLLISION = 1;
 export const KINEMATIC_COLLISION = 2;
@@ -18,5 +25,6 @@ export const DISABLE_DEACTIVATION = 4;
 export const DISABLE_SIMULATION = 5;
 
 // Common THREE.js constants:
+export const ONE_VECTOR3 = new Vector3(1.0, 1.0, 1.0);
 export const ZERO_VECTOR3 = new Vector3(0.0, 0.0, 0.0);
 export const ZERO_QUATERNION = new Quaternion(0.0, 0.0, 0.0, 1.0);

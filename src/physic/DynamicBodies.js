@@ -9,40 +9,40 @@ export default class DynamicBodies extends RigidBody {
     super(physicWorld);
   }
 
-  addBox (mesh, mass, friction = 1.0, margin = 0.04) {
+  addBox (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const box = super.createBox(size, friction, margin);
-    this.addDynamicBody(box, mesh, mass, friction);
+    const box = super.createBox(size);
+    this.addDynamicBody(box, mesh, mass);
   }
 
-  addCylinder (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCylinder (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const cylinder = super.createCylinder(size, friction, margin);
-    this.addDynamicBody(cylinder, mesh, mass, friction);
+    const cylinder = super.createCylinder(size);
+    this.addDynamicBody(cylinder, mesh, mass);
   }
 
-  addCapsule (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCapsule (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const capsule = super.createCapsule(size, friction, margin);
-    this.addDynamicBody(capsule, mesh, mass, friction);
+    const capsule = super.createCapsule(size);
+    this.addDynamicBody(capsule, mesh, mass);
   }
 
-  addCone (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCone (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const cone = super.createCone(size, friction, margin);
-    this.addDynamicBody(cone, mesh, mass, friction);
+    const cone = super.createCone(size);
+    this.addDynamicBody(cone, mesh, mass);
   }
 
-  addSphere (mesh, mass, friction = 1.0, margin = 0.04) {
+  addSphere (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const sphere = super.createSphere(size, friction, margin);
-    this.addDynamicBody(sphere, mesh, mass, friction);
+    const sphere = super.createSphere(size);
+    this.addDynamicBody(sphere, mesh, mass);
   }
 
-  addDynamicBody (shape, mesh, mass, friction) {
+  addDynamicBody (shape, mesh, mass) {
     const position = mesh.position;
     const quaternion = mesh.quaternion;
-    const body = super.createRigidBody(shape, mass, friction, position, quaternion);
+    const body = super.createRigidBody(shape, mass, position, quaternion);
 
     // mesh.quaternion.copy(quaternion);
     // mesh.position.copy(position);

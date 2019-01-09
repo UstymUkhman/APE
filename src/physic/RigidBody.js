@@ -1,56 +1,61 @@
-import { ZERO_MASS } from 'physic/constants';
 import { Ammo } from 'core/Ammo';
+
+import {
+  MARGIN,
+  FRICTION,
+  ZERO_MASS,
+  ONE_VECTOR3,
+  RESTITUTION,
+  LINEAR_DAMPING,
+  ANGULAR_DAMPING
+} from 'physic/constants';
 
 export default class RigidBody {
   constructor (world) {
+    this.angularDamping = ANGULAR_DAMPING;
+    this.linearDamping = LINEAR_DAMPING;
+    this.angularFactor = ONE_VECTOR3;
+    this.linearFactor = ONE_VECTOR3;
+    this.restitution = RESTITUTION;
+    this.friction = FRICTION;
+    this.margin = MARGIN;
+
     this.world = world;
     this.bodies = [];
   }
 
   /* eslint-disable new-cap */
-  createBox (size, friction, margin) {
-    const box = new Ammo.btBoxShape(new Ammo.btVector3(
-      size.width / 2.0, size.height / 2.0, size.depth / 2.0
-    ));
-
-    this.setMargin(box, margin);
+  createBox (size) {
+    const box = new Ammo.btBoxShape(new Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
+    this.checkBodyMargin(box);
     return box;
   }
 
-  createCylinder (size, friction, margin) {
-    const cylinder = new Ammo.btCylinderShape(
-      size.width, size.height / 2.0, size.depth / 2.0
-    );
-
-    this.setMargin(cylinder, margin);
+  createCylinder (size) {
+    const cylinder = new Ammo.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
+    this.checkBodyMargin(cylinder);
     return cylinder;
   }
 
-  createCapsule (size, friction, margin) {
-    const capsule = new Ammo.btCapsuleShape(
-      size.width, size.height / 2.0
-    );
-
-    this.setMargin(capsule, margin);
+  createCapsule (size) {
+    const capsule = new Ammo.btCapsuleShape(size.width, size.height / 2.0);
+    this.checkBodyMargin(capsule);
     return capsule;
   }
 
-  createCone (size, friction, margin) {
-    const cone = new Ammo.btConeShape(
-      size.width, size.height / 2.0
-    );
-
-    this.setMargin(cone, margin);
+  createCone (size) {
+    const cone = new Ammo.btConeShape(size.width, size.height / 2.0);
+    this.checkBodyMargin(cone);
     return cone;
   }
 
-  createSphere (size, friction, margin) {
+  createSphere (size) {
     const sphere = new Ammo.btSphereShape(size.width / 2.0);
-    this.setMargin(sphere, margin);
+    this.checkBodyMargin(sphere);
     return sphere;
   }
 
-  createRigidBody (shape, mass, friction, position, quaternion) {
+  createRigidBody (shape, mass, position, quaternion) {
     const transform = new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
@@ -64,17 +69,20 @@ export default class RigidBody {
     }
 
     const body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(mass, motion, shape, inertia));
-    // body.setDamping(linearDamping, angularDamping);
+    body.setLinearFactor(new Ammo.btVector3(this.linearFactor.x, this.linearFactor.y, this.linearFactor.z));
+    body.setAngularFactor(new Ammo.btVector3(this.angularFactor.x, this.angularFactor.y, this.angularFactor.z));
+
+    body.setDamping(this.linearDamping, this.angularDamping);
     // body.setActivationState(DISABLE_DEACTIVATION);
-    // body.setRestitution(restitution);
-    body.setFriction(friction);
+    body.setRestitution(this.restitution);
+    body.setFriction(this.friction);
     return body;
   }
   /* eslint-enable new-cap */
 
-  setMargin (shape, margin) {
-    if (margin !== 0.04) {
-      shape.setMargin(margin);
+  checkBodyMargin (shape) {
+    if (this.margin !== MARGIN) {
+      shape.setMargin(this.margin);
     }
   }
 }

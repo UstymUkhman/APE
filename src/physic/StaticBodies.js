@@ -8,51 +8,52 @@ export default class StaticBodies extends RigidBody {
   }
 
   /* eslint-disable new-cap */
-  addPlane (mesh, friction = 2.5) {
+  addPlane (mesh) {
     // Convert X-axis rotation from
     // THREE.js to Z-axis rotation in Ammo.js:
     const z = mesh.rotation.x / -Math.PI * 2.0;
     const rotation = new Ammo.btVector3(0.0, 0.0, z);
     const plane = new Ammo.btStaticPlaneShape(rotation, 0.0);
 
-    this.addStaticBody(plane, mesh, friction);
+    this.checkBodyMargin(plane);
+    this.addStaticBody(plane, mesh);
   }
   /* eslint-enable new-cap */
 
-  addBox (mesh, mass, friction = 1.0, margin = 0.04) {
+  addBox (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const box = super.createBox(size, friction, margin);
-    this.addStaticBody(box, mesh, friction);
+    const box = super.createBox(size);
+    this.addStaticBody(box, mesh);
   }
 
-  addCylinder (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCylinder (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const cylinder = super.createCylinder(size, friction, margin);
-    this.addStaticBody(cylinder, mesh, friction);
+    const cylinder = super.createCylinder(size);
+    this.addStaticBody(cylinder, mesh);
   }
 
-  addCapsule (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCapsule (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const capsule = super.createCapsule(size, friction, margin);
-    this.addStaticBody(capsule, mesh, friction);
+    const capsule = super.createCapsule(size);
+    this.addStaticBody(capsule, mesh);
   }
 
-  addCone (mesh, mass, friction = 1.0, margin = 0.04) {
+  addCone (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const cone = super.createCone(size, friction, margin);
-    this.addStaticBody(cone, mesh, friction);
+    const cone = super.createCone(size);
+    this.addStaticBody(cone, mesh);
   }
 
-  addSphere (mesh, mass, friction = 1.0, margin = 0.04) {
+  addSphere (mesh, mass) {
     const size = mesh.geometry.parameters;
-    const sphere = super.createSphere(size, friction, margin);
-    this.addStaticBody(sphere, mesh, friction);
+    const sphere = super.createSphere(size);
+    this.addStaticBody(sphere, mesh);
   }
 
-  addStaticBody (shape, mesh, friction) {
+  addStaticBody (shape, mesh) {
     const position = mesh.position;
     const quaternion = mesh.quaternion;
-    const body = super.createRigidBody(shape, ZERO_MASS, friction, position, quaternion);
+    const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
 
     // mesh.quaternion.copy(quaternion);
     // mesh.position.copy(position);
