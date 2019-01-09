@@ -3,6 +3,6 @@
 import AmmoJS from 'Ammo.js';
 
 let Ammo = null;
-AmmoJS().then(AmmoJS => Ammo = AmmoJS);
+AmmoJS().then(AmmoJS => { Ammo = AmmoJS; });
 
 export { Ammo };

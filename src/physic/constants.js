@@ -3,6 +3,7 @@ import { Vector3 } from 'three/src/math/Vector3';
 
 // Generic constants:
 export const GRAVITY = -9.81;
+export const ZERO_MASS = 0.0;
 
 // Collision constants:
 export const STATIC_COLLISION = 1;

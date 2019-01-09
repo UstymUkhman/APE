@@ -71,8 +71,7 @@ export default class Stage {
 
     ground.receiveShadow = true;
     ground.rotateX(-Math.PI / 2);
-    this.physics.dynamic.addPlane(ground);
-    // this.physics.addPlaneBody(ground);
+    this.physics.static.addPlane(ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);
     grid.material.transparent = true;
