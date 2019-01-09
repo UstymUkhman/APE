@@ -18,8 +18,12 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 
 import ThreeOrbitControls from 'three-orbit-controls';
 import FBXAnimations from 'managers/FBXAnimations';
+import PhysicWorld from 'physic/PhysicWorld';
 import RAF from 'managers/RAF';
 // import anime from 'animejs';
+
+import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 
 const OrbitControls = ThreeOrbitControls(THREE);
 
@@ -29,6 +33,7 @@ const GRAY = 0xA0A0A0;
 
 export default class Stage {
   constructor (container = document.body) {
+    this.physics = new PhysicWorld();
     this.container = container;
     this.fbx = null;
     this.setSize();
@@ -39,7 +44,7 @@ export default class Stage {
     this.createCamera();
 
     // this.createAnimation();
-    // this.createObjects();
+    this.createObjects();
     // this.createRaycaster();
 
     this.createRenderer();
@@ -66,6 +71,7 @@ export default class Stage {
 
     ground.receiveShadow = true;
     ground.rotateX(-Math.PI / 2);
+    this.physics.dynamic.addPlane(ground);
     // this.physics.addPlaneBody(ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);
@@ -95,7 +101,7 @@ export default class Stage {
 
   createCamera () {
     this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
-    this.camera.position.set(0, 5, -50);
+    this.camera.position.set(0, 5, -25);
     this.camera.lookAt(0, 0, 0);
   }
 
@@ -150,7 +156,7 @@ export default class Stage {
     // this.scene.add(cube);
   }
 
-  /* createObjects () {
+  createObjects () {
     const cube = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshBasicMaterial({
@@ -166,9 +172,9 @@ export default class Stage {
     const cube3 = cube2.clone();
     cube3.position.y = 20;
 
-    this.physics.addBoxBody(cube, 5);
-    this.physics.addBoxBody(cube2, 5);
-    this.physics.addBoxBody(cube3, 5);
+    this.physics.dynamic.addBox(cube, 5);
+    this.physics.dynamic.addBox(cube2, 5);
+    this.physics.dynamic.addBox(cube3, 5);
 
     cube.castShadow = true;
     cube2.castShadow = true;
@@ -177,7 +183,7 @@ export default class Stage {
     this.scene.add(cube);
     this.scene.add(cube2);
     this.scene.add(cube3);
-  } */
+  }
 
   /* createRaycaster () {
     this.raycaster = new Raycaster();
@@ -230,6 +236,7 @@ export default class Stage {
   } */
 
   render () {
+    this.physics.update();
     this.orbitControls.update();
     // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
