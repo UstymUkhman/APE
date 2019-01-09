@@ -30,6 +30,6 @@
     "speed": 100
   },
 
-  "horizontalSpeed": 10,
-  "verticalSpeed": 10
+  "horizontalSpeed": 50,
+  "verticalSpeed": 50
 }

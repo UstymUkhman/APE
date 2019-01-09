@@ -18,15 +18,10 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 
 import ThreeOrbitControls from 'three-orbit-controls';
 import FBXAnimations from 'managers/FBXAnimations';
-// import FirstPerson from 'controls/FirstPerson';
-import Physics from 'managers/Physics';
 import RAF from 'managers/RAF';
 // import anime from 'animejs';
 
 const OrbitControls = ThreeOrbitControls(THREE);
-
-import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
-import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 
 const WHITE = 0xFFFFFF;
 const BLACK = 0x000000;
@@ -34,7 +29,6 @@ const GRAY = 0xA0A0A0;
 
 export default class Stage {
   constructor (container = document.body) {
-    this.physics = new Physics();
     this.container = container;
     this.fbx = null;
     this.setSize();
@@ -43,12 +37,11 @@ export default class Stage {
     this.createGround();
     this.createLights();
     this.createCamera();
+
     // this.createAnimation();
-
-    this.createObjects();
-    // this.createPlayer();
-
+    // this.createObjects();
     // this.createRaycaster();
+
     this.createRenderer();
     this.createControls();
     this.createEvents();
@@ -73,7 +66,7 @@ export default class Stage {
 
     ground.receiveShadow = true;
     ground.rotateX(-Math.PI / 2);
-    this.physics.addPlaneBody(ground);
+    // this.physics.addPlaneBody(ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);
     grid.material.transparent = true;
@@ -102,7 +95,7 @@ export default class Stage {
 
   createCamera () {
     this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
-    this.camera.position.set(5, 5, -50);
+    this.camera.position.set(0, 5, -50);
     this.camera.lookAt(0, 0, 0);
   }
 
@@ -157,7 +150,7 @@ export default class Stage {
     // this.scene.add(cube);
   }
 
-  createObjects () {
+  /* createObjects () {
     const cube = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshBasicMaterial({
@@ -165,7 +158,7 @@ export default class Stage {
       })
     );
 
-    cube.position.set(0, 10, 0);
+    cube.position.set(-0.5, 10, 0);
 
     const cube2 = cube.clone();
     cube2.position.set(-2, 10, -5);
@@ -184,26 +177,12 @@ export default class Stage {
     this.scene.add(cube);
     this.scene.add(cube2);
     this.scene.add(cube3);
-  }
+  } */
 
-  createPlayer () {
-    const player = new Mesh(
-      new BoxGeometry(0.5, 1.75, 0.5),
-      new MeshBasicMaterial({
-        color: BLACK
-      })
-    );
-
-    player.name = 'Player';
-    player.position.y = 0.875;
-    this.physics.addBoxBody(player, 75);
-    this.scene.add(player);
-  }
-
-  // createRaycaster () {
-  //   this.raycaster = new Raycaster();
-  //   this.mouseVector = new Vector3();
-  // }
+  /* createRaycaster () {
+    this.raycaster = new Raycaster();
+    this.mouseVector = new Vector3();
+  } */
 
   createRenderer () {
     this.renderer = new WebGLRenderer({ antialias: true });
@@ -215,50 +194,43 @@ export default class Stage {
   }
 
   createControls () {
-    // this.controls = new FirstPerson(this.camera, this.container);
-    // this.scene.add(this.controls.yawObject);
-    // this.controls.verticalLock = 0.5;
-
-    this.controls = new OrbitControls(this.camera);
-    this.controls.target.set(-10, -10, 25);
-    this.controls.update();
+    this.orbitControls = new OrbitControls(this.camera);
+    this.orbitControls.target.set(0, 0, 25);
+    this.orbitControls.update();
   }
 
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
-    // this.container.addEventListener('click', this.controls.enable, false);
-    // this.container.addEventListener('mousemove', this.onMouseMove.bind(this), false);
   }
 
-  // onMouseMove (event) {
-  //   event.preventDefault();
+  /* onMouseMove (event) {
+    event.preventDefault();
 
-  //   const intersects = this.getIntersects(event.layerX, event.layerY);
+    const intersects = this.getIntersects(event.layerX, event.layerY);
 
-  //   if (intersects.length > 0) {
-  //     const res = intersects.filter(function (res) {
-  //       return res && res.object;
-  //     })[0];
+    if (intersects.length > 0) {
+      const res = intersects.filter(function (res) {
+        return res && res.object;
+      })[0];
 
-  //     if (res && res.object) {
-  //       console.log(res.object.name);
-  //     }
-  //   }
-  // }
+      if (res && res.object) {
+        console.log(res.object.name);
+      }
+    }
+  }
 
-  // getIntersects (x, y) {
-  //   x = (x / this.width) * 2 - 1;
-  //   y = -(y / this.height) * 2 + 1;
+  getIntersects (x, y) {
+    x = (x / this.width) * 2 - 1;
+    y = -(y / this.height) * 2 + 1;
 
-  //   this.mouseVector.set(x, y, 0.5);
-  //   this.raycaster.setFromCamera(this.mouseVector, this.camera);
+    this.mouseVector.set(x, y, 0.5);
+    this.raycaster.setFromCamera(this.mouseVector, this.camera);
 
-  //   return this.raycaster.intersectObjects(this.scene.children);
-  // }
+    return this.raycaster.intersectObjects(this.scene.children);
+  } */
 
   render () {
-    this.physics.update();
-    this.controls.update();
+    this.orbitControls.update();
     // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }

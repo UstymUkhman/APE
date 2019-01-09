@@ -13,10 +13,14 @@ import { Euler } from 'three/src/math/Euler';
 import * as controls from './playerControls.json';
 import PointerLock from 'managers/PointerLock';
 
+import { Mesh } from 'three/src/objects/Mesh';
+import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+
 const PI_2 = Math.PI / 2;
 
 export default class FirstPerson {
-  constructor (camera, container, height = 1.75) {
+  constructor (camera, container, height = 0.875 /* height = 1.75 */) {
     // this.raycaster = new Raycaster(new Vector3(), new Vector3(0, -1, 0), 0, height);
     this.rotation = new Euler(0, 0, 0, 'YXZ');
     this.direction = new Vector3(0, 0, -1);
@@ -26,8 +30,20 @@ export default class FirstPerson {
     this.yaw = new Object3D();
     this.clock = new Clock();
 
-    this.yaw.position.y = height;
-    this.normalHeight = height;
+    const player = new Mesh(
+      new BoxGeometry(0.5, 1.75, 0.5),
+      new MeshBasicMaterial({
+        color: 0x000000
+      })
+    );
+
+    // this.yaw.name = 'Player';
+    // player.position.y = 0.875;
+    // this.physics.addBoxBody(this.yaw, 75);
+    // this.scene.add(player);
+
+    this.yaw.position.y = 0.0; // height;
+    this.normalHeight = 0.0; // height;
     this.verticalLock = PI_2;
     this.enabled = false;
     this.speed = 0.002;
@@ -41,7 +57,8 @@ export default class FirstPerson {
       run: 1.0
     };
 
-    this.pitch.add(camera);
+    // this.pitch.add(camera);
+    this.yaw.add(player);
     this.yaw.add(this.pitch);
 
     this.addControlsListeners();
@@ -53,7 +70,7 @@ export default class FirstPerson {
   }
 
   addControlsListeners () {
-    document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
+    // document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
     document.addEventListener('keydown', this.onKeyDown.bind(this), false);
     document.addEventListener('keyup', this.onKeyUp.bind(this), false);
   }
@@ -176,6 +193,13 @@ export default class FirstPerson {
     this.yaw.translateX(x);
     this.yaw.translateY(y);
     this.yaw.translateZ(z);
+
+    // mesh.quaternion.copy(mesh.quaternion);
+    // this.yaw.children[0].position.copy(this.yaw.position);
+
+    // this.yaw.children[0].translateX(x);
+    // this.yaw.children[0].translateY(y);
+    // this.yaw.children[0].translateZ(z);
 
     if (this.yaw.position.y < this.normalHeight) {
       this.yaw.position.y = this.normalHeight;

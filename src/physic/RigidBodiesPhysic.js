@@ -1,3 +1,4 @@
+// https://github.com/playcanvas/engine/blob/18bdc36d108031beca3fbfab948feb911eea2159/src/framework/components/rigid-body/component.js#L135
 // https://en.blender.org/uploads/9/95/Dev-Physics-bullet-documentation.pdf
 // https://github.com/lo-th/Ammo.lab/blob/gh-pages/src/ammo/rigidBody.js
 
@@ -5,7 +6,7 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import { Clock } from 'three/src/core/Clock';
 
-import Ammo from 'Ammo.js';
+// import Ammo from 'Ammo.js';
 
 const GRAVITY = -9.81;
 const DISABLE_DEACTIVATION = 4.0;
@@ -13,9 +14,9 @@ const DISABLE_DEACTIVATION = 4.0;
 // const ZERO_VECTOR3 = new Vector3(0.0, 0.0, 0.0);
 // const ZERO_QUATERNION = new Quaternion(0.0, 0.0, 0.0, 1.0);
 
-export default class Physics {
+export default class RigidBodiesPhysic {
   constructor () {
-    this.bullets = [];
+    // this.bullets = [];
     this.rigidBodies = [];
     this.clock = new Clock();
 
@@ -60,7 +61,7 @@ export default class Physics {
   }
 
   addBoxBody (mesh, mass, friction = 1.0, margin = 0.04) {
-    const size = mesh.geometry.parameters;
+    const size = mesh.geometry ? mesh.geometry.parameters : { width: 0.5, height: 1.75, depth: 0.5 };
     const box = new this.Ammo.btBoxShape(new this.Ammo.btVector3(
       size.width / 2.0, size.height / 2.0, size.depth / 2.0
     ));
@@ -120,21 +121,21 @@ export default class Physics {
   /* eslint-enable new-cap */
 
   update () {
-    this.updateBullets();
+    // this.updateBullets();
     this.updateRigidBodies();
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);
   }
 
-  updateBullets () {
+  /* updateBullets () {
     for (let i = 0; i < this.bullets.length; i++) {
       const rayVector = new Vector3();
 
       rayVector.copy(this.bulletRay).applyMatrix4(this.bullets[i].matrixWorld);
       this.castPhysicsRay(this.bullets[i].position, rayVector);
     }
-  }
+  } */
 
   updateRigidBodies () {
     for (let i = 0; i < this.rigidBodies.length; i++) {
