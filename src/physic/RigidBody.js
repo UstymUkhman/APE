@@ -73,7 +73,6 @@ export default class RigidBody {
     body.setAngularFactor(new Ammo.btVector3(this.angularFactor.x, this.angularFactor.y, this.angularFactor.z));
 
     body.setDamping(this.linearDamping, this.angularDamping);
-    // body.setActivationState(DISABLE_DEACTIVATION);
     body.setRestitution(this.restitution);
     body.setFriction(this.friction);
     return body;
@@ -81,8 +80,8 @@ export default class RigidBody {
   /* eslint-enable new-cap */
 
   checkBodyMargin (shape) {
-    if (this.margin !== MARGIN) {
-      shape.setMargin(this.margin);
-    }
+    // if (this.margin !== MARGIN) {
+    shape.setMargin(this.margin);
+    // }
   }
 }

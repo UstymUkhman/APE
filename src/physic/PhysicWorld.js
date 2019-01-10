@@ -1,10 +1,10 @@
+import KinematicBodies from 'physic/KinematicBodies';
+import DynamicBodies from 'physic/DynamicBodies';
+import StaticBodies from 'physic/StaticBodies';
+
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physic/constants';
 import { Ammo } from 'core/Ammo';
-
-// import KinematicBodies from 'physic/KinematicBodies';
-import DynamicBodies from 'physic/DynamicBodies';
-import StaticBodies from 'physic/StaticBodies';
 
 export default class PhysicWorld {
   constructor () {
@@ -13,7 +13,7 @@ export default class PhysicWorld {
 
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
-    // this.kinematic = new KinematicBodies(this.world);
+    this.kinematic = new KinematicBodies(this.world);
   }
 
   /* eslint-disable new-cap */
@@ -32,7 +32,7 @@ export default class PhysicWorld {
 
   update () {
     this.dynamic.update(this.transform);
-    // this.kinematic.update(this.transform);
+    this.kinematic.update(this.transform);
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);

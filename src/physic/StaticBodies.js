@@ -20,31 +20,31 @@ export default class StaticBodies extends RigidBody {
   }
   /* eslint-enable new-cap */
 
-  addBox (mesh, mass) {
+  addBox (mesh) {
     const size = mesh.geometry.parameters;
     const box = super.createBox(size);
     this.addStaticBody(box, mesh);
   }
 
-  addCylinder (mesh, mass) {
+  addCylinder (mesh) {
     const size = mesh.geometry.parameters;
     const cylinder = super.createCylinder(size);
     this.addStaticBody(cylinder, mesh);
   }
 
-  addCapsule (mesh, mass) {
+  addCapsule (mesh) {
     const size = mesh.geometry.parameters;
     const capsule = super.createCapsule(size);
     this.addStaticBody(capsule, mesh);
   }
 
-  addCone (mesh, mass) {
+  addCone (mesh) {
     const size = mesh.geometry.parameters;
     const cone = super.createCone(size);
     this.addStaticBody(cone, mesh);
   }
 
-  addSphere (mesh, mass) {
+  addSphere (mesh) {
     const size = mesh.geometry.parameters;
     const sphere = super.createSphere(size);
     this.addStaticBody(sphere, mesh);
@@ -54,9 +54,6 @@ export default class StaticBodies extends RigidBody {
     const position = mesh.position;
     const quaternion = mesh.quaternion;
     const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
-
-    // mesh.quaternion.copy(quaternion);
-    // mesh.position.copy(position);
 
     mesh.userData.physicsBody = body;
     this.world.addRigidBody(body);

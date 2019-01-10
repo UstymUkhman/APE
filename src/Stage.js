@@ -71,6 +71,7 @@ export default class Stage {
 
     ground.receiveShadow = true;
     ground.rotateX(-Math.PI / 2);
+    this.physics.static.friction = 2.5;
     this.physics.static.addPlane(ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);
@@ -156,32 +157,40 @@ export default class Stage {
   }
 
   createObjects () {
-    const cube = new Mesh(
+    const cube1 = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshBasicMaterial({
         color: BLACK
       })
     );
 
-    cube.position.set(-0.5, 10, 0);
+    cube1.position.set(-0.5, 10, 0);
 
-    const cube2 = cube.clone();
+    const cube2 = cube1.clone();
     cube2.position.set(-2, 10, -5);
 
     const cube3 = cube2.clone();
     cube3.position.y = 20;
 
-    this.physics.dynamic.addBox(cube, 5);
+    const cube4 = cube1.clone();
+    cube4.position.set(5, 1, 0);
+
+    this.physics.dynamic.addBox(cube1, 5);
     this.physics.dynamic.addBox(cube2, 5);
     this.physics.dynamic.addBox(cube3, 5);
+    this.physics.kinematic.addBox(cube4);
 
-    cube.castShadow = true;
+    cube1.castShadow = true;
     cube2.castShadow = true;
     cube3.castShadow = true;
+    cube4.castShadow = true;
 
-    this.scene.add(cube);
+    this.scene.add(cube1);
     this.scene.add(cube2);
     this.scene.add(cube3);
+    this.scene.add(cube4);
+
+    this.cube = cube4;
   }
 
   /* createRaycaster () {
@@ -206,6 +215,27 @@ export default class Stage {
 
   createEvents () {
     window.addEventListener('resize', this.onResize.bind(this), false);
+    document.addEventListener('keydown', (event) => {
+      const position = this.cube.position;
+
+      switch (event.keyCode) {
+        case 38:
+          this.cube.position.set(position.x, position.y, position.z + 0.5);
+          break;
+
+        case 37:
+          this.cube.position.set(position.x + 0.5, position.y, position.z);
+          break;
+
+        case 39:
+          this.cube.position.set(position.x - 0.5, position.y, position.z);
+          break;
+
+        case 40:
+          this.cube.position.set(position.x, position.y, position.z - 0.5);
+          break;
+      }
+    }, false);
   }
 
   /* onMouseMove (event) {

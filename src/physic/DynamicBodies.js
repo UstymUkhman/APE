@@ -1,7 +1,3 @@
-// https://github.com/playcanvas/engine/blob/18bdc36d108031beca3fbfab948feb911eea2159/src/framework/components/rigid-body/component.js#L135
-// https://en.blender.org/uploads/9/95/Dev-Physics-bullet-documentation.pdf
-// https://github.com/lo-th/Ammo.lab/blob/gh-pages/src/ammo/rigidBody.js
-
 import RigidBody from 'physic/RigidBody';
 
 export default class DynamicBodies extends RigidBody {
@@ -44,9 +40,6 @@ export default class DynamicBodies extends RigidBody {
     const quaternion = mesh.quaternion;
     const body = super.createRigidBody(shape, mass, position, quaternion);
 
-    // mesh.quaternion.copy(quaternion);
-    // mesh.position.copy(position);
-
     mesh.userData.physicsBody = body;
     this.world.addRigidBody(body);
     this.bodies.push(mesh);
@@ -55,13 +48,17 @@ export default class DynamicBodies extends RigidBody {
   update (transform) {
     for (let i = 0; i < this.bodies.length; i++) {
       const body = this.bodies[i].userData.physicsBody;
-      body.getMotionState().getWorldTransform(transform);
+      const motionState = body.getMotionState();
 
-      const origin = transform.getOrigin();
-      const rotation = transform.getRotation();
+      if (motionState) {
+        motionState.getWorldTransform(transform);
 
-      this.bodies[i].position.set(origin.x(), origin.y(), origin.z());
-      this.bodies[i].quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        const origin = transform.getOrigin();
+        const rotation = transform.getRotation();
+
+        this.bodies[i].position.set(origin.x(), origin.y(), origin.z());
+        this.bodies[i].quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+      }
     }
   }
 }

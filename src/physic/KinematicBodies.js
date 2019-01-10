@@ -1,80 +1,76 @@
-import { KINEMATIC_COLLISION, DISABLE_DEACTIVATION } from './constants';
-import { Vector3 } from 'three/src/math/Vector3';
+import RigidBody from 'physic/RigidBody';
 import { Ammo } from 'core/Ammo';
 
-export default class KinematicBodies {
-  constructor () {
-    this.mass = 0.0;
-    this.kinematicBodies = [];
-    this.ammoQuat = new Ammo.btQuaternion();
+import {
+  ZERO_MASS,
+  KINEMATIC_COLLISION,
+  DISABLE_DEACTIVATION
+} from 'physic/constants';
 
-    this.displacement = new Vector3(0.0, 0.0, 0.0);
-    this.linearVelocity = new Vector3(0.0, 0.0, 0.0);
-    this.angularVelocity = new Vector3(0.0, 0.0, 0.0);
+export default class KinematicBodies extends RigidBody {
+  constructor (physicWorld) {
+    super(physicWorld);
+    /* eslint-disable new-cap */
+    this.rotation = new Ammo.btQuaternion();
+    /* eslint-enable new-cap */
   }
 
-  createBody () {
-    // ...
-    // body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
-    // body.setActivationState(DISABLE_DEACTIVATION);
+  addBox (mesh) {
+    const size = mesh.geometry.parameters;
+    const box = super.createBox(size);
+    this.addKinematicBody(box, mesh);
   }
 
-  update () {
-    // for (let i = 0; i < this.rigidBodies.length; i++) {
-    //   const body = this.rigidBodies[i].userData.physicsBody;
-    //   const motion = body.getMotionState();
-
-    //   if (motion) {
-    //     motion.getWorldTransform(this.transform);
-
-    //     const origin = this.transform.getOrigin();
-    //     const rotation = this.transform.getRotation();
-
-    //     this.rigidBodies[i].position.set(origin.x(), origin.y(), origin.z());
-    //     this.rigidBodies[i].quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-    //   }
-    // }
-
-    // var body = this.body;
-
-    // if (body) {
-    //     var pos = THREEMesh.getPosition();
-    //     var rot = THREEMesh.getRotation();
-
-    //     var transform = body.getWorldTransform();
-    //     transform.getOrigin().setValue(pos.x, pos.y, pos.z);
-
-    //     this.ammoQuat.setValue(rot.x, rot.y, rot.z, rot.w);
-    //     transform.setRotation(this.ammoQuat);
-
-    //     // update the motion state for kinematic bodies
-    //     if (this.isKinematic()) {
-    //         var motionState = this.body.getMotionState();
-    //         if (motionState) {
-    //             motionState.setWorldTransform(transform);
-    //         }
-    //     }
-
-    //     body.activate();
-    // }
+  addCylinder (mesh) {
+    const size = mesh.geometry.parameters;
+    const cylinder = super.createCylinder(size);
+    this.addKinematicBody(cylinder, mesh);
   }
 
-  // Call every frame:
-  // _updateKinematic (dt) {
-  //     this.displacement.copy(this.linearVelocity).scale(dt);
-  //     this.entity.translate(this.displacement);
+  addCapsule (mesh) {
+    const size = mesh.geometry.parameters;
+    const capsule = super.createCapsule(size);
+    this.addKinematicBody(capsule, mesh);
+  }
 
-  //     this.displacement.copy(this.angularVelocity).scale(dt);
-  //     this.entity.rotate(this.displacement.x, this.displacement.y, this.displacement.z);
-      
-  //     if (this.body.getMotionState()) {
-  //         var pos = this.entity.getPosition();
-  //         var rot = this.entity.getRotation();
+  addCone (mesh) {
+    const size = mesh.geometry.parameters;
+    const cone = super.createCone(size);
+    this.addKinematicBody(cone, mesh);
+  }
 
-  //         ammoTransform.getOrigin().setValue(pos.x, pos.y, pos.z);
-  //         ammoQuat.setValue(rot.x, rot.y, rot.z, rot.w);
-  //         ammoTransform.setRotation(ammoQuat);
-  //         this.body.getMotionState().setWorldTransform(ammoTransform);
-  //     }
-  // }
+  addSphere (mesh) {
+    const size = mesh.geometry.parameters;
+    const sphere = super.createSphere(size);
+    this.addKinematicBody(sphere, mesh);
+  }
+
+  addKinematicBody (shape, mesh) {
+    const position = mesh.position;
+    const quaternion = mesh.quaternion;
+    const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
+
+    body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
+    body.setActivationState(DISABLE_DEACTIVATION);
+
+    mesh.userData.physicsBody = body;
+    this.world.addRigidBody(body);
+    this.bodies.push(mesh);
+  }
+
+  update (transform) {
+    for (let i = 0; i < this.bodies.length; i++) {
+      const position = this.bodies[i].position;
+      const quaternion = this.bodies[i].quaternion;
+      const motionState = this.bodies[i].userData.physicsBody.getMotionState();
+
+      transform.getOrigin().setValue(position.x, position.y, position.z);
+      this.rotation.setValue(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+      transform.setRotation(this.rotation);
+
+      if (motionState) {
+        motionState.setWorldTransform(transform);
+      }
+    }
+  }
 }
