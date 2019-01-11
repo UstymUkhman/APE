@@ -4,21 +4,25 @@ import { Ammo } from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {
   constructor (physicWorld) {
-    super(physicWorld);
+    super();
+
+    this.bodies = [];
+    this.world = physicWorld;
   }
 
-  /* eslint-disable new-cap */
   addPlane (mesh) {
     // Convert X-axis rotation from
     // THREE.js to Z-axis rotation in Ammo.js:
     const z = mesh.rotation.x / -Math.PI * 2.0;
+
+    /* eslint-disable new-cap */
     const rotation = new Ammo.btVector3(0.0, 0.0, z);
     const plane = new Ammo.btStaticPlaneShape(rotation, 0.0);
+    /* eslint-enable new-cap */
 
     this.checkBodyMargin(plane);
     this.addStaticBody(plane, mesh);
   }
-  /* eslint-enable new-cap */
 
   addBox (mesh) {
     const size = mesh.geometry.parameters;

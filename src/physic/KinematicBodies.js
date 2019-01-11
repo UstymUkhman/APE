@@ -9,7 +9,11 @@ import {
 
 export default class KinematicBodies extends RigidBody {
   constructor (physicWorld) {
-    super(physicWorld);
+    super();
+
+    this.bodies = [];
+    this.world = physicWorld;
+
     /* eslint-disable new-cap */
     this.rotation = new Ammo.btQuaternion();
     /* eslint-enable new-cap */

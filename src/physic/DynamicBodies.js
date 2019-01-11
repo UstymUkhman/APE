@@ -2,7 +2,10 @@ import RigidBody from 'physic/RigidBody';
 
 export default class DynamicBodies extends RigidBody {
   constructor (physicWorld) {
-    super(physicWorld);
+    super();
+
+    this.bodies = [];
+    this.world = physicWorld;
   }
 
   addBox (mesh, mass) {
@@ -40,6 +43,7 @@ export default class DynamicBodies extends RigidBody {
     const quaternion = mesh.quaternion;
     const body = super.createRigidBody(shape, mass, position, quaternion);
 
+    // body.setActivationState(DISABLE_DEACTIVATION);
     mesh.userData.physicsBody = body;
     this.world.addRigidBody(body);
     this.bodies.push(mesh);

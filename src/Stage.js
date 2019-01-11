@@ -25,6 +25,9 @@ import RAF from 'managers/RAF';
 import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 
+import { CylinderGeometry } from 'three/src/geometries/CylinderGeometry';
+import * as controls from 'controls/vehicleControls.json';
+
 const OrbitControls = ThreeOrbitControls(THREE);
 
 const WHITE = 0xFFFFFF;
@@ -45,6 +48,7 @@ export default class Stage {
 
     // this.createAnimation();
     this.createObjects();
+    this.createVehicle();
     // this.createRaycaster();
 
     this.createRenderer();
@@ -172,25 +176,45 @@ export default class Stage {
     const cube3 = cube2.clone();
     cube3.position.y = 20;
 
-    const cube4 = cube1.clone();
-    cube4.position.set(5, 1, 0);
+    // const cube4 = cube1.clone();
+    // cube4.position.set(5, 1, 0);
 
     this.physics.dynamic.addBox(cube1, 5);
     this.physics.dynamic.addBox(cube2, 5);
     this.physics.dynamic.addBox(cube3, 5);
-    this.physics.kinematic.addBox(cube4);
+    // this.physics.kinematic.addBox(cube4);
 
     cube1.castShadow = true;
     cube2.castShadow = true;
     cube3.castShadow = true;
-    cube4.castShadow = true;
+    // cube4.castShadow = true;
 
     this.scene.add(cube1);
     this.scene.add(cube2);
     this.scene.add(cube3);
-    this.scene.add(cube4);
+    // this.scene.add(cube4);
 
-    this.cube = cube4;
+    // this.cube = cube4;
+  }
+
+  createVehicle () {
+    const wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 24, 1);
+    const chassisGeometry = new BoxGeometry(1.8, 0.6, 4, 1, 1, 1);
+    const material = new MeshPhongMaterial({ color: 0x990000 });
+
+    wheelGeometry.rotateZ(Math.PI / 2);
+
+    const wheelMesh = new THREE.Mesh(wheelGeometry, material);
+    const chassis = new Mesh(chassisGeometry, material);
+
+    this.physics.vehicle.addVehicle(chassis, 800);
+    this.scene.add(chassis);
+
+    for (let i = 0; i < 4; i++) {
+      const wheel = wheelMesh.clone();
+      this.physics.vehicle.addWheel(wheel, i);
+      this.scene.add(wheel);
+    }
   }
 
   /* createRaycaster () {
@@ -211,11 +235,18 @@ export default class Stage {
     this.orbitControls = new OrbitControls(this.camera);
     this.orbitControls.target.set(0, 0, 25);
     this.orbitControls.update();
+
+    this.vehicleControls = {};
+
+    for (const i in controls) {
+      this.vehicleControls[i] = false;
+    }
   }
 
   createEvents () {
+    // controls
     window.addEventListener('resize', this.onResize.bind(this), false);
-    document.addEventListener('keydown', (event) => {
+    /* document.addEventListener('keydown', (event) => {
       const position = this.cube.position;
 
       switch (event.keyCode) {
@@ -233,6 +264,46 @@ export default class Stage {
 
         case 40:
           this.cube.position.set(position.x, position.y, position.z - 0.5);
+          break;
+      }
+    }, false); */
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.keyCode) {
+        case 87:
+          this.vehicleControls.accelerator = true;
+          break;
+
+        case 65:
+          this.vehicleControls.left = true;
+          break;
+
+        case 68:
+          this.vehicleControls.right = true;
+          break;
+
+        case 83:
+          this.vehicleControls.brake = true;
+          break;
+      }
+    }, false);
+
+    document.addEventListener('keyup', (event) => {
+      switch (event.keyCode) {
+        case 87:
+          this.vehicleControls.accelerator = false;
+          break;
+
+        case 65:
+          this.vehicleControls.left = false;
+          break;
+
+        case 68:
+          this.vehicleControls.right = false;
+          break;
+
+        case 83:
+          this.vehicleControls.brake = false;
           break;
       }
     }, false);
@@ -265,8 +336,8 @@ export default class Stage {
   } */
 
   render () {
-    this.physics.update();
-    this.orbitControls.update();
+    this.physics.update(this.vehicleControls);
+    // this.orbitControls.update();
     // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }

@@ -1,0 +1,17 @@
+{
+  "accelerator": {
+    "code": 87
+  },
+
+  "brake": {
+    "code": 83
+  },
+
+  "left": {
+    "code": 65
+  },
+
+  "right": {
+    "code": 68
+  }
+}

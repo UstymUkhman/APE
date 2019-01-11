@@ -11,17 +11,14 @@ import {
 } from 'physic/constants';
 
 export default class RigidBody {
-  constructor (world) {
-    this.angularDamping = ANGULAR_DAMPING;
-    this.linearDamping = LINEAR_DAMPING;
-    this.angularFactor = ONE_VECTOR3;
-    this.linearFactor = ONE_VECTOR3;
-    this.restitution = RESTITUTION;
-    this.friction = FRICTION;
+  constructor () {
     this.margin = MARGIN;
-
-    this.world = world;
-    this.bodies = [];
+    this.friction = FRICTION;
+    this.restitution = RESTITUTION;
+    this.linearFactor = ONE_VECTOR3;
+    this.angularFactor = ONE_VECTOR3;
+    this.linearDamping = LINEAR_DAMPING;
+    this.angularDamping = ANGULAR_DAMPING;
   }
 
   /* eslint-disable new-cap */
@@ -64,7 +61,7 @@ export default class RigidBody {
     const motion = new Ammo.btDefaultMotionState(transform);
     const inertia = new Ammo.btVector3(0.0, 0.0, 0.0);
 
-    if (mass !== ZERO_MASS) {
+    if (mass > ZERO_MASS) {
       shape.calculateLocalInertia(mass, inertia);
     }
 
@@ -80,8 +77,8 @@ export default class RigidBody {
   /* eslint-enable new-cap */
 
   checkBodyMargin (shape) {
-    // if (this.margin !== MARGIN) {
-    shape.setMargin(this.margin);
-    // }
+    if (this.margin !== MARGIN) {
+      shape.setMargin(this.margin);
+    }
   }
 }
