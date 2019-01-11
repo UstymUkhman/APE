@@ -16,13 +16,15 @@ import {
 } from 'physic/constants';
 
 export default class VehicleBody extends RigidBody {
-  constructor (physicWorld) {
+  constructor (physicWorld, controls) {
     super();
 
     this.wheels = [];
     this.steering = 0;
-    this.vehicle = null;
+    this.controls = [];
+
     this.world = physicWorld;
+    this.controls = controls;
 
     this.breakForce = BREAK_FORCE;
     this.engineForce = ENGINE_FORCE;
@@ -43,7 +45,7 @@ export default class VehicleBody extends RigidBody {
     /* eslint-enable new-cap */
   }
 
-  addVehicle (mesh, mass) {
+  addChassis (mesh, mass) {
     const size = mesh.geometry.parameters;
     const shape = super.createBox(size);
 
@@ -56,62 +58,51 @@ export default class VehicleBody extends RigidBody {
 
     /* eslint-disable new-cap */
     const vehicleRaycaster = new Ammo.btDefaultVehicleRaycaster(this.world);
-    const vehicle = new Ammo.btRaycastVehicle(this.vehicleTuning, body, vehicleRaycaster);
+    this.vehicle = new Ammo.btRaycastVehicle(this.vehicleTuning, body, vehicleRaycaster);
     /* eslint-enable new-cap */
 
-    vehicle.setCoordinateSystem(0, 1, 2);
-    this.world.addAction(vehicle);
-
-    this.vehicle = vehicle;
+    this.vehicle.setCoordinateSystem(0, 1, 2);
+    this.world.addAction(this.vehicle);
     this.chassis = mesh;
   }
 
-  setWheel (wheelPosition, wheelRadius, front) {
+  addWheel (mesh, front) {
+    const position = mesh.position;
+    const radius = mesh.geometry.parameters.radiusTop;
+
+    /* eslint-disable new-cap */
     const wheel = this.vehicle.addWheel(
-      wheelPosition, this.wheelDirection, this.wheelAxis,
-      this.suspensionRest, wheelRadius, this.vehicleTuning, front
+      new Ammo.btVector3(position.x, position.y, position.z), this.wheelDirection,
+      this.wheelAxis, this.suspensionRest, radius, this.vehicleTuning, front
     );
+    /* eslint-enable new-cap */
 
     wheel.set_m_wheelsDampingCompression(this.suspensionCompression);
     wheel.set_m_wheelsDampingRelaxation(this.suspensionDamping);
     wheel.set_m_suspensionStiffness(this.suspensionStiffness);
     wheel.set_m_rollInfluence(this.rollInfluence);
     wheel.set_m_frictionSlip(this.frictionSlip);
-  }
 
-  // For 4 wheels
-  addWheel (mesh, index) {
-    const front = index < 2;
-    const z = front ? 1.7 : -1;
-    const width = mesh.geometry.parameters.radiusTop;
-    const x = (index === 1 || index === 2) ? -1.0 : 1.0;
-
-    /* eslint-disable new-cap */
-    this.setWheel(new Ammo.btVector3(x, 0.3, z), width, front);
-    /* eslint-enable new-cap */
     this.wheels.push(mesh);
   }
 
-  // steer () {
-  // }
+  update () {
+    let engine = 0, breaks = 0;
+    let transform, position, rotation;
 
-  update (car) {
-    let engineForce = 0;
-    let breakingForce = 0;
-
-    if (car.accelerator) {
-      if (this.speed < -1.0) breakingForce = this.breakForce;
-      else engineForce = this.engineForce;
+    if (this.controls.accelerator) {
+      if (this.speed < -1.0) breaks = this.breakForce;
+      else engine = this.engineForce;
     }
 
-    if (car.brake) {
-      if (this.speed > 1.0) breakingForce = this.breakForce;
-      else engineForce = this.engineForce / -2;
+    if (this.controls.brake) {
+      if (this.speed > 1.0) breaks = this.breakForce;
+      else engine = this.engineForce / -2;
     }
 
-    if (car.left && this.steering < this.steeringClamp) {
+    if (this.controls.left && this.steering < this.steeringClamp) {
       this.steering += this.steeringStep;
-    } else if (car.right && this.steering > -this.steeringClamp) {
+    } else if (this.controls.right && this.steering > -this.steeringClamp) {
       this.steering -= this.steeringStep;
     } else {
       if (this.steering < -this.steeringStep) {
@@ -120,26 +111,14 @@ export default class VehicleBody extends RigidBody {
         if (this.steering > this.steeringStep) {
           this.steering -= this.steeringStep;
         } else {
-          this.steering = 0;
+          this.steering = 0.0;
         }
       }
     }
 
-    this.vehicle.applyEngineForce(engineForce, 2); // Back Left
-    this.vehicle.applyEngineForce(engineForce, 3); // Back Right
+    this.applyControlForces(engine, breaks);
 
-    this.vehicle.setBrake(breakingForce / 2, 0); // Front Left
-    this.vehicle.setBrake(breakingForce / 2, 1); // Front Right
-    this.vehicle.setBrake(breakingForce, 2); // Back Left
-    this.vehicle.setBrake(breakingForce, 3); // Back Right
-
-    this.vehicle.setSteeringValue(this.steering, 0); // Front Left
-    this.vehicle.setSteeringValue(this.steering, 1); // Front Right
-
-    let transform, position, rotation;
-    const wheels = this.vehicle.getNumWheels(); // this.wheels.length
-
-    for (let i = 0; i < wheels; i++) {
+    for (let i = 0; i < this.wheels.length; i++) {
       this.vehicle.updateWheelTransform(i, true);
       transform = this.vehicle.getWheelTransformWS(i);
 
@@ -159,7 +138,34 @@ export default class VehicleBody extends RigidBody {
     this.chassis.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
   }
 
+  applyControlForces (engine, breaks) {
+    if (this.wheels.length === 4) {
+      const frontBreaks = breaks * 1.5;
+
+      this.vehicle.setSteeringValue(this.steering, 0);
+      this.vehicle.setSteeringValue(this.steering, 1);
+
+      this.vehicle.applyEngineForce(engine, 2);
+      this.vehicle.applyEngineForce(engine, 3);
+
+      this.vehicle.setBrake(frontBreaks, 0);
+      this.vehicle.setBrake(frontBreaks, 1);
+      this.vehicle.setBrake(breaks, 2);
+      this.vehicle.setBrake(breaks, 3);
+    } else if (this.wheels.length === 2) {
+      this.vehicle.setSteeringValue(this.steering, 0);
+      this.vehicle.applyEngineForce(engine, 1);
+
+      this.vehicle.setBrake(breaks / 2, 0);
+      this.vehicle.setBrake(breaks, 1);
+    }
+  }
+
   get speed () {
     return this.vehicle.getCurrentSpeedKmHour();
   }
+
+  /* get wheels () {
+    return this.vehicle.getNumWheels();
+  } */
 }

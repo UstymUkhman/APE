@@ -26,7 +26,8 @@ import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 
 import { CylinderGeometry } from 'three/src/geometries/CylinderGeometry';
-import * as controls from 'controls/vehicleControls.json';
+import * as motoControls from 'controls/motoControls.json';
+import * as carControls from 'controls/carControls.json';
 
 const OrbitControls = ThreeOrbitControls(THREE);
 
@@ -47,7 +48,7 @@ export default class Stage {
     this.createCamera();
 
     // this.createAnimation();
-    this.createObjects();
+    // this.createObjects();
     this.createVehicle();
     // this.createRaycaster();
 
@@ -198,21 +199,64 @@ export default class Stage {
   }
 
   createVehicle () {
-    const wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 24, 1);
-    const chassisGeometry = new BoxGeometry(1.8, 0.6, 4, 1, 1, 1);
+    this.carControls = {};
+
+    for (const i in carControls) {
+      this.carControls[i] = false;
+    }
+
+    let wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 24, 1);
+    let chassisGeometry = new BoxGeometry(1.8, 0.6, 4, 1, 1, 1);
     const material = new MeshPhongMaterial({ color: 0x990000 });
 
     wheelGeometry.rotateZ(Math.PI / 2);
 
-    const wheelMesh = new THREE.Mesh(wheelGeometry, material);
-    const chassis = new Mesh(chassisGeometry, material);
+    let chassis = new Mesh(chassisGeometry, material);
+    chassis.position.x = 5;
 
-    this.physics.vehicle.addVehicle(chassis, 800);
+    let wheelMesh = new THREE.Mesh(wheelGeometry, material);
+    const car = this.physics.addVehicle(chassis, 800, this.carControls);
+
     this.scene.add(chassis);
 
     for (let i = 0; i < 4; i++) {
+      let x = 1.0;
+      const z = i < 2 ? 1.7 : -1.7;
       const wheel = wheelMesh.clone();
-      this.physics.vehicle.addWheel(wheel, i);
+
+      if (i === 1 || i === 2) x = -x;
+      wheel.position.set(x, 0.3, z);
+
+      car.addWheel(wheel, i < 2);
+      this.scene.add(wheel);
+    }
+
+    this.motoControls = {};
+
+    for (const i in motoControls) {
+      this.motoControls[i] = false;
+    }
+
+    wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 64, 1);
+    chassisGeometry = new BoxGeometry(0.6, 0.6, 4, 1, 1, 1);
+
+    wheelGeometry.rotateZ(Math.PI / 2);
+
+    chassis = new Mesh(chassisGeometry, material);
+    chassis.position.x = -5;
+
+    wheelMesh = new THREE.Mesh(wheelGeometry, material);
+    const moto = this.physics.addVehicle(chassis, 200, this.motoControls);
+
+    moto.suspensionRest = 0.3;
+    this.scene.add(chassis);
+
+    for (let i = 0; i < 2; i++) {
+      const z = !i ? 1.5 : -1.5;
+      const wheel = wheelMesh.clone();
+
+      wheel.position.set(0.0, 0.2, z);
+      moto.addWheel(wheel, !i);
       this.scene.add(wheel);
     }
   }
@@ -235,12 +279,6 @@ export default class Stage {
     this.orbitControls = new OrbitControls(this.camera);
     this.orbitControls.target.set(0, 0, 25);
     this.orbitControls.update();
-
-    this.vehicleControls = {};
-
-    for (const i in controls) {
-      this.vehicleControls[i] = false;
-    }
   }
 
   createEvents () {
@@ -271,19 +309,35 @@ export default class Stage {
     document.addEventListener('keydown', (event) => {
       switch (event.keyCode) {
         case 87:
-          this.vehicleControls.accelerator = true;
+          this.carControls.accelerator = true;
+          break;
+
+        case 104:
+          this.motoControls.accelerator = true;
           break;
 
         case 65:
-          this.vehicleControls.left = true;
+          this.carControls.left = true;
+          break;
+
+        case 100:
+          this.motoControls.left = true;
           break;
 
         case 68:
-          this.vehicleControls.right = true;
+          this.carControls.right = true;
+          break;
+
+        case 102:
+          this.motoControls.right = true;
           break;
 
         case 83:
-          this.vehicleControls.brake = true;
+          this.carControls.brake = true;
+          break;
+
+        case 101:
+          this.motoControls.brake = true;
           break;
       }
     }, false);
@@ -291,19 +345,35 @@ export default class Stage {
     document.addEventListener('keyup', (event) => {
       switch (event.keyCode) {
         case 87:
-          this.vehicleControls.accelerator = false;
+          this.carControls.accelerator = false;
+          break;
+
+        case 104:
+          this.motoControls.accelerator = false;
           break;
 
         case 65:
-          this.vehicleControls.left = false;
+          this.carControls.left = false;
+          break;
+
+        case 100:
+          this.motoControls.left = false;
           break;
 
         case 68:
-          this.vehicleControls.right = false;
+          this.carControls.right = false;
+          break;
+
+        case 102:
+          this.motoControls.right = false;
           break;
 
         case 83:
-          this.vehicleControls.brake = false;
+          this.carControls.brake = false;
+          break;
+
+        case 101:
+          this.motoControls.brake = false;
           break;
       }
     }, false);
@@ -336,7 +406,7 @@ export default class Stage {
   } */
 
   render () {
-    this.physics.update(this.vehicleControls);
+    this.physics.update();
     // this.orbitControls.update();
     // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
