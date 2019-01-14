@@ -26,7 +26,7 @@ import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 
 import { CylinderGeometry } from 'three/src/geometries/CylinderGeometry';
-import * as motoControls from 'controls/motoControls.json';
+// import * as motoControls from 'controls/motoControls.json';
 import * as carControls from 'controls/carControls.json';
 
 const OrbitControls = ThreeOrbitControls(THREE);
@@ -231,7 +231,7 @@ export default class Stage {
       this.scene.add(wheel);
     }
 
-    this.motoControls = {};
+    /* this.motoControls = {};
 
     for (const i in motoControls) {
       this.motoControls[i] = false;
@@ -258,7 +258,7 @@ export default class Stage {
       wheel.position.set(0.0, 0.2, z);
       moto.addWheel(wheel, !i);
       this.scene.add(wheel);
-    }
+    } */
   }
 
   /* createRaycaster () {

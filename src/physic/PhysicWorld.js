@@ -8,17 +8,35 @@ import { GRAVITY } from 'physic/constants';
 import { Ammo } from 'core/Ammo';
 
 export default class PhysicWorld {
-  constructor () {
+  constructor (soft = false) {
     this.vehicles = [];
-    this.initAmmoWorld();
     this.clock = new Clock();
+
+    if (soft) this.initSoftWorld();
+    else this.initRigidWorld();
 
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);
   }
 
-  initAmmoWorld () {
+  initSoftWorld () {
+    /* eslint-disable new-cap */
+    const broadphase = new Ammo.btDbvtBroadphase();
+    const softSolver = new Ammo.btDefaultSoftBodySolver();
+    const solver = new Ammo.btSequentialImpulseConstraintSolver();
+
+    const collisionConfiguration = new Ammo.btSoftBodyRigidBodyCollisionConfiguration();
+    const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+
+    this.world = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
+    this.world.setGravity(new Ammo.btVector3(0.0, GRAVITY, 0.0));
+    this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, GRAVITY, 0.0));
+    this.transform = new Ammo.btTransform();
+    /* eslint-enable new-cap */
+  }
+
+  initRigidWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();

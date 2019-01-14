@@ -87,36 +87,10 @@ export default class VehicleBody extends RigidBody {
   }
 
   update () {
-    let engine = 0, breaks = 0;
     let transform, position, rotation;
 
-    if (this.controls.accelerator) {
-      if (this.speed < -1.0) breaks = this.breakForce;
-      else engine = this.engineForce;
-    }
-
-    if (this.controls.brake) {
-      if (this.speed > 1.0) breaks = this.breakForce;
-      else engine = this.engineForce / -2;
-    }
-
-    if (this.controls.left && this.steering < this.steeringClamp) {
-      this.steering += this.steeringStep;
-    } else if (this.controls.right && this.steering > -this.steeringClamp) {
-      this.steering -= this.steeringStep;
-    } else {
-      if (this.steering < -this.steeringStep) {
-        this.steering += this.steeringStep;
-      } else {
-        if (this.steering > this.steeringStep) {
-          this.steering -= this.steeringStep;
-        } else {
-          this.steering = 0.0;
-        }
-      }
-    }
-
-    this.applyControlForces(engine, breaks);
+    this.applySpeedForces();
+    this.applySteerForces();
 
     for (let i = 0; i < this.wheels.length; i++) {
       this.vehicle.updateWheelTransform(i, true);
@@ -138,27 +112,53 @@ export default class VehicleBody extends RigidBody {
     this.chassis.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
   }
 
-  applyControlForces (engine, breaks) {
-    if (this.wheels.length === 4) {
-      const frontBreaks = breaks * 1.5;
+  applySpeedForces () {
+    let engine = 0, breaks = 0;
 
-      this.vehicle.setSteeringValue(this.steering, 0);
-      this.vehicle.setSteeringValue(this.steering, 1);
-
-      this.vehicle.applyEngineForce(engine, 2);
-      this.vehicle.applyEngineForce(engine, 3);
-
-      this.vehicle.setBrake(frontBreaks, 0);
-      this.vehicle.setBrake(frontBreaks, 1);
-      this.vehicle.setBrake(breaks, 2);
-      this.vehicle.setBrake(breaks, 3);
-    } else if (this.wheels.length === 2) {
-      this.vehicle.setSteeringValue(this.steering, 0);
-      this.vehicle.applyEngineForce(engine, 1);
-
-      this.vehicle.setBrake(breaks / 2, 0);
-      this.vehicle.setBrake(breaks, 1);
+    if (this.controls.accelerator) {
+      if (this.speed < -1.0) breaks = this.breakForce;
+      else engine = this.engineForce;
     }
+
+    if (this.controls.brake) {
+      if (this.speed > 1.0) breaks = this.breakForce;
+      else engine = this.engineForce / -2;
+    }
+
+    const frontBreaks = breaks * 1.5;
+
+    this.vehicle.applyEngineForce(engine, 2);
+    this.vehicle.applyEngineForce(engine, 3);
+
+    this.vehicle.setBrake(frontBreaks, 0);
+    this.vehicle.setBrake(frontBreaks, 1);
+    this.vehicle.setBrake(breaks, 2);
+    this.vehicle.setBrake(breaks, 3);
+
+    // Two Wheel Vehicle:
+    // this.vehicle.applyEngineForce(engine, 1);
+    // this.vehicle.setBrake(breaks / 2, 0);
+    // this.vehicle.setBrake(breaks, 1);
+  }
+
+  applySteerForces () {
+    if (this.controls.right && this.steering > -this.steeringClamp) {
+      this.steering -= this.steeringStep;
+    } else if (this.controls.left && this.steering < this.steeringClamp) {
+      this.steering += this.steeringStep;
+    } else if (this.steering < -this.steeringStep) {
+      this.steering += this.steeringStep;
+    } else if (this.steering > this.steeringStep) {
+      this.steering -= this.steeringStep;
+    } else {
+      this.steering = 0.0;
+    }
+
+    this.vehicle.setSteeringValue(this.steering, 0);
+    this.vehicle.setSteeringValue(this.steering, 1);
+
+    // Two Wheel Vehicle:
+    // this.vehicle.setSteeringValue(this.steering, 0);
   }
 
   get speed () {
