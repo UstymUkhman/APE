@@ -1,26 +1,37 @@
-import KinematicBodies from 'physic/KinematicBodies';
-import DynamicBodies from 'physic/DynamicBodies';
-import StaticBodies from 'physic/StaticBodies';
-import VehicleBody from 'physic/VehicleBody';
+// Physics bodies class manager
+
+import KinematicBodies from 'physics/bodies/KinematicBodies';
+import DynamicBodies from 'physics/bodies/DynamicBodies';
+import StaticBodies from 'physics/bodies/StaticBodies';
+import VehicleBody from 'physics/bodies/VehicleBody';
 
 import { Clock } from 'three/src/core/Clock';
-import { GRAVITY } from 'physic/constants';
+import { GRAVITY } from 'physics/constants';
 import { Ammo } from 'core/Ammo';
 
 export default class PhysicWorld {
+  /**
+   * @constructs PhysicWorld
+   * @description - Initialize physics for soft and rigid bodies
+   * @param {bool} [soft] - if <true> creates soft/rigid dynamics world or discrete dynamics world otherwise
+   */
   constructor (soft = false) {
     this.vehicles = [];
     this.clock = new Clock();
 
-    if (soft) this.initSoftWorld();
-    else this.initRigidWorld();
+    if (soft) this._initSoftWorld();
+    else this._initRigidWorld();
 
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);
   }
 
-  initSoftWorld () {
+  /**
+   * @private
+   * @description - Initialize dynamics world with soft/rigid bodies
+   */
+  _initSoftWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const softSolver = new Ammo.btDefaultSoftBodySolver();
@@ -36,7 +47,11 @@ export default class PhysicWorld {
     /* eslint-enable new-cap */
   }
 
-  initRigidWorld () {
+  /**
+   * @private
+   * @description - Initialize discrete dynamics world with rigid bodies
+   */
+  _initRigidWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();
@@ -50,6 +65,14 @@ export default class PhysicWorld {
     /* eslint-enable new-cap */
   }
 
+  /**
+   * @public
+   * @description - Initialize and adds a vehicle body
+   * @param {Object} mesh - vehicle chassis mesh
+   * @param {number} mass - vehicle mass
+   * @param {Object} controls - vehicle key codes controls
+   * @returns {Object} - vehicle body
+   */
   addVehicle (mesh, mass, controls) {
     const vehicle = new VehicleBody(this.world, controls);
     vehicle.addChassis(mesh, mass);
@@ -57,6 +80,10 @@ export default class PhysicWorld {
     return vehicle;
   }
 
+  /**
+   * @public
+   * @description - Update physics world and bodies in requestAnimation loop
+   */
   update () {
     for (let i = 0; i < this.vehicles.length; i++) {
       this.vehicles[i].update();

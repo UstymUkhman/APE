@@ -1,32 +1,35 @@
-// Fullscreen API Manager
+// Fullscreen API manager
 
 import PointerLock from 'managers/PointerLock';
 import Logger from 'utils/Logger';
 
 export default class Fullscreen {
   /*
+   * @constructs Fullscreen
+   * @description - Initialize Fullscreen API manager class
    * @param {DOM Element} container - element that goes in fullscreen
    * @param {function} [onEnter] - callback when enter fullscreen
    * @param {function} [onExit] - callback when exit fullscreen
    * @param {boolean} [lock] - use PointerLock APIs when enter|exit fullscreen
    */
-  constructor (container, onEnter = null, onExit = null, lock = false) {
-    this.container = container;
-    this.onEnter = onEnter;
-    this.onExit = onExit;
-    this.lock = lock;
-    this.init();
+  constructor (container, onEnter = null, onExit = null, lock = true) {
+    this._container = container;
+    this._onEnter = onEnter;
+    this._onExit = onExit;
+    this._lock = lock;
+    this._init();
   }
 
-  /*
-   * Unify Fullscreen API
+  /**
+   * @private
+   * @description - Unify Fullscreen APIs if supported
    */
-  init () {
+  _init () {
     const requestFullscreen =
-      this.container.requestFullscreen ||
-      this.container.msRequestFullscreen ||
-      this.container.mozRequestFullScreen ||
-      this.container.webkitRequestFullscreen;
+      this._container.requestFullscreen ||
+      this._container.msRequestFullscreen ||
+      this._container.mozRequestFullScreen ||
+      this._container.webkitRequestFullscreen;
 
     document.exitFullscreen =
       document.exitFullscreen ||
@@ -35,17 +38,17 @@ export default class Fullscreen {
       document.webkitCancelFullScreen;
 
     if (requestFullscreen) {
-      if (this.lock && this.handlePointerLockEvent()) {
-        this.toggleFullscreen = this.pointer.togglePointerLock.bind(this);
+      if (this._lock && this._handlePointerLockEvent()) {
+        this.toggleFullscreen = this._pointer.togglePointerLock.bind(this);
         return;
       }
 
-      this._onFullscreenChange = this.onFullscreenChange.bind(this);
-      this._onFullscreenError = this.onFullscreenError.bind(this);
-      this.toggleFullscreen = this.onFullscreen.bind(this);
+      this.__onFullscreenChange = this._onFullscreenChange.bind(this);
+      this.__onFullscreenError = this._onFullscreenError.bind(this);
+      this.toggleFullscreen = this._onToggleFullscreen.bind(this);
 
-      this.container.requestFullscreen = requestFullscreen;
-      this.addFullscreenListeners();
+      this._container.requestFullscreen = requestFullscreen;
+      this._addFullscreenListeners();
     } else {
       Logger.error(
         'This browser does not support Fullscreen API:',
@@ -54,98 +57,109 @@ export default class Fullscreen {
     }
   }
 
-  /*
-   * Call requestPointerLock and exitPointerLock events on requestFullscreen
-   * and exitFullscreen if possible, otherwise use only PointerLock APIs
-   * @returns {boolean} - check if browser support one event at a time
+  /**
+   * @private
+   * @description - Call requestPointerLock and exitPointerLock events on requestFullscreen
+   *                and exitFullscreen if possible, otherwise use only PointerLock APIs
+   * @returns {boolean} - <true> if browser supports one event at a time
    */
-  handlePointerLockEvent () {
+  _handlePointerLockEvent () {
     const lockOnly = PointerLock.isLockOnly;
 
     if (lockOnly) {
+      this._pointer = new PointerLock(this._container, this._onEnter, this._onExit);
+
       Logger.warn(
         'This browser can\'t handle both Fullscreen and PointerLock on single event.',
         'You should call separately `toggleFullscreen` and `togglePointerLock` or use only PointerLock Manager.'
       );
-      this.pointer = new PointerLock(this.container, this.onEnter, this.onExit);
     } else {
-      this.pointer = new PointerLock(this.container);
+      this._pointer = new PointerLock(this._container);
     }
 
     return lockOnly;
   }
 
-  /*
-   * Add FullscreenChange & FullscreenError event listeners
+  /**
+   * @private
+   * @description - Add FullscreenChange & FullscreenError event listeners
    */
-  addFullscreenListeners () {
-    document.addEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
-    document.addEventListener('mozfullscreenchange', this._onFullscreenChange, false);
-    document.addEventListener('msfullscreenchange', this._onFullscreenChange, false);
-    document.addEventListener('fullscreenchange', this._onFullscreenChange, false);
+  _addFullscreenListeners () {
+    document.addEventListener('webkitfullscreenchange', this.__onFullscreenChange, false);
+    document.addEventListener('mozfullscreenchange', this.__onFullscreenChange, false);
+    document.addEventListener('msfullscreenchange', this.__onFullscreenChange, false);
+    document.addEventListener('fullscreenchange', this.__onFullscreenChange, false);
 
-    document.addEventListener('webkitfullscreenerror', this._onFullscreenError, false);
-    document.addEventListener('mozfullscreenerror', this._onFullscreenError, false);
-    document.addEventListener('msfullscreenerror', this._onFullscreenError, false);
-    document.addEventListener('fullscreenerror', this._onFullscreenError, false);
+    document.addEventListener('webkitfullscreenerror', this.__onFullscreenError, false);
+    document.addEventListener('mozfullscreenerror', this.__onFullscreenError, false);
+    document.addEventListener('msfullscreenerror', this.__onFullscreenError, false);
+    document.addEventListener('fullscreenerror', this.__onFullscreenError, false);
   }
 
-  /*
-   * Remove FullscreenChange & FullscreenError event listeners
+  /**
+   * @private
+   * @description - Remove FullscreenChange & FullscreenError event listeners
    */
-  removeFullscreenListeners () {
-    document.removeEventListener('webkitfullscreenchange', this._onFullscreenChange, false);
-    document.removeEventListener('mozfullscreenchange', this._onFullscreenChange, false);
-    document.removeEventListener('msfullscreenchange', this._onFullscreenChange, false);
-    document.removeEventListener('fullscreenchange', this._onFullscreenChange, false);
+  _removeFullscreenListeners () {
+    document.removeEventListener('webkitfullscreenchange', this.__onFullscreenChange, false);
+    document.removeEventListener('mozfullscreenchange', this.__onFullscreenChange, false);
+    document.removeEventListener('msfullscreenchange', this.__onFullscreenChange, false);
+    document.removeEventListener('fullscreenchange', this.__onFullscreenChange, false);
 
-    document.removeEventListener('webkitfullscreenerror', this._onFullscreenError, false);
-    document.removeEventListener('mozfullscreenerror', this._onFullscreenError, false);
-    document.removeEventListener('msfullscreenerror', this._onFullscreenError, false);
-    document.removeEventListener('fullscreenerror', this._onFullscreenError, false);
+    document.removeEventListener('webkitfullscreenerror', this.__onFullscreenError, false);
+    document.removeEventListener('mozfullscreenerror', this.__onFullscreenError, false);
+    document.removeEventListener('msfullscreenerror', this.__onFullscreenError, false);
+    document.removeEventListener('fullscreenerror', this.__onFullscreenError, false);
 
     // Destroy PointerLock event listeners if its APIs were used:
-    if (this.pointer) this.pointer.destroy();
+    if (this._pointer) this._pointer.destroy();
   }
 
-  /*
-   * requestFullscreen and exitFullscreen events
+  /**
+   * @private
+   * @public [toggleFullscreen]
+   * @description - Call requestFullscreen and exitFullscreen functions
    */
-  onFullscreen () {
+  _onToggleFullscreen () {
     if (!this.isFullscreen()) {
-      this.container.requestFullscreen();
+      this._container.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
 
-    if (this.lock) {
-      this.pointer.onPointerLock();
+    if (this._lock) {
+      this._pointer.onPointerLock();
     }
   }
 
-  /*
-   * Handle FullscreenChange event callbacks
+  /**
+   * @private
+   * @description - Handle FullscreenChange event callbacks
+   * @param {Object} event
    */
-  onFullscreenChange (event) {
+  _onFullscreenChange (event) {
     const isFullscreen = this.isFullscreen();
     Logger.info(`Fullscreen API: ${isFullscreen ? 'entered in' : 'exited from'} fullscreen mode.`);
 
-    if (isFullscreen && this.onEnter) {
-      this.onEnter();
-    } else if (this.onExit) {
-      this.onExit();
+    if (isFullscreen && this._onEnter) {
+      this._onEnter();
+    } else if (this._onExit) {
+      this._onExit();
     }
   }
 
-  /*
-   * Handle FullscreenError event
+  /**
+   * @private
+   * @description - Handle FullscreenError event callback
+   * @param {Object} event
    */
-  onFullscreenError (event) {
-    Logger.error('Fullscreen API: Error occured on element:', this.container);
+  _onFullscreenError (event) {
+    Logger.error('Fullscreen API: Error occured on element:', this._container);
   }
 
-  /*
-   * Check if container is currently in fullscreen
+  /**
+   * @public
+   * @description - Check if container is currently in fullscreen
    * @returns {boolean}
    */
   isFullscreen () {
@@ -155,15 +169,16 @@ export default class Fullscreen {
       !!document.fullscreenElement;
   }
 
-  /*
-   * Remove all event listeners and destroy all references
+  /**
+   * @public
+   * @description - Remove all event listeners and destroy all references
    */
   destroy () {
-    this.removeFullscreenListeners();
-    delete this.pointer;
+    this._removeFullscreenListeners();
+    delete this._pointer;
 
-    this.container = null;
-    this.onEnter = null;
-    this.onExit = null;
+    this._container = null;
+    this._onEnter = null;
+    this._onExit = null;
   }
 }

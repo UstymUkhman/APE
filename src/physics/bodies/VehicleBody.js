@@ -1,4 +1,4 @@
-import RigidBody from 'physic/RigidBody';
+import RigidBody from 'physics/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
 
 import {
@@ -13,7 +13,7 @@ import {
   DISABLE_DEACTIVATION,
   SUSPENSION_STIFFNESS,
   SUSPENSION_COMPRESSION
-} from 'physic/constants';
+} from 'physics/constants';
 
 export default class VehicleBody extends RigidBody {
   constructor (physicWorld, controls) {
@@ -125,7 +125,13 @@ export default class VehicleBody extends RigidBody {
       else engine = this.engineForce / -2;
     }
 
-    const frontBreaks = breaks * 1.5;
+    let frontBreaks = breaks * 1.5;
+
+    if (this.controls.handbreak) {
+      breaks = this.breakForce * 10.0;
+      frontBreaks = 0.0;
+      engine = 0.0;
+    }
 
     this.vehicle.applyEngineForce(engine, 2);
     this.vehicle.applyEngineForce(engine, 3);

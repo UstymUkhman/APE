@@ -1,5 +1,5 @@
-import { ZERO_MASS } from 'physic/constants';
-import RigidBody from 'physic/RigidBody';
+import RigidBody from 'physics/bodies/RigidBody';
+import { ZERO_MASS } from 'physics/constants';
 import { Ammo } from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {

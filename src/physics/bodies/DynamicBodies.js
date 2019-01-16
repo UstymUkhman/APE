@@ -1,4 +1,4 @@
-import RigidBody from 'physic/RigidBody';
+import RigidBody from 'physics/bodies/RigidBody';
 
 export default class DynamicBodies extends RigidBody {
   constructor (physicWorld) {

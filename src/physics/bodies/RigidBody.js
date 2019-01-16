@@ -8,7 +8,7 @@ import {
   RESTITUTION,
   LINEAR_DAMPING,
   ANGULAR_DAMPING
-} from 'physic/constants';
+} from 'physics/constants';
 
 export default class RigidBody {
   constructor () {

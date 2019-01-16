@@ -1,11 +1,12 @@
-// Platform detection utils
-
 import MobileDetect from 'mobile-detect';
 
 const IE11 = !!/Trident.*rv:11\./i.test(navigator.userAgent);
 const IE10 = !!navigator.userAgent.match(/MSIE 10/i);
 const MD = new MobileDetect(navigator.userAgent);
 
+/**
+ * @description - platform detection info
+ */
 export default {
   // Mobile devices:
   isMobile: !!MD.mobile(),

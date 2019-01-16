@@ -13,5 +13,9 @@
 
   "right": {
     "code": 68
+  },
+
+  "handbreak": {
+    "code": 32
   }
 }

@@ -36,5 +36,5 @@ export const WANTS_DEACTIVATION = 3;
 export const DISABLE_DEACTIVATION = 4;
 export const DISABLE_SIMULATION = 5;
 
-// Common THREE.js constants:
+// THREE.js constants:
 export const ONE_VECTOR3 = new Vector3(1.0, 1.0, 1.0);

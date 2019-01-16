@@ -17,9 +17,9 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 // import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import FBXAnimations from 'managers/FBXAnimations';
-import PhysicWorld from 'physic/PhysicWorld';
-import RAF from 'managers/RAF';
+import FBXAnimations from 'animations/FBXAnimations';
+import PhysicWorld from 'physics/PhysicWorld';
+import RAF from 'core/RAF';
 // import anime from 'animejs';
 
 import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
@@ -308,6 +308,10 @@ export default class Stage {
 
     document.addEventListener('keydown', (event) => {
       switch (event.keyCode) {
+        case 32:
+          this.carControls.handbreak = true;
+          break;
+
         case 87:
           this.carControls.accelerator = true;
           break;
@@ -344,6 +348,10 @@ export default class Stage {
 
     document.addEventListener('keyup', (event) => {
       switch (event.keyCode) {
+        case 32:
+          this.carControls.handbreak = false;
+          break;
+
         case 87:
           this.carControls.accelerator = false;
           break;
