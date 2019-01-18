@@ -7,6 +7,7 @@ import { Ammo } from 'core/Ammo';
 
 import {
   MARGIN,
+  POWER16,
   FRICTION,
   STIFFNESS,
   VITERATIONS,
@@ -46,6 +47,7 @@ export default class SoftBodies {
     );
 
     const bodyConfig = body.get_m_cfg();
+
     bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_piterations(this.piterations);
     bodyConfig.set_collisions(this.collisions);
@@ -54,13 +56,16 @@ export default class SoftBodies {
     bodyConfig.set_kDP(this.damping);
     bodyConfig.set_kPR(pressure);
 
+    if (this.margin !== MARGIN) {
+      Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
+    }
+
     body.get_m_materials().at(0).set_m_kLST(this.stiffness);
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
-    body.setTotalMass(mass, false);
-    // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
-
     body.setActivationState(DISABLE_DEACTIVATION);
+    body.setTotalMass(mass, false);
+
     this.world.addSoftBody(body, 1, -1);
     mesh.userData.physicsBody = body;
     this.bodies.push(body);
@@ -71,68 +76,62 @@ export default class SoftBodies {
     geometry.mergeVertices();
 
     const indexedBufferGeometry = this.createIndexedBufferGeometry(geometry);
-    const idxVertices = indexedBufferGeometry.attributes.position.array;
+    const indexedVertices = indexedBufferGeometry.attributes.position.array;
     const vertices = bufferGeometry.attributes.position.array;
     const indices = indexedBufferGeometry.index.array;
 
-    const numIdxVertices = idxVertices.length / 3;
-    const numVertices = vertices.length / 3;
+    const _indexedVertices = indexedVertices.length / 3;
+    const _vertices = vertices.length / 3;
 
-    bufferGeometry.ammoVertices = idxVertices;
-    bufferGeometry.ammoIndices = indices;
+    bufferGeometry.ammoVertices = indexedVertices;
     bufferGeometry.ammoIndexAssociation = [];
+    bufferGeometry.ammoIndices = indices;
 
-    for (let i = 0; i < numIdxVertices; i++) {
+    for (let i = 0; i < _indexedVertices; i++) {
       const i3 = i * 3;
       const association = [];
 
-      bufferGeometry.ammoIndexAssociation.push(association);
-
-      for (let j = 0; j < numVertices; j++) {
+      for (let j = 0; j < _vertices; j++) {
         const j3 = j * 3;
 
-        if (equalBufferVertices(idxVertices, i3, vertices, j3)) {
+        if (equalBufferVertices(indexedVertices, i3, vertices, j3)) {
           association.push(j3);
         }
       }
+
+      bufferGeometry.ammoIndexAssociation.push(association);
     }
   }
 
   createIndexedBufferGeometry (geometry) {
-    const numVertices = geometry.vertices.length;
-    const numFaces = geometry.faces.length;
+    const _vertices = geometry.vertices.length;
+    const _faces = geometry.faces.length;
+    const _faces3 = _faces * 3;
 
     const bufferGeometry = new BufferGeometry();
-    const vertices = new Float32Array(numVertices * 3);
-    const indices = new (numFaces * 3 > 65535 ? Uint32Array : Uint16Array)(numFaces * 3);
+    const vertices = new Float32Array(_vertices * 3);
+    const indices = new (_faces3 > POWER16 ? Uint32Array : Uint16Array)(_faces3);
 
-    for (let i = 0; i < numVertices; i++) {
-      const p = geometry.vertices[i];
-      const i3 = i * 3;
+    for (let v = 0; v < _vertices; v++) {
+      const v3 = v * 3;
+      const vertex = geometry.vertices[v];
 
-      vertices[i3] = p.x;
-      vertices[i3 + 1] = p.y;
-      vertices[i3 + 2] = p.z;
+      vertices[v3] = vertex.x;
+      vertices[v3 + 1] = vertex.y;
+      vertices[v3 + 2] = vertex.z;
     }
 
-    for (let i = 0; i < numFaces; i++) {
-      const f = geometry.faces[i];
-      const i3 = i * 3;
+    for (let f = 0; f < _faces; f++) {
+      const f3 = f * 3;
+      const face = geometry.faces[f];
 
-      indices[i3] = f.a;
-      indices[i3 + 1] = f.b;
-      indices[i3 + 2] = f.c;
+      indices[f3] = face.a;
+      indices[f3 + 1] = face.b;
+      indices[f3 + 2] = face.c;
     }
 
-    bufferGeometry.setIndex(new BufferAttribute(indices, 1));
     bufferGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
-
+    bufferGeometry.setIndex(new BufferAttribute(indices, 1));
     return bufferGeometry;
   }
-
-  // checkBodyMargin (shape) {
-  //   if (this.margin !== MARGIN) {
-  //     shape.setMargin(this.margin);
-  //   }
-  // }
 }
