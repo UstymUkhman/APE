@@ -4,6 +4,7 @@ import KinematicBodies from 'physics/bodies/KinematicBodies';
 import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
 import VehicleBody from 'physics/bodies/VehicleBody';
+import SoftBodies from 'physics/bodies/SoftBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
@@ -19,9 +20,13 @@ export default class PhysicWorld {
     this.vehicles = [];
     this.clock = new Clock();
 
-    if (soft) this._initSoftWorld();
-    else this._initRigidWorld();
+    if (soft) {
+      this._initSoftWorld();
+    } else {
+      this._initRigidWorld();
+    }
 
+    this.soft = new SoftBodies(this.world);
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);

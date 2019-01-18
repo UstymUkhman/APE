@@ -35,7 +35,7 @@ const WHITE = 0xFFFFFF;
 const BLACK = 0x000000;
 const GRAY = 0xA0A0A0;
 
-export default class Stage {
+export default class Vehicle {
   constructor (container = document.body) {
     this.physics = new PhysicWorld();
     this.container = container;

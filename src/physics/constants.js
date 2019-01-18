@@ -11,6 +11,13 @@ export const RESTITUTION = 0.0;
 export const LINEAR_DAMPING = 0.0;
 export const ANGULAR_DAMPING = 0.0;
 
+// Soft Body constants:
+// export const PRESSURE = ;
+export const STIFFNESS = 0.9;
+export const VITERATIONS = 40;
+export const PITERATIONS = 40;
+export const SOFT_DAMPING = 0.01;
+
 // Vehicle Body constants:
 export const BREAK_FORCE = 100.0;
 export const STEERING_STEP = 0.04;
@@ -28,6 +35,7 @@ export const SUSPENSION_COMPRESSION = 4.4;
 export const STATIC_COLLISION = 1;
 export const KINEMATIC_COLLISION = 2;
 export const IGNORED_COLLISION = 4;
+export const SOFT_COLLISION = 0x11;
 
 // Activation state constants:
 export const ACTIVE_TAG = 1;
