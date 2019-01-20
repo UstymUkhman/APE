@@ -17,17 +17,11 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 // import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import FBXAnimations from 'animations/FBXAnimations';
 import PhysicWorld from 'physics/PhysicWorld';
 import RAF from 'core/RAF';
-// import anime from 'animejs';
 
-import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
-import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
-
-import { CylinderGeometry } from 'three/src/geometries/CylinderGeometry';
-// import * as motoControls from 'controls/motoControls.json';
-import * as carControls from 'controls/carControls.json';
+// import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
+import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
 
 const OrbitControls = ThreeOrbitControls(THREE);
 
@@ -37,9 +31,8 @@ const GRAY = 0xA0A0A0;
 
 export default class Soft {
   constructor (container = document.body) {
-    this.physics = new PhysicWorld();
+    this.physics = new PhysicWorld(true);
     this.container = container;
-    this.fbx = null;
     this.setSize();
 
     this.createScene();
@@ -47,10 +40,7 @@ export default class Soft {
     this.createLights();
     this.createCamera();
 
-    // this.createAnimation();
-    // this.createObjects();
-    this.createVehicle();
-    // this.createRaycaster();
+    this.createObjects();
 
     this.createRenderer();
     this.createControls();
@@ -110,161 +100,31 @@ export default class Soft {
     this.camera.lookAt(0, 0, 0);
   }
 
-  createAnimation () {
-    this.steps = 0;
-
-    this.fbxAnimation = new FBXAnimations([{
-      path: './animations/Punching.fbx',
-      name: 'punching' // ,
-      // loop: true
-    }, {
-      path: './animations/Walking.fbx',
-      name: 'walk',
-      loop: true,
-      play: true,
-
-      onLoad: (fbx) => {
-        this.scene.add(fbx);
-      },
-
-      onLoop: (fbx) => {
-        fbx.position.z = ++this.steps * 135;
-
-        if (this.steps === 5) {
-          this.fbxAnimation.pause('walk');
-        }
-      },
-
-      onEnd: (fbx) => {
-        // const action = this.fbx.mixer.clipAction(this.fbx.animations[1]);
-
-        // event.action.fadeOut(0.5);
-        // action.fadeIn(0.5);
-        // action.play();
-
-        // anime({
-        //   targets: this.fbx.position,
-        //   easing: 'linear',
-        //   duration: 500,
-        //   z: 135.0
-        // });
-      }
-    }]);
-
-    // const cube = new Mesh(
-    //   new BoxGeometry(10, 10, 10),
-    //   new MeshBasicMaterial({
-    //     color: BLACK
-    //   })
-    // );
-
-    // this.scene.add(cube);
-  }
-
   createObjects () {
-    const cube1 = new Mesh(
-      new BoxGeometry(1, 1, 1),
-      new MeshBasicMaterial({
-        color: BLACK
-      })
-    );
+    // Create soft volumes
+    // var volumeMass = 15;
+    const sphereGeometry = new SphereBufferGeometry(1.5, 40, 25);
+    sphereGeometry.translate(5, 5, 0);
+    const sphere = new THREE.Mesh(sphereGeometry, new MeshPhongMaterial({ color: 0xFF0000 }));
 
-    cube1.position.set(-0.5, 10, 0);
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
+    sphere.frustumCulled = false;
 
-    const cube2 = cube1.clone();
-    cube2.position.set(-2, 10, -5);
+    this.physics.soft.addBody(sphere, 15, 50);
+    this.scene.add(sphere);
 
-    const cube3 = cube2.clone();
-    cube3.position.y = 20;
+    // var boxGeometry = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry( 1, 1, 5, 4, 4, 20 ) );
+    // boxGeometry.translate( -2, 5, 0 );
+    // createSoftVolume( boxGeometry, volumeMass, 120 );
 
-    // const cube4 = cube1.clone();
-    // cube4.position.set(5, 1, 0);
-
-    this.physics.dynamic.addBox(cube1, 5);
-    this.physics.dynamic.addBox(cube2, 5);
-    this.physics.dynamic.addBox(cube3, 5);
-    // this.physics.kinematic.addBox(cube4);
-
-    cube1.castShadow = true;
-    cube2.castShadow = true;
-    cube3.castShadow = true;
-    // cube4.castShadow = true;
-
-    this.scene.add(cube1);
-    this.scene.add(cube2);
-    this.scene.add(cube3);
-    // this.scene.add(cube4);
-
-    // this.cube = cube4;
+    // // Ramp
+    // pos.set( 3, 1, 0 );
+    // quat.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), 30 * Math.PI / 180 );
+    // var obstacle = createParalellepiped( 10, 1, 4, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0x606060 } ) );
+    // obstacle.castShadow = true;
+    // obstacle.receiveShadow = true;
   }
-
-  createVehicle () {
-    this.carControls = {};
-
-    for (const i in carControls) {
-      this.carControls[i] = false;
-    }
-
-    let wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 24, 1);
-    let chassisGeometry = new BoxGeometry(1.8, 0.6, 4, 1, 1, 1);
-    const material = new MeshPhongMaterial({ color: 0x990000 });
-
-    wheelGeometry.rotateZ(Math.PI / 2);
-
-    let chassis = new Mesh(chassisGeometry, material);
-    chassis.position.x = 5;
-
-    let wheelMesh = new THREE.Mesh(wheelGeometry, material);
-    const car = this.physics.addVehicle(chassis, 800, this.carControls);
-
-    this.scene.add(chassis);
-
-    for (let i = 0; i < 4; i++) {
-      let x = 1.0;
-      const z = i < 2 ? 1.7 : -1.7;
-      const wheel = wheelMesh.clone();
-
-      if (i === 1 || i === 2) x = -x;
-      wheel.position.set(x, 0.3, z);
-
-      car.addWheel(wheel, i < 2);
-      this.scene.add(wheel);
-    }
-
-    /* this.motoControls = {};
-
-    for (const i in motoControls) {
-      this.motoControls[i] = false;
-    }
-
-    wheelGeometry = new CylinderGeometry(0.4, 0.4, 0.3, 64, 1);
-    chassisGeometry = new BoxGeometry(0.6, 0.6, 4, 1, 1, 1);
-
-    wheelGeometry.rotateZ(Math.PI / 2);
-
-    chassis = new Mesh(chassisGeometry, material);
-    chassis.position.x = -5;
-
-    wheelMesh = new THREE.Mesh(wheelGeometry, material);
-    const moto = this.physics.addVehicle(chassis, 200, this.motoControls);
-
-    moto.suspensionRest = 0.3;
-    this.scene.add(chassis);
-
-    for (let i = 0; i < 2; i++) {
-      const z = !i ? 1.5 : -1.5;
-      const wheel = wheelMesh.clone();
-
-      wheel.position.set(0.0, 0.2, z);
-      moto.addWheel(wheel, !i);
-      this.scene.add(wheel);
-    } */
-  }
-
-  /* createRaycaster () {
-    this.raycaster = new Raycaster();
-    this.mouseVector = new Vector3();
-  } */
 
   createRenderer () {
     this.renderer = new WebGLRenderer({ antialias: true });
@@ -282,141 +142,12 @@ export default class Soft {
   }
 
   createEvents () {
-    // controls
     window.addEventListener('resize', this.onResize.bind(this), false);
-    /* document.addEventListener('keydown', (event) => {
-      const position = this.cube.position;
-
-      switch (event.keyCode) {
-        case 38:
-          this.cube.position.set(position.x, position.y, position.z + 0.5);
-          break;
-
-        case 37:
-          this.cube.position.set(position.x + 0.5, position.y, position.z);
-          break;
-
-        case 39:
-          this.cube.position.set(position.x - 0.5, position.y, position.z);
-          break;
-
-        case 40:
-          this.cube.position.set(position.x, position.y, position.z - 0.5);
-          break;
-      }
-    }, false); */
-
-    document.addEventListener('keydown', (event) => {
-      switch (event.keyCode) {
-        case 32:
-          this.carControls.handbreak = true;
-          break;
-
-        case 87:
-          this.carControls.accelerator = true;
-          break;
-
-        case 104:
-          this.motoControls.accelerator = true;
-          break;
-
-        case 65:
-          this.carControls.left = true;
-          break;
-
-        case 100:
-          this.motoControls.left = true;
-          break;
-
-        case 68:
-          this.carControls.right = true;
-          break;
-
-        case 102:
-          this.motoControls.right = true;
-          break;
-
-        case 83:
-          this.carControls.brake = true;
-          break;
-
-        case 101:
-          this.motoControls.brake = true;
-          break;
-      }
-    }, false);
-
-    document.addEventListener('keyup', (event) => {
-      switch (event.keyCode) {
-        case 32:
-          this.carControls.handbreak = false;
-          break;
-
-        case 87:
-          this.carControls.accelerator = false;
-          break;
-
-        case 104:
-          this.motoControls.accelerator = false;
-          break;
-
-        case 65:
-          this.carControls.left = false;
-          break;
-
-        case 100:
-          this.motoControls.left = false;
-          break;
-
-        case 68:
-          this.carControls.right = false;
-          break;
-
-        case 102:
-          this.motoControls.right = false;
-          break;
-
-        case 83:
-          this.carControls.brake = false;
-          break;
-
-        case 101:
-          this.motoControls.brake = false;
-          break;
-      }
-    }, false);
   }
-
-  /* onMouseMove (event) {
-    event.preventDefault();
-
-    const intersects = this.getIntersects(event.layerX, event.layerY);
-
-    if (intersects.length > 0) {
-      const res = intersects.filter(function (res) {
-        return res && res.object;
-      })[0];
-
-      if (res && res.object) {
-        console.log(res.object.name);
-      }
-    }
-  }
-
-  getIntersects (x, y) {
-    x = (x / this.width) * 2 - 1;
-    y = -(y / this.height) * 2 + 1;
-
-    this.mouseVector.set(x, y, 0.5);
-    this.raycaster.setFromCamera(this.mouseVector, this.camera);
-
-    return this.raycaster.intersectObjects(this.scene.children);
-  } */
 
   render () {
     this.physics.update();
-    // this.orbitControls.update();
-    // this.fbxAnimation.update();
+    this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
   }
 

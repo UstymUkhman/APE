@@ -94,6 +94,7 @@ export default class PhysicWorld {
       this.vehicles[i].update();
     }
 
+    this.soft.update();
     this.dynamic.update(this.transform);
     this.kinematic.update(this.transform);
 
