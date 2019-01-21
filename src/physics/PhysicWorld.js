@@ -4,6 +4,8 @@ import KinematicBodies from 'physics/bodies/KinematicBodies';
 import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
 import VehicleBody from 'physics/bodies/VehicleBody';
+
+import ClothBodies from 'physics/bodies/ClothBodies';
 import SoftBodies from 'physics/bodies/SoftBodies';
 
 import { Clock } from 'three/src/core/Clock';
@@ -27,6 +29,7 @@ export default class PhysicWorld {
     }
 
     this.soft = new SoftBodies(this.world);
+    this.cloth = new ClothBodies(this.world);
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);
@@ -95,6 +98,7 @@ export default class PhysicWorld {
     }
 
     this.soft.update();
+    this.cloth.update();
     this.dynamic.update(this.transform);
     this.kinematic.update(this.transform);
 

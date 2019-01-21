@@ -14,14 +14,17 @@ import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 
 // import { Raycaster } from 'three/src/core/Raycaster';
-// import { Vector3 } from 'three/src/math/Vector3';
+import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
 import PhysicWorld from 'physics/PhysicWorld';
 import RAF from 'core/RAF';
 
-// import { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
-import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
+import { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
+// import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+
+import { DoubleSide } from 'three/src/constants.js';
 
 const OrbitControls = ThreeOrbitControls(THREE);
 
@@ -101,29 +104,55 @@ export default class Soft {
   }
 
   createObjects () {
-    // Create soft volumes
-    // var volumeMass = 15;
-    const sphereGeometry = new SphereBufferGeometry(1.5, 40, 25);
-    sphereGeometry.translate(5, 5, 0);
-    const sphere = new THREE.Mesh(sphereGeometry, new MeshPhongMaterial({ color: 0xFF0000 }));
+    const boxGeometry = new BoxGeometry(1, 1, 5, 4, 4, 20);
+    // const sphereGeometry = new SphereBufferGeometry(1.5, 40, 25);
 
-    sphere.castShadow = true;
-    sphere.receiveShadow = true;
-    sphere.frustumCulled = false;
+    // sphereGeometry.translate(0, 25, 0);
+    // boxGeometry.translate(0, 10, 0);
 
-    this.physics.soft.addBody(sphere, 15, 50);
-    this.scene.add(sphere);
+    // const sphere = new THREE.Mesh(sphereGeometry, new MeshPhongMaterial({ color: 0xFF0000 }));
+    const box = new Mesh(boxGeometry, new MeshPhongMaterial({ color: 0xFFFF00 }));
 
-    // var boxGeometry = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry( 1, 1, 5, 4, 4, 20 ) );
-    // boxGeometry.translate( -2, 5, 0 );
-    // createSoftVolume( boxGeometry, volumeMass, 120 );
+    box.rotation.set(0, Math.PI / 2, 0);
+    box.position.set(0, 5, 0);
 
-    // // Ramp
-    // pos.set( 3, 1, 0 );
-    // quat.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), 30 * Math.PI / 180 );
-    // var obstacle = createParalellepiped( 10, 1, 4, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0x606060 } ) );
-    // obstacle.castShadow = true;
-    // obstacle.receiveShadow = true;
+    // this.physics.soft.addBody(sphere, 15, 200);
+    this.physics.dynamic.addBox(box, 15);
+
+    // sphere.frustumCulled = false;
+    // sphere.receiveShadow = true;
+    // sphere.castShadow = true;
+
+    box.frustumCulled = false;
+    box.receiveShadow = true;
+    box.castShadow = true;
+
+    // this.scene.add(sphere);
+    this.scene.add(box);
+
+    const width = 4.0;
+    const height = 3.0;
+
+    // var clothWidth = 4;
+    // var clothHeight = 3;
+    // var clothNumSegmentsZ = clothWidth * 5;
+    // var clothNumSegmentsY = clothHeight * 5;
+    const clothPos = new Vector3(0, 10, 2);
+
+    const material = new MeshLambertMaterial({ color: 0xA0A0A0, side: DoubleSide });
+    const geometry = new PlaneBufferGeometry(width, height, width * 5, height * 5);
+
+    // geometry.rotateY(Math.PI * 0.5);
+    geometry.translate(clothPos.x, clothPos.y + height * 0.5, clothPos.z - width * 0.5);
+
+    const cloth = new Mesh(geometry, material);
+
+    // cloth.position.set(0, 10, 0);
+    this.physics.cloth.addBody(cloth, 0.9, clothPos);
+
+    cloth.receiveShadow = true;
+    cloth.castShadow = true;
+    this.scene.add(cloth);
   }
 
   createRenderer () {
