@@ -1,5 +1,5 @@
+import { ZERO_MASS, DISABLE_DEACTIVATION } from 'physics/constants';
 import RigidBody from 'physics/bodies/RigidBody';
-import { ZERO_MASS } from 'physics/constants';
 import { Ammo } from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {
@@ -59,6 +59,7 @@ export default class StaticBodies extends RigidBody {
     const quaternion = mesh.quaternion;
     const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
 
+    body.setActivationState(DISABLE_DEACTIVATION);
     mesh.userData.physicsBody = body;
     this.world.addRigidBody(body);
     this.bodies.push(mesh);

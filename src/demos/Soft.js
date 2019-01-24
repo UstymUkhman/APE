@@ -122,7 +122,9 @@ export default class Soft {
     this.physics.dynamic.addSphere(ball, ballMass);
     this.scene.add(ball);
 
-    const ropePos = new Vector3(0, 5, 0);
+    const ropePos = ball.position.clone();
+    ropePos.y += ballRadius;
+
     const ropeNumSegments = 10;
     const ropeLength = 4;
 
@@ -156,12 +158,12 @@ export default class Soft {
     pos.set(ropePos.x, 0.1, ropePos.z - armLength);
     quat.set(0, 0, 0, 1);
 
-    const base = this.createParalellepiped(1, 0.2, 1, 1, pos, quat, baseMaterial);
+    const base = this.createParalellepiped(1, 0.2, 1, 0, pos, quat, baseMaterial);
     base.receiveShadow = true;
     base.castShadow = true;
     pos.set(ropePos.x, 0.5 * pylonHeight, ropePos.z - armLength);
 
-    const pylon = this.createParalellepiped(0.4, pylonHeight, 0.4, 1, pos, quat, baseMaterial);
+    const pylon = this.createParalellepiped(0.4, pylonHeight, 0.4, 0, pos, quat, baseMaterial);
     pylon.receiveShadow = true;
     pylon.castShadow = true;
     pos.set(ropePos.x, pylonHeight + 0.2, ropePos.z - 0.5 * armLength);
@@ -170,20 +172,46 @@ export default class Soft {
     arm.receiveShadow = true;
     arm.castShadow = true;
 
-    this.physics.rope.addBody(rope, ropeLength, 3.0);
-    this.physics.rope.append(rope, arm);
-    this.scene.add(rope);
+    // this.physics.rope.addBody(rope, ropeLength, 3.0);
+    // this.physics.rope.append(rope, arm, false);
+    // this.physics.rope.append(rope, ball);
+    // this.scene.add(rope);
+
+    const armPivot = {x: 0.0, y: 0.0, z: -1.7};
+    const pinPivot = {x: 0.0, y: 3.3, z: 0.0};
+    const axis = {x: 0, y: 1, z: 0};
+
+    this.physics.hinge.add(pylon, arm, axis, pinPivot, armPivot);
+
+    window.addEventListener('keydown', (event) => {
+      switch (event.keyCode) {
+        // Q
+        case 81:
+          this.physics.hinge.update(1);
+          break;
+
+        // A
+        case 65:
+          this.physics.hinge.update(-1);
+          break;
+      }
+    }, false);
+
+    window.addEventListener('keyup', (event) => {
+      this.physics.hinge.update(0);
+    }, false);
   }
 
   createParalellepiped (sx, sy, sz, mass, pos, quat, material) {
     const threeObject = new Mesh(new BoxGeometry(sx, sy, sz, 1, 1, 1), material);
-    // var shape = new Ammo.btBoxShape( new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 ) );
-    // shape.setMargin( margin );
-
-    // createRigidBody( threeObject, shape, mass, pos, quat );
-
-    this.physics.dynamic.createBox(threeObject, mass);
     threeObject.position.set(pos.x, pos.y, pos.z);
+
+    if (!mass) {
+      this.physics.static.addBox(threeObject);
+    } else {
+      this.physics.dynamic.addBox(threeObject, mass);
+    }
+
     this.scene.add(threeObject);
     return threeObject;
   }

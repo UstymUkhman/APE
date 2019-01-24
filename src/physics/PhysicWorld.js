@@ -3,6 +3,7 @@
 import KinematicBodies from 'physics/bodies/KinematicBodies';
 import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
+import HingeBodies from 'physics/bodies/HingeBodies';
 import VehicleBody from 'physics/bodies/VehicleBody';
 
 import ClothBodies from 'physics/bodies/ClothBodies';
@@ -34,6 +35,7 @@ export default class PhysicWorld {
     this.rope = new RopeBodies(this.world);
     this.cloth = new ClothBodies(this.world);
 
+    this.hinge = new HingeBodies(this.world);
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);

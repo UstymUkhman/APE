@@ -21,7 +21,6 @@ export default class VehicleBody extends RigidBody {
 
     this.wheels = [];
     this.steering = 0;
-    this.controls = [];
 
     this.world = physicWorld;
     this.controls = controls;
