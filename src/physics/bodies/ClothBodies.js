@@ -1,10 +1,6 @@
+import { SOFT_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
-
-import {
-  SOFT_MARGIN,
-  DISABLE_DEACTIVATION
-} from 'physics/constants';
 
 export default class ClothBodies {
   constructor (physicWorld) {

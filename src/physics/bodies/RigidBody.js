@@ -46,8 +46,8 @@ export default class RigidBody {
     return cone;
   }
 
-  createSphere (size) {
-    const sphere = new Ammo.btSphereShape(size.width / 2.0);
+  createSphere (radius) {
+    const sphere = new Ammo.btSphereShape(radius);
     this.checkBodyMargin(sphere);
     return sphere;
   }

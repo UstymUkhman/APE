@@ -7,6 +7,7 @@ import VehicleBody from 'physics/bodies/VehicleBody';
 
 import ClothBodies from 'physics/bodies/ClothBodies';
 import SoftBodies from 'physics/bodies/SoftBodies';
+import RopeBodies from 'physics/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
@@ -20,6 +21,7 @@ export default class PhysicWorld {
    */
   constructor (soft = false) {
     this.vehicles = [];
+    this.softWorld = soft;
     this.clock = new Clock();
 
     if (soft) {
@@ -29,7 +31,9 @@ export default class PhysicWorld {
     }
 
     this.soft = new SoftBodies(this.world);
+    this.rope = new RopeBodies(this.world);
     this.cloth = new ClothBodies(this.world);
+
     this.static = new StaticBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.kinematic = new KinematicBodies(this.world);
@@ -97,10 +101,14 @@ export default class PhysicWorld {
       this.vehicles[i].update();
     }
 
-    this.soft.update();
-    this.cloth.update();
-    this.dynamic.update(this.transform);
+    if (this.softWorld) {
+      // this.cloth.update();
+      // this.soft.update();
+      // this.rope.update();
+    }
+
     this.kinematic.update(this.transform);
+    this.dynamic.update(this.transform);
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);

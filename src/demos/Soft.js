@@ -20,11 +20,15 @@ import ThreeOrbitControls from 'three-orbit-controls';
 import PhysicWorld from 'physics/PhysicWorld';
 import RAF from 'core/RAF';
 
-import { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
-// import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
-import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+import { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
+import { SphereGeometry } from 'three/src/geometries/SphereGeometry';
+import { BufferAttribute } from 'three/src/core/BufferAttribute';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
+import { LineSegments } from 'three/src/objects/LineSegments';
+import { Quaternion } from 'three/src/math/Quaternion';
 
-import { DoubleSide } from 'three/src/constants.js';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+// import { DoubleSide } from 'three/src/constants.js';
 
 const OrbitControls = ThreeOrbitControls(THREE);
 
@@ -104,55 +108,84 @@ export default class Soft {
   }
 
   createObjects () {
-    const boxGeometry = new BoxGeometry(1, 1, 5, 4, 4, 20);
-    // const sphereGeometry = new SphereBufferGeometry(1.5, 40, 25);
+    const ballMass = 1.2;
+    const ballRadius = 0.6;
 
-    // sphereGeometry.translate(0, 25, 0);
-    // boxGeometry.translate(0, 10, 0);
+    let quat = new Quaternion(0, 0, 0, 1);
+    let pos = new Vector3(0, 0, 0);
 
-    // const sphere = new THREE.Mesh(sphereGeometry, new MeshPhongMaterial({ color: 0xFF0000 }));
-    const box = new Mesh(boxGeometry, new MeshPhongMaterial({ color: 0xFFFF00 }));
+    const ball = new Mesh(new SphereGeometry(ballRadius, 20, 20), new MeshPhongMaterial({ color: 0x202020 }));
+    ball.position.set(-3, 2, 0);
+    ball.receiveShadow = true;
+    ball.castShadow = true;
 
-    box.rotation.set(0, Math.PI / 2, 0);
-    box.position.set(0, 5, 0);
+    this.physics.dynamic.addSphere(ball, ballMass);
+    this.scene.add(ball);
 
-    // this.physics.soft.addBody(sphere, 15, 200);
-    this.physics.dynamic.addBox(box, 15);
+    const ropePos = new Vector3(0, 5, 0);
+    const ropeNumSegments = 10;
+    const ropeLength = 4;
 
-    // sphere.frustumCulled = false;
-    // sphere.receiveShadow = true;
-    // sphere.castShadow = true;
+    let ropeMaterial = new LineBasicMaterial({ color: 0x000000 });
+    let segmentLength = ropeLength / ropeNumSegments;
+    let ropeGeometry = new BufferGeometry();
+    let ropePositions = [];
+    let ropeIndices = [];
 
-    box.frustumCulled = false;
-    box.receiveShadow = true;
-    box.castShadow = true;
+    for (let i = 0; i < ropeNumSegments + 1; i++) {
+      ropePositions.push(ropePos.x, ropePos.y + i * segmentLength, ropePos.z);
+    }
 
-    // this.scene.add(sphere);
-    this.scene.add(box);
+    for (let i = 0; i < ropeNumSegments;) {
+      ropeIndices.push(i, ++i);
+    }
 
-    const width = 4.0;
-    const height = 3.0;
+    ropeGeometry.addAttribute('position', new BufferAttribute(new Float32Array(ropePositions), 3));
+    ropeGeometry.setIndex(new BufferAttribute(new Uint16Array(ropeIndices), 1));
+    ropeGeometry.computeBoundingSphere();
 
-    // var clothWidth = 4;
-    // var clothHeight = 3;
-    // var clothNumSegmentsZ = clothWidth * 5;
-    // var clothNumSegmentsY = clothHeight * 5;
-    const clothPos = new Vector3(0, 10, 2);
+    const rope = new LineSegments(ropeGeometry, ropeMaterial);
+    rope.receiveShadow = true;
+    rope.castShadow = true;
 
-    const material = new MeshLambertMaterial({ color: 0xA0A0A0, side: DoubleSide });
-    const geometry = new PlaneBufferGeometry(width, height, width * 5, height * 5);
+    const armMass = 2;
+    const armLength = 3;
+    const pylonHeight = ropePos.y + ropeLength;
+    const baseMaterial = new MeshPhongMaterial({ color: 0x606060 });
 
-    // geometry.rotateY(Math.PI * 0.5);
-    geometry.translate(clothPos.x, clothPos.y + height * 0.5, clothPos.z - width * 0.5);
+    pos.set(ropePos.x, 0.1, ropePos.z - armLength);
+    quat.set(0, 0, 0, 1);
 
-    const cloth = new Mesh(geometry, material);
+    const base = this.createParalellepiped(1, 0.2, 1, 1, pos, quat, baseMaterial);
+    base.receiveShadow = true;
+    base.castShadow = true;
+    pos.set(ropePos.x, 0.5 * pylonHeight, ropePos.z - armLength);
 
-    // cloth.position.set(0, 10, 0);
-    this.physics.cloth.addBody(cloth, 0.9, clothPos);
+    const pylon = this.createParalellepiped(0.4, pylonHeight, 0.4, 1, pos, quat, baseMaterial);
+    pylon.receiveShadow = true;
+    pylon.castShadow = true;
+    pos.set(ropePos.x, pylonHeight + 0.2, ropePos.z - 0.5 * armLength);
 
-    cloth.receiveShadow = true;
-    cloth.castShadow = true;
-    this.scene.add(cloth);
+    const arm = this.createParalellepiped(0.4, 0.4, armLength + 0.4, armMass, pos, quat, baseMaterial);
+    arm.receiveShadow = true;
+    arm.castShadow = true;
+
+    this.physics.rope.addBody(rope, ropeLength, 3.0);
+    this.physics.rope.append(rope, arm);
+    this.scene.add(rope);
+  }
+
+  createParalellepiped (sx, sy, sz, mass, pos, quat, material) {
+    const threeObject = new Mesh(new BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+    // var shape = new Ammo.btBoxShape( new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 ) );
+    // shape.setMargin( margin );
+
+    // createRigidBody( threeObject, shape, mass, pos, quat );
+
+    this.physics.dynamic.createBox(threeObject, mass);
+    threeObject.position.set(pos.x, pos.y, pos.z);
+    this.scene.add(threeObject);
+    return threeObject;
   }
 
   createRenderer () {

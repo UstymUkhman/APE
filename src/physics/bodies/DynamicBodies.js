@@ -33,8 +33,8 @@ export default class DynamicBodies extends RigidBody {
   }
 
   addSphere (mesh, mass) {
-    const size = mesh.geometry.parameters;
-    const sphere = super.createSphere(size);
+    const radius = mesh.geometry.parameters.radius;
+    const sphere = super.createSphere(radius);
     this.addDynamicBody(sphere, mesh, mass);
   }
 
@@ -43,7 +43,6 @@ export default class DynamicBodies extends RigidBody {
     const quaternion = mesh.quaternion;
     const body = super.createRigidBody(shape, mass, position, quaternion);
 
-    // body.setActivationState(DISABLE_DEACTIVATION);
     mesh.userData.physicsBody = body;
     this.world.addRigidBody(body);
     this.bodies.push(mesh);
