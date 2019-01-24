@@ -1,4 +1,5 @@
 import { MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
+import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
 
 export default class RopeBodies {
@@ -12,9 +13,8 @@ export default class RopeBodies {
     /* eslint-enable new-cap */
   }
 
-  addBody (mesh, length, mass) {
-    const position = mesh.geometry.attributes.position.array;
-    const segments = position.length / 3 - 2;
+  addBody (mesh, length, mass, position = new Vector3()) {
+    const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
 
     /* eslint-disable new-cap */
     const start = new Ammo.btVector3(position.x, position.y, position.z);
@@ -42,7 +42,7 @@ export default class RopeBodies {
       if (this.bodies[i].uuid === mesh.uuid) {
         const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
 
-        mesh.userData.physicsBody.appendAnchor(
+        this.bodies[i].userData.physicsBody.appendAnchor(
           top ? ropeTop : 0,
           target.userData.physicsBody,
           true, influence
@@ -67,7 +67,7 @@ export default class RopeBodies {
         positions[index + 2] = nodePosition.z();
       }
 
-      // this.bodies[i].geometry.attributes.position.needsUpdate = true;
+      this.bodies[i].geometry.attributes.position.needsUpdate = true;
     }
   }
 }

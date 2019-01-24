@@ -103,16 +103,16 @@ export default class PhysicWorld {
       this.vehicles[i].update();
     }
 
-    if (this.softWorld) {
-      // this.cloth.update();
-      // this.soft.update();
-      // this.rope.update();
-    }
-
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);
+
+    if (this.softWorld) {
+      this.cloth.update();
+      this.soft.update();
+      this.rope.update();
+    }
   }
 }

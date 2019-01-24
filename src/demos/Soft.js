@@ -8,7 +8,8 @@ import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
 import { DirectionalLight } from 'three/src/lights/DirectionalLight';
-import { HemisphereLight } from 'three/src/lights/HemisphereLight';
+// import { HemisphereLight } from 'three/src/lights/HemisphereLight';
+import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
@@ -85,20 +86,26 @@ export default class Soft {
   }
 
   createLights () {
-    const hemisphere = new HemisphereLight(WHITE, 0x444444);
-    const directional = new DirectionalLight(WHITE);
+    const directional = new DirectionalLight(WHITE, 1);
+    const ambient = new AmbientLight(WHITE);
 
-    directional.shadow.camera.bottom = -100;
-    directional.shadow.camera.right = 120;
-    directional.shadow.camera.left = -120;
-    directional.shadow.camera.top = 180;
+    directional.shadow.camera.bottom = -10;
+    directional.shadow.camera.right = 10;
+    directional.shadow.camera.left = -10;
+    directional.shadow.camera.top = 10;
     directional.castShadow = true;
 
-    directional.position.set(0, 10, 10);
-    hemisphere.position.set(0, 10, 0);
+    directional.position.set(-10, 10, 5);
+    // hemisphere.position.set(0, 10, 0);
+
+    directional.shadow.mapSize.x = 1024;
+    directional.shadow.mapSize.y = 1024;
+
+    directional.shadow.camera.near = 2;
+    directional.shadow.camera.far = 50;
 
     this.scene.add(directional);
-    this.scene.add(hemisphere);
+    this.scene.add(ambient);
   }
 
   createCamera () {
@@ -115,18 +122,21 @@ export default class Soft {
     let pos = new Vector3(0, 0, 0);
 
     const ball = new Mesh(new SphereGeometry(ballRadius, 20, 20), new MeshPhongMaterial({ color: 0x202020 }));
-    ball.position.set(-3, 2, 0);
+    pos.set(-3, 2, 0);
+    quat.set(0, 0, 0, 1);
+    ball.position.set(pos.x, pos.y, pos.z);
+    ball.quaternion.set(quat.x, quat.y, quat.z, quat.w);
     ball.receiveShadow = true;
     ball.castShadow = true;
 
     this.physics.dynamic.addSphere(ball, ballMass);
     this.scene.add(ball);
 
-    const ropePos = ball.position.clone();
-    ropePos.y += ballRadius;
-
     const ropeNumSegments = 10;
     const ropeLength = 4;
+
+    const ropePos = ball.position.clone();
+    // ropePos.y += ballRadius;
 
     let ropeMaterial = new LineBasicMaterial({ color: 0x000000 });
     let segmentLength = ropeLength / ropeNumSegments;
@@ -142,13 +152,19 @@ export default class Soft {
       ropeIndices.push(i, ++i);
     }
 
-    ropeGeometry.addAttribute('position', new BufferAttribute(new Float32Array(ropePositions), 3));
     ropeGeometry.setIndex(new BufferAttribute(new Uint16Array(ropeIndices), 1));
+    ropeGeometry.addAttribute('position', new BufferAttribute(new Float32Array(ropePositions), 3));
     ropeGeometry.computeBoundingSphere();
 
     const rope = new LineSegments(ropeGeometry, ropeMaterial);
     rope.receiveShadow = true;
     rope.castShadow = true;
+    this.scene.add(rope);
+
+    const position = ropePos.clone();
+    position.y += 0.1;
+
+    this.physics.rope.addBody(rope, ropeLength, 3.0, position);
 
     const armMass = 2;
     const armLength = 3;
@@ -166,22 +182,20 @@ export default class Soft {
     const pylon = this.createParalellepiped(0.4, pylonHeight, 0.4, 0, pos, quat, baseMaterial);
     pylon.receiveShadow = true;
     pylon.castShadow = true;
-    pos.set(ropePos.x, pylonHeight + 0.2, ropePos.z - 0.5 * armLength);
+    pos.set(ropePos.x, pylonHeight, ropePos.z - 0.5 * armLength);
 
     const arm = this.createParalellepiped(0.4, 0.4, armLength + 0.4, armMass, pos, quat, baseMaterial);
     arm.receiveShadow = true;
     arm.castShadow = true;
 
-    // this.physics.rope.addBody(rope, ropeLength, 3.0);
-    // this.physics.rope.append(rope, arm, false);
-    // this.physics.rope.append(rope, ball);
-    // this.scene.add(rope);
-
-    const armPivot = {x: 0.0, y: 0.0, z: -1.7};
-    const pinPivot = {x: 0.0, y: 3.3, z: 0.0};
+    const armPivot = {x: 0.0, y: -0.2, z: -armLength * 0.5};
+    const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
     this.physics.hinge.add(pylon, arm, axis, pinPivot, armPivot);
+
+    this.physics.rope.append(rope, arm);
+    this.physics.rope.append(rope, ball, false);
 
     window.addEventListener('keydown', (event) => {
       switch (event.keyCode) {

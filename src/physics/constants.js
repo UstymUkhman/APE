@@ -4,6 +4,7 @@ import { Vector3 } from 'three/src/math/Vector3';
 export const GRAVITY = -9.81;
 export const ZERO_MASS = 0.0;
 export const POWER16 = 0xFFFF;
+export const HINGE_FORCE = 100;
 
 // Rigid Body constants:
 export const MARGIN = 0.04;
