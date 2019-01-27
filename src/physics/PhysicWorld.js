@@ -84,11 +84,12 @@ export default class PhysicWorld {
    * @description - Initialize and adds a vehicle body
    * @param {Object} mesh - vehicle chassis mesh
    * @param {number} mass - vehicle mass
-   * @param {Object} controls - vehicle key codes controls
+   * @param {Object} controls - JSON-like vehicle controls
+   * @param {Boolean} moto - vehicle has only two wheels
    * @returns {Object} - vehicle body
    */
-  addVehicle (mesh, mass, controls) {
-    const vehicle = new VehicleBody(this.world, controls);
+  addVehicle (mesh, mass, controls, moto = false) {
+    const vehicle = new VehicleBody(this.world, controls, moto);
     vehicle.addChassis(mesh, mass);
     this.vehicles.push(vehicle);
     return vehicle;

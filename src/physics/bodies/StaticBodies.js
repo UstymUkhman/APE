@@ -22,7 +22,7 @@ export default class StaticBodies extends RigidBody {
    * @public
    * @description - Add plane-like collider to THREE.js mesh
    *                Used primarily to create ground/walls in physics world
-   * @param {Object} mesh - THREE.js mesh with PlaneBufferGeometry
+   * @param {Object} mesh - THREE.js mesh with <PlaneBufferGeometry>
    */
   addPlane (mesh) {
     // Convert X-axis rotation from
@@ -34,7 +34,7 @@ export default class StaticBodies extends RigidBody {
     const plane = new Ammo.btStaticPlaneShape(rotation, 0.0);
     /* eslint-enable new-cap */
 
-    this.checkBodyMargin(plane);
+    this._checkBodyMargin(plane);
     this._addStaticBody(plane, mesh);
   }
 

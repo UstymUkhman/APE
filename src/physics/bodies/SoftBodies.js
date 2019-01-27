@@ -1,3 +1,5 @@
+// Soft bodies class manager
+
 import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
@@ -18,6 +20,11 @@ import {
 } from 'physics/constants';
 
 export default class SoftBodies {
+  /**
+   * @constructs SoftBodies
+   * @description - Initialize default parameters for soft bodies
+   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   */
   constructor (physicWorld) {
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
@@ -35,44 +42,16 @@ export default class SoftBodies {
     /* eslint-enable new-cap */
   }
 
-  addBody (mesh, mass, pressure) {
-    this.initGeometry(mesh.geometry);
-
-    const body = this.helpers.CreateFromTriMesh(
-      this.world.getWorldInfo(),
-      mesh.geometry.ammoVertices,
-      mesh.geometry.ammoIndices,
-      mesh.geometry.ammoIndices.length / 3,
-      true
-    );
-
-    const bodyConfig = body.get_m_cfg();
-
-    bodyConfig.set_viterations(this.viterations);
-    bodyConfig.set_piterations(this.piterations);
-    bodyConfig.set_collisions(this.collisions);
-
-    bodyConfig.set_kDF(this.friction);
-    bodyConfig.set_kDP(this.damping);
-    bodyConfig.set_kPR(pressure);
-
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
-    body.get_m_materials().at(0).set_m_kLST(this.stiffness);
-    body.get_m_materials().at(0).set_m_kAST(this.stiffness);
-
-    body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass, false);
-
-    this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
-    this.bodies.push(mesh);
-  }
-
-  initGeometry (bufferGeometry) {
+  /**
+   * @private
+   * @description - Calculate collider's geometry mesh's one
+   * @param {Object} bufferGeometry - THREE.js mesh's buffer geometry
+   */
+  _initGeometry (bufferGeometry) {
     const geometry = new Geometry().fromBufferGeometry(bufferGeometry);
     geometry.mergeVertices();
 
-    const indexedBufferGeometry = this.createIndexedBufferGeometry(geometry);
+    const indexedBufferGeometry = this._createIndexedBufferGeometry(geometry);
     const indexedVertices = indexedBufferGeometry.attributes.position.array;
     const vertices = bufferGeometry.attributes.position.array;
 
@@ -99,7 +78,13 @@ export default class SoftBodies {
     }
   }
 
-  createIndexedBufferGeometry (geometry) {
+  /**
+   * @private
+   * @description - Create indexed <BufferGeometry> for body's collider
+   * @param {Object} geometry - THREE.js geometry
+   * @returns {Object} - indexed <BufferGeometry>
+   */
+  _createIndexedBufferGeometry (geometry) {
     const _vertices = geometry.vertices.length;
     const _faces = geometry.faces.length;
     const _faces3 = _faces * 3;
@@ -131,6 +116,50 @@ export default class SoftBodies {
     return bufferGeometry;
   }
 
+  /**
+   * @public
+   * @description - Add soft body collider to THREE.js mesh
+   * @param {Object} mesh - THREE.js mesh with <BufferGeometry> type
+   * @param {Number} mass - THREE.js mesh's mass
+   * @param {Number} pressure - amount of force applied to the surface of the mesh
+   */
+  addBody (mesh, mass, pressure) {
+    this._initGeometry(mesh.geometry);
+
+    const body = this.helpers.CreateFromTriMesh(
+      this.world.getWorldInfo(),
+      mesh.geometry.ammoVertices,
+      mesh.geometry.ammoIndices,
+      mesh.geometry.ammoIndices.length / 3,
+      true
+    );
+
+    const bodyConfig = body.get_m_cfg();
+
+    bodyConfig.set_viterations(this.viterations);
+    bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_collisions(this.collisions);
+
+    bodyConfig.set_kDF(this.friction);
+    bodyConfig.set_kDP(this.damping);
+    bodyConfig.set_kPR(pressure);
+
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
+    body.get_m_materials().at(0).set_m_kLST(this.stiffness);
+    body.get_m_materials().at(0).set_m_kAST(this.stiffness);
+
+    body.setActivationState(DISABLE_DEACTIVATION);
+    body.setTotalMass(mass, false);
+
+    this.world.addSoftBody(body, 1, -1);
+    mesh.userData.physicsBody = body;
+    this.bodies.push(mesh);
+  }
+
+  /**
+   * @public
+   * @description - Update soft bodies in requestAnimation loop
+   */
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const geometry = this.bodies[i].geometry;

@@ -1,3 +1,5 @@
+// Vehicle body class manager
+
 import RigidBody from 'physics/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
 
@@ -16,7 +18,15 @@ import {
 } from 'physics/constants';
 
 export default class VehicleBody extends RigidBody {
-  constructor (physicWorld, controls) {
+  /**
+   * @extends RigidBody
+   * @constructs VehicleBody
+   * @description - Initialize vehicle body physics
+   * @param {Object} physicWorld - Ammo.js soft/rigid or discrete dynamics world
+   * @param {Object} controls - JSON-like player driving controls
+   * @param {Boolean} moto - if <true> vehicle will be treated as motorcycle
+   */
+  constructor (physicWorld, controls, moto) {
     super();
 
     this.wheels = [];
@@ -42,8 +52,22 @@ export default class VehicleBody extends RigidBody {
     this.wheelAxis = new Ammo.btVector3(-1.0, 0.0, 0.0);
     this.wheelDirection = new Ammo.btVector3(0.0, -1.0, 0.0);
     /* eslint-enable new-cap */
+
+    if (moto) {
+      this._applySpeedForces = this._applyMotoSpeedForces.bind(this);
+      this._applySteerForces = this._applyMotoSteerForces.bind(this);
+    } else {
+      this._applySpeedForces = this._applyCarSpeedForces.bind(this);
+      this._applySteerForces = this._applyCarSteerForces.bind(this);
+    }
   }
 
+  /**
+   * @public
+   * @description - Add vehicle chassis collider
+   * @param {Object} mesh - THREE.js chassis mesh
+   * @param {Number} mass - chassis's mass
+   */
   addChassis (mesh, mass) {
     const size = mesh.geometry.parameters;
     const shape = super.createBox(size);
@@ -65,6 +89,12 @@ export default class VehicleBody extends RigidBody {
     this.chassis = mesh;
   }
 
+  /**
+   * @public
+   * @description - Add vehicle wheel collider
+   * @param {Object} mesh - THREE.js wheel mesh
+   * @param {Boolean} front - if <true> mesh is treated as front wheel
+   */
   addWheel (mesh, front) {
     const position = mesh.position;
     const radius = mesh.geometry.parameters.radiusTop;
@@ -85,13 +115,19 @@ export default class VehicleBody extends RigidBody {
     this.wheels.push(mesh);
   }
 
+  /**
+   * @public
+   * @description - Update vehicle body in requestAnimation loop
+   */
   update () {
     let transform, position, rotation;
+    const wheels = this.wheels.length;
+    const moto = wheels === 2;
 
-    this.applySpeedForces();
-    this.applySteerForces();
+    this._calculateSpeedForces();
+    this._calculateSteerForces();
 
-    for (let i = 0; i < this.wheels.length; i++) {
+    for (let i = 0; i < wheels; i++) {
       this.vehicle.updateWheelTransform(i, true);
       transform = this.vehicle.getWheelTransformWS(i);
 
@@ -111,7 +147,11 @@ export default class VehicleBody extends RigidBody {
     this.chassis.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
   }
 
-  applySpeedForces () {
+  /**
+   * @private
+   * @description - Calculate vehicle speed in requestAnimation loop
+   */
+  _calculateSpeedForces () {
     let engine = 0, breaks = 0;
 
     if (this.controls.accelerator) {
@@ -132,6 +172,24 @@ export default class VehicleBody extends RigidBody {
       engine = 0.0;
     }
 
+    this._applySpeedForces(engine, frontBreaks, breaks);
+  }
+
+  /**
+   * @private
+   * @description - Set moto speed in requestAnimation loop
+   */
+  _applyMotoSpeedForces (engine, frontBreaks, breaks) {
+    this.vehicle.applyEngineForce(engine, 1);
+    this.vehicle.setBrake(frontBreaks, 0);
+    this.vehicle.setBrake(breaks, 1);
+  }
+
+  /**
+   * @private
+   * @description - Set car speed in requestAnimation loop
+   */
+  _applyCarSpeedForces (engine, frontBreaks, breaks) {
     this.vehicle.applyEngineForce(engine, 2);
     this.vehicle.applyEngineForce(engine, 3);
 
@@ -139,14 +197,13 @@ export default class VehicleBody extends RigidBody {
     this.vehicle.setBrake(frontBreaks, 1);
     this.vehicle.setBrake(breaks, 2);
     this.vehicle.setBrake(breaks, 3);
-
-    // Two Wheel Vehicle:
-    // this.vehicle.applyEngineForce(engine, 1);
-    // this.vehicle.setBrake(breaks / 2, 0);
-    // this.vehicle.setBrake(breaks, 1);
   }
 
-  applySteerForces () {
+  /**
+   * @private
+   * @description - Calculate vehicle direction in requestAnimation loop
+   */
+  _calculateSteerForces () {
     if (this.controls.right && this.steering > -this.steeringClamp) {
       this.steering -= this.steeringStep;
     } else if (this.controls.left && this.steering < this.steeringClamp) {
@@ -159,18 +216,41 @@ export default class VehicleBody extends RigidBody {
       this.steering = 0.0;
     }
 
-    this.vehicle.setSteeringValue(this.steering, 0);
-    this.vehicle.setSteeringValue(this.steering, 1);
-
-    // Two Wheel Vehicle:
-    // this.vehicle.setSteeringValue(this.steering, 0);
+    this._applySteerForces(engine, frontBreaks, breaks);
   }
 
+  /**
+   * @private
+   * @description - Set moto direction in requestAnimation loop
+   */
+  _applyMotoSteerForces () {
+    this.vehicle.setSteeringValue(this.steering, 0);
+  }
+
+  /**
+   * @private
+   * @description - Set car direction in requestAnimation loop
+   */
+  _applyCarSteerForces () {
+    this.vehicle.setSteeringValue(this.steering, 0);
+    this.vehicle.setSteeringValue(this.steering, 1);
+  }
+
+  /**
+   * @public
+   * @description - Get current vehicle speed in kilometers per hour
+   * @returns {Number}
+   */
   get speed () {
     return this.vehicle.getCurrentSpeedKmHour();
   }
 
-  /* get wheels () {
+  /**
+   * @public
+   * @description - Get number of wheels attached to vehicle
+   * @returns {Number}
+   */
+  get wheelsNumber () {
     return this.vehicle.getNumWheels();
-  } */
+  }
 }
