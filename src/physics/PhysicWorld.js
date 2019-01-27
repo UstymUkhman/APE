@@ -18,7 +18,7 @@ export default class PhysicWorld {
   /**
    * @constructs PhysicWorld
    * @description - Initialize physics for soft and rigid bodies
-   * @param {bool} [soft] - if <true> creates soft/rigid dynamics world or discrete dynamics world otherwise
+   * @param {bool} soft - if <true> creates soft/rigid dynamics world or discrete dynamics world otherwise
    */
   constructor (soft = false) {
     this.vehicles = [];

@@ -16,7 +16,8 @@
     "animejs": "^2.2.0",
     "mobile-detect": "^1.4.3",
     "three": "^0.99.0",
-    "three-orbit-controls": "^82.1.0"
+    "three-orbit-controls": "^82.1.0",
+    "worker-loader": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
