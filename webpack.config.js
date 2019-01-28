@@ -43,6 +43,10 @@ module.exports = {
       }, {
         test: /(\.glsl|\.frag|\.vert)$/,
         loader: 'raw-loader'
+      }, {
+        test: /\.worker\.js$/,
+        loader: 'worker-loader',
+        exclude: /node_modules/
       }
     ]
   },

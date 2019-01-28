@@ -121,13 +121,11 @@ export default class VehicleBody extends RigidBody {
    */
   update () {
     let transform, position, rotation;
-    const wheels = this.wheels.length;
-    const moto = wheels === 2;
 
     this._calculateSpeedForces();
     this._calculateSteerForces();
 
-    for (let i = 0; i < wheels; i++) {
+    for (let i = 0; i < this.wheels.length; i++) {
       this.vehicle.updateWheelTransform(i, true);
       transform = this.vehicle.getWheelTransformWS(i);
 
@@ -216,7 +214,7 @@ export default class VehicleBody extends RigidBody {
       this.steering = 0.0;
     }
 
-    this._applySteerForces(engine, frontBreaks, breaks);
+    this._applySteerForces();
   }
 
   /**
