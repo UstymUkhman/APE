@@ -44,8 +44,8 @@ export default class SoftBodies {
 
   /**
    * @private
-   * @description - Calculate collider's geometry mesh's one
-   * @param {Object} bufferGeometry - THREE.js mesh's buffer geometry
+   * @description - Calculate collider's geometry from mesh
+   * @param {Object} bufferGeometry - THREE.js mesh buffer geometry
    */
   _initGeometry (bufferGeometry) {
     const geometry = new Geometry().fromBufferGeometry(bufferGeometry);

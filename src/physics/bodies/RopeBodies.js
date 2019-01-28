@@ -1,8 +1,15 @@
+// Rope bodies class manager
+
 import { MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
 
 export default class RopeBodies {
+  /**
+   * @constructs RopeBodies
+   * @description - Initialize default parameters for rope bodies
+   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   */
   constructor (physicWorld) {
     this.bodies = [];
     this.world = physicWorld;
@@ -13,6 +20,14 @@ export default class RopeBodies {
     /* eslint-enable new-cap */
   }
 
+  /**
+   * @public
+   * @description - Add rope body collider to THREE.js mesh
+   * @param {Object} mesh - THREE.js mesh of <LineSegments> type
+   * @param {Number} length - rope's length
+   * @param {Number} mass - rope's mass
+   * @param {Object} position - rope's position in scene
+   */
   addBody (mesh, length, mass, position = new Vector3()) {
     const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
 
@@ -37,6 +52,14 @@ export default class RopeBodies {
     this.bodies.push(mesh);
   }
 
+  /**
+   * @public
+   * @description - Add THREE.js mesh the far end of the rope
+   * @param {Object} mesh - THREE.js rope mesh
+   * @param {Object} target - THREE.js mesh to append
+   * @param {Boolean} top - append mesh on the top of the rope if <true>
+   * @param {Number} influence - mesh's physic influence to the rope
+   */
   append (mesh, target, top = true, influence = 1) {
     for (let i = 0; i < this.bodies.length; i++) {
       if (this.bodies[i].uuid === mesh.uuid) {
@@ -51,6 +74,10 @@ export default class RopeBodies {
     }
   }
 
+  /**
+   * @public
+   * @description - Update rope bodies in requestAnimation loop
+   */
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const positions = this.bodies[i].geometry.attributes.position.array;

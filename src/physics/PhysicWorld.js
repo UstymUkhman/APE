@@ -85,7 +85,7 @@ export default class PhysicWorld {
    * @param {Object} mesh - vehicle chassis mesh
    * @param {number} mass - vehicle mass
    * @param {Object} controls - JSON-like vehicle controls
-   * @param {Boolean} moto - vehicle has only two wheels
+   * @param {Boolean} moto - if <true> vehicle will be treated as motorcycle
    * @returns {Object} - vehicle body
    */
   addVehicle (mesh, mass, controls, moto = false) {

@@ -1,8 +1,15 @@
+// Cloth bodies class manager
+
 import { SOFT_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
 
 export default class ClothBodies {
+  /**
+   * @constructs ClothBodies
+   * @description - Initialize default parameters for cloth bodies
+   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   */
   constructor (physicWorld) {
     this.bodies = [];
     this.world = physicWorld;
@@ -13,6 +20,13 @@ export default class ClothBodies {
     /* eslint-enable new-cap */
   }
 
+  /**
+   * @public
+   * @description - Add cloth body collider to THREE.js mesh
+   * @param {Object} mesh - THREE.js mesh with <PlaneBufferGeometry> type
+   * @param {Number} mass - THREE.js mesh's mass
+   * @param {Object} position - mesh's position in scene
+   */
   addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
     const heightSegments = mesh.geometry.parameters.heightSegments;
     const widthSegments = mesh.geometry.parameters.widthSegments;
@@ -49,6 +63,10 @@ export default class ClothBodies {
     this.bodies.push(mesh);
   }
 
+  /**
+   * @public
+   * @description - Update cloth bodies in requestAnimation loop
+   */
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const cloth = this.bodies[i];
