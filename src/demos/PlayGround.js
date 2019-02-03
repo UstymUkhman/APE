@@ -4,6 +4,7 @@ import { Fog } from 'three/src/scenes/Fog';
 
 import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 import { Mesh } from 'three/src/objects/Mesh';
 
@@ -67,8 +68,19 @@ export default class Soft {
     grid.material.transparent = true;
     grid.material.opacity = 0.2;
 
+    const box = new Mesh(
+      new BoxGeometry(5, 5, 5),
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    box.position.y = 2.5;
+    this.physics.static.addBox(box);
+
     this.scene.add(ground);
     this.scene.add(grid);
+    this.scene.add(box);
   }
 
   createLights () {

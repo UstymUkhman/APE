@@ -9,18 +9,17 @@ export default class StaticBodies extends RigidBody {
    * @extends RigidBody
    * @constructs StaticBodies
    * @description - Initialize static bodies physics
-   * @param {Object} physicWorld - Ammo.js soft/rigid or discrete dynamics world
+   * @param {Object} world - Ammo.js soft/rigid or discrete dynamics world
    */
-  constructor (physicWorld) {
+  constructor (world) {
     super();
-    this.world = physicWorld;
+    this.world = world;
   }
 
   /**
    * @public
    * @description - Add plane-like collider to THREE.js mesh
    *                Used primarily to create ground/walls in physics world
-   * @param {Object} mesh - THREE.js mesh with <PlaneBufferGeometry>
    */
   addPlane (props) {
     /* eslint-disable new-cap */
@@ -35,56 +34,46 @@ export default class StaticBodies extends RigidBody {
   /**
    * @public
    * @description - Add box-like collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh
    */
-  addBox (mesh) {
-    const size = mesh.geometry.parameters;
-    const box = super.createBox(size);
-    this._addStaticBody(box, mesh);
+  addBox (props) {
+    const box = super.createBox(props.size);
+    this._addStaticBody(props.uuid, box, props.position, props.rotation);
   }
 
   /**
    * @public
    * @description - Add cylinder-like collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh
    */
-  addCylinder (mesh) {
-    const size = mesh.geometry.parameters;
-    const cylinder = super.createCylinder(size);
-    this._addStaticBody(cylinder, mesh);
+  addCylinder (props) {
+    const cylinder = super.createCylinder(props.size);
+    this._addStaticBody(props.uuid, cylinder, props.position, props.rotation);
   }
 
   /**
    * @public
    * @description - Add capsule-like collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh
    */
-  addCapsule (mesh) {
-    const size = mesh.geometry.parameters;
-    const capsule = super.createCapsule(size);
-    this._addStaticBody(capsule, mesh);
+  addCapsule (props) {
+    const capsule = super.createCapsule(props.size);
+    this._addStaticBody(props.uuid, capsule, props.position, props.rotation);
   }
 
   /**
    * @public
    * @description - Add cone-like collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh
    */
-  addCone (mesh) {
-    const size = mesh.geometry.parameters;
-    const cone = super.createCone(size);
-    this._addStaticBody(cone, mesh);
+  addCone (props) {
+    const cone = super.createCone(props.size);
+    this._addStaticBody(props.uuid, cone, props.position, props.rotation);
   }
 
   /**
    * @public
    * @description - Add sphere-like collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh
    */
-  addSphere (mesh) {
-    const size = mesh.geometry.parameters;
-    const sphere = super.createSphere(size);
-    this._addStaticBody(sphere, mesh);
+  addSphere (props) {
+    const sphere = super.createSphere(props.size);
+    this._addStaticBody(props.uuid, sphere, props.position, props.rotation);
   }
 
   /**

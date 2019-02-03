@@ -1,5 +1,7 @@
 // Physics bodies class manager
 
+import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
+
 // import KinematicBodies from 'physics/bodies/KinematicBodies';
 // import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
@@ -10,11 +12,7 @@ import StaticBodies from 'physics/bodies/StaticBodies';
 // import SoftBodies from 'physics/bodies/SoftBodies';
 // import RopeBodies from 'physics/bodies/RopeBodies';
 
-import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
-
 // import { Clock } from 'three/src/core/Clock';
-// import { GRAVITY } from 'physics/constants';
-// import { Ammo } from 'core/Ammo';
 
 export default class PhysicsWorld {
   /**
@@ -23,25 +21,6 @@ export default class PhysicsWorld {
    * @param {bool} soft - if <true> creates soft/rigid dynamics world or discrete dynamics world otherwise
    */
   constructor (soft = false) {
-    // this.vehicles = [];
-    // this.softWorld = soft;
-    // this.clock = new Clock();
-
-    // if (soft) {
-    //   this._initSoftWorld();
-    // } else {
-    //   this._initRigidWorld();
-    // }
-
-    // this.soft = new SoftBodies(this.world);
-    // this.rope = new RopeBodies(this.world);
-    // this.cloth = new ClothBodies(this.world);
-
-    // this.hinge = new HingeBodies(this.world);
-    // this.static = new StaticBodies(this.world);
-    // this.dynamic = new DynamicBodies(this.world);
-    // this.kinematic = new KinematicBodies(this.world);
-
     // this.clock = new Clock();
     this.bodies = [];
     this.worker = new PhysicsWorker();

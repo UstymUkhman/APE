@@ -1,12 +1,12 @@
-// import KinematicBodies from 'workers/physics-bodies/KinematicBodies';
-// import DynamicBodies from 'workers/physics-bodies/DynamicBodies';
+import KinematicBodies from 'workers/physics-bodies/KinematicBodies';
+import DynamicBodies from 'workers/physics-bodies/DynamicBodies';
 import StaticBodies from 'workers/physics-bodies/StaticBodies';
-// import HingeBodies from 'workers/physics-bodies/HingeBodies';
+import HingeBodies from 'workers/physics-bodies/HingeBodies';
 // import VehicleBody from 'workers/physics-bodies/VehicleBody';
 
-// import ClothBodies from 'workers/physics-bodies/ClothBodies';
-// import SoftBodies from 'workers/physics-bodies/SoftBodies';
-// import RopeBodies from 'workers/physics-bodies/RopeBodies';
+import ClothBodies from 'workers/physics-bodies/ClothBodies';
+import SoftBodies from 'workers/physics-bodies/SoftBodies';
+import RopeBodies from 'workers/physics-bodies/RopeBodies';
 
 import { GRAVITY } from 'physics/constants';
 
@@ -17,23 +17,13 @@ let physics = null;
 
 class PhysicsWorker {
   constructor (soft) {
-    this.vehicles = [];
-    this.softWorld = soft;
+    // this.vehicles = [];
 
     if (soft) {
       this._initSoftWorld();
     } else {
       this._initRigidWorld();
     }
-
-    // this.soft = new SoftBodies(this.world);
-    // this.rope = new RopeBodies(this.world);
-    // this.cloth = new ClothBodies(this.world);
-
-    // this.hinge = new HingeBodies(this.world);
-
-    // this.dynamic = new DynamicBodies(this.world);
-    // this.kinematic = new KinematicBodies(this.world);
   }
 
   /**
@@ -74,12 +64,32 @@ class PhysicsWorker {
     /* eslint-enable new-cap */
   }
 
+  initSoftBodies () {
+    this.soft = new SoftBodies(this.world);
+  }
+
+  initRopeBodies () {
+    this.rope = new RopeBodies(this.world);
+  }
+
+  initHingeBodies () {
+    this.hinge = new HingeBodies(this.world);
+  }
+
+  initClothBodies () {
+    this.cloth = new ClothBodies(this.world);
+  }
+
   initStaticBodies () {
     this.static = new StaticBodies(this.world);
   }
 
-  addStaticPlane (props) {
-    this.static.addPlane(props);
+  initDynamicBodies () {
+    this.dynamic = new DynamicBodies(this.world);
+  }
+
+  initKinematicBodies () {
+    this.kinematic = new KinematicBodies(this.world);
   }
 
   updateStaticConstants (constants) {
@@ -87,13 +97,16 @@ class PhysicsWorker {
       this.static[constant] = constants[constant];
     }
   }
+
+  addBody (props) {
+    const method = `add${props.collider}`;
+    this[props.type][method](props);
+  }
 }
 
 self.addEventListener('message', (event) => {
   const action = event.data.action;
   const params = event.data.params;
-
-  // console.log(params);
 
   if (physics) {
     physics[action](params);
@@ -103,6 +116,3 @@ self.addEventListener('message', (event) => {
     Logger.error('PhysicsWorker is not initialized.');
   }
 });
-
-// self.postMessage({ foo: 'foo' });
-
