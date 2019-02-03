@@ -51,7 +51,7 @@ export default class Logger {
    * @private
    * @description - convert given arguments to more comfortable type
    * @param {*[]} logs - array of logs/warnings/errors to print in console
-   * @returns {(string|Object[2])} - one joined string | array of 2 elements with different types 
+   * @returns {(string|Object[2])} - one joined string | array of 2 elements with different types
    */
   static _getMessage (logs) {
     let messages = [];
