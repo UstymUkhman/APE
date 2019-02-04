@@ -92,15 +92,17 @@ class PhysicsWorker {
     this.kinematic = new KinematicBodies(this.world);
   }
 
-  updateStaticConstants (constants) {
-    for (const constant in constants) {
-      this.static[constant] = constants[constant];
-    }
-  }
-
   addBody (props) {
     const method = `add${props.collider}`;
     this[props.type][method](props);
+  }
+
+  updateConstants (props) {
+    const constants = props.constants;
+
+    for (const constant in constants) {
+      this[props.type][constant] = constants[constant];
+    }
   }
 }
 

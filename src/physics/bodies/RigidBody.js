@@ -96,8 +96,11 @@ export default class RigidBody {
 
   _updateConstants () {
     this.worker.postMessage({
-      action: `update${this.type}Constants`,
-      params: this.constants
+      action: 'updateConstants',
+      params: {
+        constants: this.constants,
+        type: this.type
+      }
     });
   }
 }

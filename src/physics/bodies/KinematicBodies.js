@@ -112,8 +112,8 @@ export default class KinematicBodies extends RigidBody {
       const quaternion = this.bodies[i].quaternion;
       const motionState = this.bodies[i].userData.physicsBody.getMotionState();
 
-      transform.getOrigin().setValue(position.x, position.y, position.z);
       this.rotation.setValue(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+      transform.getOrigin().setValue(position.x, position.y, position.z);
       transform.setRotation(this.rotation);
 
       if (motionState) {

@@ -13,6 +13,7 @@ import StaticBodies from 'physics/bodies/StaticBodies';
 // import RopeBodies from 'physics/bodies/RopeBodies';
 
 // import { Clock } from 'three/src/core/Clock';
+import find from 'lodash/find';
 
 export default class PhysicsWorld {
   /**
@@ -49,11 +50,16 @@ export default class PhysicsWorld {
   }
 
   addBody (data) {
-    this.bodies.push({
-      type: data.type,
-      uuid: data.uuid,
-      body: data.body
-    });
+    const bodies = this[data.type].bodies;
+    const mesh = find(bodies, { uuid: data.uuid });
+    mesh.userData.physicsBody = data.body;
+    console.log(mesh);
+
+    // this.bodies.push({
+    //   type: data.type,
+    //   uuid: data.uuid,
+    //   body: data.body
+    // });
   }
 
   /**

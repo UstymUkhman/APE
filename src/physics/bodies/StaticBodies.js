@@ -7,6 +7,7 @@ export default class StaticBodies extends RigidBody {
   constructor (worker) {
     super('Static', worker);
     this.worker = worker;
+    this.bodies = [];
 
     this.worker.postMessage({
       action: 'initStaticBodies'
@@ -72,6 +73,10 @@ export default class StaticBodies extends RigidBody {
     this._addBody('Sphere', mesh);
   }
 
+  /**
+   * @private
+   * @description - Use web worker to add collider
+   */
   _addBody (collider, mesh, additionalParams) {
     const params = {
       rotation: mesh.quaternion.clone(),
@@ -86,6 +91,7 @@ export default class StaticBodies extends RigidBody {
     };
 
     assign(props, params, additionalParams);
+    this.bodies.push(mesh);
 
     this.worker.postMessage({
       action: 'addBody',
