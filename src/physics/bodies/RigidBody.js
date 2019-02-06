@@ -1,5 +1,7 @@
 // Rigid bodies parent class
 
+import assign from 'lodash/assign';
+
 import {
   MARGIN,
   FRICTION,
@@ -29,6 +31,37 @@ export default class RigidBody {
       linearDamping: LINEAR_DAMPING,
       angularDamping: ANGULAR_DAMPING
     };
+  }
+
+  addBody (collider, mesh, additionalParams) {
+    const params = {
+      rotation: mesh.quaternion.clone(),
+      position: mesh.position.clone(),
+      size: mesh.geometry.parameters,
+      uuid: mesh.uuid
+    };
+
+    const props = {
+      collider: collider,
+      type: this.type
+    };
+
+    assign(props, params, additionalParams);
+
+    this.worker.postMessage({
+      action: 'addBody',
+      params: props
+    });
+  }
+
+  _updateConstants () {
+    this.worker.postMessage({
+      action: 'updateConstants',
+      params: {
+        constants: this.constants,
+        type: this.type
+      }
+    });
   }
 
   set margin (value) {
@@ -92,15 +125,5 @@ export default class RigidBody {
 
   get angularDamping () {
     return this.constants.angularDamping;
-  }
-
-  _updateConstants () {
-    this.worker.postMessage({
-      action: 'updateConstants',
-      params: {
-        constants: this.constants,
-        type: this.type
-      }
-    });
   }
 }

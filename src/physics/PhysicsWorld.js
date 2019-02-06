@@ -3,7 +3,7 @@
 import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
 
 // import KinematicBodies from 'physics/bodies/KinematicBodies';
-// import DynamicBodies from 'physics/bodies/DynamicBodies';
+import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
 // import HingeBodies from 'physics/bodies/HingeBodies';
 // import VehicleBody from 'physics/bodies/VehicleBody';
@@ -23,7 +23,6 @@ export default class PhysicsWorld {
    */
   constructor (soft = false) {
     // this.clock = new Clock();
-    this.bodies = [];
     this.worker = new PhysicsWorker();
 
     this._onMessage = this.onWorkerMessage.bind(this);
@@ -40,7 +39,7 @@ export default class PhysicsWorld {
 
     // this.hinge = new HingeBodies();
     this.static = new StaticBodies(this.worker);
-    // this.dynamic = new DynamicBodies();
+    this.dynamic = new DynamicBodies(this.worker);
     // this.kinematic = new KinematicBodies();
   }
 
@@ -51,15 +50,20 @@ export default class PhysicsWorld {
 
   addBody (data) {
     const bodies = this[data.type].bodies;
-    const mesh = find(bodies, { uuid: data.uuid });
-    mesh.userData.physicsBody = data.body;
-    console.log(mesh);
 
-    // this.bodies.push({
-    //   type: data.type,
-    //   uuid: data.uuid,
-    //   body: data.body
-    // });
+    if (bodies) {
+      const mesh = find(bodies, { uuid: data.uuid });
+      mesh.userData.physicsBody = data.body;
+    }
+  }
+
+  updateBodies (data) {
+    this[data.type].update(data.bodies);
+
+    this.worker.postMessage({
+      action: 'updateBodies',
+      params: `${data.type}`
+    });
   }
 
   /**
@@ -82,21 +86,21 @@ export default class PhysicsWorld {
    * @public
    * @description - Update physics world and bodies in requestAnimation loop
    */
-  // update () {
-  //   for (let i = 0; i < this.vehicles.length; i++) {
-  //     this.vehicles[i].update();
-  //   }
+  update () {
+    // for (let i = 0; i < this.vehicles.length; i++) {
+    //   this.vehicles[i].update();
+    // }
 
-  //   this.kinematic.update(this.transform);
-  //   this.dynamic.update(this.transform);
+    // this.kinematic.update(this.transform);
+    // this.dynamic.update(this.transform);
 
-  //   const delta = this.clock.getDelta();
-  //   this.world.stepSimulation(delta, 10);
+    // const delta = this.clock.getDelta();
+    // this.world.stepSimulation(delta, 10);
 
-  //   if (this.softWorld) {
-  //     this.cloth.update();
-  //     this.soft.update();
-  //     this.rope.update();
-  //   }
-  // }
+    // if (this.softWorld) {
+    //   this.cloth.update();
+    //   this.soft.update();
+    //   this.rope.update();
+    // }
+  }
 }

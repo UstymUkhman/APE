@@ -101,7 +101,7 @@ export default class RigidBody {
     const transform = new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+    transform.setRotation(new Ammo.btQuaternion(quaternion._x, quaternion._y, quaternion._z, quaternion._w));
 
     const motion = new Ammo.btDefaultMotionState(transform);
     const inertia = new Ammo.btVector3(0.0, 0.0, 0.0);

@@ -8,15 +8,20 @@ import ClothBodies from 'workers/physics-bodies/ClothBodies';
 import SoftBodies from 'workers/physics-bodies/SoftBodies';
 import RopeBodies from 'workers/physics-bodies/RopeBodies';
 
+import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
-
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
+
+const capitalize = (string) => {
+  return `${string.charAt(0).toUpperCase()}${string.toLowerCase().slice(1)}`;
+};
 
 let physics = null;
 
 class PhysicsWorker {
   constructor (soft) {
+    this.clock = new Clock();
     // this.vehicles = [];
 
     if (soft) {
@@ -64,37 +69,63 @@ class PhysicsWorker {
     /* eslint-enable new-cap */
   }
 
-  initSoftBodies () {
+  initBodies (type) {
+    this[`_init${capitalize(type)}Bodies`]();
+
+    if (!this.clock) {
+      this.clock = new Clock();
+      requestAnimationFrame(this._startSimulation.bind(this));
+    }
+  }
+
+  _startSimulation () {
+    const delta = this.clock.getDelta();
+    this.world.stepSimulation(delta, 10);
+    requestAnimationFrame(this._startSimulation.bind(this));
+  }
+
+  _initSoftBodies () {
     this.soft = new SoftBodies(this.world);
   }
 
-  initRopeBodies () {
+  _initRopeBodies () {
     this.rope = new RopeBodies(this.world);
   }
 
-  initHingeBodies () {
+  _initHingeBodies () {
     this.hinge = new HingeBodies(this.world);
   }
 
-  initClothBodies () {
+  _initClothBodies () {
     this.cloth = new ClothBodies(this.world);
   }
 
-  initStaticBodies () {
+  _initStaticBodies () {
     this.static = new StaticBodies(this.world);
   }
 
-  initDynamicBodies () {
+  _initDynamicBodies () {
     this.dynamic = new DynamicBodies(this.world);
   }
 
-  initKinematicBodies () {
+  _initKinematicBodies () {
     this.kinematic = new KinematicBodies(this.world);
   }
 
   addBody (props) {
     const method = `add${props.collider}`;
     this[props.type][method](props);
+
+    const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
+    const isStatic = typeof this[props.type].update === undefined;
+
+    if (!isStatic && hasBody) {
+      this[props.type].update(this.transform);
+    }
+  }
+
+  updateBodies (type) {
+    this[type].update(this.transform);
   }
 
   updateConstants (props) {
@@ -115,6 +146,12 @@ self.addEventListener('message', (event) => {
   } else if (action === 'init') {
     physics = new PhysicsWorker(params[0]);
   } else {
-    Logger.error('PhysicsWorker is not initialized.');
+    const array = typeof params === 'object';
+    const args = params.length && array ? params.join(', ') : !array ? params : '';
+
+    Logger.error(
+      `Cannot call PhysicsWorker.${action}(${args})`,
+      'PhysicsWorker is not initialized.'
+    );
   }
 });

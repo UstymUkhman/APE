@@ -27,7 +27,7 @@ export default class StaticBodies extends RigidBody {
     const plane = new Ammo.btStaticPlaneShape(rotation, 0.0);
     /* eslint-enable new-cap */
 
-    super._checkBodyMargin(plane);
+    this._checkBodyMargin(plane);
     this._addStaticBody(props.uuid, plane, props.position, props.rotation);
   }
 
@@ -36,7 +36,7 @@ export default class StaticBodies extends RigidBody {
    * @description - Add box-like collider to THREE.js mesh
    */
   addBox (props) {
-    const box = super.createBox(props.size);
+    const box = this.createBox(props.size);
     this._addStaticBody(props.uuid, box, props.position, props.rotation);
   }
 
@@ -45,7 +45,7 @@ export default class StaticBodies extends RigidBody {
    * @description - Add cylinder-like collider to THREE.js mesh
    */
   addCylinder (props) {
-    const cylinder = super.createCylinder(props.size);
+    const cylinder = this.createCylinder(props.size);
     this._addStaticBody(props.uuid, cylinder, props.position, props.rotation);
   }
 
@@ -54,7 +54,7 @@ export default class StaticBodies extends RigidBody {
    * @description - Add capsule-like collider to THREE.js mesh
    */
   addCapsule (props) {
-    const capsule = super.createCapsule(props.size);
+    const capsule = this.createCapsule(props.size);
     this._addStaticBody(props.uuid, capsule, props.position, props.rotation);
   }
 
@@ -63,7 +63,7 @@ export default class StaticBodies extends RigidBody {
    * @description - Add cone-like collider to THREE.js mesh
    */
   addCone (props) {
-    const cone = super.createCone(props.size);
+    const cone = this.createCone(props.size);
     this._addStaticBody(props.uuid, cone, props.position, props.rotation);
   }
 
@@ -72,7 +72,7 @@ export default class StaticBodies extends RigidBody {
    * @description - Add sphere-like collider to THREE.js mesh
    */
   addSphere (props) {
-    const sphere = super.createSphere(props.size);
+    const sphere = this.createSphere(props.size);
     this._addStaticBody(props.uuid, sphere, props.position, props.rotation);
   }
 
@@ -83,7 +83,7 @@ export default class StaticBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   _addStaticBody (uuid, shape, position, quaternion) {
-    const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
+    const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setActivationState(DISABLE_DEACTIVATION);
     this.world.addRigidBody(body);
 

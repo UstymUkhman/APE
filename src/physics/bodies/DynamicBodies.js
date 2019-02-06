@@ -1,6 +1,7 @@
 // Rigid bodies class manager
 
 import RigidBody from 'physics/bodies/RigidBody';
+import find from 'lodash/find';
 
 export default class DynamicBodies extends RigidBody {
   /**
@@ -9,11 +10,14 @@ export default class DynamicBodies extends RigidBody {
    * @description - Initialize rigid bodies physics
    * @param {Object} physicWorld - Ammo.js soft/rigid or discrete dynamics world
    */
-  constructor (physicWorld) {
-    super();
-
+  constructor (worker) {
+    super('dynamic', worker);
     this.bodies = [];
-    this.world = physicWorld;
+
+    worker.postMessage({
+      action: 'initBodies',
+      params: 'dynamic'
+    });
   }
 
   /**
@@ -23,9 +27,8 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addBox (mesh, mass) {
-    const size = mesh.geometry.parameters;
-    const box = super.createBox(size);
-    this._addDynamicBody(box, mesh, mass);
+    super.addBody('Box', mesh, { mass: mass });
+    this.bodies.push(mesh);
   }
 
   /**
@@ -35,9 +38,8 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addCylinder (mesh, mass) {
-    const size = mesh.geometry.parameters;
-    const cylinder = super.createCylinder(size);
-    this._addDynamicBody(cylinder, mesh, mass);
+    super.addBody('Cylinder', mesh, { mass: mass });
+    this.bodies.push(mesh);
   }
 
   /**
@@ -47,9 +49,8 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addCapsule (mesh, mass) {
-    const size = mesh.geometry.parameters;
-    const capsule = super.createCapsule(size);
-    this._addDynamicBody(capsule, mesh, mass);
+    super.addBody('Capsule', mesh, { mass: mass });
+    this.bodies.push(mesh);
   }
 
   /**
@@ -59,9 +60,8 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addCone (mesh, mass) {
-    const size = mesh.geometry.parameters;
-    const cone = super.createCone(size);
-    this._addDynamicBody(cone, mesh, mass);
+    super.addBody('Cone', mesh, { mass: mass });
+    this.bodies.push(mesh);
   }
 
   /**
@@ -71,25 +71,7 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addSphere (mesh, mass) {
-    const radius = mesh.geometry.parameters.radius;
-    const sphere = super.createSphere(radius);
-    this._addDynamicBody(sphere, mesh, mass);
-  }
-
-  /**
-   * @private
-   * @description - Create rigid body and add it to physics world
-   * @param {Object} shape - Ammo.js shape collider
-   * @param {Object} mesh - THREE.js mesh
-   * @param {Number} mass - THREE.js mesh's mass
-   */
-  _addDynamicBody (shape, mesh, mass) {
-    const position = mesh.position;
-    const quaternion = mesh.quaternion;
-    const body = super.createRigidBody(shape, mass, position, quaternion);
-
-    mesh.userData.physicsBody = body;
-    this.world.addRigidBody(body);
+    super.addBody('Sphere', mesh, { mass: mass });
     this.bodies.push(mesh);
   }
 
@@ -98,20 +80,17 @@ export default class DynamicBodies extends RigidBody {
    * @description - Update dynamic bodies in requestAnimation loop
    * @param {Object} transform - Ammo.js default btTransform
    */
-  update (transform) {
-    for (let i = 0; i < this.bodies.length; i++) {
-      const body = this.bodies[i].userData.physicsBody;
-      const motionState = body.getMotionState();
+  update (bodies) {
+    for (let i = 0; i < bodies.length; i++) {
+      const position = bodies[i].position;
+      const quaternion = bodies[i].quaternion;
+      const mesh = find(this.bodies, { uuid: bodies[i].uuid });
 
-      if (motionState) {
-        motionState.getWorldTransform(transform);
+      // console.log(position.x, position.y, position.z);
+      // console.log(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
-        const origin = transform.getOrigin();
-        const rotation = transform.getRotation();
-
-        this.bodies[i].position.set(origin.x(), origin.y(), origin.z());
-        this.bodies[i].quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-      }
+      mesh.position.set(position.x, position.y, position.z);
+      mesh.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
   }
 }

@@ -111,7 +111,18 @@ export default class Soft {
   }
 
   createObjects () {
+    const box = new Mesh(
+      new BoxGeometry(5, 5, 5),
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
 
+    box.position.y = 10;
+    box.position.x = -2.5;
+    this.physics.dynamic.addBox(box, 10);
+
+    this.scene.add(box);
   }
 
   createRenderer () {
