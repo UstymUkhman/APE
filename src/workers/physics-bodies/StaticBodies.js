@@ -87,11 +87,32 @@ export default class StaticBodies extends RigidBody {
     body.setActivationState(DISABLE_DEACTIVATION);
     this.world.addRigidBody(body);
 
-    self.postMessage({
-      action: 'addBody',
-      type: 'static',
-      uuid: uuid,
-      body: body
-    });
+    // _object = _objects[details.id];
+    // _object.getMotionState().getWorldTransform( _transform );
+
+    // if ( details.pos ) {
+    //   _vec3_1.setX(details.pos.x);
+    //   _vec3_1.setY(details.pos.y);
+    //   _vec3_1.setZ(details.pos.z);
+    //   _transform.setOrigin(_vec3_1);
+    // }
+
+    // if ( details.quat ) {
+    //   _quat.setX(details.quat.x);
+    //   _quat.setY(details.quat.y);
+    //   _quat.setZ(details.quat.z);
+    //   _quat.setW(details.quat.w);
+    //   _transform.setRotation(_quat);
+    // }
+
+    // _object.setWorldTransform( _transform );
+    // _object.activate();
+
+    // self.postMessage({
+    //   action: 'addBody',
+    //   type: 'static',
+    //   uuid: uuid,
+    //   body: body
+    // });
   }
 }

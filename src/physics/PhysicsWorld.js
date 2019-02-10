@@ -12,8 +12,7 @@ import StaticBodies from 'physics/bodies/StaticBodies';
 // import SoftBodies from 'physics/bodies/SoftBodies';
 // import RopeBodies from 'physics/bodies/RopeBodies';
 
-// import { Clock } from 'three/src/core/Clock';
-import find from 'lodash/find';
+import { Clock } from 'three/src/core/Clock';
 
 export default class PhysicsWorld {
   /**
@@ -22,7 +21,7 @@ export default class PhysicsWorld {
    * @param {bool} soft - if <true> creates soft/rigid dynamics world or discrete dynamics world otherwise
    */
   constructor (soft = false) {
-    // this.clock = new Clock();
+    this.clock = new Clock();
     this.worker = new PhysicsWorker();
 
     this._onMessage = this.onWorkerMessage.bind(this);
@@ -48,21 +47,16 @@ export default class PhysicsWorld {
     this[action].call(this, event.data);
   }
 
-  addBody (data) {
-    const bodies = this[data.type].bodies;
-
-    if (bodies) {
-      const mesh = find(bodies, { uuid: data.uuid });
-      mesh.userData.physicsBody = data.body;
-    }
-  }
-
   updateBodies (data) {
+    const delta = this.clock.getDelta();
     this[data.type].update(data.bodies);
 
     this.worker.postMessage({
       action: 'updateBodies',
-      params: `${data.type}`
+      params: {
+        type: `${data.type}`,
+        delta: delta
+      }
     });
   }
 

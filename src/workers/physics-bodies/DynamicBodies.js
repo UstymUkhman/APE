@@ -23,7 +23,6 @@ export default class DynamicBodies extends RigidBody {
    * @param {Number} mass - THREE.js mesh's mass
    */
   addBox (props) {
-    console.log('props', props);
     const box = this.createBox(props.size);
     this._addDynamicBody(props.uuid, box, props.position, props.rotation, props.mass);
   }
@@ -83,16 +82,6 @@ export default class DynamicBodies extends RigidBody {
     const body = this.createRigidBody(shape, mass, position, quaternion);
     this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
-
-    console.log(body.getMotionState);
-    debugger;
-
-    self.postMessage({
-      action: 'addBody',
-      type: 'dynamic',
-      uuid: uuid,
-      body: body
-    });
   }
 
   /**
@@ -104,7 +93,8 @@ export default class DynamicBodies extends RigidBody {
     const update = [];
 
     for (let i = 0; i < this.bodies.length; i++) {
-      const motionState = this.bodies[i].body.getMotionState();
+      const body = this.bodies[i].body;
+      const motionState = body.getMotionState();
 
       if (motionState) {
         motionState.getWorldTransform(transform);
@@ -112,15 +102,15 @@ export default class DynamicBodies extends RigidBody {
         const origin = transform.getOrigin();
         const rotation = transform.getRotation();
 
-        // console.log(origin.x(), origin.y(), origin.z());
-        // console.log(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        const linearVelocity = body.getLinearVelocity();
+        const angularVelocity = body.getAngularVelocity();
 
         update.push({
+          angularVelocity: { x: angularVelocity.x(), y: angularVelocity.y(), z: angularVelocity.z() },
+          linearVelocity: { x: linearVelocity.x(), y: linearVelocity.y(), z: linearVelocity.z() },
           quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
           position: { x: origin.x(), y: origin.y(), z: origin.z() },
-          body: this.bodies[i].body,
-          uuid: this.bodies[i].uuid,
-          transform: transform
+          uuid: this.bodies[i].uuid
         });
       }
     }

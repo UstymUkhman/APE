@@ -8,20 +8,14 @@ import ClothBodies from 'workers/physics-bodies/ClothBodies';
 import SoftBodies from 'workers/physics-bodies/SoftBodies';
 import RopeBodies from 'workers/physics-bodies/RopeBodies';
 
-import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
-
-const capitalize = (string) => {
-  return `${string.charAt(0).toUpperCase()}${string.toLowerCase().slice(1)}`;
-};
 
 let physics = null;
 
 class PhysicsWorker {
   constructor (soft) {
-    this.clock = new Clock();
     // this.vehicles = [];
 
     if (soft) {
@@ -69,47 +63,31 @@ class PhysicsWorker {
     /* eslint-enable new-cap */
   }
 
-  initBodies (type) {
-    this[`_init${capitalize(type)}Bodies`]();
-
-    if (!this.clock) {
-      this.clock = new Clock();
-      requestAnimationFrame(this._startSimulation.bind(this));
-    }
-  }
-
-  _startSimulation () {
-    console.log(':D');
-    const delta = this.clock.getDelta();
-    this.world.stepSimulation(delta, 10);
-    requestAnimationFrame(this._startSimulation.bind(this));
-  }
-
-  _initSoftBodies () {
+  initSoftBodies () {
     this.soft = new SoftBodies(this.world);
   }
 
-  _initRopeBodies () {
+  initRopeBodies () {
     this.rope = new RopeBodies(this.world);
   }
 
-  _initHingeBodies () {
+  initHingeBodies () {
     this.hinge = new HingeBodies(this.world);
   }
 
-  _initClothBodies () {
+  initClothBodies () {
     this.cloth = new ClothBodies(this.world);
   }
 
-  _initStaticBodies () {
+  initStaticBodies () {
     this.static = new StaticBodies(this.world);
   }
 
-  _initDynamicBodies () {
+  initDynamicBodies () {
     this.dynamic = new DynamicBodies(this.world);
   }
 
-  _initKinematicBodies () {
+  initKinematicBodies () {
     this.kinematic = new KinematicBodies(this.world);
   }
 
@@ -125,8 +103,9 @@ class PhysicsWorker {
     }
   }
 
-  updateBodies (type) {
-    this[type].update(this.transform);
+  updateBodies (params) {
+    this[params.type].update(this.transform);
+    this.world.stepSimulation(params.delta, 10);
   }
 
   updateConstants (props) {

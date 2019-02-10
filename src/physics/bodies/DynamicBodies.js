@@ -1,7 +1,7 @@
 // Rigid bodies class manager
 
 import RigidBody from 'physics/bodies/RigidBody';
-// import find from 'lodash/find';
+import find from 'lodash/find';
 
 export default class DynamicBodies extends RigidBody {
   /**
@@ -13,11 +13,7 @@ export default class DynamicBodies extends RigidBody {
   constructor (worker) {
     super('dynamic', worker);
     this.bodies = [];
-
-    worker.postMessage({
-      action: 'initBodies',
-      params: 'dynamic'
-    });
+    worker.postMessage({ action: 'initDynamicBodies' });
   }
 
   /**
@@ -82,28 +78,14 @@ export default class DynamicBodies extends RigidBody {
    */
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      // const position = bodies[i].position;
-      // const quaternion = bodies[i].quaternion;
-      const mesh = find(this.bodies, { uuid: bodies[i].uuid });
+      const uuid = bodies[i].uuid;
+      const position = bodies[i].position;
+      const quaternion = bodies[i].quaternion;
 
-      // // console.log(position.x, position.y, position.z);
-      // // console.log(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+      const body = find(this.bodies, { uuid: uuid });
 
-      // // mesh.userData.physicsBody = bodies[i].body;
-      // mesh.position.set(position.x, position.y, position.z);
-      // mesh.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-
-      const motionState = bodies[i].body.getMotionState();
-
-      if (motionState) {
-        motionState.getWorldTransform(bodies[i].transform);
-
-        const origin = bodies[i].transform.getOrigin();
-        const rotation = bodies[i].transform.getRotation();
-
-        mesh.position.set(origin.x(), origin.y(), origin.z());
-        mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-      }
+      body.position.set(position.x, position.y, position.z);
+      body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
   }
 }
