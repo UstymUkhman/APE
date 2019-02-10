@@ -68,19 +68,8 @@ export default class Soft {
     grid.material.transparent = true;
     grid.material.opacity = 0.2;
 
-    const box = new Mesh(
-      new BoxGeometry(5, 5, 5),
-      new MeshPhongMaterial({
-        color: 0x222222
-      })
-    );
-
-    box.position.y = 2.5;
-    this.physics.static.addBox(box);
-
     this.scene.add(ground);
     this.scene.add(grid);
-    this.scene.add(box);
   }
 
   createLights () {
@@ -111,18 +100,24 @@ export default class Soft {
   }
 
   createObjects () {
-    const box = new Mesh(
+    this.kinematicBox = new Mesh(
       new BoxGeometry(5, 5, 5),
       new MeshPhongMaterial({
         color: 0x222222
       })
     );
 
-    box.position.y = 10;
-    box.position.x = -2.5;
-    this.physics.dynamic.addBox(box, 10);
+    const dynamicBox = this.kinematicBox.clone();
 
-    this.scene.add(box);
+    this.kinematicBox.position.y = 2.5;
+    dynamicBox.position.x = -2.5;
+    dynamicBox.position.y = 10;
+
+    this.physics.kinematic.addBox(this.kinematicBox);
+    this.physics.dynamic.addBox(dynamicBox, 10);
+
+    this.scene.add(this.kinematicBox);
+    this.scene.add(dynamicBox);
   }
 
   createRenderer () {
@@ -138,6 +133,9 @@ export default class Soft {
     this.orbitControls = new OrbitControls(this.camera);
     this.orbitControls.target.set(0, 0, 25);
     this.orbitControls.update();
+
+    this._onKeyDown = this.onKeyDown.bind(this);
+    document.addEventListener('keydown', this._onKeyDown);
   }
 
   createEvents () {
@@ -145,9 +143,30 @@ export default class Soft {
   }
 
   render () {
-    // this.physics.update();
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
+  }
+
+  onKeyDown (event) {
+    const code = event.keyCode;
+
+    switch (code) {
+      case 87:
+        this.kinematicBox.position.z += 1;
+        break;
+
+      case 83:
+        this.kinematicBox.position.z -= 1;
+        break;
+
+      case 65:
+        this.kinematicBox.position.x += 1;
+        break;
+
+      case 68:
+        this.kinematicBox.position.x -= 1;
+        break;
+    }
   }
 
   onResize () {

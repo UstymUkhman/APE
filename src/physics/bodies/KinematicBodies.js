@@ -1,13 +1,6 @@
 // Kinematic bodies class manager
 
 import RigidBody from 'physics/bodies/RigidBody';
-import { Ammo } from 'core/Ammo';
-
-import {
-  ZERO_MASS,
-  KINEMATIC_COLLISION,
-  DISABLE_DEACTIVATION
-} from 'physics/constants';
 
 export default class KinematicBodies extends RigidBody {
   /**
@@ -16,15 +9,10 @@ export default class KinematicBodies extends RigidBody {
    * @description - Initialize kinematic bodies physics
    * @param {Object} physicWorld - Ammo.js soft/rigid or discrete dynamics world
    */
-  constructor (physicWorld) {
-    super();
-
+  constructor (worker) {
+    super('kinematic', worker);
     this.bodies = [];
-    this.world = physicWorld;
-
-    /* eslint-disable new-cap */
-    this.rotation = new Ammo.btQuaternion();
-    /* eslint-enable new-cap */
+    worker.postMessage({action: 'initKinematicBodies'});
   }
 
   /**
@@ -33,9 +21,8 @@ export default class KinematicBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   addBox (mesh) {
-    const size = mesh.geometry.parameters;
-    const box = super.createBox(size);
-    this._addKinematicBody(box, mesh);
+    super.addBody('Box', mesh);
+    this.bodies.push(mesh);
   }
 
   /**
@@ -44,9 +31,8 @@ export default class KinematicBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   addCylinder (mesh) {
-    const size = mesh.geometry.parameters;
-    const cylinder = super.createCylinder(size);
-    this._addKinematicBody(cylinder, mesh);
+    super.addBody('Cylinder', mesh);
+    this.bodies.push(mesh);
   }
 
   /**
@@ -55,9 +41,8 @@ export default class KinematicBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   addCapsule (mesh) {
-    const size = mesh.geometry.parameters;
-    const capsule = super.createCapsule(size);
-    this._addKinematicBody(capsule, mesh);
+    super.addBody('Capsule', mesh);
+    this.bodies.push(mesh);
   }
 
   /**
@@ -66,9 +51,8 @@ export default class KinematicBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   addCone (mesh) {
-    const size = mesh.geometry.parameters;
-    const cone = super.createCone(size);
-    this._addKinematicBody(cone, mesh);
+    super.addBody('Cone', mesh);
+    this.bodies.push(mesh);
   }
 
   /**
@@ -77,27 +61,7 @@ export default class KinematicBodies extends RigidBody {
    * @param {Object} mesh - THREE.js mesh
    */
   addSphere (mesh) {
-    const size = mesh.geometry.parameters;
-    const sphere = super.createSphere(size);
-    this._addKinematicBody(sphere, mesh);
-  }
-
-  /**
-   * @private
-   * @description - Create kinematic body and add it to physics world
-   * @param {Object} shape - Ammo.js shape collider
-   * @param {Object} mesh - THREE.js mesh
-   */
-  _addKinematicBody (shape, mesh) {
-    const position = mesh.position;
-    const quaternion = mesh.quaternion;
-    const body = super.createRigidBody(shape, ZERO_MASS, position, quaternion);
-
-    body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
-    body.setActivationState(DISABLE_DEACTIVATION);
-
-    mesh.userData.physicsBody = body;
-    this.world.addRigidBody(body);
+    super.addBody('Sphere', mesh);
     this.bodies.push(mesh);
   }
 
@@ -106,19 +70,18 @@ export default class KinematicBodies extends RigidBody {
    * @description - Update kinematic bodies in requestAnimation loop
    * @param {Object} transform - Ammo.js default btTransform
    */
-  update (transform) {
+  update () {
+    const bodies = [];
     for (let i = 0; i < this.bodies.length; i++) {
-      const position = this.bodies[i].position;
-      const quaternion = this.bodies[i].quaternion;
-      const motionState = this.bodies[i].userData.physicsBody.getMotionState();
+      const mesh = this.bodies[i];
 
-      this.rotation.setValue(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-      transform.getOrigin().setValue(position.x, position.y, position.z);
-      transform.setRotation(this.rotation);
-
-      if (motionState) {
-        motionState.setWorldTransform(transform);
-      }
+      bodies.push({
+        rotation: mesh.quaternion.clone(),
+        position: mesh.position.clone(),
+        uuid: mesh.uuid
+      });
     }
+
+    return bodies;
   }
 }

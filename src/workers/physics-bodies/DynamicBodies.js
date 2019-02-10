@@ -102,12 +102,12 @@ export default class DynamicBodies extends RigidBody {
         const origin = transform.getOrigin();
         const rotation = transform.getRotation();
 
-        const linearVelocity = body.getLinearVelocity();
-        const angularVelocity = body.getAngularVelocity();
+        // const linearVelocity = body.getLinearVelocity();
+        // const angularVelocity = body.getAngularVelocity();
 
         update.push({
-          angularVelocity: { x: angularVelocity.x(), y: angularVelocity.y(), z: angularVelocity.z() },
-          linearVelocity: { x: linearVelocity.x(), y: linearVelocity.y(), z: linearVelocity.z() },
+          // angularVelocity: { x: angularVelocity.x(), y: angularVelocity.y(), z: angularVelocity.z() },
+          // linearVelocity: { x: linearVelocity.x(), y: linearVelocity.y(), z: linearVelocity.z() },
           quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
           position: { x: origin.x(), y: origin.y(), z: origin.z() },
           uuid: this.bodies[i].uuid

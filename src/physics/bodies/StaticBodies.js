@@ -11,7 +11,7 @@ export default class StaticBodies extends RigidBody {
    */
   constructor (worker) {
     super('static', worker);
-    worker.postMessage({ action: 'initStaticBodies' });
+    worker.postMessage({action: 'initStaticBodies'});
   }
 
   /**

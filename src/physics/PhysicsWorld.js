@@ -2,7 +2,7 @@
 
 import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
 
-// import KinematicBodies from 'physics/bodies/KinematicBodies';
+import KinematicBodies from 'physics/bodies/KinematicBodies';
 import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
 // import HingeBodies from 'physics/bodies/HingeBodies';
@@ -39,7 +39,7 @@ export default class PhysicsWorld {
     // this.hinge = new HingeBodies();
     this.static = new StaticBodies(this.worker);
     this.dynamic = new DynamicBodies(this.worker);
-    // this.kinematic = new KinematicBodies();
+    this.kinematic = new KinematicBodies(this.worker);
   }
 
   onWorkerMessage (event) {
@@ -49,12 +49,13 @@ export default class PhysicsWorld {
 
   updateBodies (data) {
     const delta = this.clock.getDelta();
-    this[data.type].update(data.bodies);
+    const bodies = this[data.type].update(data.bodies);
 
     this.worker.postMessage({
       action: 'updateBodies',
       params: {
         type: `${data.type}`,
+        bodies: bodies,
         delta: delta
       }
     });

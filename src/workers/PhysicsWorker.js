@@ -96,15 +96,18 @@ class PhysicsWorker {
     this[props.type][method](props);
 
     const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
-    const isStatic = typeof this[props.type].update === undefined;
 
-    if (!isStatic && hasBody) {
-      this[props.type].update(this.transform);
+    if (props.type !== 'static' && hasBody) {
+      this[props.type].update(this.transform, [{
+        position: props.position,
+        rotation: props.rotation,
+        uuid: props.uuid
+      }]);
     }
   }
 
   updateBodies (params) {
-    this[params.type].update(this.transform);
+    this[params.type].update(this.transform, params.bodies);
     this.world.stepSimulation(params.delta, 10);
   }
 

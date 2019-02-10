@@ -13,7 +13,7 @@ export default class DynamicBodies extends RigidBody {
   constructor (worker) {
     super('dynamic', worker);
     this.bodies = [];
-    worker.postMessage({ action: 'initDynamicBodies' });
+    worker.postMessage({action: 'initDynamicBodies'});
   }
 
   /**
