@@ -79,6 +79,7 @@ class PhysicsWorker {
   }
 
   _startSimulation () {
+    console.log(':D');
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);
     requestAnimationFrame(this._startSimulation.bind(this));

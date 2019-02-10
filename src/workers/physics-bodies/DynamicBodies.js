@@ -84,6 +84,9 @@ export default class DynamicBodies extends RigidBody {
     this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
 
+    console.log(body.getMotionState);
+    debugger;
+
     self.postMessage({
       action: 'addBody',
       type: 'dynamic',
@@ -110,12 +113,14 @@ export default class DynamicBodies extends RigidBody {
         const rotation = transform.getRotation();
 
         // console.log(origin.x(), origin.y(), origin.z());
-        console.log(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        // console.log(rotation.x(), rotation.y(), rotation.z(), rotation.w());
 
         update.push({
           quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
           position: { x: origin.x(), y: origin.y(), z: origin.z() },
-          uuid: this.bodies[i].uuid
+          body: this.bodies[i].body,
+          uuid: this.bodies[i].uuid,
+          transform: transform
         });
       }
     }
