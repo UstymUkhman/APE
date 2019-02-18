@@ -9,7 +9,7 @@ import StaticBodies from 'physics/bodies/StaticBodies';
 // import VehicleBody from 'physics/bodies/VehicleBody';
 
 // import ClothBodies from 'physics/bodies/ClothBodies';
-// import SoftBodies from 'physics/bodies/SoftBodies';
+import SoftBodies from 'physics/bodies/SoftBodies';
 // import RopeBodies from 'physics/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
@@ -32,7 +32,7 @@ export default class PhysicsWorld {
       params: [soft]
     });
 
-    // this.soft = new SoftBodies();
+    this.soft = new SoftBodies(this.worker);
     // this.rope = new RopeBodies();
     // this.cloth = new ClothBodies();
 

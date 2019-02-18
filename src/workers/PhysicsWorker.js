@@ -16,6 +16,7 @@ let physics = null;
 
 class PhysicsWorker {
   constructor (soft) {
+    this._soft = soft;
     // this.vehicles = [];
 
     if (soft) {
@@ -96,8 +97,16 @@ class PhysicsWorker {
     this[props.type][method](props);
 
     const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
+    const staticType = props.type === 'static';
 
-    if (props.type !== 'static' && hasBody) {
+    if (this._soft && staticType && props.collider === 'Plane') {
+      Logger.warn(
+        'You\'re using a static plane in a soft world. It may not work as expected.',
+        'Please, consider replacing all Plane[Buffer]Geometries with a BoxGeometry.'
+      );
+    }
+
+    if (!staticType && hasBody) {
       this[props.type].update(this.transform, [{
         position: props.position,
         rotation: props.rotation,

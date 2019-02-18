@@ -4,6 +4,7 @@ import { Fog } from 'three/src/scenes/Fog';
 
 import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 import { Mesh } from 'three/src/objects/Mesh';
@@ -26,7 +27,7 @@ const GRAY = 0xA0A0A0;
 
 export default class Soft {
   constructor (container = document.body) {
-    this.physics = new PhysicsWorld();
+    this.physics = new PhysicsWorld(true);
     this.container = container;
     this.setSize();
 
@@ -53,6 +54,7 @@ export default class Soft {
   createGround () {
     const ground = new Mesh(
       new PlaneBufferGeometry(500, 500),
+      // new BoxGeometry(500, 500, 0.5),
       new MeshPhongMaterial({
         depthWrite: false,
         color: 0x888888
@@ -63,6 +65,8 @@ export default class Soft {
     ground.rotateX(-Math.PI / 2);
     this.physics.static.friction = 2.5;
     this.physics.static.addPlane(ground);
+    // this.physics.kinematic.friction = 2.5;
+    // this.physics.kinematic.addBox(ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);
     grid.material.transparent = true;
@@ -108,16 +112,33 @@ export default class Soft {
     );
 
     const dynamicBox = this.kinematicBox.clone();
+    const softBoxGeometry = new BufferGeometry().fromGeometry(
+      new BoxGeometry(5, 5, 5, 20, 20, 20)
+    );
 
+    softBoxGeometry.translate(-2.5, 10, 0);
     this.kinematicBox.position.y = 2.5;
     dynamicBox.position.x = -2.5;
     dynamicBox.position.y = 10;
 
+    const softBox = new Mesh(
+      softBoxGeometry,
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    softBox.frustumCulled = false;
+    softBox.receiveShadow = true;
+    softBox.castShadow = true;
+
+    this.physics.soft.addBody(softBox, 5, 200);
     this.physics.kinematic.addBox(this.kinematicBox);
-    this.physics.dynamic.addBox(dynamicBox, 10);
+    // this.physics.dynamic.addBox(dynamicBox, 10);
 
     this.scene.add(this.kinematicBox);
-    this.scene.add(dynamicBox);
+    // this.scene.add(dynamicBox);
+    this.scene.add(softBox);
   }
 
   createRenderer () {

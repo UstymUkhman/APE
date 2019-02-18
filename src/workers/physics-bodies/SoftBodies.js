@@ -23,9 +23,12 @@ export default class SoftBodies {
   /**
    * @constructs SoftBodies
    * @description - Initialize default parameters for soft bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   * @param {Object} world - Ammo.js soft/rigid dynamics world
    */
-  constructor (physicWorld) {
+  constructor (world) {
+    this.bodies = [];
+    this.world = world;
+
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
     this.stiffness = STIFFNESS;
@@ -33,9 +36,6 @@ export default class SoftBodies {
     this.viterations = VITERATIONS;
     this.piterations = PITERATIONS;
     this.collisions = SOFT_COLLISION;
-
-    this.bodies = [];
-    this.world = physicWorld;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -123,14 +123,14 @@ export default class SoftBodies {
    * @param {Number} mass - THREE.js mesh's mass
    * @param {Number} pressure - amount of force applied to the surface of the mesh
    */
-  addBody (mesh, mass, pressure) {
-    this._initGeometry(mesh.geometry);
+  addBody (props) {
+    this._initGeometry(props.geometry);
 
     const body = this.helpers.CreateFromTriMesh(
       this.world.getWorldInfo(),
-      mesh.geometry.ammoVertices,
-      mesh.geometry.ammoIndices,
-      mesh.geometry.ammoIndices.length / 3,
+      props.geometry.ammoVertices,
+      props.geometry.ammoIndices,
+      props.geometry.ammoIndices.length / 3,
       true
     );
 
@@ -140,20 +140,23 @@ export default class SoftBodies {
     bodyConfig.set_piterations(this.piterations);
     bodyConfig.set_collisions(this.collisions);
 
+    bodyConfig.set_kPR(props.pressure);
     bodyConfig.set_kDF(this.friction);
     bodyConfig.set_kDP(this.damping);
-    bodyConfig.set_kPR(pressure);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.get_m_materials().at(0).set_m_kLST(this.stiffness);
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass, false);
-
+    body.setTotalMass(props.mass, false);
     this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
-    this.bodies.push(mesh);
+
+    this.bodies.push({
+      geometry: props.geometry,
+      uuid: props.uuid,
+      body: body
+    });
   }
 
   /**
@@ -161,12 +164,15 @@ export default class SoftBodies {
    * @description - Update soft bodies in requestAnimation loop
    */
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
       const geometry = this.bodies[i].geometry;
+      const nodes = this.bodies[i].body.get_m_nodes();
+
       const association = geometry.ammoIndexAssociation;
       const volumeNormals = geometry.attributes.normal.array;
       const volumePositions = geometry.attributes.position.array;
-      const nodes = this.bodies[i].userData.physicsBody.get_m_nodes();
 
       for (let j = 0; j < association.length; j++) {
         const node = nodes.at(j);
@@ -196,8 +202,17 @@ export default class SoftBodies {
         }
       }
 
-      geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.normal.needsUpdate = true;
+      update.push({
+        positions: volumePositions,
+        uuid: this.bodies[i].uuid,
+        normals: volumeNormals
+      });
     }
+
+    self.postMessage({
+      action: 'updateBodies',
+      bodies: update,
+      type: 'soft'
+    });
   }
 }
