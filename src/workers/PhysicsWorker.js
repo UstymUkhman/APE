@@ -9,6 +9,7 @@ import SoftBodies from 'workers/physics-bodies/SoftBodies';
 import RopeBodies from 'workers/physics-bodies/RopeBodies';
 
 import { GRAVITY } from 'physics/constants';
+import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
 
@@ -93,18 +94,21 @@ class PhysicsWorker {
   }
 
   addBody (props) {
-    const method = `add${props.collider}`;
-    this[props.type][method](props);
-
-    const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
+    const plane = props.collider === 'Plane';
     const staticType = props.type === 'static';
+    const boxFallback = this._soft && staticType && plane;
+    const method = boxFallback ? 'addBox' : `add${props.collider}`;
 
-    if (this._soft && staticType && props.collider === 'Plane') {
+    if (boxFallback) {
+      assign(props.size, { depth: 1.0 });
       Logger.warn(
         'You\'re using a static plane in a soft world. It may not work as expected.',
-        'Please, consider replacing all Plane[Buffer]Geometries with a BoxGeometry.'
+        'Static box collider was used automatically as fallback for a PlaneGeometry.'
       );
     }
+
+    this[props.type][method](props);
+    const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
 
     if (!staticType && hasBody) {
       this[props.type].update(this.transform, [{
