@@ -14,7 +14,7 @@ import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
-// import { DoubleSide } from 'three/src/constants';
+import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
@@ -40,7 +40,7 @@ export default class Soft {
 
     // this.createObjects();
     this.createHinge();
-    // this.createCloth();
+    this.createCloth();
 
     this.createRenderer();
     this.createControls();
@@ -147,11 +147,11 @@ export default class Soft {
 
   createHinge () {
     const material = new MeshPhongMaterial({ color: 0x606060 });
+    const position = new Vector3(-3, 0.1, -5.5);
     const ropePosition = new Vector3(-3, 2, 0);
-    const position = new Vector3(-3, 0.1, -3);
 
-    const pylonHeight = 5;
-    const armLength = 3;
+    const pylonHeight = 10;
+    const armLength = 5.5;
 
     const base = this.createMesh(1, 0.2, 1, 0, position, material);
     position.set(ropePosition.x, 0.5 * pylonHeight, ropePosition.z - armLength);
@@ -159,22 +159,22 @@ export default class Soft {
     base.receiveShadow = true;
     base.castShadow = true;
 
-    const pylon = this.createMesh(0.4, pylonHeight, 0.4, 0, position, material);
+    const pylon = this.createMesh(0.5, pylonHeight, 0.5, 0, position, material);
     position.set(ropePosition.x, pylonHeight, ropePosition.z - 0.5 * armLength);
 
     pylon.receiveShadow = true;
     pylon.castShadow = true;
 
-    const arm = this.createMesh(0.4, 0.4, armLength + 0.4, 2.0, position, material);
+    this.arm = this.createMesh(0.5, 0.5, armLength + 0.5, 2.0, position, material);
 
-    arm.receiveShadow = true;
-    arm.castShadow = true;
+    this.arm.receiveShadow = true;
+    this.arm.castShadow = true;
 
     const armPivot = {x: 0.0, y: -0.2, z: -armLength * 0.5};
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    const hingeIndex = this.physics.hinge.add(pylon, arm, axis, pinPivot, armPivot);
+    const hingeIndex = this.physics.hinge.add(pylon, this.arm, axis, pinPivot, armPivot);
 
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {
@@ -208,24 +208,27 @@ export default class Soft {
   }
 
   createCloth () {
-    // const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
-    // const position = new Vector3(-2.5, 5.0, 0);
+    const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
+    const position = new Vector3(-3, 5, 0);
 
-    // geometry.translate(position.x, position.y + 2.5, -2.5);
-    // // geometry.rotateY(Math.PI * 0.5);
+    geometry.rotateY(Math.PI / 2.0);
+    geometry.translate(position.x, position.y + 2.5, position.z - 2.5);
 
-    // const cloth = new Mesh(
-    //   geometry,
-    //   new MeshPhongMaterial({
-    //     side: DoubleSide,
-    //     color: 0x222222
-    //   })
-    // );
+    const cloth = new Mesh(
+      geometry,
+      new MeshPhongMaterial({
+        side: DoubleSide,
+        color: 0x222222
+      })
+    );
 
-    // this.physics.cloth.addBody(cloth, 1, position);
-    // cloth.receiveShadow = true;
-    // cloth.castShadow = true;
-    // this.scene.add(cloth);
+    this.physics.cloth.addBody(cloth, 1, position);
+    this.physics.cloth.append(cloth, 25, this.arm);
+    this.physics.cloth.append(cloth, 0, this.arm);
+
+    cloth.receiveShadow = true;
+    cloth.castShadow = true;
+    this.scene.add(cloth);
   }
 
   createRenderer () {

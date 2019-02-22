@@ -152,6 +152,28 @@ class PhysicsWorker {
     }
   }
 
+  appendCloth (props) {
+    const target = find(this.dynamic.bodies, { uuid: props.target });
+    const cloth = find(this.cloth.bodies, { uuid: props.uuid });
+
+    if (!cloth) {
+      Logger.error(
+        'Cloth body was not found.'
+        `Make sure your mesh [${props.uuid}] has a cloth collider.`
+      );
+    }
+
+    if (!target) {
+      Logger.error(
+        'Target body was not found.'
+        `Make sure your mesh [${props.uuid}] has a dynamic collider.`
+      );
+    }
+
+    props.target = target.body;
+    this.cloth.append(props);
+  }
+
   _updateHingeProps (props) {
     let pin = null;
     let arm = null;

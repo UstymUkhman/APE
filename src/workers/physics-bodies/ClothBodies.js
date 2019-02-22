@@ -1,6 +1,7 @@
 // Cloth bodies class manager
 
 import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
 
 import {
   FRICTION,
@@ -87,6 +88,11 @@ export default class ClothBodies {
       uuid: props.uuid,
       body: body
     });
+  }
+
+  append (props) {
+    const body = find(this.bodies, { uuid: props.uuid }).body;
+    body.appendAnchor(props.point, props.target, false, props.influence);
   }
 
   /**

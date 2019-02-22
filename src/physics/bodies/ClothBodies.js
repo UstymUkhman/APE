@@ -42,6 +42,20 @@ export default class ClothBodies {
     this.bodies.push(mesh);
   }
 
+  append (mesh, point, target, influence = 0.5) {
+    this.worker.postMessage({
+      action: 'appendCloth',
+
+      params: {
+        influence: influence,
+        target: target.uuid,
+        collider: 'Body',
+        uuid: mesh.uuid,
+        point: point
+      }
+    });
+  }
+
   /**
    * @public
    * @description - Update cloth bodies in requestAnimation loop
