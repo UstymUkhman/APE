@@ -10,12 +10,12 @@ import { Ammo } from 'core/Ammo';
 import {
   POWER16,
   FRICTION,
-  STIFFNESS,
-  VITERATIONS,
-  PITERATIONS,
   SOFT_MARGIN,
   SOFT_DAMPING,
   SOFT_COLLISION,
+  SOFT_STIFFNESS,
+  SOFT_VITERATIONS,
+  SOFT_PITERATIONS,
   DISABLE_DEACTIVATION
 } from 'physics/constants';
 
@@ -31,11 +31,11 @@ export default class SoftBodies {
 
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
-    this.stiffness = STIFFNESS;
     this.damping = SOFT_DAMPING;
-    this.viterations = VITERATIONS;
-    this.piterations = PITERATIONS;
+    this.stiffness = SOFT_STIFFNESS;
     this.collisions = SOFT_COLLISION;
+    this.viterations = SOFT_VITERATIONS;
+    this.piterations = SOFT_PITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();

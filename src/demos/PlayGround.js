@@ -146,10 +146,13 @@ export default class Soft {
 
   createCloth () {
     const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
-    const position = new Vector3(-2.5, 7.5, 0);
+    const position = new Vector3(-2.5, 5.0, 0);
 
-    geometry.translate(position.x, position.y + 2.5, -2.5);
-    // geometry.rotateY(Math.PI / 2.0);
+    // geometry.translate(position.x, position.y + 2.5, -2.5);
+    // geometry.rotateY(Math.PI * 0.5);
+    geometry.translate(position.x, position.y, position.z);
+    console.log(geometry);
+    // geometry.rotation.set(0.0, Math.PI * 0.5, 0.0);
 
     const cloth = new Mesh(
       geometry,

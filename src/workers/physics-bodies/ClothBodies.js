@@ -1,7 +1,17 @@
 // Cloth bodies class manager
 
-import { SOFT_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Ammo } from 'core/Ammo';
+
+import {
+  FRICTION,
+  CLOTH_MARGIN,
+  CLOTH_DAMPING,
+  SOFT_COLLISION,
+  CLOTH_STIFFNESS,
+  CLOTH_VITERATIONS,
+  CLOTH_PITERATIONS,
+  DISABLE_DEACTIVATION
+} from 'physics/constants';
 
 export default class ClothBodies {
   /**
@@ -12,7 +22,14 @@ export default class ClothBodies {
   constructor (world) {
     this.bodies = [];
     this.world = world;
-    this.margin = SOFT_MARGIN;
+
+    this.friction = FRICTION;
+    this.margin = CLOTH_MARGIN;
+    this.damping = CLOTH_DAMPING;
+    this.stiffness = CLOTH_STIFFNESS;
+    this.collisions = SOFT_COLLISION;
+    this.viterations = CLOTH_VITERATIONS;
+    this.piterations = CLOTH_PITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -33,6 +50,8 @@ export default class ClothBodies {
     const height = props.geometry.parameters.height;
     const width = props.geometry.parameters.width;
 
+    console.log(props.position);
+
     /* eslint-disable new-cap */
     const clothCorner00 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z);
     const clothCorner01 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z - width);
@@ -48,11 +67,19 @@ export default class ClothBodies {
       0, true
     );
 
-    const sbConfig = body.get_m_cfg();
-    sbConfig.set_viterations(10);
-    sbConfig.set_piterations(10);
+    const bodyConfig = body.get_m_cfg();
 
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin * 3);
+    bodyConfig.set_viterations(this.viterations);
+    bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_collisions(this.collisions);
+
+    bodyConfig.set_kDF(this.friction);
+    bodyConfig.set_kDP(this.damping);
+
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
+    body.get_m_materials().at(0).set_m_kLST(this.stiffness);
+    body.get_m_materials().at(0).set_m_kAST(this.stiffness);
+
     body.setActivationState(DISABLE_DEACTIVATION);
     body.setTotalMass(props.mass, false);
     this.world.addSoftBody(body, 1, -1);
