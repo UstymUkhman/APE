@@ -50,8 +50,6 @@ export default class ClothBodies {
     const height = props.geometry.parameters.height;
     const width = props.geometry.parameters.width;
 
-    console.log(props.position);
-
     /* eslint-disable new-cap */
     const clothCorner00 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z);
     const clothCorner01 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z - width);

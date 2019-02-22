@@ -27,6 +27,9 @@ export const CLOTH_STIFFNESS = 1.0;
 export const CLOTH_VITERATIONS = 10;
 export const CLOTH_PITERATIONS = 10;
 
+// Rope Body constants:
+export const ROPE_MARGIN = 0.1;
+
 // Vehicle Body constants:
 export const BREAK_FORCE = 100.0;
 export const STEERING_STEP = 0.04;

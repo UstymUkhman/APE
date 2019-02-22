@@ -14,7 +14,7 @@ import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
-import { DoubleSide } from 'three/src/constants';
+// import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
@@ -39,7 +39,8 @@ export default class Soft {
     this.createCamera();
 
     // this.createObjects();
-    this.createCloth();
+    this.createHinge();
+    // this.createCloth();
 
     this.createRenderer();
     this.createControls();
@@ -144,28 +145,87 @@ export default class Soft {
     this.scene.add(softBox);
   }
 
+  createHinge () {
+    const material = new MeshPhongMaterial({ color: 0x606060 });
+    const ropePosition = new Vector3(-3, 2, 0);
+    const position = new Vector3(-3, 0.1, -3);
+
+    const pylonHeight = 5;
+    const armLength = 3;
+
+    const base = this.createMesh(1, 0.2, 1, 0, position, material);
+    position.set(ropePosition.x, 0.5 * pylonHeight, ropePosition.z - armLength);
+
+    base.receiveShadow = true;
+    base.castShadow = true;
+
+    const pylon = this.createMesh(0.4, pylonHeight, 0.4, 0, position, material);
+    position.set(ropePosition.x, pylonHeight, ropePosition.z - 0.5 * armLength);
+
+    pylon.receiveShadow = true;
+    pylon.castShadow = true;
+
+    const arm = this.createMesh(0.4, 0.4, armLength + 0.4, 2.0, position, material);
+
+    arm.receiveShadow = true;
+    arm.castShadow = true;
+
+    const armPivot = {x: 0.0, y: -0.2, z: -armLength * 0.5};
+    const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
+    const axis = {x: 0, y: 1, z: 0};
+
+    const hingeIndex = this.physics.hinge.add(pylon, arm, axis, pinPivot, armPivot);
+
+    window.addEventListener('keydown', event => {
+      switch (event.keyCode) {
+        case 81:
+          this.physics.hinge.update(hingeIndex, 1);
+          break;
+
+        case 65:
+          this.physics.hinge.update(hingeIndex, -1);
+          break;
+      }
+    }, false);
+
+    window.addEventListener('keyup', () => {
+      this.physics.hinge.update(hingeIndex, 0);
+    }, false);
+  }
+
+  createMesh (sx, sy, sz, mass, pos, material) {
+    const mesh = new Mesh(new BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+    mesh.position.set(pos.x, pos.y, pos.z);
+
+    if (mass) {
+      this.physics.dynamic.addBox(mesh, mass);
+    } else {
+      this.physics.static.addBox(mesh);
+    }
+
+    this.scene.add(mesh);
+    return mesh;
+  }
+
   createCloth () {
-    const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
-    const position = new Vector3(-2.5, 5.0, 0);
+    // const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
+    // const position = new Vector3(-2.5, 5.0, 0);
 
     // geometry.translate(position.x, position.y + 2.5, -2.5);
-    // geometry.rotateY(Math.PI * 0.5);
-    geometry.translate(position.x, position.y, position.z);
-    console.log(geometry);
-    // geometry.rotation.set(0.0, Math.PI * 0.5, 0.0);
+    // // geometry.rotateY(Math.PI * 0.5);
 
-    const cloth = new Mesh(
-      geometry,
-      new MeshPhongMaterial({
-        side: DoubleSide,
-        color: 0x222222
-      })
-    );
+    // const cloth = new Mesh(
+    //   geometry,
+    //   new MeshPhongMaterial({
+    //     side: DoubleSide,
+    //     color: 0x222222
+    //   })
+    // );
 
-    this.physics.cloth.addBody(cloth, 1, position);
-    cloth.receiveShadow = true;
-    cloth.castShadow = true;
-    this.scene.add(cloth);
+    // this.physics.cloth.addBody(cloth, 1, position);
+    // cloth.receiveShadow = true;
+    // cloth.castShadow = true;
+    // this.scene.add(cloth);
   }
 
   createRenderer () {
@@ -182,8 +242,8 @@ export default class Soft {
     this.orbitControls.target.set(0, 0, 25);
     this.orbitControls.update();
 
-    this._onKeyDown = this.onKeyDown.bind(this);
-    document.addEventListener('keydown', this._onKeyDown);
+    // this._onKeyDown = this.onKeyDown.bind(this);
+    // document.addEventListener('keydown', this._onKeyDown);
   }
 
   createEvents () {

@@ -9,9 +9,11 @@ import SoftBodies from 'workers/physics-bodies/SoftBodies';
 import RopeBodies from 'workers/physics-bodies/RopeBodies';
 
 import { GRAVITY } from 'physics/constants';
-import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
+
+import assign from 'lodash/assign';
+import find from 'lodash/find';
 
 let physics = null;
 
@@ -113,6 +115,10 @@ class PhysicsWorker {
       );
     }
 
+    if (props.type === 'hinge') {
+      this._updateHingeProps(props);
+    }
+
     this[props.type][method](props);
     const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
 
@@ -134,12 +140,50 @@ class PhysicsWorker {
     this.world.stepSimulation(params.delta, 10);
   }
 
+  updateHingeBodies (params) {
+    this.hinge.update(params);
+  }
+
   updateConstants (props) {
     const constants = props.constants;
 
     for (const constant in constants) {
       this[props.type][constant] = constants[constant];
     }
+  }
+
+  _updateHingeProps (props) {
+    let pin = null;
+    let arm = null;
+
+    pin = find(this.static.bodies, { uuid: props.pin });
+    arm = find(this.dynamic.bodies, { uuid: props.arm });
+
+    if (!pin) {
+      pin = find(this.kinematic.bodies, { uuid: props.pin });
+    }
+
+    if (!pin) {
+      pin = find(this.dynamic.bodies, { uuid: props.pin });
+    }
+
+    if (!pin) {
+      Logger.error(
+        'Hinge pin\'s collider was not found.'
+        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:`,
+        'static (recommended); kinematic or dynamic.'
+      );
+    }
+
+    if (!arm) {
+      Logger.error(
+        'Hinge arm\'s collider was not found.'
+        `Make sure to add a dynamic body to your arm mesh [${props.arm}].`
+      );
+    }
+
+    props.pin = pin.body;
+    props.arm = arm.body;
   }
 }
 

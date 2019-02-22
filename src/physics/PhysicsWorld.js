@@ -5,7 +5,7 @@ import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
 import KinematicBodies from 'physics/bodies/KinematicBodies';
 import DynamicBodies from 'physics/bodies/DynamicBodies';
 import StaticBodies from 'physics/bodies/StaticBodies';
-// import HingeBodies from 'physics/bodies/HingeBodies';
+import HingeBodies from 'physics/bodies/HingeBodies';
 // import VehicleBody from 'physics/bodies/VehicleBody';
 
 import ClothBodies from 'physics/bodies/ClothBodies';
@@ -33,10 +33,10 @@ export default class PhysicsWorld {
     });
 
     this.soft = new SoftBodies(this.worker);
-    // this.rope = new RopeBodies();
+    // this.rope = new RopeBodies(this.worker);
     this.cloth = new ClothBodies(this.worker);
 
-    // this.hinge = new HingeBodies();
+    this.hinge = new HingeBodies(this.worker);
     this.static = new StaticBodies(this.worker);
     this.dynamic = new DynamicBodies(this.worker);
     this.kinematic = new KinematicBodies(this.worker);

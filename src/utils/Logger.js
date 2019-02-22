@@ -4,7 +4,7 @@ export default class Logger {
   /**
    * @static
    * @description - print message with `console.info`
-   * @param {...*} - max 2 arguments of differebt types
+   * @param {...*} - max 2 arguments of different types
    */
   static info () {
     const message = Logger._getMessage(arguments);
@@ -19,7 +19,7 @@ export default class Logger {
   /**
    * @static
    * @description - print message with `console.warn`
-   * @param {...*} - max 2 arguments of differebt types
+   * @param {...*} - max 2 arguments of different types
    */
   static warn () {
     const warning = Logger._getMessage(arguments);
@@ -34,7 +34,7 @@ export default class Logger {
   /**
    * @static
    * @description - print message with `console.error`
-   * @param {...*} - max 2 arguments of differebt types
+   * @param {...*} - max 2 arguments of different types
    */
   static error () {
     const error = Logger._getMessage(arguments);

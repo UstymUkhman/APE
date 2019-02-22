@@ -2,18 +2,19 @@
 
 import { Vector3 } from 'three/src/math/Vector3';
 import { HINGE_FORCE } from 'physics/constants';
-import { Ammo } from 'core/Ammo';
 
 export default class HingeBodies {
   /**
    * @constructs HingeBodies
-   * @description - Initialize default parameters for hinge bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   * @param {Object} worker - web worker used by parent class
+   * @description - Initialize default parameters for rope bodies
    */
-  constructor (physicWorld) {
-    this.bodies = [];
-    this.world = physicWorld;
-    this.force = HINGE_FORCE;
+  constructor (worker) {
+    this._bodies = 0;
+    this.worker = worker;
+
+    this.constants = { force: HINGE_FORCE };
+    worker.postMessage({action: 'initHingeBodies'});
   }
 
   /**
@@ -26,29 +27,30 @@ export default class HingeBodies {
    * @param {Object} armPivot - arm's pivot position
    */
   add (pinMesh, armMesh, axis, pinPivot = new Vector3(), armPivot = new Vector3()) {
-    /* eslint-disable new-cap */
-    const armAxis = new Ammo.btVector3(axis.x, axis.y, axis.z);
+    this.worker.postMessage({
+      action: 'addBody',
 
-    const hinge = new Ammo.btHingeConstraint(
-      pinMesh.userData.physicsBody, armMesh.userData.physicsBody,
-      new Ammo.btVector3(pinPivot.x, pinPivot.y, pinPivot.z),
-      new Ammo.btVector3(armPivot.x, armPivot.y, armPivot.z),
-      armAxis, armAxis, true
-    );
+      params: {
+        collider: 'Bodies',
+        pinPivot: pinPivot,
+        armPivot: armPivot,
+        pin: pinMesh.uuid,
+        arm: armMesh.uuid,
+        type: 'hinge',
+        axis: axis
+      }
+    });
 
-    /* eslint-enable new-cap */
-    this.world.addConstraint(hinge, true);
-    this.bodies.push(hinge);
+    return this._bodies++;
   }
 
-  /**
-   * @public
-   * @description - Update hinge bodies in requestAnimation loop
-   * @param {Number} direction - arm's movement amount along it's rotation axis/axes
-   */
-  update (direction) {
-    for (let i = 0; i < this.bodies.length; i++) {
-      this.bodies[i].enableAngularMotor(true, direction, this.force);
-    }
+  update (bodyIndex, direction) {
+    this.worker.postMessage({
+      action: 'updateHingeBodies',
+      params: {
+        direction: direction,
+        index: bodyIndex
+      }
+    });
   }
 }

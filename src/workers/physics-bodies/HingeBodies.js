@@ -1,18 +1,17 @@
 // Hinge bodies class manager
 
-import { Vector3 } from 'three/src/math/Vector3';
 import { HINGE_FORCE } from 'physics/constants';
 import { Ammo } from 'core/Ammo';
 
 export default class HingeBodies {
   /**
    * @constructs HingeBodies
-   * @description - Initialize default parameters for hinge bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
+   * @param {Object} world - Ammo.js soft/rigid dynamics world
+   * @description - Initialize default parameters for cloth bodies
    */
-  constructor (physicWorld) {
+  constructor (world) {
     this.bodies = [];
-    this.world = physicWorld;
+    this.world = world;
     this.force = HINGE_FORCE;
   }
 
@@ -25,14 +24,14 @@ export default class HingeBodies {
    * @param {Object} pinPivot - pin's pivot position
    * @param {Object} armPivot - arm's pivot position
    */
-  add (pinMesh, armMesh, axis, pinPivot = new Vector3(), armPivot = new Vector3()) {
+  addBodies (props) {
     /* eslint-disable new-cap */
-    const armAxis = new Ammo.btVector3(axis.x, axis.y, axis.z);
+    const armAxis = new Ammo.btVector3(props.axis.x, props.axis.y, props.axis.z);
 
     const hinge = new Ammo.btHingeConstraint(
-      pinMesh.userData.physicsBody, armMesh.userData.physicsBody,
-      new Ammo.btVector3(pinPivot.x, pinPivot.y, pinPivot.z),
-      new Ammo.btVector3(armPivot.x, armPivot.y, armPivot.z),
+      props.pin, props.arm,
+      new Ammo.btVector3(props.pinPivot.x, props.pinPivot.y, props.pinPivot.z),
+      new Ammo.btVector3(props.armPivot.x, props.armPivot.y, props.armPivot.z),
       armAxis, armAxis, true
     );
 
@@ -46,9 +45,11 @@ export default class HingeBodies {
    * @description - Update hinge bodies in requestAnimation loop
    * @param {Number} direction - arm's movement amount along it's rotation axis/axes
    */
-  update (direction) {
-    for (let i = 0; i < this.bodies.length; i++) {
-      this.bodies[i].enableAngularMotor(true, direction, this.force);
+  update (params) {
+    const body = this.bodies[params.index];
+
+    if (body) {
+      body.enableAngularMotor(true, params.direction, this.force);
     }
   }
 }

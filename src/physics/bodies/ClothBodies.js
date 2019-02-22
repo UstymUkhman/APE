@@ -14,10 +14,7 @@ export default class ClothBodies {
     this.bodies = [];
     this.worker = worker;
 
-    this.constants = {
-      margin: SOFT_MARGIN
-    };
-
+    this.constants = { margin: SOFT_MARGIN };
     worker.postMessage({action: 'initClothBodies'});
   }
 

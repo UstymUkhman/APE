@@ -1,19 +1,19 @@
 // Rope bodies class manager
 
-import { MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
-import { Vector3 } from 'three/src/math/Vector3';
+import { ROPE_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
+// import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
 
 export default class RopeBodies {
   /**
    * @constructs RopeBodies
+   * @param {Object} world - Ammo.js soft/rigid dynamics world
    * @description - Initialize default parameters for rope bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
    */
-  constructor (physicWorld) {
+  constructor (world) {
     this.bodies = [];
-    this.world = physicWorld;
-    this.margin = MARGIN * 3;
+    this.world = world;
+    this.margin = ROPE_MARGIN;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -28,28 +28,31 @@ export default class RopeBodies {
    * @param {Number} mass - rope's mass
    * @param {Object} position - rope's position in scene
    */
-  addBody (mesh, length, mass, position = new Vector3()) {
-    const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
+  addBody (props) {
+    const segments = props.geometry.attributes.position.array.length / 3 - 2;
 
     /* eslint-disable new-cap */
-    const start = new Ammo.btVector3(position.x, position.y, position.z);
-    const end = new Ammo.btVector3(position.x, position.y + length, position.z);
+    const start = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
+    const end = new Ammo.btVector3(props.position.x, props.position.y + props.length, props.position.z);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
     const config = body.get_m_cfg();
 
-    body.setTotalMass(mass, false);
+    body.setTotalMass(props.mass, false);
 
     config.set_viterations(10);
     config.set_piterations(10);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.setActivationState(DISABLE_DEACTIVATION);
-
     this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
-    this.bodies.push(mesh);
+
+    this.bodies.push({
+      geometry: props.geometry,
+      uuid: props.uuid,
+      body: body
+    });
   }
 
   /**

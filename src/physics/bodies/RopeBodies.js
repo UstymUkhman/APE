@@ -1,23 +1,20 @@
 // Rope bodies class manager
 
-import { MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Vector3 } from 'three/src/math/Vector3';
-import { Ammo } from 'core/Ammo';
+import { MARGIN } from 'physics/constants';
 
 export default class RopeBodies {
   /**
    * @constructs RopeBodies
+   * @param {Object} worker - web worker used by parent class
    * @description - Initialize default parameters for rope bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
    */
-  constructor (physicWorld) {
+  constructor (worker) {
     this.bodies = [];
-    this.world = physicWorld;
-    this.margin = MARGIN * 3;
+    this.worker = worker;
 
-    /* eslint-disable new-cap */
-    this.helpers = new Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+    this.constants = { margin: MARGIN };
+    worker.postMessage({action: 'initRopeBodies'});
   }
 
   /**
@@ -29,26 +26,20 @@ export default class RopeBodies {
    * @param {Object} position - rope's position in scene
    */
   addBody (mesh, length, mass, position = new Vector3()) {
-    const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
+    this.worker.postMessage({
+      action: 'addBody',
 
-    /* eslint-disable new-cap */
-    const start = new Ammo.btVector3(position.x, position.y, position.z);
-    const end = new Ammo.btVector3(position.x, position.y + length, position.z);
-    /* eslint-enable new-cap */
+      params: {
+        geometry: mesh.geometry,
+        position: position,
+        collider: 'Body',
+        uuid: mesh.uuid,
+        length: length,
+        type: 'rope',
+        mass: mass
+      }
+    });
 
-    const body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
-    const config = body.get_m_cfg();
-
-    body.setTotalMass(mass, false);
-
-    config.set_viterations(10);
-    config.set_piterations(10);
-
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
-    body.setActivationState(DISABLE_DEACTIVATION);
-
-    this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
     this.bodies.push(mesh);
   }
 

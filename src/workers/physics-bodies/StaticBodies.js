@@ -13,6 +13,7 @@ export default class StaticBodies extends RigidBody {
    */
   constructor (world) {
     super();
+    this.bodies = [];
     this.world = world;
   }
 
@@ -85,6 +86,7 @@ export default class StaticBodies extends RigidBody {
   _addStaticBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setActivationState(DISABLE_DEACTIVATION);
+    this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
   }
 }
