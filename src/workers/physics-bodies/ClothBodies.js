@@ -1,18 +1,17 @@
 // Cloth bodies class manager
 
 import { SOFT_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
-import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
 
 export default class ClothBodies {
   /**
    * @constructs ClothBodies
+   * @param {Object} world - Ammo.js soft/rigid dynamics world
    * @description - Initialize default parameters for cloth bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
    */
-  constructor (physicWorld) {
+  constructor (world) {
     this.bodies = [];
-    this.world = physicWorld;
+    this.world = world;
     this.margin = SOFT_MARGIN;
 
     /* eslint-disable new-cap */
@@ -27,18 +26,18 @@ export default class ClothBodies {
    * @param {Number} mass - THREE.js mesh's mass
    * @param {Object} position - mesh's position in scene
    */
-  addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
-    const heightSegments = mesh.geometry.parameters.heightSegments;
-    const widthSegments = mesh.geometry.parameters.widthSegments;
+  addBody (props) {
+    const heightSegments = props.geometry.parameters.heightSegments;
+    const widthSegments = props.geometry.parameters.widthSegments;
 
-    const height = mesh.geometry.parameters.height;
-    const width = mesh.geometry.parameters.width;
+    const height = props.geometry.parameters.height;
+    const width = props.geometry.parameters.width;
 
     /* eslint-disable new-cap */
-    const clothCorner00 = new Ammo.btVector3(position.x, position.y + height, position.z);
-    const clothCorner01 = new Ammo.btVector3(position.x, position.y + height, position.z - width);
-    const clothCorner10 = new Ammo.btVector3(position.x, position.y, position.z);
-    const clothCorner11 = new Ammo.btVector3(position.x, position.y, position.z - width);
+    const clothCorner00 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z);
+    const clothCorner01 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z - width);
+    const clothCorner10 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
+    const clothCorner11 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z - width);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreatePatch(
@@ -50,17 +49,19 @@ export default class ClothBodies {
     );
 
     const sbConfig = body.get_m_cfg();
-
     sbConfig.set_viterations(10);
     sbConfig.set_piterations(10);
 
-    body.setTotalMass(mass, false);
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin * 3);
-
     body.setActivationState(DISABLE_DEACTIVATION);
+    body.setTotalMass(props.mass, false);
     this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
-    this.bodies.push(mesh);
+
+    this.bodies.push({
+      geometry: props.geometry,
+      uuid: props.uuid,
+      body: body
+    });
   }
 
   /**
@@ -68,10 +69,12 @@ export default class ClothBodies {
    * @description - Update cloth bodies in requestAnimation loop
    */
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
-      const cloth = this.bodies[i];
-      const body = cloth.userData.physicsBody;
-      const positions = cloth.geometry.attributes.position.array;
+      const body = this.bodies[i].body;
+      const geometry = this.bodies[i].geometry;
+      const positions = geometry.attributes.position.array;
 
       const vertices = positions.length / 3;
       const nodes = body.get_m_nodes();
@@ -84,9 +87,16 @@ export default class ClothBodies {
         positions[index + 2] = nodePosition.z();
       }
 
-      cloth.geometry.attributes.position.needsUpdate = true;
-      cloth.geometry.attributes.normal.needsUpdate = true;
-      cloth.geometry.computeVertexNormals();
+      update.push({
+        uuid: this.bodies[i].uuid,
+        positions: positions
+      });
     }
+
+    self.postMessage({
+      action: 'updateBodies',
+      bodies: update,
+      type: 'cloth'
+    });
   }
 }

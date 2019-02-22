@@ -17,7 +17,7 @@ export const ANGULAR_DAMPING = 0.0;
 export const STIFFNESS = 0.9;
 export const VITERATIONS = 40;
 export const PITERATIONS = 40;
-export const SOFT_MARGIN = 0.0;
+export const SOFT_MARGIN = 0.05;
 export const SOFT_DAMPING = 0.01;
 
 // Vehicle Body constants:

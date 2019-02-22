@@ -8,7 +8,7 @@ import StaticBodies from 'physics/bodies/StaticBodies';
 // import HingeBodies from 'physics/bodies/HingeBodies';
 // import VehicleBody from 'physics/bodies/VehicleBody';
 
-// import ClothBodies from 'physics/bodies/ClothBodies';
+import ClothBodies from 'physics/bodies/ClothBodies';
 import SoftBodies from 'physics/bodies/SoftBodies';
 // import RopeBodies from 'physics/bodies/RopeBodies';
 
@@ -34,7 +34,7 @@ export default class PhysicsWorld {
 
     this.soft = new SoftBodies(this.worker);
     // this.rope = new RopeBodies();
-    // this.cloth = new ClothBodies();
+    this.cloth = new ClothBodies(this.worker);
 
     // this.hinge = new HingeBodies();
     this.static = new StaticBodies(this.worker);

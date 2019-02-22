@@ -72,6 +72,7 @@ export default class KinematicBodies extends RigidBody {
    */
   update () {
     const bodies = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
       const mesh = this.bodies[i];
 

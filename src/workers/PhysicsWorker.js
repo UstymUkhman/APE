@@ -94,16 +94,22 @@ class PhysicsWorker {
   }
 
   addBody (props) {
+    let staticType = props.type === 'static';
     const plane = props.collider === 'Plane';
-    const staticType = props.type === 'static';
+
     const boxFallback = this._soft && staticType && plane;
     const method = boxFallback ? 'addBox' : `add${props.collider}`;
+    const constants = boxFallback ? this.kinematic.constants : null;
 
     if (boxFallback) {
-      assign(props.size, { depth: 1.0 });
+      this.kinematic.constants = this.static.constants;
+      assign(props.size, { depth: 0.25 });
+      props.type = 'kinematic';
+      staticType = false;
+
       Logger.warn(
         'You\'re using a static plane in a soft world. It may not work as expected.',
-        'Static box collider was used automatically as fallback for a PlaneGeometry.'
+        'Kinematic box collider was used automatically as fallback for a PlaneGeometry.'
       );
     }
 
@@ -116,6 +122,10 @@ class PhysicsWorker {
         rotation: props.rotation,
         uuid: props.uuid
       }]);
+    }
+
+    if (boxFallback) {
+      this.kinematic.constants = constants;
     }
   }
 

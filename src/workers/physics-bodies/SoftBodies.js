@@ -22,8 +22,8 @@ import {
 export default class SoftBodies {
   /**
    * @constructs SoftBodies
-   * @description - Initialize default parameters for soft bodies
    * @param {Object} world - Ammo.js soft/rigid dynamics world
+   * @description - Initialize default parameters for soft bodies
    */
   constructor (world) {
     this.bodies = [];

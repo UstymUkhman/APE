@@ -132,4 +132,22 @@ export default class RigidBody {
       shape.setMargin(this.margin);
     }
   }
+
+  set constants (values) {
+    for (const constant in values) {
+      this[constant] = values[constant];
+    }
+  }
+
+  get constants () {
+    return {
+      angularDamping: this.angularDamping,
+      linearDamping: this.linearDamping,
+      angularFactor: this.angularFactor,
+      linearFactor: this.linearFactor,
+      restitution: this.restitution,
+      friction: this.friction,
+      margin: this.margin
+    };
+  }
 }

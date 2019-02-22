@@ -14,6 +14,8 @@ import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
+import { DoubleSide } from 'three/src/constants';
+import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
 import PhysicsWorld from 'physics/PhysicsWorld';
@@ -36,7 +38,8 @@ export default class Soft {
     this.createLights();
     this.createCamera();
 
-    this.createObjects();
+    // this.createObjects();
+    this.createCloth();
 
     this.createRenderer();
     this.createControls();
@@ -139,6 +142,27 @@ export default class Soft {
     this.scene.add(this.kinematicBox);
     // this.scene.add(dynamicBox);
     this.scene.add(softBox);
+  }
+
+  createCloth () {
+    const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
+    const position = new Vector3(-2.5, 7.5, 0);
+
+    geometry.translate(position.x, position.y + 2.5, -2.5);
+    // geometry.rotateY(Math.PI / 2.0);
+
+    const cloth = new Mesh(
+      geometry,
+      new MeshPhongMaterial({
+        side: DoubleSide,
+        color: 0x222222
+      })
+    );
+
+    this.physics.cloth.addBody(cloth, 1, position);
+    cloth.receiveShadow = true;
+    cloth.castShadow = true;
+    this.scene.add(cloth);
   }
 
   createRenderer () {

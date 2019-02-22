@@ -1,23 +1,24 @@
 // Cloth bodies class manager
 
-import { SOFT_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
 import { Vector3 } from 'three/src/math/Vector3';
-import { Ammo } from 'core/Ammo';
+import { SOFT_MARGIN } from 'physics/constants';
+import find from 'lodash/find';
 
 export default class ClothBodies {
   /**
    * @constructs ClothBodies
+   * @param {Object} worker - web worker used by parent class
    * @description - Initialize default parameters for cloth bodies
-   * @param {Object} physicWorld - Ammo.js soft/rigid dynamics world
    */
-  constructor (physicWorld) {
+  constructor (worker) {
     this.bodies = [];
-    this.world = physicWorld;
-    this.margin = SOFT_MARGIN;
+    this.worker = worker;
 
-    /* eslint-disable new-cap */
-    this.helpers = new Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+    this.constants = {
+      margin: SOFT_MARGIN
+    };
+
+    worker.postMessage({action: 'initClothBodies'});
   }
 
   /**
@@ -28,38 +29,19 @@ export default class ClothBodies {
    * @param {Object} position - mesh's position in scene
    */
   addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
-    const heightSegments = mesh.geometry.parameters.heightSegments;
-    const widthSegments = mesh.geometry.parameters.widthSegments;
+    this.worker.postMessage({
+      action: 'addBody',
 
-    const height = mesh.geometry.parameters.height;
-    const width = mesh.geometry.parameters.width;
+      params: {
+        geometry: mesh.geometry,
+        position: position,
+        collider: 'Body',
+        uuid: mesh.uuid,
+        type: 'cloth',
+        mass: mass
+      }
+    });
 
-    /* eslint-disable new-cap */
-    const clothCorner00 = new Ammo.btVector3(position.x, position.y + height, position.z);
-    const clothCorner01 = new Ammo.btVector3(position.x, position.y + height, position.z - width);
-    const clothCorner10 = new Ammo.btVector3(position.x, position.y, position.z);
-    const clothCorner11 = new Ammo.btVector3(position.x, position.y, position.z - width);
-    /* eslint-enable new-cap */
-
-    const body = this.helpers.CreatePatch(
-      this.world.getWorldInfo(),
-      clothCorner00, clothCorner01,
-      clothCorner10, clothCorner11,
-      widthSegments + 1, heightSegments + 1,
-      0, true
-    );
-
-    const sbConfig = body.get_m_cfg();
-
-    sbConfig.set_viterations(10);
-    sbConfig.set_piterations(10);
-
-    body.setTotalMass(mass, false);
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin * 3);
-
-    body.setActivationState(DISABLE_DEACTIVATION);
-    this.world.addSoftBody(body, 1, -1);
-    mesh.userData.physicsBody = body;
     this.bodies.push(mesh);
   }
 
@@ -67,26 +49,36 @@ export default class ClothBodies {
    * @public
    * @description - Update cloth bodies in requestAnimation loop
    */
-  update () {
-    for (let i = 0; i < this.bodies.length; i++) {
-      const cloth = this.bodies[i];
-      const body = cloth.userData.physicsBody;
-      const positions = cloth.geometry.attributes.position.array;
+  update (bodies) {
+    for (let i = 0; i < bodies.length; i++) {
+      const body = find(this.bodies, { uuid: bodies[i].uuid });
+      const position = body.geometry.attributes.position;
+      const normal = body.geometry.attributes.normal;
 
-      const vertices = positions.length / 3;
-      const nodes = body.get_m_nodes();
+      position.array = bodies[i].positions;
+      position.needsUpdate = true;
+      normal.needsUpdate = true;
 
-      for (let j = 0, index = 0; j < vertices; j++, index += 3) {
-        const nodePosition = nodes.at(j).get_m_x();
-
-        positions[index] = nodePosition.x();
-        positions[index + 1] = nodePosition.y();
-        positions[index + 2] = nodePosition.z();
-      }
-
-      cloth.geometry.attributes.position.needsUpdate = true;
-      cloth.geometry.attributes.normal.needsUpdate = true;
-      cloth.geometry.computeVertexNormals();
+      body.geometry.computeVertexNormals();
     }
+  }
+
+  _updateConstants () {
+    this.worker.postMessage({
+      action: 'updateConstants',
+      params: {
+        constants: this.constants,
+        type: 'cloth'
+      }
+    });
+  }
+
+  set margin (value) {
+    this.constants.margin = value;
+    this._updateConstants();
+  }
+
+  get margin () {
+    return this.constants.margin;
   }
 }
