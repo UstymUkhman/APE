@@ -158,14 +158,14 @@ class PhysicsWorker {
 
     if (!cloth) {
       Logger.error(
-        'Cloth body was not found.'
+        'Cloth body was not found.',
         `Make sure your mesh [${props.uuid}] has a cloth collider.`
       );
     }
 
     if (!target) {
       Logger.error(
-        'Target body was not found.'
+        'Target body was not found.',
         `Make sure your mesh [${props.uuid}] has a dynamic collider.`
       );
     }
@@ -191,7 +191,7 @@ class PhysicsWorker {
 
     if (!pin) {
       Logger.error(
-        'Hinge pin\'s collider was not found.'
+        'Hinge pin\'s collider was not found.',
         `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:`,
         'static (recommended); kinematic or dynamic.'
       );
@@ -199,7 +199,7 @@ class PhysicsWorker {
 
     if (!arm) {
       Logger.error(
-        'Hinge arm\'s collider was not found.'
+        'Hinge arm\'s collider was not found.',
         `Make sure to add a dynamic body to your arm mesh [${props.arm}].`
       );
     }
