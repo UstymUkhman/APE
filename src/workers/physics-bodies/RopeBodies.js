@@ -1,8 +1,14 @@
 // Rope bodies class manager
 
-import { ROPE_MARGIN, DISABLE_DEACTIVATION } from 'physics/constants';
-// import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
+
+import {
+  ROPE_MARGIN,
+  ROPE_VITERATIONS,
+  ROPE_PITERATIONS,
+  DISABLE_DEACTIVATION
+} from 'physics/constants';
 
 export default class RopeBodies {
   /**
@@ -13,7 +19,10 @@ export default class RopeBodies {
   constructor (world) {
     this.bodies = [];
     this.world = world;
+
     this.margin = ROPE_MARGIN;
+    this.viterations = ROPE_VITERATIONS;
+    this.piterations = ROPE_PITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -41,8 +50,8 @@ export default class RopeBodies {
 
     body.setTotalMass(props.mass, false);
 
-    config.set_viterations(10);
-    config.set_piterations(10);
+    config.set_viterations(this.viterations);
+    config.set_piterations(this.piterations);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.setActivationState(DISABLE_DEACTIVATION);
@@ -63,18 +72,9 @@ export default class RopeBodies {
    * @param {Boolean} top - append mesh on the top of the rope if <true>
    * @param {Number} influence - mesh's physic influence to the rope
    */
-  append (mesh, target, top = true, influence = 1) {
-    for (let i = 0; i < this.bodies.length; i++) {
-      if (this.bodies[i].uuid === mesh.uuid) {
-        const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
-
-        this.bodies[i].userData.physicsBody.appendAnchor(
-          top ? ropeTop : 0,
-          target.userData.physicsBody,
-          true, influence
-        );
-      }
-    }
+  append (props) {
+    const body = find(this.bodies, { uuid: props.uuid }).body;
+    body.appendAnchor(props.position, props.target, true, props.influence);
   }
 
   /**
@@ -82,10 +82,13 @@ export default class RopeBodies {
    * @description - Update rope bodies in requestAnimation loop
    */
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
       const positions = this.bodies[i].geometry.attributes.position.array;
-      const body = this.bodies[i].userData.physicsBody;
       const vertices = positions.length / 3;
+
+      const body = this.bodies[i].body;
       const nodes = body.get_m_nodes();
 
       for (let j = 0, index = 0; j < vertices; j++, index += 3) {
@@ -97,7 +100,16 @@ export default class RopeBodies {
         positions[index + 2] = nodePosition.z();
       }
 
-      this.bodies[i].geometry.attributes.position.needsUpdate = true;
+      update.push({
+        uuid: this.bodies[i].uuid,
+        positions: positions
+      });
     }
+
+    self.postMessage({
+      action: 'updateBodies',
+      bodies: update,
+      type: 'rope'
+    });
   }
 }

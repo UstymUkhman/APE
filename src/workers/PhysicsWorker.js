@@ -29,10 +29,6 @@ class PhysicsWorker {
     }
   }
 
-  /**
-   * @private
-   * @description - Initialize dynamics world with soft/rigid bodies
-   */
   _initSoftWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
@@ -49,10 +45,6 @@ class PhysicsWorker {
     /* eslint-enable new-cap */
   }
 
-  /**
-   * @private
-   * @description - Initialize discrete dynamics world with rigid bodies
-   */
   _initRigidWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
@@ -135,6 +127,68 @@ class PhysicsWorker {
     }
   }
 
+  appendCloth (props) {
+    let target = find(this.dynamic.bodies, { uuid: props.target });
+    const cloth = find(this.cloth.bodies, { uuid: props.uuid });
+
+    if (!target) {
+      target = find(this.kinematic.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.static.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.soft.bodies, { uuid: props.target });
+    }
+
+    if (!cloth) {
+      Logger.error(
+        'Cloth body was not found.',
+        `Make sure your mesh [${props.uuid}] has a cloth collider.`
+      );
+    }
+
+    if (!target) {
+      Logger.error(
+        'Target body was not found.',
+        `Make sure to add one of the following bodies to your pin mesh [${props.target}]:`,
+        'dynamic (recommended); kinematic; static or soft.'
+      );
+    }
+
+    props.target = target.body;
+    this.cloth.append(props);
+  }
+
+  appendRope (props) {
+    let target = find(this.dynamic.bodies, { uuid: props.target });
+
+    if (!target) {
+      target = find(this.kinematic.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.static.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.soft.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      Logger.error(
+        'Target body was not found.',
+        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:`,
+        'dynamic (recommended); kinematic; static or soft.'
+      );
+    }
+
+    props.target = target.body;
+    this.rope.append(props);
+  }
+
   updateBodies (params) {
     this[params.type].update(this.transform, params.bodies);
     this.world.stepSimulation(params.delta, 10);
@@ -152,34 +206,9 @@ class PhysicsWorker {
     }
   }
 
-  appendCloth (props) {
-    const target = find(this.dynamic.bodies, { uuid: props.target });
-    const cloth = find(this.cloth.bodies, { uuid: props.uuid });
-
-    if (!cloth) {
-      Logger.error(
-        'Cloth body was not found.',
-        `Make sure your mesh [${props.uuid}] has a cloth collider.`
-      );
-    }
-
-    if (!target) {
-      Logger.error(
-        'Target body was not found.',
-        `Make sure your mesh [${props.uuid}] has a dynamic collider.`
-      );
-    }
-
-    props.target = target.body;
-    this.cloth.append(props);
-  }
-
   _updateHingeProps (props) {
-    let pin = null;
-    let arm = null;
-
-    pin = find(this.static.bodies, { uuid: props.pin });
-    arm = find(this.dynamic.bodies, { uuid: props.arm });
+    let arm = find(this.dynamic.bodies, { uuid: props.arm });
+    let pin = find(this.static.bodies, { uuid: props.pin });
 
     if (!pin) {
       pin = find(this.kinematic.bodies, { uuid: props.pin });

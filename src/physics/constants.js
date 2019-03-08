@@ -29,6 +29,8 @@ export const CLOTH_PITERATIONS = 10;
 
 // Rope Body constants:
 export const ROPE_MARGIN = 0.1;
+export const ROPE_VITERATIONS = 10;
+export const ROPE_PITERATIONS = 10;
 
 // Vehicle Body constants:
 export const BREAK_FORCE = 100.0;

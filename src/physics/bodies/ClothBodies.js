@@ -49,7 +49,6 @@ export default class ClothBodies {
       params: {
         influence: influence,
         target: target.uuid,
-        collider: 'Body',
         uuid: mesh.uuid,
         point: point
       }

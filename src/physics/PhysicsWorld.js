@@ -10,7 +10,7 @@ import HingeBodies from 'physics/bodies/HingeBodies';
 
 import ClothBodies from 'physics/bodies/ClothBodies';
 import SoftBodies from 'physics/bodies/SoftBodies';
-// import RopeBodies from 'physics/bodies/RopeBodies';
+import RopeBodies from 'physics/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 
@@ -32,14 +32,14 @@ export default class PhysicsWorld {
       params: [soft]
     });
 
-    this.soft = new SoftBodies(this.worker);
-    // this.rope = new RopeBodies(this.worker);
-    this.cloth = new ClothBodies(this.worker);
-
-    this.hinge = new HingeBodies(this.worker);
-    this.static = new StaticBodies(this.worker);
-    this.dynamic = new DynamicBodies(this.worker);
     this.kinematic = new KinematicBodies(this.worker);
+    this.dynamic = new DynamicBodies(this.worker);
+    this.static = new StaticBodies(this.worker);
+    this.hinge = new HingeBodies(this.worker);
+
+    this.cloth = new ClothBodies(this.worker);
+    this.rope = new RopeBodies(this.worker);
+    this.soft = new SoftBodies(this.worker);
   }
 
   onWorkerMessage (event) {
@@ -70,32 +70,44 @@ export default class PhysicsWorld {
    * @param {Boolean} moto - if <true> vehicle will be treated as motorcycle
    * @returns {Object} - vehicle body
    */
-  // addVehicle (mesh, mass, controls, moto = false) {
-  //   const vehicle = new VehicleBody(this.world, controls, moto);
-  //   vehicle.addChassis(mesh, mass);
-  //   this.vehicles.push(vehicle);
-  //   return vehicle;
-  // }
+  /* addVehicle (mesh, mass, controls, moto = false) {
+    const vehicle = new VehicleBody(this.world, controls, moto);
+    vehicle.addChassis(mesh, mass);
+    this.vehicles.push(vehicle);
+    return vehicle;
+  } */
 
-  /**
-   * @public
-   * @description - Update physics world and bodies in requestAnimation loop
-   */
-  update () {
-    // for (let i = 0; i < this.vehicles.length; i++) {
-    //   this.vehicles[i].update();
-    // }
+  /* update () {
+    for (let i = 0; i < this.vehicles.length; i++) {
+      this.vehicles[i].update();
+    }
 
-    // this.kinematic.update(this.transform);
-    // this.dynamic.update(this.transform);
+    this.kinematic.update(this.transform);
+    this.dynamic.update(this.transform);
 
-    // const delta = this.clock.getDelta();
-    // this.world.stepSimulation(delta, 10);
+    const delta = this.clock.getDelta();
+    this.world.stepSimulation(delta, 10);
 
-    // if (this.softWorld) {
-    //   this.cloth.update();
-    //   this.soft.update();
-    //   this.rope.update();
-    // }
+    if (this.softWorld) {
+      this.cloth.update();
+      this.soft.update();
+      this.rope.update();
+    }
+  } */
+
+  destroy () {
+    this.worker.removeEventListener('message', this._onMessage);
+
+    delete this.kinematic;
+    delete this.dynamic;
+    delete this.static;
+    delete this.hinge;
+
+    delete this.cloth;
+    delete this.soft;
+    delete this.rope;
+
+    delete this.worker;
+    delete this.clock;
   }
 }

@@ -1,7 +1,13 @@
 // Rope bodies class manager
 
 import { Vector3 } from 'three/src/math/Vector3';
-import { MARGIN } from 'physics/constants';
+import find from 'lodash/find';
+
+import {
+  ROPE_MARGIN,
+  ROPE_VITERATIONS,
+  ROPE_PITERATIONS
+} from 'physics/constants';
 
 export default class RopeBodies {
   /**
@@ -13,7 +19,12 @@ export default class RopeBodies {
     this.bodies = [];
     this.worker = worker;
 
-    this.constants = { margin: MARGIN };
+    this.constants = {
+      margin: ROPE_MARGIN,
+      viterations: ROPE_VITERATIONS,
+      piterations: ROPE_PITERATIONS
+    };
+
     worker.postMessage({action: 'initRopeBodies'});
   }
 
@@ -52,40 +63,67 @@ export default class RopeBodies {
    * @param {Number} influence - mesh's physic influence to the rope
    */
   append (mesh, target, top = true, influence = 1) {
-    for (let i = 0; i < this.bodies.length; i++) {
-      if (this.bodies[i].uuid === mesh.uuid) {
-        const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
+    const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
 
-        this.bodies[i].userData.physicsBody.appendAnchor(
-          top ? ropeTop : 0,
-          target.userData.physicsBody,
-          true, influence
-        );
+    this.worker.postMessage({
+      action: 'appendRope',
+      params: {
+        position: top ? ropeTop : 0.0,
+        influence: influence,
+        target: target.uuid,
+        uuid: mesh.uuid
       }
-    }
+    });
   }
 
   /**
    * @public
    * @description - Update rope bodies in requestAnimation loop
    */
-  update () {
-    for (let i = 0; i < this.bodies.length; i++) {
-      const positions = this.bodies[i].geometry.attributes.position.array;
-      const body = this.bodies[i].userData.physicsBody;
-      const vertices = positions.length / 3;
-      const nodes = body.get_m_nodes();
+  update (bodies) {
+    for (let i = 0; i < bodies.length; i++) {
+      const body = find(this.bodies, { uuid: bodies[i].uuid });
+      const position = body.geometry.attributes.position;
 
-      for (let j = 0, index = 0; j < vertices; j++, index += 3) {
-        const node = nodes.at(j);
-        const nodePosition = node.get_m_x();
-
-        positions[index] = nodePosition.x();
-        positions[index + 1] = nodePosition.y();
-        positions[index + 2] = nodePosition.z();
-      }
-
-      this.bodies[i].geometry.attributes.position.needsUpdate = true;
+      position.array = bodies[i].positions;
+      position.needsUpdate = true;
     }
+  }
+
+  _updateConstants () {
+    this.worker.postMessage({
+      action: 'updateConstants',
+      params: {
+        constants: this.constants,
+        type: 'rope'
+      }
+    });
+  }
+
+  set margin (value) {
+    this.constants.margin = value;
+    this._updateConstants();
+  }
+
+  get margin () {
+    return this.constants.margin;
+  }
+
+  set viterations (value) {
+    this.constants.viterations = value;
+    this._updateConstants();
+  }
+
+  get viterations () {
+    return this.constants.viterations;
+  }
+
+  set piterations (value) {
+    this.constants.piterations = value;
+    this._updateConstants();
+  }
+
+  get piterations () {
+    return this.constants.piterations;
   }
 }

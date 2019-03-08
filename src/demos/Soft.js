@@ -18,7 +18,7 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import PhysicWorld from 'physics/PhysicWorld';
+import PhysicsWorld from 'physics/PhysicsWorld';
 import RAF from 'core/RAF';
 
 import { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
@@ -39,7 +39,7 @@ const GRAY = 0xA0A0A0;
 
 export default class Soft {
   constructor (container = document.body) {
-    this.physics = new PhysicWorld(true);
+    this.physics = new PhysicsWorld(true);
     this.container = container;
     this.setSize();
 
@@ -115,11 +115,41 @@ export default class Soft {
   }
 
   createObjects () {
-    const ballMass = 1.2;
-    const ballRadius = 0.6;
+    const material = new MeshPhongMaterial({ color: 0x606060 });
+    const ropePosition = new Vector3(-3, 2, 0);
+    let position = new Vector3(-3, 0.1, -5.5);
+
+    const pylonHeight = 10;
+    const armLength = 5.5;
+
+    const base = this.createMesh(1, 0.2, 1, 0, position, material);
+    position.set(ropePosition.x, 0.5 * pylonHeight, ropePosition.z - armLength);
+
+    base.receiveShadow = true;
+    base.castShadow = true;
+
+    const pylon = this.createMesh(0.5, pylonHeight, 0.5, 0, position, material);
+    position.set(ropePosition.x, pylonHeight, ropePosition.z - 0.5 * armLength);
+
+    pylon.receiveShadow = true;
+    pylon.castShadow = true;
+
+    this.arm = this.createMesh(0.5, 0.5, armLength + 0.5, 2.0, position, material);
+
+    this.arm.receiveShadow = true;
+    this.arm.castShadow = true;
+
+    const armPivot = {x: 0.0, y: -0.2, z: -armLength * 0.5};
+    const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
+    const axis = {x: 0, y: 1, z: 0};
+
+    const hingeIndex = this.physics.hinge.add(pylon, this.arm, axis, pinPivot, armPivot);
 
     let quat = new Quaternion(0, 0, 0, 1);
     let pos = new Vector3(0, 0, 0);
+
+    const ballRadius = 0.6;
+    const ballMass = 1.2;
 
     const ball = new Mesh(new SphereGeometry(ballRadius, 20, 20), new MeshPhongMaterial({ color: 0x202020 }));
     pos.set(-3, 2, 0);
@@ -132,11 +162,9 @@ export default class Soft {
     this.physics.dynamic.addSphere(ball, ballMass);
     this.scene.add(ball);
 
-    const ropeNumSegments = 10;
-    const ropeLength = 4;
-
     const ropePos = ball.position.clone();
-    // ropePos.y += ballRadius;
+    const ropeNumSegments = 20;
+    const ropeLength = 8;
 
     let ropeMaterial = new LineBasicMaterial({ color: 0x000000 });
     let segmentLength = ropeLength / ropeNumSegments;
@@ -161,73 +189,43 @@ export default class Soft {
     rope.castShadow = true;
     this.scene.add(rope);
 
-    const position = ropePos.clone();
+    position = ropePos.clone();
     position.y += 0.1;
 
-    this.physics.rope.addBody(rope, ropeLength, 3.0, position);
+    this.physics.rope.addBody(rope, ropeLength, 0.5, position);
 
-    const armMass = 2;
-    const armLength = 3;
-    const pylonHeight = ropePos.y + ropeLength;
-    const baseMaterial = new MeshPhongMaterial({ color: 0x606060 });
-
-    pos.set(ropePos.x, 0.1, ropePos.z - armLength);
-    quat.set(0, 0, 0, 1);
-
-    const base = this.createParalellepiped(1, 0.2, 1, 0, pos, quat, baseMaterial);
-    base.receiveShadow = true;
-    base.castShadow = true;
-    pos.set(ropePos.x, 0.5 * pylonHeight, ropePos.z - armLength);
-
-    const pylon = this.createParalellepiped(0.4, pylonHeight, 0.4, 0, pos, quat, baseMaterial);
-    pylon.receiveShadow = true;
-    pylon.castShadow = true;
-    pos.set(ropePos.x, pylonHeight, ropePos.z - 0.5 * armLength);
-
-    const arm = this.createParalellepiped(0.4, 0.4, armLength + 0.4, armMass, pos, quat, baseMaterial);
-    arm.receiveShadow = true;
-    arm.castShadow = true;
-
-    const armPivot = {x: 0.0, y: -0.2, z: -armLength * 0.5};
-    const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
-    const axis = {x: 0, y: 1, z: 0};
-
-    this.physics.hinge.add(pylon, arm, axis, pinPivot, armPivot);
-
-    this.physics.rope.append(rope, arm);
+    this.physics.rope.append(rope, this.arm);
     this.physics.rope.append(rope, ball, false);
 
-    window.addEventListener('keydown', (event) => {
+    window.addEventListener('keydown', event => {
       switch (event.keyCode) {
-        // Q
         case 81:
-          this.physics.hinge.update(1);
+          this.physics.hinge.update(hingeIndex, 1);
           break;
 
-        // A
         case 65:
-          this.physics.hinge.update(-1);
+          this.physics.hinge.update(hingeIndex, -1);
           break;
       }
     }, false);
 
-    window.addEventListener('keyup', (event) => {
-      this.physics.hinge.update(0);
+    window.addEventListener('keyup', () => {
+      this.physics.hinge.update(hingeIndex, 0);
     }, false);
   }
 
-  createParalellepiped (sx, sy, sz, mass, pos, quat, material) {
-    const threeObject = new Mesh(new BoxGeometry(sx, sy, sz, 1, 1, 1), material);
-    threeObject.position.set(pos.x, pos.y, pos.z);
+  createMesh (sx, sy, sz, mass, pos, material) {
+    const mesh = new Mesh(new BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+    mesh.position.set(pos.x, pos.y, pos.z);
 
-    if (!mass) {
-      this.physics.static.addBox(threeObject);
+    if (mass) {
+      this.physics.dynamic.addBox(mesh, mass);
     } else {
-      this.physics.dynamic.addBox(threeObject, mass);
+      this.physics.static.addBox(mesh);
     }
 
-    this.scene.add(threeObject);
-    return threeObject;
+    this.scene.add(mesh);
+    return mesh;
   }
 
   createRenderer () {
@@ -250,7 +248,6 @@ export default class Soft {
   }
 
   render () {
-    this.physics.update();
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
   }
