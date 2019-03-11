@@ -1,5 +1,3 @@
-// Rope bodies class manager
-
 import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
 
@@ -11,11 +9,6 @@ import {
 } from 'physics/constants';
 
 export default class RopeBodies {
-  /**
-   * @constructs RopeBodies
-   * @param {Object} world - Ammo.js soft/rigid dynamics world
-   * @description - Initialize default parameters for rope bodies
-   */
   constructor (world) {
     this.bodies = [];
     this.world = world;
@@ -29,14 +22,6 @@ export default class RopeBodies {
     /* eslint-enable new-cap */
   }
 
-  /**
-   * @public
-   * @description - Add rope body collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh of <LineSegments> type
-   * @param {Number} length - rope's length
-   * @param {Number} mass - rope's mass
-   * @param {Object} position - rope's position in scene
-   */
   addBody (props) {
     const segments = props.geometry.attributes.position.array.length / 3 - 2;
 
@@ -64,23 +49,11 @@ export default class RopeBodies {
     });
   }
 
-  /**
-   * @public
-   * @description - Add THREE.js mesh the far end of the rope
-   * @param {Object} mesh - THREE.js rope mesh
-   * @param {Object} target - THREE.js mesh to append
-   * @param {Boolean} top - append mesh on the top of the rope if <true>
-   * @param {Number} influence - mesh's physic influence to the rope
-   */
   append (props) {
     const body = find(this.bodies, { uuid: props.uuid }).body;
     body.appendAnchor(props.position, props.target, true, props.influence);
   }
 
-  /**
-   * @public
-   * @description - Update rope bodies in requestAnimation loop
-   */
   update () {
     const update = [];
 

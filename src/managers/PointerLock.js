@@ -4,7 +4,7 @@ import Platform from 'utils/PlatformDetector';
 import Logger from 'utils/Logger';
 
 export default class PointerLock {
-  /*
+  /**
    * @constructs PointerLock
    * @description - Initialize PointerLock API manager class
    * @param {DOM Element} container - which locks mouse pointer

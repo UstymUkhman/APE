@@ -8,7 +8,7 @@ import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
 import { DirectionalLight } from 'three/src/lights/DirectionalLight';
-import { HemisphereLight } from 'three/src/lights/HemisphereLight';
+import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
@@ -17,8 +17,7 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 // import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import FBXAnimations from 'animations/FBXAnimations';
-import PhysicWorld from 'physics/PhysicWorld';
+import PhysicsWorld from 'physics/PhysicsWorld';
 import RAF from 'core/RAF';
 // import anime from 'animejs';
 
@@ -37,9 +36,8 @@ const GRAY = 0xA0A0A0;
 
 export default class Vehicle {
   constructor (container = document.body) {
-    this.physics = new PhysicWorld();
+    this.physics = new PhysicsWorld();
     this.container = container;
-    this.fbx = null;
     this.setSize();
 
     this.createScene();
@@ -47,10 +45,8 @@ export default class Vehicle {
     this.createLights();
     this.createCamera();
 
-    // this.createAnimation();
-    // this.createObjects();
+    this.createObjects();
     this.createVehicle();
-    // this.createRaycaster();
 
     this.createRenderer();
     this.createControls();
@@ -88,77 +84,30 @@ export default class Vehicle {
   }
 
   createLights () {
-    const hemisphere = new HemisphereLight(WHITE, 0x444444);
-    const directional = new DirectionalLight(WHITE);
+    const directional = new DirectionalLight(WHITE, 1);
+    const ambient = new AmbientLight(WHITE);
 
-    directional.shadow.camera.bottom = -100;
-    directional.shadow.camera.right = 120;
-    directional.shadow.camera.left = -120;
-    directional.shadow.camera.top = 180;
+    directional.shadow.camera.bottom = -10;
+    directional.shadow.camera.right = 10;
+    directional.shadow.camera.left = -10;
+    directional.shadow.camera.top = 10;
     directional.castShadow = true;
 
-    directional.position.set(0, 10, 10);
-    hemisphere.position.set(0, 10, 0);
+    directional.position.set(-10, 10, 5);
+
+    directional.shadow.mapSize.x = 1024;
+    directional.shadow.mapSize.y = 1024;
+    directional.shadow.camera.near = 2;
+    directional.shadow.camera.far = 50;
 
     this.scene.add(directional);
-    this.scene.add(hemisphere);
+    this.scene.add(ambient);
   }
 
   createCamera () {
     this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
     this.camera.position.set(0, 5, -25);
     this.camera.lookAt(0, 0, 0);
-  }
-
-  createAnimation () {
-    this.steps = 0;
-
-    this.fbxAnimation = new FBXAnimations([{
-      path: './animations/Punching.fbx',
-      name: 'punching' // ,
-      // loop: true
-    }, {
-      path: './animations/Walking.fbx',
-      name: 'walk',
-      loop: true,
-      play: true,
-
-      onLoad: (fbx) => {
-        this.scene.add(fbx);
-      },
-
-      onLoop: (fbx) => {
-        fbx.position.z = ++this.steps * 135;
-
-        if (this.steps === 5) {
-          this.fbxAnimation.pause('walk');
-        }
-      },
-
-      onEnd: (fbx) => {
-        // const action = this.fbx.mixer.clipAction(this.fbx.animations[1]);
-
-        // event.action.fadeOut(0.5);
-        // action.fadeIn(0.5);
-        // action.play();
-
-        // anime({
-        //   targets: this.fbx.position,
-        //   easing: 'linear',
-        //   duration: 500,
-        //   z: 135.0
-        // });
-      }
-    }]);
-
-    // const cube = new Mesh(
-    //   new BoxGeometry(10, 10, 10),
-    //   new MeshBasicMaterial({
-    //     color: BLACK
-    //   })
-    // );
-
-    // this.scene.add(cube);
   }
 
   createObjects () {
@@ -261,11 +210,6 @@ export default class Vehicle {
     } */
   }
 
-  /* createRaycaster () {
-    this.raycaster = new Raycaster();
-    this.mouseVector = new Vector3();
-  } */
-
   createRenderer () {
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
@@ -282,29 +226,7 @@ export default class Vehicle {
   }
 
   createEvents () {
-    // controls
     window.addEventListener('resize', this.onResize.bind(this), false);
-    /* document.addEventListener('keydown', (event) => {
-      const position = this.cube.position;
-
-      switch (event.keyCode) {
-        case 38:
-          this.cube.position.set(position.x, position.y, position.z + 0.5);
-          break;
-
-        case 37:
-          this.cube.position.set(position.x + 0.5, position.y, position.z);
-          break;
-
-        case 39:
-          this.cube.position.set(position.x - 0.5, position.y, position.z);
-          break;
-
-        case 40:
-          this.cube.position.set(position.x, position.y, position.z - 0.5);
-          break;
-      }
-    }, false); */
 
     document.addEventListener('keydown', (event) => {
       switch (event.keyCode) {
@@ -387,36 +309,8 @@ export default class Vehicle {
     }, false);
   }
 
-  /* onMouseMove (event) {
-    event.preventDefault();
-
-    const intersects = this.getIntersects(event.layerX, event.layerY);
-
-    if (intersects.length > 0) {
-      const res = intersects.filter(function (res) {
-        return res && res.object;
-      })[0];
-
-      if (res && res.object) {
-        console.log(res.object.name);
-      }
-    }
-  }
-
-  getIntersects (x, y) {
-    x = (x / this.width) * 2 - 1;
-    y = -(y / this.height) * 2 + 1;
-
-    this.mouseVector.set(x, y, 0.5);
-    this.raycaster.setFromCamera(this.mouseVector, this.camera);
-
-    return this.raycaster.intersectObjects(this.scene.children);
-  } */
-
   render () {
     this.physics.update();
-    // this.orbitControls.update();
-    // this.fbxAnimation.update();
     this.renderer.render(this.scene, this.camera);
   }
 

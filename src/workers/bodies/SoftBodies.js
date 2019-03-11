@@ -1,5 +1,3 @@
-// Soft bodies class manager
-
 import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
@@ -20,11 +18,6 @@ import {
 } from 'physics/constants';
 
 export default class SoftBodies {
-  /**
-   * @constructs SoftBodies
-   * @param {Object} world - Ammo.js soft/rigid dynamics world
-   * @description - Initialize default parameters for soft bodies
-   */
   constructor (world) {
     this.bodies = [];
     this.world = world;
@@ -42,11 +35,6 @@ export default class SoftBodies {
     /* eslint-enable new-cap */
   }
 
-  /**
-   * @private
-   * @description - Calculate collider's geometry from mesh
-   * @param {Object} bufferGeometry - THREE.js mesh buffer geometry
-   */
   _initGeometry (bufferGeometry) {
     const geometry = new Geometry().fromBufferGeometry(bufferGeometry);
     geometry.mergeVertices();
@@ -78,12 +66,6 @@ export default class SoftBodies {
     }
   }
 
-  /**
-   * @private
-   * @description - Create indexed <BufferGeometry> for body's collider
-   * @param {Object} geometry - THREE.js geometry
-   * @returns {Object} - indexed <BufferGeometry>
-   */
   _createIndexedBufferGeometry (geometry) {
     const _vertices = geometry.vertices.length;
     const _faces = geometry.faces.length;
@@ -116,13 +98,6 @@ export default class SoftBodies {
     return bufferGeometry;
   }
 
-  /**
-   * @public
-   * @description - Add soft body collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh with <BufferGeometry> type
-   * @param {Number} mass - THREE.js mesh's mass
-   * @param {Number} pressure - amount of force applied to the surface of the mesh
-   */
   addBody (props) {
     this._initGeometry(props.geometry);
 
@@ -159,10 +134,6 @@ export default class SoftBodies {
     });
   }
 
-  /**
-   * @public
-   * @description - Update soft bodies in requestAnimation loop
-   */
   update () {
     const update = [];
 

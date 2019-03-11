@@ -1,9 +1,11 @@
 // import PlayGround from 'demos/PlayGround';
-import Soft from 'demos/Soft';
+import Vehicle from 'demos/Vehicle';
+// import Soft from 'demos/Soft';
 
 export default class SWAGE {
   static createStage () {
     // return new PlayGround();
-    return new Soft();
+    return new Vehicle();
+    // return new Soft();
   }
 };

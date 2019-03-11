@@ -96,11 +96,9 @@ export default class Soft {
     directional.castShadow = true;
 
     directional.position.set(-10, 10, 5);
-    // hemisphere.position.set(0, 10, 0);
 
     directional.shadow.mapSize.x = 1024;
     directional.shadow.mapSize.y = 1024;
-
     directional.shadow.camera.near = 2;
     directional.shadow.camera.far = 50;
 

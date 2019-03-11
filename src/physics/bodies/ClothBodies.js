@@ -1,15 +1,8 @@
-// Cloth bodies class manager
-
 import { Vector3 } from 'three/src/math/Vector3';
 import { SOFT_MARGIN } from 'physics/constants';
 import find from 'lodash/find';
 
 export default class ClothBodies {
-  /**
-   * @constructs ClothBodies
-   * @param {Object} worker - web worker used by parent class
-   * @description - Initialize default parameters for cloth bodies
-   */
   constructor (worker) {
     this.bodies = [];
     this.worker = worker;
@@ -18,13 +11,6 @@ export default class ClothBodies {
     worker.postMessage({action: 'initClothBodies'});
   }
 
-  /**
-   * @public
-   * @description - Add cloth body collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh with <PlaneBufferGeometry> type
-   * @param {Number} mass - THREE.js mesh's mass
-   * @param {Object} position - mesh's position in scene
-   */
   addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
     this.worker.postMessage({
       action: 'addBody',
@@ -55,10 +41,6 @@ export default class ClothBodies {
     });
   }
 
-  /**
-   * @public
-   * @description - Update cloth bodies in requestAnimation loop
-   */
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const body = find(this.bodies, { uuid: bodies[i].uuid });

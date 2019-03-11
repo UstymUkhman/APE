@@ -1,5 +1,3 @@
-// Soft bodies class manager
-
 import {
   FRICTION,
   STIFFNESS,
@@ -13,11 +11,6 @@ import {
 import find from 'lodash/find';
 
 export default class SoftBodies {
-  /**
-   * @constructs SoftBodies
-   * @param {Object} worker - web worker used by parent class
-   * @description - Initialize default parameters for soft bodies
-   */
   constructor (worker) {
     this.bodies = [];
     this.worker = worker;
@@ -52,10 +45,6 @@ export default class SoftBodies {
     this.bodies.push(mesh);
   }
 
-  /**
-   * @public
-   * @description - Update soft bodies in requestAnimation loop
-   */
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const body = find(this.bodies, { uuid: bodies[i].uuid });

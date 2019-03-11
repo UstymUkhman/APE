@@ -4,7 +4,7 @@ import PointerLock from 'managers/PointerLock';
 import Logger from 'utils/Logger';
 
 export default class Fullscreen {
-  /*
+  /**
    * @constructs Fullscreen
    * @description - Initialize Fullscreen API manager class
    * @param {DOM Element} container - element that goes in fullscreen

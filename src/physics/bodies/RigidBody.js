@@ -1,5 +1,3 @@
-// Rigid bodies parent class
-
 import assign from 'lodash/assign';
 
 import {
@@ -12,12 +10,6 @@ import {
 } from 'physics/constants';
 
 export default class RigidBody {
-  /**
-   * @constructs RigidBody
-   * @param {String} type - rigid body type
-   * @param {Object} worker - web worker used by parent class
-   * @description - Initialize default parameters for rigid bodies
-   */
   constructor (type, worker) {
     this.type = type;
     this.worker = worker;

@@ -1,18 +1,16 @@
-import KinematicBodies from 'workers/physics-bodies/KinematicBodies';
-import DynamicBodies from 'workers/physics-bodies/DynamicBodies';
-import StaticBodies from 'workers/physics-bodies/StaticBodies';
-import HingeBodies from 'workers/physics-bodies/HingeBodies';
-// import VehicleBody from 'workers/physics-bodies/VehicleBody';
+import KinematicBodies from 'workers/bodies/KinematicBodies';
+import DynamicBodies from 'workers/bodies/DynamicBodies';
+import StaticBodies from 'workers/bodies/StaticBodies';
+import HingeBodies from 'workers/bodies/HingeBodies';
 
-import ClothBodies from 'workers/physics-bodies/ClothBodies';
-import SoftBodies from 'workers/physics-bodies/SoftBodies';
-import RopeBodies from 'workers/physics-bodies/RopeBodies';
+import ClothBodies from 'workers/bodies/ClothBodies';
+import SoftBodies from 'workers/bodies/SoftBodies';
+import RopeBodies from 'workers/bodies/RopeBodies';
 
 import { GRAVITY } from 'physics/constants';
+import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
-
-import assign from 'lodash/assign';
 import find from 'lodash/find';
 
 let physics = null;
@@ -20,16 +18,15 @@ let physics = null;
 class PhysicsWorker {
   constructor (soft) {
     this._soft = soft;
-    // this.vehicles = [];
 
     if (soft) {
-      this._initSoftWorld();
+      this.initSoftWorld();
     } else {
-      this._initRigidWorld();
+      this.initRigidWorld();
     }
   }
 
-  _initSoftWorld () {
+  initSoftWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const softSolver = new Ammo.btDefaultSoftBodySolver();
@@ -45,7 +42,7 @@ class PhysicsWorker {
     /* eslint-enable new-cap */
   }
 
-  _initRigidWorld () {
+  initRigidWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();
@@ -108,7 +105,7 @@ class PhysicsWorker {
     }
 
     if (props.type === 'hinge') {
-      this._updateHingeProps(props);
+      this.updateHingeProps(props);
     }
 
     this[props.type][method](props);
@@ -125,6 +122,33 @@ class PhysicsWorker {
     if (boxFallback) {
       this.kinematic.constants = constants;
     }
+  }
+
+  appendRope (props) {
+    let target = find(this.dynamic.bodies, { uuid: props.target });
+
+    if (!target) {
+      target = find(this.kinematic.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.static.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      target = find(this.soft.bodies, { uuid: props.target });
+    }
+
+    if (!target) {
+      Logger.error(
+        'Target body was not found.',
+        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:`,
+        'dynamic (recommended); kinematic; static or soft.'
+      );
+    }
+
+    props.target = target.body;
+    this.rope.append(props);
   }
 
   appendCloth (props) {
@@ -162,40 +186,9 @@ class PhysicsWorker {
     this.cloth.append(props);
   }
 
-  appendRope (props) {
-    let target = find(this.dynamic.bodies, { uuid: props.target });
-
-    if (!target) {
-      target = find(this.kinematic.bodies, { uuid: props.target });
-    }
-
-    if (!target) {
-      target = find(this.static.bodies, { uuid: props.target });
-    }
-
-    if (!target) {
-      target = find(this.soft.bodies, { uuid: props.target });
-    }
-
-    if (!target) {
-      Logger.error(
-        'Target body was not found.',
-        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:`,
-        'dynamic (recommended); kinematic; static or soft.'
-      );
-    }
-
-    props.target = target.body;
-    this.rope.append(props);
-  }
-
   updateBodies (params) {
     this[params.type].update(this.transform, params.bodies);
     this.world.stepSimulation(params.delta, 10);
-  }
-
-  updateHingeBodies (params) {
-    this.hinge.update(params);
   }
 
   updateConstants (props) {
@@ -206,7 +199,7 @@ class PhysicsWorker {
     }
   }
 
-  _updateHingeProps (props) {
+  updateHingeProps (props) {
     let arm = find(this.dynamic.bodies, { uuid: props.arm });
     let pin = find(this.static.bodies, { uuid: props.pin });
 
@@ -235,6 +228,10 @@ class PhysicsWorker {
 
     props.pin = pin.body;
     props.arm = arm.body;
+  }
+
+  updateHingeBodies (params) {
+    this.hinge.update(params);
   }
 }
 

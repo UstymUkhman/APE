@@ -1,5 +1,3 @@
-// Cloth bodies class manager
-
 import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
 
@@ -15,11 +13,6 @@ import {
 } from 'physics/constants';
 
 export default class ClothBodies {
-  /**
-   * @constructs ClothBodies
-   * @param {Object} world - Ammo.js soft/rigid dynamics world
-   * @description - Initialize default parameters for cloth bodies
-   */
   constructor (world) {
     this.bodies = [];
     this.world = world;
@@ -37,13 +30,6 @@ export default class ClothBodies {
     /* eslint-enable new-cap */
   }
 
-  /**
-   * @public
-   * @description - Add cloth body collider to THREE.js mesh
-   * @param {Object} mesh - THREE.js mesh with <PlaneBufferGeometry> type
-   * @param {Number} mass - THREE.js mesh's mass
-   * @param {Object} position - mesh's position in scene
-   */
   addBody (props) {
     const heightSegments = props.geometry.parameters.heightSegments;
     const widthSegments = props.geometry.parameters.widthSegments;
@@ -95,10 +81,6 @@ export default class ClothBodies {
     body.appendAnchor(props.point, props.target, false, props.influence);
   }
 
-  /**
-   * @public
-   * @description - Update cloth bodies in requestAnimation loop
-   */
   update () {
     const update = [];
 

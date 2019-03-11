@@ -14,7 +14,7 @@ import { AmbientLight } from 'three/src/lights/AmbientLight';
 
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
-import { Object3D } from 'three/src/core/Object3D';
+// import { Object3D } from 'three/src/core/Object3D';
 import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 
@@ -39,8 +39,8 @@ export default class Soft {
     this.createLights();
     this.createCamera();
 
-    this.createObjects();
-    // this.createHinge();
+    // this.createObjects();
+    this.createHinge();
     this.createCloth();
 
     this.createRenderer();
@@ -210,8 +210,9 @@ export default class Soft {
 
   createCloth () {
     const geometry = new PlaneBufferGeometry(5, 5, 25, 25);
-    const position = new Vector3(-3, 10, 0);
+    const position = new Vector3(-3, 5, 0);
 
+    // Appended to hinge:
     geometry.rotateY(Math.PI / 2.0);
     geometry.translate(position.x, position.y + 2.5, position.z - 2.5);
 
@@ -223,19 +224,23 @@ export default class Soft {
       })
     );
 
-    this.physics.cloth.addBody(cloth, 1);
-    // this.physics.cloth.append(cloth, 25, this.arm);
-    // this.physics.cloth.append(cloth, 0, this.arm);
+    // Appended to hinge:
+    this.physics.cloth.addBody(cloth, 1, position);
+    this.physics.cloth.append(cloth, 25, this.arm);
+    this.physics.cloth.append(cloth, 0, this.arm);
 
     cloth.receiveShadow = true;
     cloth.castShadow = true;
-    // this.scene.add(cloth);
+    this.scene.add(cloth);
 
-    const obj = new Object3D();
-    obj.rotation.y = Math.PI / 2;
+    // Rotated:
+    // this.physics.cloth.addBody(cloth, 1);
 
-    obj.add(cloth);
-    this.scene.add(obj);
+    // const obj = new Object3D();
+    // obj.rotation.y = Math.PI / 2;
+
+    // obj.add(cloth);
+    // this.scene.add(obj);
   }
 
   createRenderer () {
