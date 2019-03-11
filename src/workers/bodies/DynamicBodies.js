@@ -1,4 +1,4 @@
-import RigidBody from 'workers/physics-bodies/RigidBody';
+import RigidBody from 'workers/bodies/RigidBody';
 import { ZERO_MASS } from 'physics/constants';
 
 export default class DynamicBodies extends RigidBody {

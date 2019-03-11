@@ -2,7 +2,7 @@ import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
-import { equalBufferVertices } from 'utils/equalBufferVertices';
+import { equalBufferVertices } from 'utils/Buffer';
 import { Ammo } from 'core/Ammo';
 
 import {

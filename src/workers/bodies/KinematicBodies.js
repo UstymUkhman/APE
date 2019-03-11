@@ -1,4 +1,4 @@
-import RigidBody from 'workers/physics-bodies/RigidBody';
+import RigidBody from 'workers/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
 

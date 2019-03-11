@@ -1,5 +1,5 @@
 import { ZERO_MASS, DISABLE_DEACTIVATION } from 'physics/constants';
-import RigidBody from 'workers/physics-bodies/RigidBody';
+import RigidBody from 'workers/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {
