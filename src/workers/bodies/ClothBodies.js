@@ -119,7 +119,7 @@ export default class ClothBodies {
 
     if (mesh === -1) return false;
 
-    this.world.removeRigidBody(mesh.body);
+    this.world.removeSoftBody(mesh.body);
     Ammo.destroy(mesh.body);
 
     this.bodies.splice(index, 1);

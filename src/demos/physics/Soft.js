@@ -157,7 +157,8 @@ export default class Soft {
     ball.receiveShadow = true;
     ball.castShadow = true;
 
-    this.physics.dynamic.addSphere(ball, ballMass);
+    // this.physics.dynamic.addSphere(ball, ballMass);
+    this.physics.kinematic.addSphere(ball, ballMass);
     this.scene.add(ball);
 
     const ropePos = ball.position.clone();
@@ -198,11 +199,13 @@ export default class Soft {
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {
         case 81:
-          this.physics.hinge.update(hingeIndex, 1);
+          // this.physics.hinge.update(hingeIndex, 1);
+          ball.position.z += 1;
           break;
 
         case 65:
-          this.physics.hinge.update(hingeIndex, -1);
+          // this.physics.hinge.update(hingeIndex, -1);
+          ball.position.z -= 1;
           break;
       }
     }, false);
