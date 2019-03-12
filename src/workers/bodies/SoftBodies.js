@@ -4,6 +4,7 @@ import { Geometry } from 'three/src/core/Geometry';
 
 import { equalBufferVertices } from 'utils/Buffer';
 import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
 
 import {
   POWER16,
@@ -185,5 +186,19 @@ export default class SoftBodies {
       bodies: update,
       type: 'soft'
     });
+  }
+
+  remove (props) {
+    const mesh = find(this.bodies, { uuid: props.uuid });
+    const index = this.bodies.indexOf(mesh);
+
+    if (mesh === -1) return false;
+
+    this.world.removeRigidBody(mesh.body);
+    Ammo.destroy(mesh.body);
+    delete mesh.geometry;
+
+    this.bodies.splice(index, 1);
+    return true;
   }
 }

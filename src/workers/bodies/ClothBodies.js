@@ -112,4 +112,17 @@ export default class ClothBodies {
       type: 'cloth'
     });
   }
+
+  remove (props) {
+    const mesh = find(this.bodies, { uuid: props.uuid });
+    const index = this.bodies.indexOf(mesh);
+
+    if (mesh === -1) return false;
+
+    this.world.removeRigidBody(mesh.body);
+    Ammo.destroy(mesh.body);
+
+    this.bodies.splice(index, 1);
+    return true;
+  }
 }

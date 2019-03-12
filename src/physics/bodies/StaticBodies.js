@@ -3,6 +3,7 @@ import RigidBody from 'physics/bodies/RigidBody';
 export default class StaticBodies extends RigidBody {
   constructor (worker) {
     super('static', worker);
+    this.worker = worker;
     worker.postMessage({action: 'initStaticBodies'});
   }
 
@@ -32,5 +33,16 @@ export default class StaticBodies extends RigidBody {
 
   addSphere (mesh) {
     super.addBody('Sphere', mesh);
+  }
+
+  remove (mesh) {
+    this.worker.postMessage({
+      action: 'removeBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: 'static'
+      }
+    });
   }
 }

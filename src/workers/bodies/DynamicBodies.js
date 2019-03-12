@@ -1,5 +1,7 @@
 import RigidBody from 'workers/bodies/RigidBody';
 import { ZERO_MASS } from 'physics/constants';
+import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
@@ -70,5 +72,18 @@ export default class DynamicBodies extends RigidBody {
       type: 'dynamic',
       bodies: update
     });
+  }
+
+  remove (props) {
+    const mesh = find(this.bodies, { uuid: props.uuid });
+    const index = this.bodies.indexOf(mesh);
+
+    if (mesh === -1) return false;
+
+    this.world.removeRigidBody(mesh.body);
+    Ammo.destroy(mesh.body);
+
+    this.bodies.splice(index, 1);
+    return true;
   }
 }

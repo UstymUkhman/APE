@@ -56,10 +56,12 @@ export default class RopeBodies {
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const body = find(this.bodies, { uuid: bodies[i].uuid });
-      const position = body.geometry.attributes.position;
 
-      position.array = bodies[i].positions;
-      position.needsUpdate = true;
+      if (body) {
+        const position = body.geometry.attributes.position;
+        position.array = bodies[i].positions;
+        position.needsUpdate = true;
+      }
     }
   }
 
@@ -71,6 +73,23 @@ export default class RopeBodies {
         type: 'rope'
       }
     });
+  }
+
+  remove (mesh) {
+    const body = this.bodies.indexOf(mesh);
+
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          uuid: mesh.uuid,
+          type: 'rope'
+        }
+      });
+    }
   }
 
   set margin (value) {

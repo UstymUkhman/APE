@@ -186,9 +186,9 @@ class PhysicsWorker {
     this.cloth.append(props);
   }
 
-  updateBodies (params) {
-    this[params.type].update(this.transform, params.bodies);
-    this.world.stepSimulation(params.delta, 10);
+  updateBodies (props) {
+    this[props.type].update(this.transform, props.bodies);
+    this.world.stepSimulation(props.delta, 10);
   }
 
   updateConstants (props) {
@@ -230,8 +230,18 @@ class PhysicsWorker {
     props.arm = arm.body;
   }
 
-  updateHingeBodies (params) {
-    this.hinge.update(params);
+  updateHingeBodies (props) {
+    this.hinge.update(props);
+  }
+
+  removeBody (props) {
+    const found = this[props.type].remove(props);
+
+    if (!found) {
+      Logger.warn(
+        `There\'s no \'${props.type}\' collider attached to your mesh [${props.uuid}].`
+      );
+    }
   }
 }
 

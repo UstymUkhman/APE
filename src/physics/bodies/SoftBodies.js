@@ -48,14 +48,34 @@ export default class SoftBodies {
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const body = find(this.bodies, { uuid: bodies[i].uuid });
-      const position = body.geometry.attributes.position;
-      const normal = body.geometry.attributes.normal;
 
-      position.array = bodies[i].positions;
-      normal.array = bodies[i].normals;
+      if (body) {
+        const position = body.geometry.attributes.position;
+        const normal = body.geometry.attributes.normal;
 
-      position.needsUpdate = true;
-      normal.needsUpdate = true;
+        position.array = bodies[i].positions;
+        normal.array = bodies[i].normals;
+
+        position.needsUpdate = true;
+        normal.needsUpdate = true;
+      }
+    }
+  }
+
+  remove (mesh) {
+    const body = this.bodies.indexOf(mesh);
+
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          uuid: mesh.uuid,
+          type: 'soft'
+        }
+      });
     }
   }
 

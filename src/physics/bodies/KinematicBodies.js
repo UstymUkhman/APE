@@ -3,7 +3,9 @@ import RigidBody from 'physics/bodies/RigidBody';
 export default class KinematicBodies extends RigidBody {
   constructor (worker) {
     super('kinematic', worker);
+
     this.bodies = [];
+    this.worker = worker;
     worker.postMessage({action: 'initKinematicBodies'});
   }
 
@@ -46,5 +48,22 @@ export default class KinematicBodies extends RigidBody {
     }
 
     return bodies;
+  }
+
+  remove (mesh) {
+    const body = this.bodies.indexOf(mesh);
+
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          type: 'kinematic',
+          uuid: mesh.uuid
+        }
+      });
+    }
   }
 }

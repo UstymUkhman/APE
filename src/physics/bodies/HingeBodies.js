@@ -37,4 +37,15 @@ export default class HingeBodies {
       }
     });
   }
+
+  remove (bodyIndex) {
+    this.worker.postMessage({
+      action: 'removeBody',
+
+      params: {
+        index: bodyIndex,
+        type: 'hinge'
+      }
+    });
+  }
 }

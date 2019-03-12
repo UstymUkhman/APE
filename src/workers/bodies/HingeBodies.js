@@ -31,4 +31,16 @@ export default class HingeBodies {
       body.enableAngularMotor(true, params.direction, this.force);
     }
   }
+
+  remove (props) {
+    const body = this.bodies[props.index];
+
+    if (!body) return false;
+
+    this.world.removeRigidBody(body);
+    Ammo.destroy(body);
+
+    this.bodies.splice(props.index, 1);
+    return true;
+  }
 }

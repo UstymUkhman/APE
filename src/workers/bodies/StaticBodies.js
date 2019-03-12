@@ -1,6 +1,7 @@
 import { ZERO_MASS, DISABLE_DEACTIVATION } from 'physics/constants';
 import RigidBody from 'workers/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
 
 export default class StaticBodies extends RigidBody {
   constructor (world) {
@@ -49,5 +50,18 @@ export default class StaticBodies extends RigidBody {
     body.setActivationState(DISABLE_DEACTIVATION);
     this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
+  }
+
+  remove (props) {
+    const mesh = find(this.bodies, { uuid: props.uuid });
+    const index = this.bodies.indexOf(mesh);
+
+    if (mesh === -1) return false;
+
+    this.world.removeRigidBody(mesh.body);
+    Ammo.destroy(mesh.body);
+
+    this.bodies.splice(index, 1);
+    return true;
   }
 }

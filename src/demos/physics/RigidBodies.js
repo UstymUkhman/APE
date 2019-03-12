@@ -50,5 +50,30 @@ export default class RigidBodies extends Playground {
 
     this.physics.kinematic.addBox(this.kinematicBox);
     this.scene.add(this.kinematicBox);
+
+    this._onKeyDown = this.onKeyDown.bind(this);
+    document.addEventListener('keydown', this._onKeyDown);
+  }
+
+  onKeyDown (event) {
+    const code = event.keyCode;
+
+    switch (code) {
+      case 87:
+        this.kinematicBox.position.z += 1;
+        break;
+
+      case 83:
+        this.kinematicBox.position.z -= 1;
+        break;
+
+      case 65:
+        this.kinematicBox.position.x += 1;
+        break;
+
+      case 68:
+        this.kinematicBox.position.x -= 1;
+        break;
+    }
   }
 }

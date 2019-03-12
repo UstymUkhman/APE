@@ -6,7 +6,9 @@ import find from 'lodash/find';
 export default class DynamicBodies extends RigidBody {
   constructor (worker) {
     super('dynamic', worker);
+
     this.bodies = [];
+    this.worker = worker;
     worker.postMessage({action: 'initDynamicBodies'});
   }
 
@@ -37,14 +39,31 @@ export default class DynamicBodies extends RigidBody {
 
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      const uuid = bodies[i].uuid;
-      const position = bodies[i].position;
+      const body = find(this.bodies, { uuid: bodies[i].uuid });
       const quaternion = bodies[i].quaternion;
+      const position = bodies[i].position;
 
-      const body = find(this.bodies, { uuid: uuid });
+      if (body) {
+        body.position.set(position.x, position.y, position.z);
+        body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+      }
+    }
+  }
 
-      body.position.set(position.x, position.y, position.z);
-      body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+  remove (mesh) {
+    const body = this.bodies.indexOf(mesh);
+
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          uuid: mesh.uuid,
+          type: 'dynamic'
+        }
+      });
     }
   }
 }
