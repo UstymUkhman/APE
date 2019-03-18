@@ -18,7 +18,7 @@ export default class RigidBodies extends Playground {
     this.physics = new PhysicsWorld();
 
     this.physics.static.friction = 2.5;
-    this.physics.static.addPlane(this.ground);
+    this.physics.static.addBox(this.ground);
   }
 
   createDynamicBodies () {
@@ -35,6 +35,20 @@ export default class RigidBodies extends Playground {
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
+
+    const concaveBox = new Mesh(
+      new BoxGeometry(5, 5, 5),
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    concaveBox.castShadow = true;
+    concaveBox.position.x = -7.5;
+    concaveBox.position.y = 2.5;
+
+    this.physics.dynamic.addConcave(concaveBox, 10);
+    this.scene.add(concaveBox);
   }
 
   createKinematicBodies () {

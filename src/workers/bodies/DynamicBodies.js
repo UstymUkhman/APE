@@ -30,6 +30,32 @@ export default class DynamicBodies extends RigidBody {
     this._addDynamicBody(props.uuid, cone, props.position, props.rotation, props.mass);
   }
 
+  addConcave (props) {
+    const vertices = props.geometry.vertices;
+    const triangles = [];
+
+    for (let i = 0; i < props.geometry.faces.length; i++) {
+      const face = props.geometry.faces[i];
+
+      triangles.push([{
+        x: vertices[face.a].x,
+        y: vertices[face.a].y,
+        z: vertices[face.a].z
+      }, {
+        x: vertices[face.b].x,
+        y: vertices[face.b].y,
+        z: vertices[face.b].z
+      }, {
+        x: vertices[face.c].x,
+        y: vertices[face.c].y,
+        z: vertices[face.c].z
+      }]);
+    }
+
+    const concave = this.createConcave(triangles);
+    this._addDynamicBody(props.uuid, concave, props.position, props.rotation, props.mass);
+  }
+
   addSphere (props) {
     const sphere = this.createSphere(props.size.radius);
     this._addDynamicBody(props.uuid, sphere, props.position, props.rotation, props.mass);

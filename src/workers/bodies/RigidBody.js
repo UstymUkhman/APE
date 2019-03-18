@@ -46,6 +46,34 @@ export default class RigidBody {
     return cone;
   }
 
+  createConcave (triangles) {
+    const mesh = new Ammo.btTriangleMesh();
+
+    const vec1 = new Ammo.btVector3(0.0, 0.0, 0.0);
+    const vec2 = new Ammo.btVector3(0.0, 0.0, 0.0);
+    const vec3 = new Ammo.btVector3(0.0, 0.0, 0.0);
+
+    for (let i = 0; i < triangles.length; i++) {
+      vec1.setX(triangles[i][0].x);
+      vec1.setY(triangles[i][0].y);
+      vec1.setZ(triangles[i][0].z);
+
+      vec2.setX(triangles[i][1].x);
+      vec2.setY(triangles[i][1].y);
+      vec2.setZ(triangles[i][1].z);
+
+      vec3.setX(triangles[i][2].x);
+      vec3.setY(triangles[i][2].y);
+      vec3.setZ(triangles[i][2].z);
+
+      mesh.addTriangle(vec1, vec2, vec3, true);
+    }
+
+    const concave = new Ammo.btBvhTriangleMeshShape(mesh, true, true);
+    this._checkBodyMargin(concave);
+    return concave;
+  }
+
   createSphere (radius) {
     const sphere = new Ammo.btSphereShape(radius);
     this._checkBodyMargin(sphere);

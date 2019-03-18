@@ -102,6 +102,11 @@ class PhysicsWorker {
         'You\'re using a static plane in a soft world. It may not work as expected.',
         'Kinematic box collider was used automatically as fallback for a PlaneGeometry.'
       );
+    } else if (staticType && plane) {
+      Logger.warn(
+        'You\'re using a static plane which may have some issues with \'Concave\' rigid bodies.',
+        'It\'s recommended to use a BoxGeometry with static box collider instead.'
+      );
     }
 
     if (props.type === 'hinge') {

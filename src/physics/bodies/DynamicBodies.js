@@ -32,6 +32,19 @@ export default class DynamicBodies extends RigidBody {
     this.bodies.push(mesh);
   }
 
+  addConcave (mesh, mass) {
+    if (!mesh.geometry.boundingBox) {
+      mesh.geometry.computeBoundingBox();
+    }
+
+    super.addBody('Concave', mesh, {
+      geometry: mesh.geometry,
+      mass: mass
+    });
+
+    this.bodies.push(mesh);
+  }
+
   addSphere (mesh, mass) {
     super.addBody('Sphere', mesh, { mass: mass });
     this.bodies.push(mesh);

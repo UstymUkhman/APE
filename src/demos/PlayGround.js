@@ -1,8 +1,9 @@
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
-import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
+// import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { DirectionalLight } from 'three/src/lights/DirectionalLight';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { AmbientLight } from 'three/src/lights/AmbientLight';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
@@ -74,7 +75,8 @@ export default class Playground {
 
   createGround () {
     this.ground = new Mesh(
-      new PlaneBufferGeometry(500, 500),
+      // new PlaneBufferGeometry(500, 500),
+      new BoxGeometry(500, 500, 1),
       new MeshPhongMaterial({
         depthWrite: false,
         color: 0x888888
