@@ -53,25 +53,41 @@ export default class RigidBody {
     const vec2 = new Ammo.btVector3(0.0, 0.0, 0.0);
     const vec3 = new Ammo.btVector3(0.0, 0.0, 0.0);
 
-    for (let i = 0; i < triangles.length; i++) {
-      vec1.setX(triangles[i][0].x);
-      vec1.setY(triangles[i][0].y);
-      vec1.setZ(triangles[i][0].z);
+    triangles.forEach((triangle) => {
+      vec1.setX(triangle[0].x);
+      vec1.setY(triangle[0].y);
+      vec1.setZ(triangle[0].z);
 
-      vec2.setX(triangles[i][1].x);
-      vec2.setY(triangles[i][1].y);
-      vec2.setZ(triangles[i][1].z);
+      vec2.setX(triangle[1].x);
+      vec2.setY(triangle[1].y);
+      vec2.setZ(triangle[1].z);
 
-      vec3.setX(triangles[i][2].x);
-      vec3.setY(triangles[i][2].y);
-      vec3.setZ(triangles[i][2].z);
+      vec3.setX(triangle[2].x);
+      vec3.setY(triangle[2].y);
+      vec3.setZ(triangle[2].z);
 
       mesh.addTriangle(vec1, vec2, vec3, true);
-    }
+    });
 
     const concave = new Ammo.btBvhTriangleMeshShape(mesh, true, true);
     this._checkBodyMargin(concave);
     return concave;
+  }
+
+  createConvex (points) {
+    const convex = new Ammo.btConvexHullShape();
+    const vec = new Ammo.btVector3(0.0, 0.0, 0.0);
+
+    points.forEach((point) => {
+      vec.setX(point.x);
+      vec.setY(point.y);
+      vec.setZ(point.z);
+
+      convex.addPoint(vec);
+    });
+
+    this._checkBodyMargin(convex);
+    return convex;
   }
 
   createSphere (radius) {

@@ -104,7 +104,7 @@ class PhysicsWorker {
       );
     } else if (staticType && plane) {
       Logger.warn(
-        'You\'re using a static plane which may have some issues with \'Concave\' rigid bodies.',
+        'You\'re using a static plane which may have some issues with \'Concave\' and \'Convex\' rigid bodies.',
         'It\'s recommended to use a BoxGeometry with static box collider instead.'
       );
     }

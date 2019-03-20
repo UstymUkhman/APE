@@ -34,9 +34,7 @@ export default class DynamicBodies extends RigidBody {
     const vertices = props.geometry.vertices;
     const triangles = [];
 
-    for (let i = 0; i < props.geometry.faces.length; i++) {
-      const face = props.geometry.faces[i];
-
+    props.geometry.faces.forEach((face) => {
       triangles.push([{
         x: vertices[face.a].x,
         y: vertices[face.a].y,
@@ -50,10 +48,25 @@ export default class DynamicBodies extends RigidBody {
         y: vertices[face.c].y,
         z: vertices[face.c].z
       }]);
-    }
+    });
 
     const concave = this.createConcave(triangles);
     this._addDynamicBody(props.uuid, concave, props.position, props.rotation, props.mass);
+  }
+
+  addConvex (props) {
+    const points = [];
+
+    props.geometry.vertices.forEach((vertex) => {
+      points.push({
+        x: vertex.x,
+        y: vertex.y,
+        z: vertex.z
+      });
+    });
+
+    const convex = this.createConvex(points);
+    this._addDynamicBody(props.uuid, convex, props.position, props.rotation, props.mass);
   }
 
   addSphere (props) {

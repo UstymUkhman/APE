@@ -49,6 +49,20 @@ export default class RigidBodies extends Playground {
 
     this.physics.dynamic.addConcave(concaveBox, 10);
     this.scene.add(concaveBox);
+
+    const convexBox = new Mesh(
+      new BoxGeometry(5, 5, 5),
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    convexBox.castShadow = true;
+    convexBox.position.x = 7.5;
+    convexBox.position.y = 2.5;
+
+    this.physics.dynamic.addConvex(convexBox, 10);
+    this.scene.add(convexBox);
   }
 
   createKinematicBodies () {
