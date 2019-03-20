@@ -11,14 +11,19 @@ export default class RigidBodies extends Playground {
 
     this.initPhysics();
     this.createDynamicBodies();
-    this.createKinematicBodies();
+    // this.createKinematicBodies();
   }
 
   initPhysics () {
     this.physics = new PhysicsWorld();
 
     this.physics.static.friction = 2.5;
-    this.physics.static.addBox(this.ground);
+    this.physics.static.addHeightField(
+      this.ground,
+      this.heightData,
+      this.minHeight,
+      this.maxHeight
+    );
   }
 
   createDynamicBodies () {
@@ -31,7 +36,7 @@ export default class RigidBodies extends Playground {
 
     dynamicBox.castShadow = true;
     dynamicBox.position.x = -2.5;
-    dynamicBox.position.y = 10;
+    dynamicBox.position.y = 20;
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
@@ -45,9 +50,10 @@ export default class RigidBodies extends Playground {
 
     concaveBox.castShadow = true;
     concaveBox.position.x = -7.5;
-    concaveBox.position.y = 2.5;
+    concaveBox.position.y = 25;
 
-    this.physics.dynamic.addConcave(concaveBox, 10);
+    // this.physics.dynamic.addConcave(concaveBox, 10);
+    this.physics.dynamic.addBox(concaveBox, 10);
     this.scene.add(concaveBox);
 
     const convexBox = new Mesh(
@@ -59,9 +65,10 @@ export default class RigidBodies extends Playground {
 
     convexBox.castShadow = true;
     convexBox.position.x = 7.5;
-    convexBox.position.y = 2.5;
+    convexBox.position.y = 25;
 
-    this.physics.dynamic.addConvex(convexBox, 10);
+    // this.physics.dynamic.addConvex(convexBox, 10);
+    this.physics.dynamic.addBox(convexBox, 10);
     this.scene.add(convexBox);
   }
 

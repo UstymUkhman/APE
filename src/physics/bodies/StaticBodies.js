@@ -15,6 +15,14 @@ export default class StaticBodies extends RigidBody {
     });
   }
 
+  addHeightField (mesh, data, minHeight, maxHeight) {
+    super.addBody('HeightField', mesh, {
+      minHeight: minHeight,
+      maxHeight: maxHeight,
+      data: data
+    });
+  }
+
   addBox (mesh) {
     super.addBody('Box', mesh);
   }

@@ -99,6 +99,7 @@ export default class RigidBody {
   createRigidBody (shape, mass, position, quaternion) {
     const transform = new Ammo.btTransform();
     transform.setIdentity();
+    console.log(position);
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
     transform.setRotation(new Ammo.btQuaternion(quaternion._x, quaternion._y, quaternion._z, quaternion._w));
 

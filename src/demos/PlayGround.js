@@ -95,20 +95,20 @@ export default class Playground {
     // const terrainWidthExtents = 100;
     // const terrainDepthExtents = 100;
 
-    const terrainMinHeight = -2;
-    const terrainMaxHeight = 8;
-
     const terrainWidth = 128;
     const terrainDepth = 128;
 
-    const heightData = this.generateHeight(terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight);
+    this.minHeight = -2;
+    this.maxHeight = 8;
+
+    this.heightData = this.generateHeight(terrainWidth, terrainDepth, this.minHeight);
     const geometry = new PlaneBufferGeometry(100, 100, terrainWidth - 1, terrainDepth - 1);
     const vertices = geometry.attributes.position.array;
 
     geometry.rotateX(-Math.PI / 2);
 
     for (let i = 0, j = 0; i < vertices.length; i++, j += 3) {
-      vertices[j + 1] = heightData[i];
+      vertices[j + 1] = this.heightData[i];
     }
 
     geometry.computeVertexNormals();
@@ -117,13 +117,13 @@ export default class Playground {
     this.scene.add(this.ground);
   }
 
-  generateHeight (width, depth, minHeight, maxHeight) {
+  generateHeight (width, depth, minHeight) {
+    const height = this.maxHeight - this.minHeight;
     const data = new Float32Array(width * depth);
-    const hRange = maxHeight - minHeight;
 
     const w2 = width / 2.0;
     const d2 = depth / 2.0;
-    const phaseMult = 5.0;
+    const phaseMult = 12.0;
 
     for (let j = 0, p = 0; j < depth; j++) {
       for (let i = 0; i < width; i++, p++) {
@@ -132,7 +132,7 @@ export default class Playground {
           Math.pow((j - d2) / d2, 2.0)
         );
 
-        data[p] = (Math.sin(radius * phaseMult) + 1) * 0.5 * hRange + minHeight;
+        data[p] = (Math.sin(radius * phaseMult) + 1) * 0.5 * height + minHeight;
       }
     }
 
