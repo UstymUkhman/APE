@@ -15,11 +15,18 @@ export default class StaticBodies extends RigidBody {
     });
   }
 
-  addHeightField (mesh, data, minHeight, maxHeight) {
+  addHeightField (mesh, minHeight, maxHeight) {
+    const vertices = mesh.geometry.attributes.position.array;
+    const heightData = [];
+
+    for (let i = 0, length = vertices.length / 3; i < length; i++) {
+      heightData.push(vertices[i * 3 + 1]);
+    }
+
     super.addBody('HeightField', mesh, {
       minHeight: minHeight,
       maxHeight: maxHeight,
-      data: data
+      data: heightData
     });
   }
 

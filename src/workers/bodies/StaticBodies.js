@@ -13,55 +13,29 @@ export default class StaticBodies extends RigidBody {
   _createHeightField (props) {
     const width = props.size.widthSegments + 1;
     const depth = props.size.widthSegments + 1;
-    // This parameter is not really used, since we are using PHY_FLOAT height data type and hence it is ignored
-    const heightScale = 1;
+    const data = Ammo._malloc(4.0 * width * depth);
 
-    // Up axis = 0 for X, 1 for Y, 2 for Z. Normally 1 = Y is used.
-    const upAxis = 1;
-
-    // hdt, height data type. "PHY_FLOAT" is used. Possible values are "PHY_FLOAT", "PHY_UCHAR", "PHY_SHORT"
-    const hdt = 'PHY_FLOAT';
-
-    // Set this to your needs (inverts the triangles)
-    const flipQuadEdges = false;
-
-    // Creates height data buffer in Ammo heap
-    const ammoHeightData = Ammo._malloc(4.0 * width * depth);
-
-    // Copy the javascript height data array to the Ammo one.
     for (let i = 0, p1 = 0, p2 = 0; i < depth; i++) {
       for (let j = 0; j < width; j++, p1++, p2 += 4) {
-        // Write 32-bit float data to memory
-        Ammo.HEAPF32[ammoHeightData + p2 >> 2] = props.data[p1];
+        Ammo.HEAPF32[data + p2 >> 2] = props.data[p1];
       }
     }
 
-    // Creates the heightfield physics shape
-
     /* eslint-disable new-cap */
     const heightFieldShape = new Ammo.btHeightfieldTerrainShape(
-      width,
-      depth,
-
-      ammoHeightData,
-
-      heightScale,
-      props.minHeight,
-      props.maxHeight,
-
-      upAxis,
-      hdt,
-      flipQuadEdges
+      width, depth, data, 1.0, props.minHeight, props.maxHeight, 1.0, 'PHY_FLOAT', false
     );
 
-    // Set horizontal scale
-    const scaleX = 100 / (width - 1); // terrainWidthExtents
-    const scaleZ = 100 / (depth - 1); // terrainDepthExtents
-
-    heightFieldShape.setLocalScaling(new Ammo.btVector3(scaleX, 1, scaleZ));
-    /* eslint-enable new-cap */
+    heightFieldShape.setLocalScaling(
+      new Ammo.btVector3(
+        props.size.width / (width - 1),
+        1.0,
+        props.size.height / (depth - 1)
+      )
+    );
 
     return heightFieldShape;
+    /* eslint-enable new-cap */
   }
 
   addPlane (props) {
@@ -77,7 +51,6 @@ export default class StaticBodies extends RigidBody {
   addHeightField (props) {
     const position = props.position;
     const field = this._createHeightField(props);
-
     position.y = (props.maxHeight + props.minHeight) / 2.0;
 
     this._checkBodyMargin(field);

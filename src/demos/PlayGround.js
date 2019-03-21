@@ -3,23 +3,22 @@ import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
 import { DirectionalLight } from 'three/src/lights/DirectionalLight';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
-// import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { AmbientLight } from 'three/src/lights/AmbientLight';
-// import { GridHelper } from 'three/src/helpers/GridHelper';
+import { GridHelper } from 'three/src/helpers/GridHelper';
+import ThreeOrbitControls from 'three-orbit-controls';
 
 import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
-
 import RAF from 'core/RAF';
 
-import ThreeOrbitControls from 'three-orbit-controls';
 const OrbitControls = ThreeOrbitControls(THREE);
 
 const WHITE = 0xFFFFFF;
 const GRAY = 0xA0A0A0;
-// const BLACK = 0x000000;
+const BLACK = 0x000000;
 
 export default class Playground {
   constructor (container = document.body) {
@@ -30,6 +29,7 @@ export default class Playground {
     this.createCamera();
     this.createLights();
     this.createGround();
+    // this.createHeightField();
 
     this.createRenderer();
     this.createControls();
@@ -73,8 +73,58 @@ export default class Playground {
     this.scene.add(ambient);
   }
 
+  _createHeightData (width, depth) {
+    const height = this.maxHeight - this.minHeight;
+    const data = new Float32Array(width * depth);
+
+    const halfWidth = width / 2.0;
+    const halfDepth = depth / 2.0;
+
+    for (let j = 0, p = 0; j < depth; j++) {
+      for (let i = 0; i < width; i++, p++) {
+        const radius = Math.sqrt(
+          Math.pow((i - halfWidth) / halfWidth, 2.0) +
+          Math.pow((j - halfDepth) / halfDepth, 2.0)
+        );
+
+        const radiusPosition = Math.sin(radius * 8.0) + 1.0;
+        data[p] = radiusPosition * 0.5 * height + this.minHeight;
+      }
+    }
+
+    return data;
+  }
+
+  createHeightField () {
+    this.minHeight = -2;
+    this.maxHeight = 8;
+
+    const width = 128;
+    const depth = 128;
+
+    const geometry = new PlaneBufferGeometry(100, 100, width - 1, depth - 1);
+    const heightData = this._createHeightData(width, depth);
+    const vertices = geometry.attributes.position.array;
+
+    geometry.rotateX(-Math.PI / 2);
+
+    for (let i = 0; i < vertices.length; i++) {
+      vertices[i * 3 + 1] = heightData[i];
+    }
+
+    geometry.computeVertexNormals();
+
+    this.ground = new Mesh(geometry,
+      new MeshPhongMaterial({
+        color: 0x888888
+      })
+    );
+
+    this.scene.add(this.ground);
+  }
+
   createGround () {
-    /* this.ground = new Mesh(
+    this.ground = new Mesh(
       // new PlaneBufferGeometry(500, 500),
       new BoxGeometry(500, 500, 1),
       new MeshPhongMaterial({
@@ -90,53 +140,7 @@ export default class Playground {
     const grid = new GridHelper(500, 50, BLACK, BLACK);
     grid.material.transparent = true;
     grid.material.opacity = 0.2;
-    this.scene.add(grid); */
-
-    // const terrainWidthExtents = 100;
-    // const terrainDepthExtents = 100;
-
-    const terrainWidth = 128;
-    const terrainDepth = 128;
-
-    this.minHeight = -2;
-    this.maxHeight = 8;
-
-    this.heightData = this.generateHeight(terrainWidth, terrainDepth, this.minHeight);
-    const geometry = new PlaneBufferGeometry(100, 100, terrainWidth - 1, terrainDepth - 1);
-    const vertices = geometry.attributes.position.array;
-
-    geometry.rotateX(-Math.PI / 2);
-
-    for (let i = 0, j = 0; i < vertices.length; i++, j += 3) {
-      vertices[j + 1] = this.heightData[i];
-    }
-
-    geometry.computeVertexNormals();
-
-    this.ground = new Mesh(geometry, new MeshPhongMaterial({ color: 0x888888 }));
-    this.scene.add(this.ground);
-  }
-
-  generateHeight (width, depth, minHeight) {
-    const height = this.maxHeight - this.minHeight;
-    const data = new Float32Array(width * depth);
-
-    const w2 = width / 2.0;
-    const d2 = depth / 2.0;
-    const phaseMult = 12.0;
-
-    for (let j = 0, p = 0; j < depth; j++) {
-      for (let i = 0; i < width; i++, p++) {
-        const radius = Math.sqrt(
-          Math.pow((i - w2) / w2, 2.0) +
-          Math.pow((j - d2) / d2, 2.0)
-        );
-
-        data[p] = (Math.sin(radius * phaseMult) + 1) * 0.5 * height + minHeight;
-      }
-    }
-
-    return data;
+    this.scene.add(grid);
   }
 
   createRenderer () {
