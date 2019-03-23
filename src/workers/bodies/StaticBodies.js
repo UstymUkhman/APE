@@ -10,34 +10,6 @@ export default class StaticBodies extends RigidBody {
     this.world = world;
   }
 
-  _createHeightField (props) {
-    const width = props.size.widthSegments + 1;
-    const depth = props.size.widthSegments + 1;
-    const data = Ammo._malloc(4.0 * width * depth);
-
-    for (let i = 0, p1 = 0, p2 = 0; i < depth; i++) {
-      for (let j = 0; j < width; j++, p1++, p2 += 4) {
-        Ammo.HEAPF32[data + p2 >> 2] = props.data[p1];
-      }
-    }
-
-    /* eslint-disable new-cap */
-    const heightFieldShape = new Ammo.btHeightfieldTerrainShape(
-      width, depth, data, 1.0, props.minHeight, props.maxHeight, 1.0, 'PHY_FLOAT', false
-    );
-
-    heightFieldShape.setLocalScaling(
-      new Ammo.btVector3(
-        props.size.width / (width - 1),
-        1.0,
-        props.size.height / (depth - 1)
-      )
-    );
-
-    return heightFieldShape;
-    /* eslint-enable new-cap */
-  }
-
   addPlane (props) {
     /* eslint-disable new-cap */
     const rotation = new Ammo.btVector3(0.0, 0.0, props.z);
@@ -80,6 +52,34 @@ export default class StaticBodies extends RigidBody {
   addSphere (props) {
     const sphere = this.createSphere(props.size);
     this._addStaticBody(props.uuid, sphere, props.position, props.rotation);
+  }
+
+  _createHeightField (props) {
+    const width = props.size.widthSegments + 1;
+    const depth = props.size.widthSegments + 1;
+    const data = Ammo._malloc(4.0 * width * depth);
+
+    for (let i = 0, p1 = 0, p2 = 0; i < depth; i++) {
+      for (let j = 0; j < width; j++, p1++, p2 += 4) {
+        Ammo.HEAPF32[data + p2 >> 2] = props.data[p1];
+      }
+    }
+
+    /* eslint-disable new-cap */
+    const heightFieldShape = new Ammo.btHeightfieldTerrainShape(
+      width, depth, data, 1.0, props.minHeight, props.maxHeight, 1.0, 'PHY_FLOAT', false
+    );
+
+    heightFieldShape.setLocalScaling(
+      new Ammo.btVector3(
+        props.size.width / (width - 1),
+        1.0,
+        props.size.height / (depth - 1)
+      )
+    );
+
+    return heightFieldShape;
+    /* eslint-enable new-cap */
   }
 
   _addStaticBody (uuid, shape, position, quaternion) {

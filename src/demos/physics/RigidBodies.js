@@ -11,7 +11,7 @@ export default class RigidBodies extends Playground {
 
     this.initPhysics();
     this.createDynamicBodies();
-    this.createKinematicBodies();
+    // this.createKinematicBodies();
   }
 
   initPhysics () {
@@ -32,39 +32,41 @@ export default class RigidBodies extends Playground {
     );
 
     dynamicBox.castShadow = true;
-    dynamicBox.position.x = -2.5;
+    dynamicBox.position.x = 10;
     dynamicBox.position.y = 20;
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
 
-    const concaveBox = new Mesh(
-      new BoxGeometry(5, 5, 5),
-      new MeshPhongMaterial({
-        color: 0x222222
-      })
-    );
+    // const concaveBox = new Mesh(
+    //   new BoxGeometry(5, 5, 5),
+    //   new MeshPhongMaterial({
+    //     color: 0x222222
+    //   })
+    // );
 
-    concaveBox.castShadow = true;
-    concaveBox.position.x = -7.5;
-    concaveBox.position.y = 25;
+    // concaveBox.castShadow = true;
+    // concaveBox.position.x = -7.5;
+    // concaveBox.position.y = 25;
 
-    this.physics.dynamic.addConcave(concaveBox, 10);
-    this.scene.add(concaveBox);
+    // // this.physics.dynamic.addConcave(concaveBox, 10);
+    // this.physics.dynamic.addBox(concaveBox, 10);
+    // this.scene.add(concaveBox);
 
-    const convexBox = new Mesh(
-      new BoxGeometry(5, 5, 5),
-      new MeshPhongMaterial({
-        color: 0x222222
-      })
-    );
+    // const convexBox = new Mesh(
+    //   new BoxGeometry(5, 5, 5),
+    //   new MeshPhongMaterial({
+    //     color: 0x222222
+    //   })
+    // );
 
-    convexBox.castShadow = true;
-    convexBox.position.x = 7.5;
-    convexBox.position.y = 25;
+    // convexBox.castShadow = true;
+    // convexBox.position.x = 7.5;
+    // convexBox.position.y = 25;
 
-    this.physics.dynamic.addConvex(convexBox, 10);
-    this.scene.add(convexBox);
+    // // this.physics.dynamic.addConvex(convexBox, 10);
+    // this.physics.dynamic.addBox(convexBox, 10);
+    // this.scene.add(convexBox);
   }
 
   createKinematicBodies () {

@@ -7,6 +7,8 @@ import ClothBodies from 'workers/bodies/ClothBodies';
 import SoftBodies from 'workers/bodies/SoftBodies';
 import RopeBodies from 'workers/bodies/RopeBodies';
 
+import { Vector3 } from 'three/src/math/Vector3';
+
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
@@ -194,6 +196,70 @@ class PhysicsWorker {
   updateBodies (props) {
     this[props.type].update(this.transform, props.bodies);
     this.world.stepSimulation(props.delta, 10);
+
+    this.checkCollisions();
+  }
+
+  checkCollisions () {
+    const dispatcher = this.world.getDispatcher();
+    const manifolds = dispatcher.getNumManifolds();
+
+    for (let i = 0; i < manifolds; i++) {
+      const manifold = dispatcher.getManifoldByIndexInternal(i);
+      const contacts = manifold.getNumContacts();
+
+      const collisions = new Array(contacts);
+      const collidedBodies = new Array(2);
+
+      // console.log(i, contacts);
+
+      for (let j = 0; j < contacts; j++) {
+        const bodyPoint = new Vector3();
+        const collisionPoint = new Vector3();
+        const collisionNormal = new Vector3();
+
+        const point = manifold.getContactPoint(j);
+        const pointDistance = point.getDistance();
+        const normal = point.get_m_normalWorldOnB();
+
+        let localPoint = point.get_m_localPointA();
+        bodyPoint.set(-localPoint.x(), localPoint.y(), localPoint.z());
+
+        let bodyCollisionPoint = point.get_m_positionWorldOnA();
+        collisionPoint.set(bodyCollisionPoint.x(), bodyCollisionPoint.y(), bodyCollisionPoint.z());
+
+        collidedBodies[0] = {
+          collisionPoint: collisionPoint,
+          bodyPoint: bodyPoint,
+          uuid: ''
+        };
+
+        localPoint = point.get_m_localPointB();
+        bodyCollisionPoint = point.get_m_positionWorldOnB();
+
+        bodyPoint.set(-localPoint.x(), localPoint.y(), localPoint.z());
+        collisionPoint.set(bodyCollisionPoint.x(), bodyCollisionPoint.y(), bodyCollisionPoint.z());
+
+        collidedBodies[1] = {
+          collisionPoint: collisionPoint,
+          bodyPoint: bodyPoint,
+          uuid: ''
+        };
+
+        collisionNormal.set(normal.x(), normal.y(), normal.z());
+
+        // const body0 = manifold.getBody0();
+        // const body1 = manifold.getBody1();
+
+        collisions.push({
+          distance: pointDistance,
+          normal: collisionNormal,
+          bodies: collidedBodies
+        });
+      }
+
+      // POST
+    }
   }
 
   updateConstants (props) {
