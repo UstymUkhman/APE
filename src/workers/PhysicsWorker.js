@@ -7,7 +7,6 @@ import ClothBodies from 'workers/bodies/ClothBodies';
 import SoftBodies from 'workers/bodies/SoftBodies';
 import RopeBodies from 'workers/bodies/RopeBodies';
 
-import { GRAVITY } from 'physics/constants';
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import { Ammo } from 'core/Ammo';
@@ -16,8 +15,9 @@ import find from 'lodash/find';
 let physics = null;
 
 class PhysicsWorker {
-  constructor (soft) {
+  constructor (soft, gravity) {
     this._soft = soft;
+    this._gravity = gravity;
 
     if (soft) {
       this.initSoftWorld();
@@ -36,8 +36,8 @@ class PhysicsWorker {
     const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
 
     this.world = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
-    this.world.setGravity(new Ammo.btVector3(0.0, GRAVITY, 0.0));
-    this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, GRAVITY, 0.0));
+    this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
+    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     this.transform = new Ammo.btTransform();
     /* eslint-enable new-cap */
   }
@@ -51,7 +51,7 @@ class PhysicsWorker {
     const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
 
     this.world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    this.world.setGravity(new Ammo.btVector3(0.0, GRAVITY, 0.0));
+    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     this.transform = new Ammo.btTransform();
     /* eslint-enable new-cap */
   }
@@ -257,7 +257,7 @@ self.addEventListener('message', (event) => {
   if (physics) {
     physics[action](params);
   } else if (action === 'init') {
-    physics = new PhysicsWorker(params[0]);
+    physics = new PhysicsWorker(params[0], params[1]);
   } else {
     const array = typeof params === 'object';
     const args = params.length && array ? params.join(', ') : !array ? params : '';

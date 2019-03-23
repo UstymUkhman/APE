@@ -10,9 +10,10 @@ import SoftBodies from 'physics/bodies/SoftBodies';
 import RopeBodies from 'physics/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
+import { GRAVITY } from 'physics/constants';
 
 export default class PhysicsWorld {
-  constructor (soft = false) {
+  constructor (soft = false, gravity = GRAVITY) {
     this.clock = new Clock();
     this.worker = new PhysicsWorker();
 
@@ -20,8 +21,8 @@ export default class PhysicsWorld {
     this.worker.addEventListener('message', this._onMessage);
 
     this.worker.postMessage({
-      action: 'init',
-      params: [soft]
+      params: [soft, gravity],
+      action: 'init'
     });
 
     this.kinematic = new KinematicBodies(this.worker);
