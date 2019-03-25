@@ -54,6 +54,10 @@ export default class PhysicsWorld {
     });
   }
 
+  reportCollisions (data) {
+    console.log(data.bodies);
+  }
+
   /* addVehicle (mesh, mass, controls, moto = false) {
     const vehicle = new VehicleBody(this.world, controls, moto);
     vehicle.addChassis(mesh, mass);

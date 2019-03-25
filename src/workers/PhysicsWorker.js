@@ -20,6 +20,7 @@ class PhysicsWorker {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
+    this._fullReport = false;
 
     if (soft) {
       this.initSoftWorld();
@@ -197,69 +198,97 @@ class PhysicsWorker {
     this[props.type].update(this.transform, props.bodies);
     this.world.stepSimulation(props.delta, 10);
 
+    // if report collisions:
     this.checkCollisions();
   }
 
   checkCollisions () {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
+    const collisions = new Array(manifolds);
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
-      const contacts = manifold.getNumContacts();
+      const collisionContacts = manifold.getNumContacts();
+      const contacts = new Array(collisionContacts);
 
-      const collisions = new Array(contacts);
-      const collidedBodies = new Array(2);
+      let body = manifold.getBody0();
+      const uuid0 = this.getBodyUUID(body);
 
-      // console.log(i, contacts);
+      body = manifold.getBody1();
+      const uuid1 = this.getBodyUUID(body);
 
-      for (let j = 0; j < contacts; j++) {
-        const bodyPoint = new Vector3();
-        const collisionPoint = new Vector3();
-        const collisionNormal = new Vector3();
-
-        const point = manifold.getContactPoint(j);
-        const pointDistance = point.getDistance();
-        const normal = point.get_m_normalWorldOnB();
-
-        let localPoint = point.get_m_localPointA();
-        bodyPoint.set(-localPoint.x(), localPoint.y(), localPoint.z());
-
-        let bodyCollisionPoint = point.get_m_positionWorldOnA();
-        collisionPoint.set(bodyCollisionPoint.x(), bodyCollisionPoint.y(), bodyCollisionPoint.z());
-
-        collidedBodies[0] = {
-          collisionPoint: collisionPoint,
-          bodyPoint: bodyPoint,
-          uuid: ''
+      if (!this._fullReport) {
+        collisions[i] = {
+          contacts: collisionContacts,
+          bodies: [uuid0, uuid1]
         };
 
-        localPoint = point.get_m_localPointB();
-        bodyCollisionPoint = point.get_m_positionWorldOnB();
-
-        bodyPoint.set(-localPoint.x(), localPoint.y(), localPoint.z());
-        collisionPoint.set(bodyCollisionPoint.x(), bodyCollisionPoint.y(), bodyCollisionPoint.z());
-
-        collidedBodies[1] = {
-          collisionPoint: collisionPoint,
-          bodyPoint: bodyPoint,
-          uuid: ''
-        };
-
-        collisionNormal.set(normal.x(), normal.y(), normal.z());
-
-        // const body0 = manifold.getBody0();
-        // const body1 = manifold.getBody1();
-
-        collisions.push({
-          distance: pointDistance,
-          normal: collisionNormal,
-          bodies: collidedBodies
-        });
+        continue;
       }
 
-      // POST
+      for (let j = 0; j < collisionContacts; j++) {
+        const point = manifold.getContactPoint(j);
+        const pointDistance = point.getDistance();
+
+        const normal = point.get_m_normalWorldOnB();
+        const collisionNormal = new Vector3(normal.x(), normal.y(), normal.z());
+
+        let bodyPoint = point.get_m_localPointA();
+        let collisionPoint = point.get_m_positionWorldOnA();
+        const body0Point = new Vector3(bodyPoint.x(), bodyPoint.y(), bodyPoint.z());
+        const collisionPoint0 = new Vector3(collisionPoint.x(), collisionPoint.y(), collisionPoint.z());
+
+        bodyPoint = point.get_m_localPointB();
+        collisionPoint = point.get_m_positionWorldOnB();
+        const body1Point = new Vector3(bodyPoint.x(), bodyPoint.y(), bodyPoint.z());
+        const collisionPoint1 = new Vector3(collisionPoint.x(), collisionPoint.y(), collisionPoint.z());
+
+        contacts[j] = {
+          distance: pointDistance,
+          normal: collisionNormal,
+
+          bodies: [{
+            collisionPoint: collisionPoint0,
+            bodyPoint: body0Point,
+            uuid: uuid0
+          }, {
+            collisionPoint: collisionPoint1,
+            bodyPoint: body1Point,
+            uuid: uuid1
+          }]
+        };
+      }
+
+      collisions[i] = contacts;
     }
+
+    self.postMessage({
+      action: 'reportCollisions',
+      bodies: collisions
+    });
+  }
+
+  getBodyUUID (body) {
+    let collider = find(this.dynamic.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    collider = find(this.kinematic.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    collider = find(this.static.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    collider = find(this.soft.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    collider = find(this.cloth.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    collider = find(this.hinge.bodies, { body: body });
+    if (collider) return collider.uuid;
+
+    return '';
   }
 
   updateConstants (props) {
