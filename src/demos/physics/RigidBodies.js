@@ -18,6 +18,7 @@ export default class RigidBodies extends Playground {
     this.physics = new PhysicsWorld();
 
     this.physics.static.friction = 2.5;
+    this.physics.fullCollisionReport = true;
     this.physics.static.addBox(this.ground);
     // this.physics.static.addPlane(this.ground);
     // this.physics.static.addHeightField(this.ground, this.minHeight, this.maxHeight);

@@ -20,7 +20,9 @@ class PhysicsWorker {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
+
     this._fullReport = false;
+    this._reportCollisions = false;
 
     if (soft) {
       this.initSoftWorld();
@@ -198,8 +200,9 @@ class PhysicsWorker {
     this[props.type].update(this.transform, props.bodies);
     this.world.stepSimulation(props.delta, 10);
 
-    // if report collisions:
-    this.checkCollisions();
+    if (this._reportCollisions) {
+      this.checkCollisions();
+    }
   }
 
   checkCollisions () {
@@ -213,15 +216,15 @@ class PhysicsWorker {
       const contacts = new Array(collisionContacts);
 
       let body = manifold.getBody0();
-      const uuid0 = this.getBodyUUID(body);
+      const body0 = this.getBodyUUID(body);
 
       body = manifold.getBody1();
-      const uuid1 = this.getBodyUUID(body);
+      const body1 = this.getBodyUUID(body);
 
       if (!this._fullReport) {
         collisions[i] = {
           contacts: collisionContacts,
-          bodies: [uuid0, uuid1]
+          bodies: [body0, body1]
         };
 
         continue;
@@ -251,11 +254,11 @@ class PhysicsWorker {
           bodies: [{
             collisionPoint: collisionPoint0,
             bodyPoint: body0Point,
-            uuid: uuid0
+            body: body0
           }, {
             collisionPoint: collisionPoint1,
             bodyPoint: body1Point,
-            uuid: uuid1
+            body: body1
           }]
         };
       }
@@ -263,32 +266,34 @@ class PhysicsWorker {
       collisions[i] = contacts;
     }
 
-    self.postMessage({
-      action: 'reportCollisions',
-      bodies: collisions
-    });
+    if (collisions.length) {
+      self.postMessage({
+        action: 'reportCollisions',
+        bodies: collisions
+      });
+    }
   }
 
   getBodyUUID (body) {
     let collider = find(this.dynamic.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'dynamic' };
 
     collider = find(this.kinematic.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'kinematic' };
 
     collider = find(this.static.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'static' };
 
     collider = find(this.soft.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'soft' };
 
     collider = find(this.cloth.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'cloth' };
 
     collider = find(this.hinge.bodies, { body: body });
-    if (collider) return collider.uuid;
+    if (collider) return { uuid: collider.uuid, type: 'hinge' };
 
-    return '';
+    return null;
   }
 
   updateConstants (props) {
@@ -332,6 +337,16 @@ class PhysicsWorker {
 
   updateHingeBodies (props) {
     this.hinge.update(props);
+  }
+
+  reportCollisions (report) {
+    this._reportCollisions = report[0];
+    this._fullReport = report[1];
+
+    self.postMessage({
+      action: 'updateCollisionReport',
+      params: report
+    });
   }
 
   removeBody (props) {

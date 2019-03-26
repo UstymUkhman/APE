@@ -133,8 +133,8 @@ export default class Playground {
       })
     );
 
-    this.ground.receiveShadow = true;
     this.ground.rotateX(-Math.PI / 2);
+    this.ground.receiveShadow = true;
     this.scene.add(this.ground);
 
     const grid = new GridHelper(500, 50, BLACK, BLACK);

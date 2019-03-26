@@ -17,6 +17,9 @@ export default class PhysicsWorld {
     this.clock = new Clock();
     this.worker = new PhysicsWorker();
 
+    this._collisionReport = false;
+    this._fullCollisionReport = false;
+
     this._onMessage = this.onWorkerMessage.bind(this);
     this.worker.addEventListener('message', this._onMessage);
 
@@ -54,8 +57,28 @@ export default class PhysicsWorld {
     });
   }
 
+  setCollisionReport (report, fullReport) {
+    this.worker.postMessage({
+      params: [report, fullReport],
+      action: 'reportCollisions'
+    });
+  }
+
+  updateCollisionReport (report) {
+    this._collisionReport = report.params[0];
+    this._fullCollisionReport = report.params[1];
+  }
+
   reportCollisions (data) {
-    console.log(data.bodies);
+    const report = data.bodies[0];
+
+    if (this._fullCollisionReport) {
+      report.forEach((data) => {
+        // console.log(data.bodies[0], data.bodies[1]);
+      });
+    } else {
+      // console.log(report.bodies[0], report.bodies[1]);
+    }
   }
 
   /* addVehicle (mesh, mass, controls, moto = false) {
@@ -85,5 +108,21 @@ export default class PhysicsWorld {
 
     delete this.worker;
     delete this.clock;
+  }
+
+  set collisionReport (report) {
+    this.setCollisionReport(report);
+  }
+
+  get collisionReport () {
+    return this._collisionReport;
+  }
+
+  set fullCollisionReport (report) {
+    this.setCollisionReport(true, report);
+  }
+
+  get fullCollisionReport () {
+    return this._fullCollisionReport;
   }
 }
