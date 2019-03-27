@@ -1,4 +1,5 @@
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
@@ -15,10 +16,10 @@ export default class RigidBodies extends Playground {
   }
 
   initPhysics () {
-    this.physics = new PhysicsWorld();
+    this.physics = new PhysicsWorld(true);
 
     this.physics.static.friction = 2.5;
-    this.physics.fullCollisionReport = true;
+    this.physics.collisionReport = true;
     this.physics.static.addBox(this.ground);
     // this.physics.static.addPlane(this.ground);
     // this.physics.static.addHeightField(this.ground, this.minHeight, this.maxHeight);
@@ -33,41 +34,25 @@ export default class RigidBodies extends Playground {
     );
 
     dynamicBox.castShadow = true;
-    dynamicBox.position.x = 10;
-    dynamicBox.position.y = 20;
+    dynamicBox.position.x = -10;
+    dynamicBox.position.y = 5;
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
 
-    // const concaveBox = new Mesh(
-    //   new BoxGeometry(5, 5, 5),
-    //   new MeshPhongMaterial({
-    //     color: 0x222222
-    //   })
-    // );
+    const boxGeometry = new BufferGeometry().fromGeometry(new BoxGeometry(5, 5, 5, 20, 20, 20));
+    boxGeometry.translate(-10, 20, 0);
 
-    // concaveBox.castShadow = true;
-    // concaveBox.position.x = -7.5;
-    // concaveBox.position.y = 25;
+    const softBox = new Mesh(
+      boxGeometry,
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
 
-    // // this.physics.dynamic.addConcave(concaveBox, 10);
-    // this.physics.dynamic.addBox(concaveBox, 10);
-    // this.scene.add(concaveBox);
-
-    // const convexBox = new Mesh(
-    //   new BoxGeometry(5, 5, 5),
-    //   new MeshPhongMaterial({
-    //     color: 0x222222
-    //   })
-    // );
-
-    // convexBox.castShadow = true;
-    // convexBox.position.x = 7.5;
-    // convexBox.position.y = 25;
-
-    // // this.physics.dynamic.addConvex(convexBox, 10);
-    // this.physics.dynamic.addBox(convexBox, 10);
-    // this.scene.add(convexBox);
+    this.physics.soft.addBody(softBox, 10, 500);
+    softBox.castShadow = true;
+    this.scene.add(softBox);
   }
 
   createKinematicBodies () {
@@ -93,11 +78,11 @@ export default class RigidBodies extends Playground {
 
     switch (code) {
       case 87:
-        this.kinematicBox.position.z += 1;
+        this.kinematicBox.position.y += 1;
         break;
 
       case 83:
-        this.kinematicBox.position.z -= 1;
+        this.kinematicBox.position.y -= 1;
         break;
 
       case 65:

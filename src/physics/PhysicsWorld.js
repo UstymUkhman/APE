@@ -77,7 +77,7 @@ export default class PhysicsWorld {
         // console.log(data.bodies[0], data.bodies[1]);
       });
     } else {
-      // console.log(report.bodies[0], report.bodies[1]);
+      console.log(report.bodies[0], report.bodies[1]);
     }
   }
 

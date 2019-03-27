@@ -28,7 +28,7 @@ const WHITE = 0xFFFFFF;
 const BLACK = 0x000000;
 const GRAY = 0xA0A0A0;
 
-export default class Soft {
+export default class ClothBody {
   constructor (container = document.body) {
     this.physics = new PhysicsWorld(true);
     this.container = container;

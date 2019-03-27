@@ -284,15 +284,6 @@ class PhysicsWorker {
     collider = find(this.static.bodies, { body: body });
     if (collider) return { uuid: collider.uuid, type: 'static' };
 
-    collider = find(this.soft.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'soft' };
-
-    collider = find(this.cloth.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'cloth' };
-
-    collider = find(this.hinge.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'hinge' };
-
     return null;
   }
 
