@@ -120,6 +120,10 @@ export default class RigidBody {
   }
   /* eslint-enable new-cap */
 
+  getCollisionStatus (wasColliding) {
+    return wasColliding ? 'onCollision' : 'onCollisionStart';
+  }
+
   _checkBodyMargin (shape) {
     if (this.margin !== MARGIN) {
       shape.setMargin(this.margin);

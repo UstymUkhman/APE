@@ -8,6 +8,7 @@ import SoftBodies from 'workers/bodies/SoftBodies';
 import RopeBodies from 'workers/bodies/RopeBodies';
 
 import { Vector3 } from 'three/src/math/Vector3';
+import differenceBy from 'lodash/differenceBy';
 
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
@@ -20,6 +21,7 @@ class PhysicsWorker {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
+    this._collidedBodies = [];
 
     this._fullReport = false;
     this._reportCollisions = false;
@@ -208,7 +210,9 @@ class PhysicsWorker {
   checkCollisions () {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
+
     const collisions = new Array(manifolds);
+    const collidedBodies = [];
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
@@ -216,10 +220,13 @@ class PhysicsWorker {
       const contacts = new Array(collisionContacts);
 
       let body = manifold.getBody0();
-      const body0 = this.getBodyUUID(body);
+      const body0 = this.getCollisionData(body);
 
       body = manifold.getBody1();
-      const body1 = this.getBodyUUID(body);
+      const body1 = this.getCollisionData(body);
+
+      collidedBodies.push({uuid: body0.uuid, type: body0.type});
+      collidedBodies.push({uuid: body1.uuid, type: body1.type});
 
       if (!this._fullReport) {
         collisions[i] = {
@@ -266,25 +273,22 @@ class PhysicsWorker {
       collisions[i] = contacts;
     }
 
-    if (collisions.length) {
-      self.postMessage({
-        action: 'reportCollisions',
-        bodies: collisions
-      });
-    }
+    const lastCollided = differenceBy(this._collidedBodies, collidedBodies, 'uuid');
+    lastCollided.forEach((body) => { this[body.type].resetCollision(body.uuid); });
+    this._collidedBodies = collidedBodies;
+
+    self.postMessage({
+      active: !!collisions.length,
+      action: 'reportCollisions',
+      collisions: collisions
+    });
   }
 
-  getBodyUUID (body) {
-    let collider = find(this.dynamic.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'dynamic' };
-
-    collider = find(this.kinematic.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'kinematic' };
-
-    collider = find(this.static.bodies, { body: body });
-    if (collider) return { uuid: collider.uuid, type: 'static' };
-
-    return null;
+  getCollisionData (body) {
+    let data = this.dynamic.getCollisionStatus(body);
+    data = this.kinematic.getCollisionStatus(body) || data;
+    data = this.static.getCollisionStatus(body) || data;
+    return data;
   }
 
   updateConstants (props) {

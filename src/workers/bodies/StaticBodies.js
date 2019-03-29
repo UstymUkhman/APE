@@ -84,8 +84,8 @@ export default class StaticBodies extends RigidBody {
 
   _addStaticBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
+    this.bodies.push({uuid: uuid, body: body, colliding: false});
     body.setActivationState(DISABLE_DEACTIVATION);
-    this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
   }
 
@@ -100,5 +100,27 @@ export default class StaticBodies extends RigidBody {
 
     this.bodies.splice(index, 1);
     return true;
+  }
+
+  getCollisionStatus (body) {
+    const collider = find(this.bodies, { body: body });
+
+    if (collider) {
+      const status = super.getCollisionStatus(collider.colliding);
+      collider.colliding = true;
+
+      return {
+        uuid: collider.uuid,
+        colliding: status,
+        type: 'static'
+      };
+    }
+
+    return null;
+  }
+
+  resetCollision (uuid) {
+    const body = find(this.bodies, { uuid: uuid });
+    body.colliding = false;
   }
 }

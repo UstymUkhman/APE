@@ -45,13 +45,34 @@ export default class KinematicBodies extends RigidBody {
     this._addKinematicBody(props.uuid, sphere, props.position, props.rotation);
   }
 
+  getCollisionStatus (body) {
+    const collider = find(this.bodies, { body: body });
+
+    if (collider) {
+      const status = super.getCollisionStatus(collider.colliding);
+      collider.colliding = true;
+
+      return {
+        uuid: collider.uuid,
+        colliding: status,
+        type: 'kinematic'
+      };
+    }
+
+    return null;
+  }
+
   _addKinematicBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
+    this.bodies.push({uuid: uuid, body: body, colliding: false});
     body.setActivationState(DISABLE_DEACTIVATION);
-
-    this.bodies.push({uuid: uuid, body: body});
     this.world.addRigidBody(body);
+  }
+
+  resetCollision (uuid) {
+    const body = find(this.bodies, { uuid: uuid });
+    body.colliding = false;
   }
 
   update (transform, bodies) {

@@ -3,6 +3,8 @@ import RigidBody from 'physics/bodies/RigidBody';
 export default class StaticBodies extends RigidBody {
   constructor (worker) {
     super('static', worker);
+
+    this.bodies = [];
     this.worker = worker;
     worker.postMessage({action: 'initStaticBodies'});
   }
@@ -13,6 +15,8 @@ export default class StaticBodies extends RigidBody {
       // Z-axis rotation in Ammo.js:
       z: mesh.rotation.x / -Math.PI * 2.0
     });
+
+    this.bodies.push(mesh);
   }
 
   addHeightField (mesh, minHeight, maxHeight) {
@@ -28,36 +32,49 @@ export default class StaticBodies extends RigidBody {
       maxHeight: maxHeight,
       data: heightData
     });
+
+    this.bodies.push(mesh);
   }
 
   addBox (mesh) {
     super.addBody('Box', mesh);
+    this.bodies.push(mesh);
   }
 
   addCylinder (mesh) {
     super.addBody('Cylinder', mesh);
+    this.bodies.push(mesh);
   }
 
   addCapsule (mesh) {
     super.addBody('Capsule', mesh);
+    this.bodies.push(mesh);
   }
 
   addCone (mesh) {
     super.addBody('Cone', mesh);
+    this.bodies.push(mesh);
   }
 
   addSphere (mesh) {
     super.addBody('Sphere', mesh);
+    this.bodies.push(mesh);
   }
 
   remove (mesh) {
-    this.worker.postMessage({
-      action: 'removeBody',
+    const body = this.bodies.indexOf(mesh);
 
-      params: {
-        uuid: mesh.uuid,
-        type: 'static'
-      }
-    });
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          uuid: mesh.uuid,
+          type: 'static'
+        }
+      });
+    }
   }
 }

@@ -57,7 +57,7 @@ export default class PhysicsWorld {
     });
   }
 
-  setCollisionReport (report, fullReport) {
+  setCollisionReport (report, fullReport = false) {
     this.worker.postMessage({
       params: [report, fullReport],
       action: 'reportCollisions'
@@ -69,16 +69,35 @@ export default class PhysicsWorld {
     this._fullCollisionReport = report.params[1];
   }
 
-  reportCollisions (data) {
-    const report = data.bodies[0];
+  reportCollisions (report) {
+    // console.log(report);
 
-    if (this._fullCollisionReport) {
-      report.forEach((data) => {
-        // console.log(data.bodies[0], data.bodies[1]);
+    // if (this._fullCollisionReport) {
+    //   // report.contacts
+    //   // report.bodies[0]
+    //   // report.bodies[1]
+
+    //   report.forEach((data) => {
+    //     // console.log(data.bodies[0], data.bodies[1]);
+    //   });
+    // } else {
+    //   // report.contacts
+    //   // report.bodies[0]
+    //   // report.bodies[1]
+    //   console.log(report.bodies[0], report.bodies[1]);
+    // }
+
+    if (report.active) {
+      report.collisions.forEach((collision) => {
+        // collision.contacts
+        // collision.bodies[0]
+        // collision.bodies[1]
       });
-    } else {
-      console.log(report.bodies[0], report.bodies[1]);
     }
+
+    // this.static.updateCollisions(report.bodies, { contacts: report.contacts });
+    // this.dynamic.updateCollisions(report.bodies, { contacts: report.contacts });
+    // this.kinematic.updateCollisions(report.bodies, { contacts: report.contacts });
   }
 
   /* addVehicle (mesh, mass, controls, moto = false) {

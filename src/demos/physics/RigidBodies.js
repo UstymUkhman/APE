@@ -1,5 +1,5 @@
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
-import { BufferGeometry } from 'three/src/core/BufferGeometry';
+// import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
@@ -12,11 +12,11 @@ export default class RigidBodies extends Playground {
 
     this.initPhysics();
     this.createDynamicBodies();
-    // this.createKinematicBodies();
+    this.createKinematicBodies();
   }
 
   initPhysics () {
-    this.physics = new PhysicsWorld(true);
+    this.physics = new PhysicsWorld();
 
     this.physics.static.friction = 2.5;
     this.physics.collisionReport = true;
@@ -34,25 +34,10 @@ export default class RigidBodies extends Playground {
     );
 
     dynamicBox.castShadow = true;
-    dynamicBox.position.x = -10;
-    dynamicBox.position.y = 5;
+    dynamicBox.position.y = 15;
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
-
-    const boxGeometry = new BufferGeometry().fromGeometry(new BoxGeometry(5, 5, 5, 20, 20, 20));
-    boxGeometry.translate(-10, 20, 0);
-
-    const softBox = new Mesh(
-      boxGeometry,
-      new MeshPhongMaterial({
-        color: 0x222222
-      })
-    );
-
-    this.physics.soft.addBody(softBox, 10, 500);
-    softBox.castShadow = true;
-    this.scene.add(softBox);
   }
 
   createKinematicBodies () {
@@ -64,7 +49,7 @@ export default class RigidBodies extends Playground {
     );
 
     this.kinematicBox.castShadow = true;
-    this.kinematicBox.position.y = 2.5;
+    this.kinematicBox.position.y = 5;
 
     this.physics.kinematic.addBox(this.kinematicBox);
     this.scene.add(this.kinematicBox);
