@@ -29,7 +29,6 @@ export default class Playground {
     this.createCamera();
     this.createLights();
     this.createGround();
-    // this.createHeightField();
 
     this.createRenderer();
     this.createControls();
@@ -47,7 +46,7 @@ export default class Playground {
 
   createCamera () {
     this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
-    this.camera.position.set(0, 5, -25);
+    this.camera.position.set(0, 15, -50);
     this.camera.lookAt(0, 0, 0);
   }
 
