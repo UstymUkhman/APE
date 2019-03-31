@@ -1,13 +1,10 @@
 import { ZERO_MASS, DISABLE_DEACTIVATION } from 'physics/constants';
 import RigidBody from 'workers/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
-import find from 'lodash/find';
 
 export default class StaticBodies extends RigidBody {
   constructor (world) {
-    super();
-    this.bodies = [];
-    this.world = world;
+    super(world);
   }
 
   addPlane (props) {
@@ -89,21 +86,8 @@ export default class StaticBodies extends RigidBody {
     this.world.addRigidBody(body);
   }
 
-  remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
-
-    if (mesh === -1) return false;
-
-    this.world.removeRigidBody(mesh.body);
-    Ammo.destroy(mesh.body);
-
-    this.bodies.splice(index, 1);
-    return true;
-  }
-
   getCollisionStatus (body) {
-    const collider = find(this.bodies, { body: body });
+    const collider = this.getBodyByCollider(body);
 
     if (collider) {
       const status = super.getCollisionStatus(collider.colliding);
@@ -117,10 +101,5 @@ export default class StaticBodies extends RigidBody {
     }
 
     return null;
-  }
-
-  resetCollision (uuid) {
-    const body = find(this.bodies, { uuid: uuid });
-    body.colliding = false;
   }
 }

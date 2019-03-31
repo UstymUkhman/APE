@@ -3,35 +3,27 @@ import RigidBody from 'physics/bodies/RigidBody';
 export default class KinematicBodies extends RigidBody {
   constructor (worker) {
     super('kinematic', worker);
-
-    this.bodies = [];
-    this.worker = worker;
-    worker.postMessage({action: 'initKinematicBodies'});
+    this.worker.postMessage({action: 'initKinematicBodies'});
   }
 
   addBox (mesh) {
     super.addBody('Box', mesh);
-    this.bodies.push(mesh);
   }
 
   addCylinder (mesh) {
     super.addBody('Cylinder', mesh);
-    this.bodies.push(mesh);
   }
 
   addCapsule (mesh) {
     super.addBody('Capsule', mesh);
-    this.bodies.push(mesh);
   }
 
   addCone (mesh) {
     super.addBody('Cone', mesh);
-    this.bodies.push(mesh);
   }
 
   addSphere (mesh) {
     super.addBody('Sphere', mesh);
-    this.bodies.push(mesh);
   }
 
   update () {

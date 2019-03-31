@@ -1,6 +1,5 @@
 import RigidBody from 'workers/bodies/RigidBody';
 import { Ammo } from 'core/Ammo';
-import find from 'lodash/find';
 
 import {
   ZERO_MASS,
@@ -45,8 +44,16 @@ export default class KinematicBodies extends RigidBody {
     this._addKinematicBody(props.uuid, sphere, props.position, props.rotation);
   }
 
+  _addKinematicBody (uuid, shape, position, quaternion) {
+    const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
+    body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
+    this.bodies.push({uuid: uuid, body: body, colliding: false});
+    body.setActivationState(DISABLE_DEACTIVATION);
+    this.world.addRigidBody(body);
+  }
+
   getCollisionStatus (body) {
-    const collider = find(this.bodies, { body: body });
+    const collider = this.getBodyByCollider(body);
 
     if (collider) {
       const status = super.getCollisionStatus(collider.colliding);
@@ -62,23 +69,10 @@ export default class KinematicBodies extends RigidBody {
     return null;
   }
 
-  _addKinematicBody (uuid, shape, position, quaternion) {
-    const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
-    body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
-    this.bodies.push({uuid: uuid, body: body, colliding: false});
-    body.setActivationState(DISABLE_DEACTIVATION);
-    this.world.addRigidBody(body);
-  }
-
-  resetCollision (uuid) {
-    const body = find(this.bodies, { uuid: uuid });
-    body.colliding = false;
-  }
-
   update (transform, bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const mesh = bodies[i];
-      const body = find(this.bodies, { uuid: mesh.uuid }).body;
+      const body = this.getBodyByUUID(mesh.uuid).body;
 
       const motionState = body.getMotionState();
 
@@ -95,18 +89,5 @@ export default class KinematicBodies extends RigidBody {
       action: 'updateBodies',
       type: 'kinematic'
     });
-  }
-
-  remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
-
-    if (mesh === -1) return false;
-
-    this.world.removeRigidBody(mesh.body);
-    Ammo.destroy(mesh.body);
-
-    this.bodies.splice(index, 1);
-    return true;
   }
 }

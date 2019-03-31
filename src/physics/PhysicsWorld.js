@@ -89,15 +89,49 @@ export default class PhysicsWorld {
 
     if (report.active) {
       report.collisions.forEach((collision) => {
-        // collision.contacts
-        // collision.bodies[0]
-        // collision.bodies[1]
+        const body0 = collision.bodies[0];
+        const body1 = collision.bodies[1];
+
+        const type0 = body0.type;
+        const type1 = body1.type;
+
+        const body0Mesh = this[type0].getBody(body0.uuid);
+        const body1Mesh = this[type1].getBody(body1.uuid);
+
+        this[type0].updateCollisions(
+          { callback: body0.collisionFunction, mesh: body0Mesh },
+          { mesh: body1Mesh, type: type1 },
+          collision.contacts
+        );
+
+        this[type1].updateCollisions(
+          { callback: body1.collisionFunction, mesh: body1Mesh },
+          { mesh: body0Mesh, type: type0 },
+          collision.contacts
+        );
       });
     }
 
-    // this.static.updateCollisions(report.bodies, { contacts: report.contacts });
-    // this.dynamic.updateCollisions(report.bodies, { contacts: report.contacts });
-    // this.kinematic.updateCollisions(report.bodies, { contacts: report.contacts });
+    report.lost.forEach((bodies) => {
+      const uuid0 = bodies[0].uuid;
+      const uuid1 = bodies[1].uuid;
+
+      const type0 = bodies[0].type;
+      const type1 = bodies[1].type;
+
+      const body0Mesh = this[type0].getBody(uuid0);
+      const body1Mesh = this[type1].getBody(uuid1);
+
+      this[type0].updateCollisions(
+        { callback: 'onCollisionEnd', mesh: body0Mesh },
+        { mesh: body1Mesh, type: type1 }
+      );
+
+      this[type1].updateCollisions(
+        { callback: 'onCollisionEnd', mesh: body1Mesh },
+        { mesh: body0Mesh, type: type0 }
+      );
+    });
   }
 
   /* addVehicle (mesh, mass, controls, moto = false) {

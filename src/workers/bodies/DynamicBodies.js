@@ -1,7 +1,5 @@
 import RigidBody from 'workers/bodies/RigidBody';
 import { ZERO_MASS } from 'physics/constants';
-import { Ammo } from 'core/Ammo';
-import find from 'lodash/find';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
@@ -74,32 +72,27 @@ export default class DynamicBodies extends RigidBody {
     this._addDynamicBody(props.uuid, sphere, props.position, props.rotation, props.mass);
   }
 
-  getCollisionStatus (body) {
-    const collider = find(this.bodies, { body: body });
-
-    if (collider) {
-      const status = super.getCollisionStatus(collider.colliding);
-      collider.colliding = true;
-
-      return {
-        uuid: collider.uuid,
-        colliding: status,
-        type: 'dynamic'
-      };
-    }
-
-    return null;
-  }
-
   _addDynamicBody (uuid, shape, position, quaternion, mass = ZERO_MASS) {
     const body = this.createRigidBody(shape, mass, position, quaternion);
     this.bodies.push({uuid: uuid, body: body, colliding: false});
     this.world.addRigidBody(body);
   }
 
-  resetCollision (uuid) {
-    const body = find(this.bodies, { uuid: uuid });
-    body.colliding = false;
+  getCollisionStatus (body) {
+    const collider = this.getBodyByCollider(body);
+
+    if (collider) {
+      const status = super.getCollisionStatus(collider.colliding);
+      collider.colliding = true;
+
+      return {
+        collisionFunction: status,
+        uuid: collider.uuid,
+        type: 'dynamic'
+      };
+    }
+
+    return null;
   }
 
   update (transform) {
@@ -133,18 +126,5 @@ export default class DynamicBodies extends RigidBody {
       type: 'dynamic',
       bodies: update
     });
-  }
-
-  remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
-
-    if (mesh === -1) return false;
-
-    this.world.removeRigidBody(mesh.body);
-    Ammo.destroy(mesh.body);
-
-    this.bodies.splice(index, 1);
-    return true;
   }
 }

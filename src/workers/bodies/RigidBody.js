@@ -1,4 +1,6 @@
+import findIndex from 'lodash/findIndex';
 import { Ammo } from 'core/Ammo';
+import find from 'lodash/find';
 
 import {
   MARGIN,
@@ -11,7 +13,10 @@ import {
 } from 'physics/constants';
 
 export default class RigidBody {
-  constructor () {
+  constructor (world) {
+    this.bodies = [];
+    this.world = world;
+
     this.margin = MARGIN;
     this.friction = FRICTION;
     this.restitution = RESTITUTION;
@@ -122,6 +127,34 @@ export default class RigidBody {
 
   getCollisionStatus (wasColliding) {
     return wasColliding ? 'onCollision' : 'onCollisionStart';
+  }
+
+  getBodyByCollider (collider) {
+    return find(this.bodies, { body: collider });
+  }
+
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
+
+  resetCollision (uuid) {
+    const body = this.getBodyByUUID(uuid);
+    body.colliding = false;
+  }
+
+  remove (props) {
+    const index = findIndex(this.bodies, { uuid: props.uuid });
+
+    if (index > -1) {
+      const body = this.bodies[index].body;
+      this.world.removeRigidBody(body);
+      Ammo.destroy(body);
+
+      this.bodies.splice(index, 1);
+      return true;
+    }
+
+    return false;
   }
 
   _checkBodyMargin (shape) {

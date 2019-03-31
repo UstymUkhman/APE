@@ -225,8 +225,8 @@ class PhysicsWorker {
       body = manifold.getBody1();
       const body1 = this.getCollisionData(body);
 
-      collidedBodies.push({uuid: body0.uuid, type: body0.type});
-      collidedBodies.push({uuid: body1.uuid, type: body1.type});
+      collidedBodies.push({ uuid: body0.uuid, type: body0.type, otherUUID: body1.uuid, otherType: body1.type });
+      collidedBodies.push({ uuid: body1.uuid, type: body1.type, otherUUID: body0.uuid, otherType: body0.type });
 
       if (!this._fullReport) {
         collisions[i] = {
@@ -274,13 +274,26 @@ class PhysicsWorker {
     }
 
     const lastCollided = differenceBy(this._collidedBodies, collidedBodies, 'uuid');
-    lastCollided.forEach((body) => { this[body.type].resetCollision(body.uuid); });
     this._collidedBodies = collidedBodies;
+    const lostCollisions = [];
+
+    lastCollided.forEach((body) => {
+      this[body.type].resetCollision(body.uuid);
+
+      lostCollisions.push([{
+        uuid: body.otherUUID,
+        type: body.otherType
+      }, {
+        uuid: body.uuid,
+        type: body.type
+      }]);
+    });
 
     self.postMessage({
       active: !!collisions.length,
       action: 'reportCollisions',
-      collisions: collisions
+      collisions: collisions,
+      lost: lostCollisions
     });
   }
 

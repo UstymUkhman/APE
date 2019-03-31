@@ -38,6 +38,18 @@ export default class RigidBodies extends Playground {
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
+
+    // dynamicBox.onCollisionStart = (otherMesh, otherMeshType, contacts) => {
+    //   console.log('onCollisionStart', otherMesh, otherMeshType, contacts);
+    // };
+
+    // dynamicBox.onCollision = (otherMesh, otherMeshType, contacts) => {
+    //   console.log('onCollision', otherMesh, otherMeshType, contacts);
+    // };
+
+    dynamicBox.onCollisionEnd = (otherMesh, otherMeshType, contacts) => {
+      console.log('onCollisionEnd', otherMesh, otherMeshType, contacts);
+    };
   }
 
   createKinematicBodies () {

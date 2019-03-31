@@ -1,4 +1,5 @@
 import assign from 'lodash/assign';
+import find from 'lodash/find';
 
 import {
   MARGIN,
@@ -11,6 +12,7 @@ import {
 
 export default class RigidBody {
   constructor (type, worker) {
+    this.bodies = [];
     this.type = type;
     this.worker = worker;
 
@@ -39,11 +41,25 @@ export default class RigidBody {
     };
 
     assign(props, params, additionalParams);
+    this.bodies.push(mesh);
 
     this.worker.postMessage({
       action: 'addBody',
       params: props
     });
+  }
+
+  updateCollisions (thisBody, otherBody, contacts = 0) {
+    const callback = thisBody.callback;
+    const mesh = thisBody.mesh;
+
+    if (typeof mesh[callback] === 'function') {
+      mesh[callback](otherBody.mesh, otherBody.type, contacts);
+    }
+  }
+
+  getBody (uuid) {
+    return find(this.bodies, { uuid });
   }
 
   _updateConstants () {
