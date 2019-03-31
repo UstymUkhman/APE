@@ -94,8 +94,8 @@ export default class StaticBodies extends RigidBody {
       collider.colliding = true;
 
       return {
+        collisionFunction: status,
         uuid: collider.uuid,
-        colliding: status,
         type: 'static'
       };
     }

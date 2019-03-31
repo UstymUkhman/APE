@@ -49,12 +49,12 @@ export default class RigidBody {
     });
   }
 
-  updateCollisions (thisBody, otherBody, contacts = 0) {
+  updateCollisions (thisBody, otherBody, contacts = null) {
     const callback = thisBody.callback;
     const mesh = thisBody.mesh;
 
     if (typeof mesh[callback] === 'function') {
-      mesh[callback](otherBody.mesh, otherBody.type, contacts);
+      mesh[callback](otherBody.mesh, otherBody.type, contacts || 0);
     }
   }
 

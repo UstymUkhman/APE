@@ -217,7 +217,6 @@ class PhysicsWorker {
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
       const collisionContacts = manifold.getNumContacts();
-      const contacts = new Array(collisionContacts);
 
       let body = manifold.getBody0();
       const body0 = this.getCollisionData(body);
@@ -228,12 +227,12 @@ class PhysicsWorker {
       collidedBodies.push({ uuid: body0.uuid, type: body0.type, otherUUID: body1.uuid, otherType: body1.type });
       collidedBodies.push({ uuid: body1.uuid, type: body1.type, otherUUID: body0.uuid, otherType: body0.type });
 
-      if (!this._fullReport) {
-        collisions[i] = {
-          contacts: collisionContacts,
-          bodies: [body0, body1]
-        };
+      collisions[i] = { bodies: [body0, body1] };
 
+      if (this._fullReport) {
+        collisions[i].contacts = new Array(collisionContacts);
+      } else {
+        collisions[i].contacts = collisionContacts;
         continue;
       }
 
@@ -254,23 +253,17 @@ class PhysicsWorker {
         const body1Point = new Vector3(bodyPoint.x(), bodyPoint.y(), bodyPoint.z());
         const collisionPoint1 = new Vector3(collisionPoint.x(), collisionPoint.y(), collisionPoint.z());
 
-        contacts[j] = {
-          distance: pointDistance,
-          normal: collisionNormal,
+        collisions[i].bodies[0].collisionPoint = collisionPoint0;
+        collisions[i].bodies[1].collisionPoint = collisionPoint1;
 
-          bodies: [{
-            collisionPoint: collisionPoint0,
-            bodyPoint: body0Point,
-            body: body0
-          }, {
-            collisionPoint: collisionPoint1,
-            bodyPoint: body1Point,
-            body: body1
-          }]
+        collisions[i].bodies[0].bodyPoint = body0Point;
+        collisions[i].bodies[1].bodyPoint = body1Point;
+
+        collisions[i].contacts[j] = {
+          distance: pointDistance,
+          normal: collisionNormal
         };
       }
-
-      collisions[i] = contacts;
     }
 
     const lastCollided = differenceBy(this._collidedBodies, collidedBodies, 'uuid');
@@ -302,6 +295,16 @@ class PhysicsWorker {
     data = this.kinematic.getCollisionStatus(body) || data;
     data = this.static.getCollisionStatus(body) || data;
     return data;
+  }
+
+  reportCollisions (report) {
+    this._reportCollisions = report[0];
+    this._fullReport = report[1];
+
+    self.postMessage({
+      action: 'updateCollisionReport',
+      params: report
+    });
   }
 
   updateConstants (props) {
@@ -345,16 +348,6 @@ class PhysicsWorker {
 
   updateHingeBodies (props) {
     this.hinge.update(props);
-  }
-
-  reportCollisions (report) {
-    this._reportCollisions = report[0];
-    this._fullReport = report[1];
-
-    self.postMessage({
-      action: 'updateCollisionReport',
-      params: report
-    });
   }
 
   removeBody (props) {

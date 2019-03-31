@@ -70,23 +70,6 @@ export default class PhysicsWorld {
   }
 
   reportCollisions (report) {
-    // console.log(report);
-
-    // if (this._fullCollisionReport) {
-    //   // report.contacts
-    //   // report.bodies[0]
-    //   // report.bodies[1]
-
-    //   report.forEach((data) => {
-    //     // console.log(data.bodies[0], data.bodies[1]);
-    //   });
-    // } else {
-    //   // report.contacts
-    //   // report.bodies[0]
-    //   // report.bodies[1]
-    //   console.log(report.bodies[0], report.bodies[1]);
-    // }
-
     if (report.active) {
       report.collisions.forEach((collision) => {
         const body0 = collision.bodies[0];
@@ -98,16 +81,19 @@ export default class PhysicsWorld {
         const body0Mesh = this[type0].getBody(body0.uuid);
         const body1Mesh = this[type1].getBody(body1.uuid);
 
+        const hasContactsData = this._fullCollisionReport && !!collision.contacts.length;
+        const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
+
         this[type0].updateCollisions(
           { callback: body0.collisionFunction, mesh: body0Mesh },
           { mesh: body1Mesh, type: type1 },
-          collision.contacts
+          contacts
         );
 
         this[type1].updateCollisions(
           { callback: body1.collisionFunction, mesh: body1Mesh },
           { mesh: body0Mesh, type: type0 },
-          collision.contacts
+          contacts
         );
       });
     }
