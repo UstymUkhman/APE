@@ -1,7 +1,7 @@
 // Vehicle body class manager
 
 import RigidBody from 'physics/bodies/RigidBody';
-import { Ammo } from 'core/Ammo';
+import Ammo from 'core/Ammo';
 
 import {
   BREAK_FORCE,

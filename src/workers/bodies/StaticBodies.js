@@ -1,6 +1,6 @@
-import { ZERO_MASS, DISABLE_DEACTIVATION } from 'physics/constants';
 import RigidBody from 'workers/bodies/RigidBody';
-import { Ammo } from 'core/Ammo';
+import { ZERO_MASS } from 'physics/constants';
+import Ammo from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {
   constructor (world) {
@@ -82,7 +82,6 @@ export default class StaticBodies extends RigidBody {
   _addStaticBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     this.bodies.push({uuid: uuid, body: body, colliding: false});
-    body.setActivationState(DISABLE_DEACTIVATION);
     this.world.addRigidBody(body);
   }
 

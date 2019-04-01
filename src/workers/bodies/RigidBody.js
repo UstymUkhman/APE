@@ -1,6 +1,6 @@
 import findIndex from 'lodash/findIndex';
-import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
+import Ammo from 'core/Ammo';
 
 import {
   MARGIN,

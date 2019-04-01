@@ -1,5 +1,5 @@
 import RigidBody from 'workers/bodies/RigidBody';
-import { Ammo } from 'core/Ammo';
+import Ammo from 'core/Ammo';
 
 import {
   ZERO_MASS,
@@ -9,9 +9,7 @@ import {
 
 export default class KinematicBodies extends RigidBody {
   constructor (world) {
-    super();
-    this.bodies = [];
-    this.world = world;
+    super(world);
 
     /* eslint-disable new-cap */
     this.position = new Ammo.btVector3();

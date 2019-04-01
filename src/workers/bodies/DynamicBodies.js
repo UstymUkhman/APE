@@ -3,9 +3,7 @@ import { ZERO_MASS } from 'physics/constants';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
-    super();
-    this.bodies = [];
-    this.world = world;
+    super(world);
   }
 
   addBox (props) {

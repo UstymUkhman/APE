@@ -1,5 +1,5 @@
-import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
+import Ammo from 'core/Ammo';
 
 import {
   ROPE_MARGIN,

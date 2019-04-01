@@ -17,6 +17,7 @@ export default class PhysicsWorld {
     this.clock = new Clock();
     this.worker = new PhysicsWorker();
 
+    this._gravity = gravity;
     this._collisionReport = false;
     this._fullCollisionReport = false;
 
@@ -163,5 +164,18 @@ export default class PhysicsWorld {
 
   get fullCollisionReport () {
     return this._fullCollisionReport;
+  }
+
+  set gravity (value) {
+    this._gravity = value;
+
+    this.worker.postMessage({
+      params: { gravity: value },
+      action: 'setGravity'
+    });
+  }
+
+  get gravity () {
+    return this._gravity;
   }
 }

@@ -12,8 +12,8 @@ import differenceBy from 'lodash/differenceBy';
 
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
-import { Ammo } from 'core/Ammo';
 import find from 'lodash/find';
+import Ammo from 'core/Ammo';
 
 let physics = null;
 
@@ -359,6 +359,20 @@ class PhysicsWorker {
         `There\'s no \'${props.type}\' collider attached to your mesh [${props.uuid}].`
       );
     }
+  }
+
+  setGravity (props) {
+    /* eslint-disable new-cap */
+    this._gravity = props.gravity;
+
+    if (this._soft) {
+      this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
+    }
+
+    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
+    /* eslint-enable new-cap */
+
+    // call .activate() on all bodies.
   }
 }
 

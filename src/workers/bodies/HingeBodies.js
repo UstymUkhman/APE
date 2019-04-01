@@ -1,5 +1,5 @@
 import { HINGE_FORCE } from 'physics/constants';
-import { Ammo } from 'core/Ammo';
+import Ammo from 'core/Ammo';
 
 export default class HingeBodies {
   constructor (world) {
