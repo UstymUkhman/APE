@@ -81,6 +81,14 @@ export default class ClothBodies {
     body.appendAnchor(props.point, props.target, false, props.influence);
   }
 
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
+    });
+  }
+
   update () {
     const update = [];
 

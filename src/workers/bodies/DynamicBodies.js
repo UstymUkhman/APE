@@ -93,6 +93,14 @@ export default class DynamicBodies extends RigidBody {
     return null;
   }
 
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeRigidBody(collider.body);
+      this.world.addRigidBody(collider.body);
+      collider.body.activate();
+    });
+  }
+
   update (transform) {
     const update = [];
 

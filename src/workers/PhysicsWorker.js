@@ -351,6 +351,14 @@ class PhysicsWorker {
     this.hinge.update(props);
   }
 
+  activateBodies () {
+    this.soft.activateAll();
+    this.rope.activateAll();
+    this.hinge.activateAll();
+    this.cloth.activateAll();
+    this.dynamic.activateAll();
+  }
+
   removeBody (props) {
     const found = this[props.type].remove(props);
 
@@ -371,8 +379,8 @@ class PhysicsWorker {
 
     this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     /* eslint-enable new-cap */
-
-    // call .activate() on all bodies.
+    console.log('setGravity', this._gravity);
+    this.activateBodies();
   }
 }
 

@@ -24,6 +24,14 @@ export default class HingeBodies {
     this.bodies.push(hinge);
   }
 
+  activateAll () {
+    this.bodies.forEach((body) => {
+      this.world.removeConstraint(body);
+      this.world.addConstraint(body);
+      body.activate();
+    });
+  }
+
   update (params) {
     const body = this.bodies[params.index];
 

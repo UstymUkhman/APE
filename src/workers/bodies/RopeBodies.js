@@ -54,6 +54,14 @@ export default class RopeBodies {
     body.appendAnchor(props.position, props.target, true, props.influence);
   }
 
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
+    });
+  }
+
   update () {
     const update = [];
 
