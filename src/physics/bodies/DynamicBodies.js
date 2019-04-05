@@ -36,10 +36,6 @@ export default class DynamicBodies extends RigidBody {
   }
 
   addConvex (mesh, mass) {
-    // if (!mesh.geometry.boundingBox) {
-    //   mesh.geometry.computeBoundingBox();
-    // }
-
     super.addBody('Convex', mesh, {
       geometry: mesh.geometry,
       mass: mass

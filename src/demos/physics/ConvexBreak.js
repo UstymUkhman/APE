@@ -14,6 +14,7 @@ export default class ConvexBreak extends Playground {
 
     this.initPhysics();
     this.createObjects();
+    this.createUserShot();
   }
 
   initPhysics () {
@@ -121,5 +122,40 @@ export default class ConvexBreak extends Playground {
     // var btVecUserData = new Ammo.btVector3(0, 0, 0);
     // btVecUserData.threeObject = mesh;
     // body.setUserPointer(btVecUserData);
+  }
+
+  createUserShot () {
+    this.ball = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.25, 14, 10),
+      new THREE.MeshPhongMaterial({ color: 0x202020 })
+    );
+
+    this.ball.castShadow = true;
+    this.ball.receiveShadow = true;
+
+    this.raycaster = new THREE.Raycaster();
+    this._shotBall = this.shotBall.bind(this);
+    this.ballPosition = new THREE.Vector2(0.0, 0.0);
+    document.addEventListener('keyup', this._shotBall, false);
+  }
+
+  shotBall () {
+    const ball = this.ball.clone();
+
+    this.raycaster.setFromCamera(this.ballPosition, this.camera);
+    this.vec3.copy(this.raycaster.ray.direction);
+    this.vec3.add(this.raycaster.ray.origin);
+    this.quat.set(0, 0, 0, 1);
+
+    ball.position.copy(this.vec3);
+    ball.quaternion.copy(this.quat);
+
+    this.scene.add(ball);
+    this.physics.dynamic.addSphere(ball, 35);
+
+    this.vec3.copy(this.raycaster.ray.direction);
+    this.vec3.multiplyScalar(50);
+
+    this.physics.dynamic.setLinearVelocity(ball, this.vec3);
   }
 }

@@ -142,6 +142,26 @@ export default class RigidBody {
     return find(this.bodies, { uuid: uuid });
   }
 
+  /* eslint-disable new-cap */
+  setLinearVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setLinearVelocity(
+      new Ammo.btVector3(
+        velocity.x, velocity.y, velocity.z
+      )
+    );
+  }
+
+  setAngularVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setAngularVelocity(
+      new Ammo.btVector3(velocity.x, velocity.y, velocity.z)
+    );
+  }
+  /* eslint-enable new-cap */
+
   resetCollision (uuid) {
     const body = this.getBodyByUUID(uuid);
     body.colliding = false;

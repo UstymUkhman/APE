@@ -379,8 +379,15 @@ class PhysicsWorker {
 
     this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     /* eslint-enable new-cap */
-    console.log('setGravity', this._gravity);
     this.activateBodies();
+  }
+
+  setAngularVelocity (props) {
+    this[props.type].setAngularVelocity(props.uuid, props.velocity);
+  }
+
+  setLinearVelocity (props) {
+    this[props.type].setLinearVelocity(props.uuid, props.velocity);
   }
 }
 

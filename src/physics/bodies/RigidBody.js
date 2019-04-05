@@ -58,6 +58,30 @@ export default class RigidBody {
     }
   }
 
+  setLinearVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setLinearVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setAngularVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setAngularVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   getBody (uuid) {
     return find(this.bodies, { uuid });
   }

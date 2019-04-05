@@ -77,7 +77,7 @@ export default class CollidedBodies extends Playground {
     this.scene.add(this.kinematicBox);
 
     this._onKeyDown = this.onKeyDown.bind(this);
-    document.addEventListener('keydown', this._onKeyDown);
+    document.addEventListener('keydown', this._onKeyDown, false);
   }
 
   onKeyDown (event) {
