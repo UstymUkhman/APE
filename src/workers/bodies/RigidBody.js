@@ -79,17 +79,22 @@ export default class RigidBody {
     return concave;
   }
 
-  createConvex (points) {
+  createConvex (coords) {
     const convex = new Ammo.btConvexHullShape();
     const vec = new Ammo.btVector3(0.0, 0.0, 0.0);
 
-    points.forEach((point) => {
-      vec.setX(point.x);
-      vec.setY(point.y);
-      vec.setZ(point.z);
+    // points.forEach((point) => {
+    //   vec.setX(point.x);
+    //   vec.setY(point.y);
+    //   vec.setZ(point.z);
 
-      convex.addPoint(vec);
-    });
+    //   convex.addPoint(vec);
+    // });
+
+    for (let i = 0, last = coords.length - 3; i < coords.length; i += 3) {
+      vec.setValue(coords[i], coords[i + 1], coords[i + 2]);
+      convex.addPoint(vec, i >= last);
+    }
 
     this._checkBodyMargin(convex);
     return convex;
