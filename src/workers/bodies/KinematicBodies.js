@@ -9,7 +9,7 @@ import {
 
 export default class KinematicBodies extends RigidBody {
   constructor (world) {
-    super(world);
+    super(world, 'kinematic');
 
     /* eslint-disable new-cap */
     this.position = new Ammo.btVector3();
@@ -45,26 +45,17 @@ export default class KinematicBodies extends RigidBody {
   _addKinematicBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
-    this.bodies.push({uuid: uuid, body: body, colliding: false});
+    this.bodies.push({uuid: uuid, body: body, collisions: []});
     body.setActivationState(DISABLE_DEACTIVATION);
     this.world.addRigidBody(body);
   }
 
-  getCollisionStatus (body) {
-    const collider = this.getBodyByCollider(body);
+  getCollisionStatus (thisUUID, otherUUID) {
+    const body = this.getBodyByUUID(thisUUID);
+    const status = super.getCollisionStatus(body, otherUUID);
 
-    if (collider) {
-      const status = super.getCollisionStatus(collider.colliding);
-      collider.colliding = true;
-
-      return {
-        collisionFunction: status,
-        uuid: collider.uuid,
-        type: 'kinematic'
-      };
-    }
-
-    return null;
+    if (!status) body.collisions.push(otherUUID);
+    return status ? 'onCollision' : 'onCollisionStart';
   }
 
   update (transform, bodies) {

@@ -4,7 +4,7 @@ import Ammo from 'core/Ammo';
 
 export default class StaticBodies extends RigidBody {
   constructor (world) {
-    super(world);
+    super(world, 'static');
   }
 
   addPlane (props) {
@@ -81,24 +81,15 @@ export default class StaticBodies extends RigidBody {
 
   _addStaticBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
-    this.bodies.push({uuid: uuid, body: body, colliding: false});
+    this.bodies.push({uuid: uuid, body: body, collisions: []});
     this.world.addRigidBody(body);
   }
 
-  getCollisionStatus (body) {
-    const collider = this.getBodyByCollider(body);
+  getCollisionStatus (thisUUID, otherUUID) {
+    const body = this.getBodyByUUID(thisUUID);
+    const status = super.getCollisionStatus(body, otherUUID);
 
-    if (collider) {
-      const status = super.getCollisionStatus(collider.colliding);
-      collider.colliding = true;
-
-      return {
-        collisionFunction: status,
-        uuid: collider.uuid,
-        type: 'static'
-      };
-    }
-
-    return null;
+    if (!status) body.collisions.push(otherUUID);
+    return status ? 'onCollision' : 'onCollisionStart';
   }
 }

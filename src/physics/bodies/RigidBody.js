@@ -54,7 +54,13 @@ export default class RigidBody {
     const mesh = thisBody.mesh;
 
     if (typeof mesh[callback] === 'function') {
-      mesh[callback](otherBody.mesh, otherBody.type, contacts || 0);
+      mesh[callback]({
+        mesh: mesh,
+        type: thisBody.type
+      }, {
+        mesh: otherBody.mesh,
+        type: otherBody.type
+      }, contacts || 0);
     }
   }
 

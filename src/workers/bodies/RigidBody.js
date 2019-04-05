@@ -13,7 +13,8 @@ import {
 } from 'physics/constants';
 
 export default class RigidBody {
-  constructor (world) {
+  constructor (world, type) {
+    this.type = type;
     this.bodies = [];
     this.world = world;
 
@@ -128,21 +129,7 @@ export default class RigidBody {
     body.setFriction(this.friction);
     return body;
   }
-  /* eslint-enable new-cap */
 
-  getCollisionStatus (wasColliding) {
-    return wasColliding ? 'onCollision' : 'onCollisionStart';
-  }
-
-  getBodyByCollider (collider) {
-    return find(this.bodies, { body: collider });
-  }
-
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
-  }
-
-  /* eslint-disable new-cap */
   setLinearVelocity (uuid, velocity) {
     const body = this.getBodyByUUID(uuid).body;
 
@@ -162,9 +149,36 @@ export default class RigidBody {
   }
   /* eslint-enable new-cap */
 
-  resetCollision (uuid) {
+  getBodyInfo (collider) {
+    const body = this.getBodyByCollider(collider);
+
+    return !body ? null : {
+      collisions: body.collisions,
+      uuid: body.uuid,
+      type: this.type
+    };
+  }
+
+  getBodyByCollider (collider) {
+    return find(this.bodies, { body: collider });
+  }
+
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
+
+  getCollisionStatus (body, uuid) {
+    return body.collisions.includes(uuid);
+  }
+
+  // resetCollisions (uuid) {
+  //   const body = this.getBodyByUUID(uuid);
+  //   body.collisions = [];
+  // }
+
+  resetCollision (uuid, otherUUID) {
     const body = this.getBodyByUUID(uuid);
-    body.colliding = false;
+    body.collisions.splice(body.collisions.indexOf(otherUUID), 1);
   }
 
   remove (props) {

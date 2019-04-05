@@ -225,6 +225,9 @@ class PhysicsWorker {
       body = manifold.getBody1();
       const body1 = this.getCollisionData(body);
 
+      body0.collisionFunction = this[body0.type].getCollisionStatus(body0.uuid, body1.uuid);
+      body1.collisionFunction = this[body1.type].getCollisionStatus(body1.uuid, body0.uuid);
+
       collidedBodies.push({ uuid: body0.uuid, type: body0.type, otherUUID: body1.uuid, otherType: body1.type });
       collidedBodies.push({ uuid: body1.uuid, type: body1.type, otherUUID: body0.uuid, otherType: body0.type });
 
@@ -239,6 +242,7 @@ class PhysicsWorker {
 
       for (let j = 0; j < collisionContacts; j++) {
         const point = manifold.getContactPoint(j);
+        const impulse = point.getAppliedImpulse();
         const pointDistance = point.getDistance();
 
         const normal = point.get_m_normalWorldOnB();
@@ -262,7 +266,8 @@ class PhysicsWorker {
 
         collisions[i].contacts[j] = {
           distance: pointDistance,
-          normal: collisionNormal
+          normal: collisionNormal,
+          impulse: impulse
         };
       }
     }
@@ -272,7 +277,8 @@ class PhysicsWorker {
     const lostCollisions = [];
 
     lastCollided.forEach((body) => {
-      this[body.type].resetCollision(body.uuid);
+      // this[body.type].resetCollisions(body.uuid);
+      this[body.type].resetCollision(body.uuid, body.otherUUID);
 
       lostCollisions.push([{
         uuid: body.otherUUID,
@@ -292,9 +298,9 @@ class PhysicsWorker {
   }
 
   getCollisionData (body) {
-    let data = this.dynamic.getCollisionStatus(body);
-    data = this.kinematic.getCollisionStatus(body) || data;
-    data = this.static.getCollisionStatus(body) || data;
+    let data = this.dynamic.getBodyInfo(body);
+    data = this.kinematic.getBodyInfo(body) || data;
+    data = this.static.getBodyInfo(body) || data;
     return data;
   }
 

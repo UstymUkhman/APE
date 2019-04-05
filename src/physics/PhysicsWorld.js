@@ -86,13 +86,13 @@ export default class PhysicsWorld {
         const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
 
         this[type0].updateCollisions(
-          { callback: body0.collisionFunction, mesh: body0Mesh },
+          { mesh: body0Mesh, type: type0, callback: body0.collisionFunction },
           { mesh: body1Mesh, type: type1 },
           contacts
         );
 
         this[type1].updateCollisions(
-          { callback: body1.collisionFunction, mesh: body1Mesh },
+          { mesh: body1Mesh, type: type1, callback: body1.collisionFunction },
           { mesh: body0Mesh, type: type0 },
           contacts
         );
@@ -110,12 +110,12 @@ export default class PhysicsWorld {
       const body1Mesh = this[type1].getBody(uuid1);
 
       this[type0].updateCollisions(
-        { callback: 'onCollisionEnd', mesh: body0Mesh },
+        { mesh: body0Mesh, type: type0, callback: 'onCollisionEnd' },
         { mesh: body1Mesh, type: type1 }
       );
 
       this[type1].updateCollisions(
-        { callback: 'onCollisionEnd', mesh: body1Mesh },
+        { mesh: body1Mesh, type: type1, callback: 'onCollisionEnd' },
         { mesh: body0Mesh, type: type0 }
       );
     });
