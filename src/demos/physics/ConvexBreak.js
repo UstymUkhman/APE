@@ -23,20 +23,22 @@ export default class ConvexBreak extends Playground {
     this.physics.static.addBox(this.ground);
     this.physics.fullCollisionReport = true;
 
-    // console.log('ground UUID', this.ground.uuid);
+    console.log('ground UUID', this.ground.uuid);
     this.convexBreaker = new THREE.ConvexObjectBreaker();
+    // this.ground.onCollisionEnd = this.onCollisionEnd.bind(this);
+    // this.ground.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createObjects () {
     // Tower 1
-    this.vec3.set(-8, 5.5, 0);
-    this.quat.set(0, 0, 0, 1);
+    // this.vec3.set(-8, 5.5, 0);
+    // this.quat.set(0, 0, 0, 1);
 
-    this.createBufferMesh(
-      new THREE.Vector3(2, 5, 2),
-      this.vec3, this.quat,
-      0xB03014, 1000
-    );
+    // this.createBufferMesh(
+    //   new THREE.Vector3(2, 5, 2),
+    //   this.vec3, this.quat,
+    //   0xB03014, 1000
+    // );
 
     // Tower 2
     this.vec3.set(8, 5.5, 0);
@@ -49,28 +51,28 @@ export default class ConvexBreak extends Playground {
     );
 
     // Bridge
-    this.vec3.set(0, 10.7, 0);
-    this.quat.set(0, 0, 0, 1);
+    // this.vec3.set(0, 10.7, 0);
+    // this.quat.set(0, 0, 0, 1);
 
-    this.createBufferMesh(
-      new THREE.Vector3(7, 0.2, 1.5),
-      this.vec3, this.quat,
-      0xB3B865, 100
-    );
+    // this.createBufferMesh(
+    //   new THREE.Vector3(7, 0.2, 1.5),
+    //   this.vec3, this.quat,
+    //   0xB3B865, 100
+    // );
 
     // Stones
-    this.quat.set(0, 0, 0, 1);
+    // this.quat.set(0, 0, 0, 1);
 
-    for (let i = 0; i < 8; i++) {
-      const z = 15 * (0.5 - i / 9);
-      this.vec3.set(0, 2.5, z);
+    // for (let i = 0; i < 8; i++) {
+    //   const z = 15 * (0.5 - i / 9);
+    //   this.vec3.set(0, 2.5, z);
 
-      this.createBufferMesh(
-        new THREE.Vector3(1, 2, 0.15),
-        this.vec3, this.quat,
-        0xB0B0B0, 120
-      );
-    }
+    //   this.createBufferMesh(
+    //     new THREE.Vector3(1, 2, 0.15),
+    //     this.vec3, this.quat,
+    //     0xB0B0B0, 120
+    //   );
+    // }
 
     // Mountain
     const mountainSize = new THREE.Vector3(4, 5, 4);
@@ -97,9 +99,9 @@ export default class ConvexBreak extends Playground {
     );
 
     this.createMeshDebris(mesh, 860);
-    // console.log('mountain UUID', mesh.uuid);
-    mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
-    mesh.onCollisionStart = this.onCollisionStart.bind(this);
+    console.log('mountain UUID', mesh.uuid);
+    // mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
+    // mesh.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createBufferMesh (halfSize, position, rotation, color, mass) {

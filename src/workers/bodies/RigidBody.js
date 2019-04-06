@@ -149,16 +149,6 @@ export default class RigidBody {
   }
   /* eslint-enable new-cap */
 
-  getBodyInfo (collider) {
-    const body = this.getBodyByCollider(collider);
-
-    return !body ? null : {
-      collisions: body.collisions,
-      uuid: body.uuid,
-      type: this.type
-    };
-  }
-
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });
   }
@@ -167,18 +157,57 @@ export default class RigidBody {
     return find(this.bodies, { uuid: uuid });
   }
 
-  getCollisionStatus (body, uuid) {
-    return body.collisions.includes(uuid);
+  getBodyInfo (collider, uuid) {
+    const body = !collider ?
+      this.getBodyByUUID(uuid) :
+      this.getBodyByCollider(collider);
+
+    return !body ? null : {
+      uuid: body.uuid,
+      type: this.type
+    };
   }
 
-  // resetCollisions (uuid) {
-  //   const body = this.getBodyByUUID(uuid);
-  //   body.collisions = [];
-  // }
+  getAllCollisions () {
+    const collisions = [];
+
+    this.bodies.forEach((body) => {
+      collisions.push({
+        collisions: [...body.collisions],
+        uuid: body.uuid
+      });
+    });
+
+    return collisions;
+  }
+
+  getCollisions (uuid) {
+    const body = this.getBodyByUUID(uuid);
+    return body.collisions;
+  }
+
+  updateCollisions (thisUUID, otherUUID) {
+    const body = this.getBodyByUUID(thisUUID);
+    body.collisions.push(otherUUID);
+
+    // if (!body.collisions.includes(otherUUID)) {
+    //   body.collisions.push(otherUUID);
+    // }
+  }
+
+  resetCollisions () {
+    this.bodies.forEach((body) => {
+      body.collisions = [];
+    });
+  }
 
   resetCollision (uuid, otherUUID) {
     const body = this.getBodyByUUID(uuid);
-    body.collisions.splice(body.collisions.indexOf(otherUUID), 1);
+    const index = body.collisions.indexOf(otherUUID);
+
+    if (index > -1) {
+      body.collisions.splice(index, 1);
+    }
   }
 
   remove (props) {

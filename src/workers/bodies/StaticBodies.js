@@ -84,12 +84,4 @@ export default class StaticBodies extends RigidBody {
     this.bodies.push({uuid: uuid, body: body, collisions: []});
     this.world.addRigidBody(body);
   }
-
-  getCollisionStatus (thisUUID, otherUUID) {
-    const body = this.getBodyByUUID(thisUUID);
-    const status = super.getCollisionStatus(body, otherUUID);
-
-    if (!status) body.collisions.push(otherUUID);
-    return status ? 'onCollision' : 'onCollisionStart';
-  }
 }

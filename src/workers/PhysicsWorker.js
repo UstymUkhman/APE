@@ -8,7 +8,9 @@ import SoftBodies from 'workers/bodies/SoftBodies';
 import RopeBodies from 'workers/bodies/RopeBodies';
 
 import { Vector3 } from 'three/src/math/Vector3';
-import differenceBy from 'lodash/differenceBy';
+import intersection from 'lodash/intersection';
+// import differenceBy from 'lodash/differenceBy';
+import difference from 'lodash/difference';
 
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
@@ -21,7 +23,7 @@ class PhysicsWorker {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
-    this._collidedBodies = [];
+    // this._collidedBodies = [];
 
     this._fullReport = false;
     this._reportCollisions = false;
@@ -212,21 +214,32 @@ class PhysicsWorker {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
 
+    const lastCollisions = {
+      kinematic: this.kinematic.getAllCollisions(),
+      dynamic: this.dynamic.getAllCollisions(),
+      static: this.static.getAllCollisions()
+    };
+
     const collisions = new Array(manifolds);
     const collidedBodies = [];
+    const lostCollisions = [];
+
+    this.kinematic.resetCollisions();
+    this.dynamic.resetCollisions();
+    this.static.resetCollisions();
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
       const collisionContacts = manifold.getNumContacts();
 
       let body = manifold.getBody0();
-      const body0 = this.getCollisionData(body);
+      const body0 = this.getBodyByCollider(body);
 
       body = manifold.getBody1();
-      const body1 = this.getCollisionData(body);
+      const body1 = this.getBodyByCollider(body);
 
-      body0.collisionFunction = this[body0.type].getCollisionStatus(body0.uuid, body1.uuid);
-      body1.collisionFunction = this[body1.type].getCollisionStatus(body1.uuid, body0.uuid);
+      this[body0.type].updateCollisions(body0.uuid, body1.uuid);
+      this[body1.type].updateCollisions(body1.uuid, body0.uuid);
 
       collidedBodies.push({ uuid: body0.uuid, type: body0.type, otherUUID: body1.uuid, otherType: body1.type });
       collidedBodies.push({ uuid: body1.uuid, type: body1.type, otherUUID: body0.uuid, otherType: body0.type });
@@ -272,22 +285,62 @@ class PhysicsWorker {
       }
     }
 
-    const lastCollided = differenceBy(this._collidedBodies, collidedBodies, 'uuid');
-    this._collidedBodies = collidedBodies;
-    const lostCollisions = [];
+    // const lastCollided = differenceBy(this._collidedBodies, collidedBodies, 'uuid');
+    // this._collidedBodies = collidedBodies;
 
-    lastCollided.forEach((body) => {
-      // this[body.type].resetCollisions(body.uuid);
-      this[body.type].resetCollision(body.uuid, body.otherUUID);
+    // lastCollided.forEach((body) => {
+    //   this[body.type].resetCollision(body.uuid, body.otherUUID);
 
-      lostCollisions.push([{
-        uuid: body.otherUUID,
-        type: body.otherType
-      }, {
-        uuid: body.uuid,
-        type: body.type
-      }]);
+    //   lostCollisions.push([{
+    //     uuid: body.otherUUID,
+    //     type: body.otherType
+    //   }, {
+    //     uuid: body.uuid,
+    //     type: body.type
+    //   }]);
+    // });
+
+    collidedBodies.forEach((body, b) => {
+      const index = (b % 2 ? b - 1 : b) / 2;
+      const currentCollisions = this[body.type].getCollisions(body.uuid);
+      const collidedBody = find(collisions[index].bodies, { uuid: body.uuid });
+      const oldCollisions = find(lastCollisions[body.type], { uuid: body.uuid }).collisions;
+
+      const removedCollisions = difference(oldCollisions, currentCollisions);
+      const wasColliding = intersection(currentCollisions, oldCollisions).includes(body.otherUUID);
+
+      collidedBody.collisionFunction = wasColliding ? 'onCollision' : 'onCollisionStart';
+
+      // if (removedCollisions.length) {
+      //   console.log(removedCollisions);
+      //   debugger;
+      // }
+
+      removedCollisions.forEach((uuid) => {
+        const removed = this.getBodyByUUID(uuid);
+        const index = oldCollisions.indexOf(uuid);
+
+        // console.log(body.uuid, uuid);
+
+        if (index > -1) {
+          this[body.type].resetCollision(body.uuid, removed.uuid);
+          collidedBody.collisionFunction = 'onCollisionEnd';
+          oldCollisions.splice(index, 1);
+
+          lostCollisions.push([{
+            uuid: body.uuid,
+            type: body.type
+          }, {
+            uuid: removed.uuid,
+            type: removed.type
+          }]);
+        }
+      });
     });
+
+    if (lostCollisions.length) {
+      console.log(lostCollisions);
+    }
 
     self.postMessage({
       active: !!collisions.length,
@@ -297,11 +350,18 @@ class PhysicsWorker {
     });
   }
 
-  getCollisionData (body) {
-    let data = this.dynamic.getBodyInfo(body);
-    data = this.kinematic.getBodyInfo(body) || data;
-    data = this.static.getBodyInfo(body) || data;
-    return data;
+  getBodyByCollider (collider) {
+    let body = this.dynamic.getBodyInfo(collider, '');
+    body = this.kinematic.getBodyInfo(collider, '') || body;
+    body = this.static.getBodyInfo(collider, '') || body;
+    return body;
+  }
+
+  getBodyByUUID (uuid) {
+    let body = this.dynamic.getBodyInfo(null, uuid);
+    body = this.kinematic.getBodyInfo(null, uuid) || body;
+    body = this.static.getBodyInfo(null, uuid) || body;
+    return body;
   }
 
   reportCollisions (report) {

@@ -77,14 +77,6 @@ export default class DynamicBodies extends RigidBody {
     this.world.addRigidBody(body);
   }
 
-  getCollisionStatus (thisUUID, otherUUID) {
-    const body = this.getBodyByUUID(thisUUID);
-    const status = super.getCollisionStatus(body, otherUUID);
-
-    if (!status) body.collisions.push(otherUUID);
-    return status ? 'onCollision' : 'onCollisionStart';
-  }
-
   activateAll () {
     this.bodies.forEach((collider) => {
       this.world.removeRigidBody(collider.body);
