@@ -100,8 +100,8 @@ export default class ConvexBreak extends Playground {
 
     this.createMeshDebris(mesh, 860);
     console.log('mountain UUID', mesh.uuid);
-    // mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
-    // mesh.onCollisionStart = this.onCollisionStart.bind(this);
+    mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
+    mesh.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createBufferMesh (halfSize, position, rotation, color, mass) {
@@ -134,7 +134,7 @@ export default class ConvexBreak extends Playground {
   }
 
   onCollisionStart (thisBody, otherBody, contacts) {
-    console.log('onCollisionStart', thisBody, otherBody, contacts);
+    console.log('onCollisionStart', thisBody, otherBody);
 
     // if (type !== 'static' && contact.impulse > 250.0) {
     //   // const distance = contact.distance;
@@ -155,7 +155,7 @@ export default class ConvexBreak extends Playground {
   }
 
   onCollisionEnd (thisBody, otherBody, contacts) {
-    console.log('onCollisionEnd', thisBody, otherBody, contacts);
+    console.log('onCollisionEnd', thisBody, otherBody);
   }
 
   createUserShot () {

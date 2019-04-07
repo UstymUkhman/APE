@@ -168,7 +168,12 @@ export default class RigidBody {
     };
   }
 
-  getAllCollisions () {
+  addCollision (thisUUID, otherUUID) {
+    const body = this.getBodyByUUID(thisUUID);
+    body.collisions.push(otherUUID);
+  }
+
+  getCollisions () {
     const collisions = [];
 
     this.bodies.forEach((body) => {
@@ -181,33 +186,10 @@ export default class RigidBody {
     return collisions;
   }
 
-  getCollisions (uuid) {
-    const body = this.getBodyByUUID(uuid);
-    return body.collisions;
-  }
-
-  updateCollisions (thisUUID, otherUUID) {
-    const body = this.getBodyByUUID(thisUUID);
-    body.collisions.push(otherUUID);
-
-    // if (!body.collisions.includes(otherUUID)) {
-    //   body.collisions.push(otherUUID);
-    // }
-  }
-
   resetCollisions () {
     this.bodies.forEach((body) => {
       body.collisions = [];
     });
-  }
-
-  resetCollision (uuid, otherUUID) {
-    const body = this.getBodyByUUID(uuid);
-    const index = body.collisions.indexOf(otherUUID);
-
-    if (index > -1) {
-      body.collisions.splice(index, 1);
-    }
   }
 
   remove (props) {
