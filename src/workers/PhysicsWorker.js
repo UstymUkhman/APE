@@ -7,8 +7,6 @@ import ClothBodies from 'workers/bodies/ClothBodies';
 import SoftBodies from 'workers/bodies/SoftBodies';
 import RopeBodies from 'workers/bodies/RopeBodies';
 
-import { Vector3 } from 'three/src/math/Vector3';
-
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
 import find from 'lodash/find';
@@ -250,17 +248,19 @@ class PhysicsWorker {
         const pointDistance = point.getDistance();
 
         const normal = point.get_m_normalWorldOnB();
-        const collisionNormal = new Vector3(normal.x(), normal.y(), normal.z());
+        const collisionNormal = { x: normal.x(), y: normal.y(), z: normal.z() };
 
         let bodyPoint = point.get_m_localPointA();
         let collisionPoint = point.get_m_positionWorldOnA();
-        const body0Point = new Vector3(bodyPoint.x(), bodyPoint.y(), bodyPoint.z());
-        const collisionPoint0 = new Vector3(collisionPoint.x(), collisionPoint.y(), collisionPoint.z());
+
+        const body0Point = { x: bodyPoint.x(), y: bodyPoint.y(), z: bodyPoint.z() };
+        const collisionPoint0 = { x: collisionPoint.x(), y: collisionPoint.y(), z: collisionPoint.z() };
 
         bodyPoint = point.get_m_localPointB();
         collisionPoint = point.get_m_positionWorldOnB();
-        const body1Point = new Vector3(bodyPoint.x(), bodyPoint.y(), bodyPoint.z());
-        const collisionPoint1 = new Vector3(collisionPoint.x(), collisionPoint.y(), collisionPoint.z());
+
+        const body1Point = { x: bodyPoint.x(), y: bodyPoint.y(), z: bodyPoint.z() };
+        const collisionPoint1 = { x: collisionPoint.x(), y: collisionPoint.y(), z: collisionPoint.z() };
 
         collisions[i].bodies[0].collisionPoint = collisionPoint0;
         collisions[i].bodies[1].collisionPoint = collisionPoint1;

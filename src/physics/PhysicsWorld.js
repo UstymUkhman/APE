@@ -78,27 +78,30 @@ export default class PhysicsWorld {
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
+      if (!body0 || !body1) return;
+
       const type0 = body0.type;
       const type1 = body1.type;
 
       const body0Mesh = this[type0].getBody(body0.uuid);
       const body1Mesh = this[type1].getBody(body1.uuid);
 
-      const hasContactsData = this._fullCollisionReport && !!collision.contacts.length;
+      const existingBodies = body0Mesh && body1Mesh;
+      const hasContactsData = this._fullCollisionReport && !!this._collisions;
       const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
 
-      if (body0.collisionFunction) {
+      if (existingBodies && body0.collisionFunction) {
         this[type0].updateCollisions(
-          { mesh: body0Mesh, type: type0, callback: body0.collisionFunction },
-          { mesh: body1Mesh, type: type1 },
+          { mesh: body0Mesh, body: body0 },
+          { mesh: body1Mesh, body: body1 },
           contacts
         );
       }
 
-      if (body1.collisionFunction) {
+      if (existingBodies && body1.collisionFunction) {
         this[type1].updateCollisions(
-          { mesh: body1Mesh, type: type1, callback: body1.collisionFunction },
-          { mesh: body0Mesh, type: type0 },
+          { mesh: body1Mesh, body: body1 },
+          { mesh: body0Mesh, body: body0 },
           contacts
         );
       }

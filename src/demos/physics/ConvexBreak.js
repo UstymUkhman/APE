@@ -9,6 +9,7 @@ export default class ConvexBreak extends Playground {
   constructor () {
     super();
 
+    this.now = Date.now();
     this.vec3 = new THREE.Vector3();
     this.quat = new THREE.Quaternion();
 
@@ -23,22 +24,19 @@ export default class ConvexBreak extends Playground {
     this.physics.static.addBox(this.ground);
     this.physics.fullCollisionReport = true;
 
-    console.log('ground UUID', this.ground.uuid);
     this.convexBreaker = new THREE.ConvexObjectBreaker();
-    // this.ground.onCollisionEnd = this.onCollisionEnd.bind(this);
-    // this.ground.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createObjects () {
     // Tower 1
-    // this.vec3.set(-8, 5.5, 0);
-    // this.quat.set(0, 0, 0, 1);
+    this.vec3.set(-8, 5.5, 0);
+    this.quat.set(0, 0, 0, 1);
 
-    // this.createBufferMesh(
-    //   new THREE.Vector3(2, 5, 2),
-    //   this.vec3, this.quat,
-    //   0xB03014, 1000
-    // );
+    this.createBufferMesh(
+      new THREE.Vector3(2, 5, 2),
+      this.vec3, this.quat,
+      0xB03014, 1000
+    );
 
     // Tower 2
     this.vec3.set(8, 5.5, 0);
@@ -51,28 +49,28 @@ export default class ConvexBreak extends Playground {
     );
 
     // Bridge
-    // this.vec3.set(0, 10.7, 0);
-    // this.quat.set(0, 0, 0, 1);
+    this.vec3.set(0, 10.7, 0);
+    this.quat.set(0, 0, 0, 1);
 
-    // this.createBufferMesh(
-    //   new THREE.Vector3(7, 0.2, 1.5),
-    //   this.vec3, this.quat,
-    //   0xB3B865, 100
-    // );
+    this.createBufferMesh(
+      new THREE.Vector3(7, 0.2, 1.5),
+      this.vec3, this.quat,
+      0xB3B865, 100
+    );
 
     // Stones
-    // this.quat.set(0, 0, 0, 1);
+    this.quat.set(0, 0, 0, 1);
 
-    // for (let i = 0; i < 8; i++) {
-    //   const z = 15 * (0.5 - i / 9);
-    //   this.vec3.set(0, 2.5, z);
+    for (let i = 0; i < 8; i++) {
+      const z = 15 * (0.5 - i / 9);
+      this.vec3.set(0, 2.5, z);
 
-    //   this.createBufferMesh(
-    //     new THREE.Vector3(1, 2, 0.15),
-    //     this.vec3, this.quat,
-    //     0xB0B0B0, 120
-    //   );
-    // }
+      this.createBufferMesh(
+        new THREE.Vector3(1, 2, 0.15),
+        this.vec3, this.quat,
+        0xB0B0B0, 120
+      );
+    }
 
     // Mountain
     const mountainSize = new THREE.Vector3(4, 5, 4);
@@ -99,9 +97,6 @@ export default class ConvexBreak extends Playground {
     );
 
     this.createMeshDebris(mesh, 860);
-    console.log('mountain UUID', mesh.uuid);
-    mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
-    mesh.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createBufferMesh (halfSize, position, rotation, color, mass) {
@@ -120,42 +115,41 @@ export default class ConvexBreak extends Playground {
     );
 
     this.createMeshDebris(mesh, mass);
-    // mesh.onCollisionEnd = this.onCollisionEnd.bind(this);
-    // mesh.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createMeshDebris (mesh, mass) {
+    mesh.onCollision = this.onCollision.bind(this);
     this.physics.dynamic.addConvex(mesh, mass);
     this.scene.add(mesh);
-
-    // var btVecUserData = new Ammo.btVector3(0, 0, 0);
-    // btVecUserData.threeObject = mesh;
-    // body.setUserPointer(btVecUserData);
   }
 
-  onCollisionStart (thisBody, otherBody, contacts) {
-    console.log('onCollisionStart', thisBody, otherBody);
+  onCollision (thisBody, otherBody, contacts) {
+    const userData = thisBody.mesh.userData;
 
-    // if (type !== 'static' && contact.impulse > 250.0) {
-    //   // const distance = contact.distance;
-    //   const impulse = contact.impulse;
-    //   // const normal = contact.normal;
+    if (userData.breakable && contacts.length) {
+      const impulse = contacts[0].impulse;
+      const now = Date.now();
 
-    //   console.log('impulse', impulse, this);
+      if (impulse > 500 && (now - this.now) > 500) {
+        this.now = now;
 
-    //   // const debris = this.convexBreaker.subdivideByImpact(threeObject0, impact, normal, 1, 2, 1.5);
+        const debris = this.convexBreaker.subdivideByImpact(
+          thisBody.mesh, thisBody.collisionPoint,
+          contacts[0].normal, 1, 2, 1.5
+        );
 
-    //   // for (let i = 0; i < debris.length; i++) {
-    //   //   this.createMeshDebris(debris[i], mass);
-    //   // }
+        for (let i = 0; i < debris.length; i++) {
+          this.createMeshDebris(debris[i], debris[i].userData.mass);
+        }
+        this.physics.dynamic.remove(thisBody.mesh);
+        this.scene.remove(thisBody.mesh);
 
-    //   // objectsToRemove[numObjectsToRemove++] = threeObject0;
-    //   // userData0.collided = true;
-    // }
-  }
-
-  onCollisionEnd (thisBody, otherBody, contacts) {
-    console.log('onCollisionEnd', thisBody, otherBody);
+        setTimeout(() => {
+          this.physics.dynamic.remove(otherBody.mesh);
+          this.scene.remove(otherBody.mesh);
+        }, 10000);
+      }
+    }
   }
 
   createUserShot () {
@@ -175,7 +169,6 @@ export default class ConvexBreak extends Playground {
 
   shotBall () {
     const ball = this.ball.clone();
-    console.log('ball UUID', ball.uuid);
 
     this.raycaster.setFromCamera(this.ballPosition, this.camera);
     this.vec3.copy(this.raycaster.ray.direction);
@@ -186,13 +179,11 @@ export default class ConvexBreak extends Playground {
     ball.quaternion.copy(this.quat);
 
     this.scene.add(ball);
-    this.physics.dynamic.addSphere(ball, 35);
+    this.physics.dynamic.addSphere(ball, 50);
 
     this.vec3.copy(this.raycaster.ray.direction);
     this.vec3.multiplyScalar(50);
 
     this.physics.dynamic.setLinearVelocity(ball, this.vec3);
-    ball.onCollisionEnd = this.onCollisionEnd.bind(this);
-    ball.onCollisionStart = this.onCollisionStart.bind(this);
   }
 }
