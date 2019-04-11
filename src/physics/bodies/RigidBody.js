@@ -1,5 +1,3 @@
-import { Vector3 } from 'three/src/math/Vector3';
-
 import assign from 'lodash/assign';
 import find from 'lodash/find';
 
@@ -49,37 +47,6 @@ export default class RigidBody {
       action: 'addBody',
       params: props
     });
-  }
-
-  updateCollisions (thisObject, otherObject, contacts = null) {
-    const callback = thisObject.body.collisionFunction;
-    const mesh = thisObject.mesh;
-
-    if (contacts) {
-      for (const c in contacts) {
-        contacts[c].normal = new Vector3(...Object.values(contacts[c].normal));
-      }
-    }
-
-    if (typeof mesh[callback] === 'function') {
-      const otherBody = { mesh: otherObject.mesh, type: otherObject.body.type };
-      const thisBody = { mesh: mesh, type: thisObject.body.type };
-
-      const otherCollisionPoint = otherObject.body.collisionPoint;
-      const thisCollisionPoint = thisObject.body.collisionPoint;
-
-      const otherBodyPoint = otherObject.body.bodyPoint;
-      const thisBodyPoint = thisObject.body.bodyPoint;
-
-      if (otherCollisionPoint) {
-        otherBody.collisionPoint = new Vector3(...Object.values(otherCollisionPoint));
-        thisBody.collisionPoint = new Vector3(...Object.values(thisCollisionPoint));
-        otherBody.bodyPoint = new Vector3(...Object.values(otherBodyPoint));
-        thisBody.bodyPoint = new Vector3(...Object.values(thisBodyPoint));
-      }
-
-      mesh[callback](thisBody, otherBody, contacts || 0);
-    }
   }
 
   setLinearVelocity (mesh, velocity) {

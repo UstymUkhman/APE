@@ -15,6 +15,7 @@
     "ammo.js": "kripken/ammo.js",
     "animejs": "^2.2.0",
     "mobile-detect": "^1.4.3",
+    "stats.js": "^0.17.0",
     "three": "^0.103.0",
     "three-orbit-controls": "^82.1.0",
     "worker-loader": "^2.0.0"

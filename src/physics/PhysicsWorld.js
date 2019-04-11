@@ -90,23 +90,43 @@ export default class PhysicsWorld {
       const hasContactsData = this._fullCollisionReport && !!this._collisions;
       const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
 
-      if (existingBodies && body0.collisionFunction) {
-        this[type0].updateCollisions(
-          { mesh: body0Mesh, body: body0 },
-          { mesh: body1Mesh, body: body1 },
-          contacts
-        );
+      if (existingBodies) {
+        this[collision.collisionFunction]({
+          collisionPoint: body0.collisionPoint,
+          bodyPoint: body0.bodyPoint,
+          mesh: body0Mesh,
+          type: type0
+        }, {
+          collisionPoint: body1.collisionPoint,
+          bodyPoint: body1.bodyPoint,
+          mesh: body1Mesh,
+          type: type1
+        }, contacts);
       }
 
-      if (existingBodies && body1.collisionFunction) {
-        this[type1].updateCollisions(
-          { mesh: body1Mesh, body: body1 },
-          { mesh: body0Mesh, body: body0 },
-          contacts
-        );
-      }
+      // if (existingBodies && body0.collisionFunction) {
+      //   this[type0].updateCollisions(
+      //     { mesh: body0Mesh, body: body0 },
+      //     { mesh: body1Mesh, body: body1 },
+      //     contacts
+      //   );
+      // }
+
+      // if (existingBodies && body1.collisionFunction) {
+      //   this[type1].updateCollisions(
+      //     { mesh: body1Mesh, body: body1 },
+      //     { mesh: body0Mesh, body: body0 },
+      //     contacts
+      //   );
+      // }
     });
   }
+
+  onCollisionStart (thisObject, otherObject, contacts) { }
+
+  onCollision (thisObject, otherObject, contacts) { }
+
+  onCollisionEnd (thisObject, otherObject, contacts) { }
 
   /* addVehicle (mesh, mass, controls, moto = false) {
     const vehicle = new VehicleBody(this.world, controls, moto);

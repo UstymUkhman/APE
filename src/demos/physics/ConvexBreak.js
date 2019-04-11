@@ -2,6 +2,7 @@ import 'three/examples/js/QuickHull';
 import 'three/examples/js/ConvexObjectBreaker';
 import 'three/examples/js/geometries/ConvexGeometry';
 
+const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
 import PhysicsWorld from 'physics/PhysicsWorld';
 import Playground from 'demos/Playground';
 
@@ -11,6 +12,8 @@ export default class ConvexBreak extends Playground {
 
     this.now = Date.now();
     this.vec3 = new THREE.Vector3();
+    this.vec3 = new THREE.Vector3();
+    this.normal = new THREE.Vector3();
     this.quat = new THREE.Quaternion();
 
     this.initPhysics();
@@ -22,9 +25,10 @@ export default class ConvexBreak extends Playground {
     this.physics = new PhysicsWorld();
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
-    this.physics.fullCollisionReport = true;
 
+    this.physics.fullCollisionReport = true;
     this.convexBreaker = new THREE.ConvexObjectBreaker();
+    this.physics.onCollision = this.onCollision.bind(this);
   }
 
   createObjects () {
@@ -33,7 +37,7 @@ export default class ConvexBreak extends Playground {
     this.quat.set(0, 0, 0, 1);
 
     this.createBufferMesh(
-      new THREE.Vector3(2, 5, 2),
+      new THREE.Vector3(4, 10, 4),
       this.vec3, this.quat,
       0xB03014, 1000
     );
@@ -43,7 +47,7 @@ export default class ConvexBreak extends Playground {
     this.quat.set(0, 0, 0, 1);
 
     this.createBufferMesh(
-      new THREE.Vector3(2, 5, 2),
+      new THREE.Vector3(4, 10, 4),
       this.vec3, this.quat,
       0xB03214, 1000
     );
@@ -53,7 +57,7 @@ export default class ConvexBreak extends Playground {
     this.quat.set(0, 0, 0, 1);
 
     this.createBufferMesh(
-      new THREE.Vector3(7, 0.2, 1.5),
+      new THREE.Vector3(14, 0.4, 3),
       this.vec3, this.quat,
       0xB3B865, 100
     );
@@ -66,7 +70,7 @@ export default class ConvexBreak extends Playground {
       this.vec3.set(0, 2.5, z);
 
       this.createBufferMesh(
-        new THREE.Vector3(1, 2, 0.15),
+        new THREE.Vector3(2, 4, 0.3),
         this.vec3, this.quat,
         0xB0B0B0, 120
       );
@@ -91,64 +95,60 @@ export default class ConvexBreak extends Playground {
 
     mesh.position.copy(this.vec3);
     mesh.quaternion.copy(this.quat);
-
-    this.convexBreaker.prepareBreakableObject(
-      mesh, 860, new THREE.Vector3(), new THREE.Vector3(), true
-    );
-
     this.createMeshDebris(mesh, 860);
   }
 
-  createBufferMesh (halfSize, position, rotation, color, mass) {
+  createBufferMesh (size, position, rotation, color, mass) {
     const mesh = new THREE.Mesh(
-      new THREE.BoxBufferGeometry(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2),
+      new THREE.BoxBufferGeometry(size.x, size.y, size.z),
       new THREE.MeshPhongMaterial({ color: color })
     );
 
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
     mesh.position.copy(position);
     mesh.quaternion.copy(rotation);
-
-    this.convexBreaker.prepareBreakableObject(
-      mesh, mass, new THREE.Vector3(), new THREE.Vector3(), true
-    );
 
     this.createMeshDebris(mesh, mass);
   }
 
   createMeshDebris (mesh, mass) {
-    mesh.onCollision = this.onCollision.bind(this);
+    if (mass > 50) {
+      this.convexBreaker.prepareBreakableObject(
+        mesh, mass, VECTOR_ZERO, VECTOR_ZERO, true
+      );
+    }
+
     this.physics.dynamic.addConvex(mesh, mass);
+    mesh.receiveShadow = true;
+    mesh.castShadow = true;
     this.scene.add(mesh);
   }
 
   onCollision (thisBody, otherBody, contacts) {
+    const now = Date.now();
+    if (now < (this.now + 1000)) return;
+
+    const impulse = contacts[0] ? contacts[0].impulse : 0;
+    const isBall = otherBody.type === 'dynamic';
     const userData = thisBody.mesh.userData;
 
-    if (userData.breakable && contacts.length) {
-      const impulse = contacts[0].impulse;
-      const now = Date.now();
+    if (isBall && userData.breakable && impulse > 500) {
+      const normal = contacts[0].normal;
+      const point = thisBody.collisionPoint;
 
-      if (impulse > 500 && (now - this.now) > 500) {
-        this.now = now;
+      this.vec3.set(point.x, point.y, point.z);
+      this.normal.set(normal.x, normal.y, normal.z);
 
-        const debris = this.convexBreaker.subdivideByImpact(
-          thisBody.mesh, thisBody.collisionPoint,
-          contacts[0].normal, 1, 2, 1.5
-        );
+      const debris = this.convexBreaker.subdivideByImpact(
+        thisBody.mesh, this.vec3, this.normal, 1, 2, 1.5
+      );
 
-        for (let i = 0; i < debris.length; i++) {
-          this.createMeshDebris(debris[i], debris[i].userData.mass);
-        }
-        this.physics.dynamic.remove(thisBody.mesh);
-        this.scene.remove(thisBody.mesh);
-
-        setTimeout(() => {
-          this.physics.dynamic.remove(otherBody.mesh);
-          this.scene.remove(otherBody.mesh);
-        }, 10000);
+      for (let i = 0; i < debris.length; i++) {
+        this.createMeshDebris(debris[i], debris[i].userData.mass);
       }
+
+      this.physics.dynamic.remove(thisBody.mesh);
+      this.scene.remove(thisBody.mesh);
+      this.now = now;
     }
   }
 
@@ -185,5 +185,10 @@ export default class ConvexBreak extends Playground {
     this.vec3.multiplyScalar(50);
 
     this.physics.dynamic.setLinearVelocity(ball, this.vec3);
+
+    setTimeout(() => {
+      this.physics.dynamic.remove(ball);
+      this.scene.remove(ball);
+    }, 5000);
   }
 }

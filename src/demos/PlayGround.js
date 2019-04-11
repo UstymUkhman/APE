@@ -12,6 +12,7 @@ import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
+import Stats from 'stats.js';
 import RAF from 'core/RAF';
 
 const OrbitControls = ThreeOrbitControls(THREE);
@@ -35,7 +36,11 @@ export default class Playground {
     this.createEvents();
 
     this._render = this.render.bind(this);
+    this.stats = new Stats();
+    this.stats.showPanel(0);
+
     RAF.add(this._render);
+    document.body.appendChild(this.stats.dom);
   }
 
   createScene () {
@@ -163,8 +168,10 @@ export default class Playground {
   }
 
   render () {
+    this.stats.begin();
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
+    this.stats.end();
   }
 
   onResize () {

@@ -51,17 +51,6 @@ export default class DynamicBodies extends RigidBody {
   }
 
   addConvex (props) {
-    // const points = [];
-
-    // props.geometry.vertices.forEach((vertex) => {
-    //   points.push({
-    //     x: vertex.x,
-    //     y: vertex.y,
-    //     z: vertex.z
-    //   });
-    // });
-
-    // const convex = this.createConvex(points);
     const convex = this.createConvex(props.geometry.attributes.position.array);
     this._addDynamicBody(props.uuid, convex, props.position, props.rotation, props.mass);
   }
