@@ -281,26 +281,14 @@ class Physics {
       const body1 = collision.bodies[1];
 
       const body0Collisions = find(lastCollisions[body0.type], { uuid: body0.uuid }).collisions;
-      // const body1Collisions = find(lastCollisions[body1.type], { uuid: body1.uuid }).collisions;
-
       const body0CollisionIndex = body0Collisions.indexOf(body1.uuid);
-      // const body1CollisionIndex = body1Collisions.indexOf(body0.uuid);
 
       if (body0CollisionIndex > -1) {
-        // body0.collisionFunction = 'onCollision';
         collision.collisionFunction = 'onCollision';
         body0Collisions.splice(body0CollisionIndex, 1);
       } else {
-        // body0.collisionFunction = 'onCollisionStart';
         collision.collisionFunction = 'onCollisionStart';
       }
-
-      // if (body1CollisionIndex > -1) {
-      //   body1.collisionFunction = 'onCollision';
-      //   body1Collisions.splice(body1CollisionIndex, 1);
-      // } else {
-      //   body1.collisionFunction = 'onCollisionStart';
-      // }
     });
 
     for (const type in lastCollisions) {
@@ -308,8 +296,6 @@ class Physics {
         body.collisions.forEach((uuid) => {
           const body0 = this.getBodyByUUID(body.uuid);
           const body1 = this.getBodyByUUID(uuid);
-
-          // body0.collisionFunction = 'onCollisionEnd';
 
           collisions.push({
             collisionFunction: 'onCollisionEnd',

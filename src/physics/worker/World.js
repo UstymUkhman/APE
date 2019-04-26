@@ -1,4 +1,4 @@
-import Physics from 'worker-loader!workers/physics/Physics.js';
+import Physics from 'worker-loader!workers/Physics.js';
 
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';

@@ -1,10 +1,10 @@
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
-// import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
-import PhysicsWorld from 'physics/PhysicsWorld';
 import Playground from 'demos/Playground';
+import Physics from 'physics/World';
+import RAF from 'core/RAF';
 
 export default class RigidBodies extends Playground {
   constructor () {
@@ -13,16 +13,15 @@ export default class RigidBodies extends Playground {
     this.initPhysics();
     this.createDynamicBodies();
     this.createKinematicBodies();
+
+    this._update = this.update.bind(this);
+    RAF.add(this._update);
   }
 
   initPhysics () {
-    this.physics = new PhysicsWorld();
-
-    this.physics.static.friction = 2.5;
-    this.physics.collisionReport = true;
+    this.physics = new Physics();
+    this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
-    // this.physics.static.addPlane(this.ground);
-    // this.physics.static.addHeightField(this.ground, this.minHeight, this.maxHeight);
   }
 
   createDynamicBodies () {
@@ -38,18 +37,6 @@ export default class RigidBodies extends Playground {
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
-
-    dynamicBox.onCollisionStart = (otherMesh, otherMeshType, contacts) => {
-      console.log('onCollisionStart', contacts);
-    };
-
-    dynamicBox.onCollision = (otherMesh, otherMeshType, contacts) => {
-      console.log('onCollision', contacts);
-    };
-
-    dynamicBox.onCollisionEnd = (otherMesh, otherMeshType, contacts) => {
-      console.log('onCollisionEnd', contacts);
-    };
   }
 
   createKinematicBodies () {
@@ -61,6 +48,7 @@ export default class RigidBodies extends Playground {
     );
 
     this.kinematicBox.castShadow = true;
+    this.kinematicBox.position.x = 2.5;
     this.kinematicBox.position.y = 5;
 
     this.physics.kinematic.addBox(this.kinematicBox);
@@ -90,5 +78,9 @@ export default class RigidBodies extends Playground {
         this.kinematicBox.position.x -= 1;
         break;
     }
+  }
+
+  update () {
+    this.physics.update();
   }
 }
