@@ -1,11 +1,11 @@
-import KinematicBodies from 'workers/bodies/KinematicBodies';
-import DynamicBodies from 'workers/bodies/DynamicBodies';
-import StaticBodies from 'workers/bodies/StaticBodies';
-import HingeBodies from 'workers/bodies/HingeBodies';
+import KinematicBodies from './bodies/KinematicBodies';
+import DynamicBodies from './bodies/DynamicBodies';
+import StaticBodies from './bodies/StaticBodies';
+import HingeBodies from './bodies/HingeBodies';
 
-import ClothBodies from 'workers/bodies/ClothBodies';
-import SoftBodies from 'workers/bodies/SoftBodies';
-import RopeBodies from 'workers/bodies/RopeBodies';
+import ClothBodies from './bodies/ClothBodies';
+import SoftBodies from './bodies/SoftBodies';
+import RopeBodies from './bodies/RopeBodies';
 
 import assign from 'lodash/assign';
 import Logger from 'utils/Logger';
@@ -14,7 +14,7 @@ import Ammo from 'core/Ammo';
 
 let physics = null;
 
-class PhysicsWorker {
+class Physics {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
@@ -441,14 +441,14 @@ self.addEventListener('message', (event) => {
   if (physics) {
     physics[action](params);
   } else if (action === 'init') {
-    physics = new PhysicsWorker(params[0], params[1]);
+    physics = new Physics(params[0], params[1]);
   } else {
     const array = typeof params === 'object';
     const args = params.length && array ? params.join(', ') : !array ? params : '';
 
     Logger.error(
-      `Cannot call PhysicsWorker.${action}(${args})`,
-      'PhysicsWorker is not initialized.'
+      `Cannot call Physics.${action}(${args})`,
+      'Physics is not initialized.'
     );
   }
 });

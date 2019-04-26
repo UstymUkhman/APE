@@ -1,6 +1,6 @@
 // Rigid bodies class manager
 
-import RigidBody from 'physics/bodies/RigidBody';
+import RigidBody from './RigidBody';
 
 export default class DynamicBodies extends RigidBody {
   constructor (worker) {

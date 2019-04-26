@@ -1,21 +1,21 @@
-import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
+import Physics from 'worker-loader!workers/physics/Physics.js';
 
-import KinematicBodies from 'physics/bodies/KinematicBodies';
-import DynamicBodies from 'physics/bodies/DynamicBodies';
-import StaticBodies from 'physics/bodies/StaticBodies';
-import HingeBodies from 'physics/bodies/HingeBodies';
+import KinematicBodies from './bodies/KinematicBodies';
+import DynamicBodies from './bodies/DynamicBodies';
+import StaticBodies from './bodies/StaticBodies';
+import HingeBodies from './bodies/HingeBodies';
 
-import ClothBodies from 'physics/bodies/ClothBodies';
-import SoftBodies from 'physics/bodies/SoftBodies';
-import RopeBodies from 'physics/bodies/RopeBodies';
+import ClothBodies from './bodies/ClothBodies';
+import SoftBodies from './bodies/SoftBodies';
+import RopeBodies from './bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
-import { GRAVITY } from 'physics/constants';
+import { GRAVITY } from '../constants';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
     this.clock = new Clock();
-    this.worker = new PhysicsWorker();
+    this.worker = new Physics();
 
     this._collisions = 0;
     this._gravity = gravity;
@@ -103,22 +103,6 @@ export default class PhysicsWorld {
           type: type1
         }, contacts);
       }
-
-      // if (existingBodies && body0.collisionFunction) {
-      //   this[type0].updateCollisions(
-      //     { mesh: body0Mesh, body: body0 },
-      //     { mesh: body1Mesh, body: body1 },
-      //     contacts
-      //   );
-      // }
-
-      // if (existingBodies && body1.collisionFunction) {
-      //   this[type1].updateCollisions(
-      //     { mesh: body1Mesh, body: body1 },
-      //     { mesh: body0Mesh, body: body0 },
-      //     contacts
-      //   );
-      // }
     });
   }
 
@@ -127,19 +111,6 @@ export default class PhysicsWorld {
   onCollision (thisObject, otherObject, contacts) { }
 
   onCollisionEnd (thisObject, otherObject, contacts) { }
-
-  /* addVehicle (mesh, mass, controls, moto = false) {
-    const vehicle = new VehicleBody(this.world, controls, moto);
-    vehicle.addChassis(mesh, mass);
-    this.vehicles.push(vehicle);
-    return vehicle;
-  } */
-
-  /* update () {
-    for (let i = 0; i < this.vehicles.length; i++) {
-      this.vehicles[i].update();
-    }
-  } */
 
   destroy () {
     this.worker.removeEventListener('message', this._onMessage);

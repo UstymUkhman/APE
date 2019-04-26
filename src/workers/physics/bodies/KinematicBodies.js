@@ -1,4 +1,4 @@
-import RigidBody from 'workers/bodies/RigidBody';
+import RigidBody from './RigidBody';
 import Ammo from 'core/Ammo';
 
 import {

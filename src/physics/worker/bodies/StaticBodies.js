@@ -1,4 +1,4 @@
-import RigidBody from 'physics/bodies/RigidBody';
+import RigidBody from './RigidBody';
 
 export default class StaticBodies extends RigidBody {
   constructor (worker) {
