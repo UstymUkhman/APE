@@ -1,3 +1,4 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
 import Ammo from 'core/Ammo';
@@ -10,9 +11,10 @@ import {
 } from 'physics/constants';
 
 export default class RopeBodies {
-  constructor (world) {
+  constructor (world, events) {
     this.bodies = [];
     this.world = world;
+    this.events = events;
 
     this.margin = ROPE_MARGIN;
     this.viterations = ROPE_VITERATIONS;
@@ -23,18 +25,18 @@ export default class RopeBodies {
     /* eslint-enable new-cap */
   }
 
-  addBody (props) {
-    const segments = props.geometry.attributes.position.array.length / 3 - 2;
+  addBody (mesh, length, mass, position = new Vector3()) {
+    const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
 
     /* eslint-disable new-cap */
-    const start = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
-    const end = new Ammo.btVector3(props.position.x, props.position.y + props.length, props.position.z);
+    const start = new Ammo.btVector3(position.x, position.y, position.z);
+    const end = new Ammo.btVector3(position.x, position.y + length, position.z);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
     const config = body.get_m_cfg();
 
-    body.setTotalMass(props.mass, false);
+    body.setTotalMass(mass, false);
 
     config.set_viterations(this.viterations);
     config.set_piterations(this.piterations);
@@ -44,28 +46,28 @@ export default class RopeBodies {
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
-      geometry: props.geometry,
-      uuid: props.uuid,
+      geometry: mesh.geometry,
+      uuid: mesh.uuid,
       body: body
     });
   }
 
-  append (props) {
-    const body = find(this.bodies, { uuid: props.uuid }).body;
-    body.appendAnchor(props.position, props.target, true, props.influence);
-  }
+  append (mesh, target, top = true, influence = 1) {
+    const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
 
-  activateAll () {
-    this.bodies.forEach((collider) => {
-      this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
-      collider.body.activate();
+    this.events.emit('getRopeAnchor', target.uuid, {
+      position: top ? ropeTop : 0.0,
+      influence: influence,
+      uuid: mesh.uuid
     });
   }
 
-  update () {
-    const update = [];
+  appendAnchor (target, rope) {
+    const body = find(this.bodies, { uuid: rope.uuid }).body;
+    body.appendAnchor(rope.position, target, true, rope.influence);
+  }
 
+  update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const positions = this.bodies[i].geometry.attributes.position.array;
       const vertices = positions.length / 3;
@@ -82,21 +84,20 @@ export default class RopeBodies {
         positions[index + 2] = nodePosition.z();
       }
 
-      update.push({
-        uuid: this.bodies[i].uuid,
-        positions: positions
-      });
+      this.bodies[i].geometry.attributes.position.needsUpdate = true;
     }
+  }
 
-    self.postMessage({
-      action: 'updateBodies',
-      bodies: update,
-      type: 'rope'
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
     });
   }
 
-  remove (props) {
-    const index = findIndex(this.bodies, { uuid: props.uuid });
+  remove (uuid) {
+    const index = findIndex(this.bodies, { uuid: uuid });
 
     if (index > -1) {
       const mesh = this.bodies[index];

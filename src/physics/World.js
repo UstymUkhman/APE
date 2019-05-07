@@ -5,7 +5,7 @@ import HingeBodies from './bodies/HingeBodies';
 
 // import ClothBodies from './bodies/ClothBodies';
 // import SoftBodies from './bodies/SoftBodies';
-// import RopeBodies from './bodies/RopeBodies';
+import RopeBodies from './bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
@@ -16,7 +16,8 @@ import Ammo from 'core/Ammo';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
-    const events = new EventEmitter();
+    const eventEmitter = new EventEmitter();
+
     this.clock = new Clock();
     this._gravity = gravity;
 
@@ -26,13 +27,14 @@ export default class PhysicsWorld {
       this.initRigidWorld();
     }
 
+    this.hinge = new HingeBodies(this.world, eventEmitter);
+    this.rope = new RopeBodies(this.world, eventEmitter);
+
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
 
-    this.hinge = new HingeBodies(this.world, events);
-
-    events.on('getHingeComponents', (pinUUID, armUUID, position) => {
+    eventEmitter.on('getHingeComponents', (pinUUID, armUUID, position) => {
       let arm = this.dynamic.getBodyByUUID(armUUID);
       let pin = this.static.getBodyByUUID(pinUUID);
 
@@ -64,6 +66,32 @@ export default class PhysicsWorld {
       }
 
       this.hinge.addBodies(pin.body, arm.body, position);
+    });
+
+    eventEmitter.on('getRopeAnchor', (targetUUID, rope) => {
+      let target = this.dynamic.getBodyByUUID(targetUUID);
+
+      if (!target) {
+        target = this.kinematic.getBodyByUUID(targetUUID);
+      }
+
+      if (!target) {
+        target = this.static.getBodyByUUID(targetUUID);
+      }
+
+      // if (!target) {
+      //   target = this.soft.getBodyByUUID(targetUUID);
+      // }
+
+      if (!target) {
+        Logger.error(
+          'Target body was not found.',
+          `Make sure to add one of the following bodies to your rope mesh [${targetUUID}]:`,
+          'dynamic (recommended); kinematic; static or soft.'
+        );
+      }
+
+      this.rope.appendAnchor(target.body, rope);
     });
   }
 
@@ -100,6 +128,8 @@ export default class PhysicsWorld {
   update () {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
+
+    this.rope.update();
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);

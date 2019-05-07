@@ -42,7 +42,6 @@ export default class HingeBodies {
     const body = this.bodies[index];
 
     if (body) {
-      console.log(index, direction, this.force);
       body.enableAngularMotor(true, direction, this.force);
     }
   }

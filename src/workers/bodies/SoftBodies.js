@@ -135,14 +135,6 @@ export default class SoftBodies {
     });
   }
 
-  activateAll () {
-    this.bodies.forEach((collider) => {
-      this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
-      collider.body.activate();
-    });
-  }
-
   update () {
     const update = [];
 
@@ -196,6 +188,14 @@ export default class SoftBodies {
     });
   }
 
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
+    });
+  }
+
   remove (props) {
     const mesh = find(this.bodies, { uuid: props.uuid });
     const index = this.bodies.indexOf(mesh);
@@ -208,5 +208,9 @@ export default class SoftBodies {
 
     this.bodies.splice(index, 1);
     return true;
+  }
+
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
   }
 }

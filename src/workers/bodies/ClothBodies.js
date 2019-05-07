@@ -133,4 +133,8 @@ export default class ClothBodies {
     this.bodies.splice(index, 1);
     return true;
   }
+
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
 }

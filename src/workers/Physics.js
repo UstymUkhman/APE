@@ -134,18 +134,18 @@ class Physics {
   }
 
   appendRope (props) {
-    let target = find(this.dynamic.bodies, { uuid: props.target });
+    let target = this.dynamic.getBodyByUUID(props.target);
 
     if (!target) {
-      target = find(this.kinematic.bodies, { uuid: props.target });
+      target = this.kinematic.getBodyByUUID(props.target);
     }
 
     if (!target) {
-      target = find(this.static.bodies, { uuid: props.target });
+      target = this.static.getBodyByUUID(props.target);
     }
 
     if (!target) {
-      target = find(this.soft.bodies, { uuid: props.target });
+      target = this.soft.getBodyByUUID(props.target);
     }
 
     if (!target) {
@@ -161,19 +161,19 @@ class Physics {
   }
 
   appendCloth (props) {
-    let target = find(this.dynamic.bodies, { uuid: props.target });
-    const cloth = find(this.cloth.bodies, { uuid: props.uuid });
+    let target = this.dynamic.getBodyByUUID(props.target);
+    const cloth = this.cloth.getBodyByUUID(props.uuid);
 
     if (!target) {
-      target = find(this.kinematic.bodies, { uuid: props.target });
+      target = this.kinematic.getBodyByUUID(props.target);
     }
 
     if (!target) {
-      target = find(this.static.bodies, { uuid: props.target });
+      target = this.static.getBodyByUUID(props.target);
     }
 
     if (!target) {
-      target = find(this.soft.bodies, { uuid: props.target });
+      target = this.soft.getBodyByUUID(props.target);
     }
 
     if (!cloth) {
