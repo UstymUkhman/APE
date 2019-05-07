@@ -35,9 +35,11 @@ export default class PhysicsWorld {
     this.static = new StaticBodies(this.worker);
     this.hinge = new HingeBodies(this.worker);
 
-    this.cloth = new ClothBodies(this.worker);
-    this.rope = new RopeBodies(this.worker);
-    this.soft = new SoftBodies(this.worker);
+    if (soft) {
+      this.cloth = new ClothBodies(this.worker);
+      this.rope = new RopeBodies(this.worker);
+      this.soft = new SoftBodies(this.worker);
+    }
   }
 
   onWorkerMessage (event) {

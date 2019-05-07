@@ -1,7 +1,7 @@
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
-// import HingeBodies from './bodies/HingeBodies';
+import HingeBodies from './bodies/HingeBodies';
 
 // import ClothBodies from './bodies/ClothBodies';
 // import SoftBodies from './bodies/SoftBodies';
@@ -9,10 +9,14 @@ import StaticBodies from './bodies/StaticBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from 'physics/constants';
+
+import EventEmitter from 'events';
+import Logger from 'utils/Logger';
 import Ammo from 'core/Ammo';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
+    const events = new EventEmitter();
     this.clock = new Clock();
     this._gravity = gravity;
 
@@ -25,6 +29,42 @@ export default class PhysicsWorld {
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
+
+    this.hinge = new HingeBodies(this.world, events);
+
+    events.on('getHingeComponents', (pinUUID, armUUID, position) => {
+      let arm = this.dynamic.getBodyByUUID(armUUID);
+      let pin = this.static.getBodyByUUID(pinUUID);
+
+      if (!pin) {
+        pin = this.kinematic.getBodyByUUID(pinUUID);
+      }
+
+      if (!pin) {
+        pin = this.dynamic.getBodyByUUID(pinUUID);
+      }
+
+      if (!pin) {
+        Logger.error(
+          'Hinge pin\'s collider was not found.',
+          `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:`,
+          'static (recommended); kinematic or dynamic.'
+        );
+
+        return;
+      }
+
+      if (!arm) {
+        Logger.error(
+          'Hinge arm\'s collider was not found.',
+          `Make sure to add a dynamic body to your arm mesh [${armUUID}].`
+        );
+
+        return;
+      }
+
+      this.hinge.addBodies(pin.body, arm.body, position);
+    });
   }
 
   initSoftWorld () {

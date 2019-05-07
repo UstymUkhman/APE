@@ -346,15 +346,15 @@ class Physics {
   }
 
   updateHingeProps (props) {
-    let arm = find(this.dynamic.bodies, { uuid: props.arm });
-    let pin = find(this.static.bodies, { uuid: props.pin });
+    let arm = this.dynamic.getBodyByUUID(props.arm);
+    let pin = this.static.getBodyByUUID(props.pin);
 
     if (!pin) {
-      pin = find(this.kinematic.bodies, { uuid: props.pin });
+      pin = this.kinematic.getBodyByUUID(props.pin);
     }
 
     if (!pin) {
-      pin = find(this.dynamic.bodies, { uuid: props.pin });
+      pin = this.dynamic.getBodyByUUID(props.pin);
     }
 
     if (!pin) {

@@ -18,14 +18,14 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import PhysicsWorld from 'physics/PhysicsWorld';
+import PhysicsWorld from 'physics/World';
 import RAF from 'core/RAF';
 
-import { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
+// import { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
 import { SphereGeometry } from 'three/src/geometries/SphereGeometry';
-import { BufferAttribute } from 'three/src/core/BufferAttribute';
-import { BufferGeometry } from 'three/src/core/BufferGeometry';
-import { LineSegments } from 'three/src/objects/LineSegments';
+// import { BufferAttribute } from 'three/src/core/BufferAttribute';
+// import { BufferGeometry } from 'three/src/core/BufferGeometry';
+// import { LineSegments } from 'three/src/objects/LineSegments';
 import { Quaternion } from 'three/src/math/Quaternion';
 
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
@@ -55,6 +55,11 @@ export default class Soft {
     this.createEvents();
 
     RAF.add(this.render.bind(this));
+
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   console.log(':D', this);
+    //   RAF.add(this.render.bind(this));
+    // });
   }
 
   createScene () {
@@ -161,51 +166,51 @@ export default class Soft {
     this.physics.kinematic.addSphere(ball, ballMass);
     this.scene.add(ball);
 
-    const ropePos = ball.position.clone();
-    const ropeNumSegments = 20;
-    const ropeLength = 8;
+    // const ropePos = ball.position.clone();
+    // const ropeNumSegments = 20;
+    // const ropeLength = 8;
 
-    let ropeMaterial = new LineBasicMaterial({ color: 0x000000 });
-    let segmentLength = ropeLength / ropeNumSegments;
-    let ropeGeometry = new BufferGeometry();
-    let ropePositions = [];
-    let ropeIndices = [];
+    // let ropeMaterial = new LineBasicMaterial({ color: 0x000000 });
+    // let segmentLength = ropeLength / ropeNumSegments;
+    // let ropeGeometry = new BufferGeometry();
+    // let ropePositions = [];
+    // let ropeIndices = [];
 
-    for (let i = 0; i < ropeNumSegments + 1; i++) {
-      ropePositions.push(ropePos.x, ropePos.y + i * segmentLength, ropePos.z);
-    }
+    // for (let i = 0; i < ropeNumSegments + 1; i++) {
+    //   ropePositions.push(ropePos.x, ropePos.y + i * segmentLength, ropePos.z);
+    // }
 
-    for (let i = 0; i < ropeNumSegments;) {
-      ropeIndices.push(i, ++i);
-    }
+    // for (let i = 0; i < ropeNumSegments;) {
+    //   ropeIndices.push(i, ++i);
+    // }
 
-    ropeGeometry.setIndex(new BufferAttribute(new Uint16Array(ropeIndices), 1));
-    ropeGeometry.addAttribute('position', new BufferAttribute(new Float32Array(ropePositions), 3));
-    ropeGeometry.computeBoundingSphere();
+    // ropeGeometry.setIndex(new BufferAttribute(new Uint16Array(ropeIndices), 1));
+    // ropeGeometry.addAttribute('position', new BufferAttribute(new Float32Array(ropePositions), 3));
+    // ropeGeometry.computeBoundingSphere();
 
-    const rope = new LineSegments(ropeGeometry, ropeMaterial);
-    rope.receiveShadow = true;
-    rope.castShadow = true;
-    this.scene.add(rope);
+    // const rope = new LineSegments(ropeGeometry, ropeMaterial);
+    // rope.receiveShadow = true;
+    // rope.castShadow = true;
+    // this.scene.add(rope);
 
-    position = ropePos.clone();
-    position.y += 0.1;
+    // position = ropePos.clone();
+    // position.y += 0.1;
 
-    this.physics.rope.addBody(rope, ropeLength, 0.5, position);
+    // this.physics.rope.addBody(rope, ropeLength, 0.5, position);
 
-    this.physics.rope.append(rope, this.arm);
-    this.physics.rope.append(rope, ball, false);
+    // this.physics.rope.append(rope, this.arm);
+    // this.physics.rope.append(rope, ball, false);
 
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {
         case 81:
-          // this.physics.hinge.update(hingeIndex, 1);
-          ball.position.z += 1;
+          this.physics.hinge.update(hingeIndex, 1);
+          // ball.position.z += 1;
           break;
 
         case 65:
-          // this.physics.hinge.update(hingeIndex, -1);
-          ball.position.z -= 1;
+          this.physics.hinge.update(hingeIndex, -1);
+          // ball.position.z -= 1;
           break;
       }
     }, false);
@@ -249,6 +254,7 @@ export default class Soft {
   }
 
   render () {
+    this.physics.update();
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
   }

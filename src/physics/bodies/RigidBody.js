@@ -1,5 +1,5 @@
 import findIndex from 'lodash/findIndex';
-// import find from 'lodash/find';
+import find from 'lodash/find';
 import Ammo from 'core/Ammo';
 
 import {
@@ -145,9 +145,9 @@ export default class RigidBody {
   //   return find(this.bodies, { body: collider });
   // }
 
-  // getBodyByUUID (uuid) {
-  //   return find(this.bodies, { uuid: uuid });
-  // }
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
 
   // getBodyInfo (collider, uuid) {
   //   const body = !collider ?
