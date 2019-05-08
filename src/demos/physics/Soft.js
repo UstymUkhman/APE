@@ -28,6 +28,7 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { LineSegments } from 'three/src/objects/LineSegments';
 import { Quaternion } from 'three/src/math/Quaternion';
 
+import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 // import { DoubleSide } from 'three/src/constants.js';
 
@@ -49,17 +50,13 @@ export default class Soft {
     this.createCamera();
 
     this.createObjects();
+    this.createSoftObjects();
 
     this.createRenderer();
     this.createControls();
     this.createEvents();
 
     RAF.add(this.render.bind(this));
-
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   console.log(':D', this);
-    //   RAF.add(this.render.bind(this));
-    // });
   }
 
   createScene () {
@@ -218,6 +215,37 @@ export default class Soft {
     window.addEventListener('keyup', () => {
       this.physics.hinge.update(hingeIndex, 0);
     }, false);
+  }
+
+  createSoftObjects () {
+    const sphereGeometry = new SphereBufferGeometry(3, 20, 20);
+    const boxGeometry = new BufferGeometry().fromGeometry(
+      new BoxGeometry(2, 2, 2, 4, 4, 20)
+    );
+
+    sphereGeometry.translate(2.5, 15, 0);
+    boxGeometry.translate(5, 10, 0);
+
+    const softSphere = new Mesh(sphereGeometry,
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    const softBox = new Mesh(boxGeometry,
+      new MeshPhongMaterial({
+        color: 0x222222
+      })
+    );
+
+    this.physics.soft.addBody(softSphere, 10, 80);
+    this.physics.soft.addBody(softBox, 10, 100);
+
+    softSphere.castShadow = true;
+    softBox.castShadow = true;
+
+    this.scene.add(softSphere);
+    this.scene.add(softBox);
   }
 
   createMesh (sx, sy, sz, mass, pos, material) {

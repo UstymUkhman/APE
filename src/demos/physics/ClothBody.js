@@ -19,7 +19,7 @@ import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 
 import ThreeOrbitControls from 'three-orbit-controls';
-import PhysicsWorld from 'physics/PhysicsWorld';
+import PhysicsWorld from 'physics/worker/World';
 import RAF from 'core/RAF';
 
 const OrbitControls = ThreeOrbitControls(THREE);

@@ -4,7 +4,7 @@ import StaticBodies from './bodies/StaticBodies';
 import HingeBodies from './bodies/HingeBodies';
 
 // import ClothBodies from './bodies/ClothBodies';
-// import SoftBodies from './bodies/SoftBodies';
+import SoftBodies from './bodies/SoftBodies';
 import RopeBodies from './bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
@@ -33,6 +33,8 @@ export default class PhysicsWorld {
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
+
+    this.soft = new SoftBodies(this.world);
 
     eventEmitter.on('getHingeComponents', (pinUUID, armUUID, position) => {
       let arm = this.dynamic.getBodyByUUID(armUUID);
@@ -79,9 +81,9 @@ export default class PhysicsWorld {
         target = this.static.getBodyByUUID(targetUUID);
       }
 
-      // if (!target) {
-      //   target = this.soft.getBodyByUUID(targetUUID);
-      // }
+      if (!target) {
+        target = this.soft.getBodyByUUID(targetUUID);
+      }
 
       if (!target) {
         Logger.error(
@@ -129,6 +131,7 @@ export default class PhysicsWorld {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
 
+    this.soft.update();
     this.rope.update();
 
     const delta = this.clock.getDelta();
