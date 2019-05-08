@@ -1,117 +1,36 @@
-import { Scene } from 'three/src/scenes/Scene';
-import { Color } from 'three/src/math/Color';
-import { Fog } from 'three/src/scenes/Fog';
-
-import { Mesh } from 'three/src/objects/Mesh';
-import { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry';
+import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
-import { GridHelper } from 'three/src/helpers/GridHelper';
-
-import { DirectionalLight } from 'three/src/lights/DirectionalLight';
-// import { HemisphereLight } from 'three/src/lights/HemisphereLight';
-import { AmbientLight } from 'three/src/lights/AmbientLight';
-
-import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera';
-import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
-
-// import { Raycaster } from 'three/src/core/Raycaster';
-import { Vector3 } from 'three/src/math/Vector3';
-
-import ThreeOrbitControls from 'three-orbit-controls';
-import PhysicsWorld from 'physics/World';
-import RAF from 'core/RAF';
-
 import { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
 import { SphereGeometry } from 'three/src/geometries/SphereGeometry';
 import { BufferAttribute } from 'three/src/core/BufferAttribute';
+
+import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { LineSegments } from 'three/src/objects/LineSegments';
 import { Quaternion } from 'three/src/math/Quaternion';
+import { Vector3 } from 'three/src/math/Vector3';
+import { Mesh } from 'three/src/objects/Mesh';
 
-import { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry';
-import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
-// import { DoubleSide } from 'three/src/constants.js';
+import Playground from 'demos/Playground';
+import Physics from 'physics/World';
+import RAF from 'core/RAF';
 
-const OrbitControls = ThreeOrbitControls(THREE);
+export default class Soft extends Playground {
+  constructor () {
+    super();
 
-const WHITE = 0xFFFFFF;
-const BLACK = 0x000000;
-const GRAY = 0xA0A0A0;
-
-export default class Soft {
-  constructor (container = document.body) {
-    this.physics = new PhysicsWorld(true);
-    this.container = container;
-    this.setSize();
-
-    this.createScene();
-    this.createGround();
-    this.createLights();
-    this.createCamera();
-
+    this.initPhysics();
     this.createObjects();
     this.createSoftObjects();
 
-    this.createRenderer();
-    this.createControls();
-    this.createEvents();
-
-    RAF.add(this.render.bind(this));
+    this._update = this.update.bind(this);
+    RAF.add(this._update);
   }
 
-  createScene () {
-    this.scene = new Scene();
-    this.scene.background = new Color(GRAY);
-    this.scene.fog = new Fog(GRAY, 50, 100);
-  }
-
-  createGround () {
-    const ground = new Mesh(
-      new PlaneBufferGeometry(500, 500),
-      new MeshPhongMaterial({
-        depthWrite: false,
-        color: 0x888888
-      })
-    );
-
-    ground.receiveShadow = true;
-    ground.rotateX(-Math.PI / 2);
-    this.physics.static.friction = 2.5;
-    this.physics.static.addPlane(ground);
-
-    const grid = new GridHelper(500, 50, BLACK, BLACK);
-    grid.material.transparent = true;
-    grid.material.opacity = 0.2;
-
-    this.scene.add(ground);
-    this.scene.add(grid);
-  }
-
-  createLights () {
-    const directional = new DirectionalLight(WHITE, 1);
-    const ambient = new AmbientLight(WHITE);
-
-    directional.shadow.camera.bottom = -10;
-    directional.shadow.camera.right = 10;
-    directional.shadow.camera.left = -10;
-    directional.shadow.camera.top = 10;
-    directional.castShadow = true;
-
-    directional.position.set(-10, 10, 5);
-
-    directional.shadow.mapSize.x = 1024;
-    directional.shadow.mapSize.y = 1024;
-    directional.shadow.camera.near = 2;
-    directional.shadow.camera.far = 50;
-
-    this.scene.add(directional);
-    this.scene.add(ambient);
-  }
-
-  createCamera () {
-    this.camera = new PerspectiveCamera(45, this.ratio, 1, 500);
-    this.camera.position.set(0, 5, -25);
-    this.camera.lookAt(0, 0, 0);
+  initPhysics () {
+    this.physics = new Physics(true);
+    this.physics.static.friction = 5.0;
+    this.physics.static.addBox(this.ground);
   }
 
   createObjects () {
@@ -262,41 +181,7 @@ export default class Soft {
     return mesh;
   }
 
-  createRenderer () {
-    this.renderer = new WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(window.devicePixelRatio || 1);
-    this.renderer.setSize(this.width, this.height);
-    this.renderer.shadowMap.enabled = true;
-
-    this.container.appendChild(this.renderer.domElement);
-  }
-
-  createControls () {
-    this.orbitControls = new OrbitControls(this.camera);
-    this.orbitControls.target.set(0, 0, 25);
-    this.orbitControls.update();
-  }
-
-  createEvents () {
-    window.addEventListener('resize', this.onResize.bind(this), false);
-  }
-
-  render () {
+  update () {
     this.physics.update();
-    this.orbitControls.update();
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  onResize () {
-    this.setSize();
-    this.camera.aspect = this.ratio;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(this.width, this.height);
-  }
-
-  setSize () {
-    this.height = this.container.offsetHeight;
-    this.width = this.container.offsetWidth;
-    this.ratio = this.width / this.height;
   }
 }

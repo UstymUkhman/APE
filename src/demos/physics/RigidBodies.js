@@ -3,7 +3,7 @@ import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
-import Physics from 'physics/World';
+import PhysicsWorld from 'physics/World';
 import RAF from 'core/RAF';
 
 export default class RigidBodies extends Playground {
@@ -19,7 +19,7 @@ export default class RigidBodies extends Playground {
   }
 
   initPhysics () {
-    this.physics = new Physics();
+    this.physics = new PhysicsWorld();
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
   }

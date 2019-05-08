@@ -2,7 +2,7 @@ import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
-import PhysicsWorld from 'physics/PhysicsWorld';
+import PhysicsWorld from 'physics/worker/World';
 import Playground from 'demos/Playground';
 
 const KINEMATIC_COLLISION = 0x920000;

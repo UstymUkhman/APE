@@ -3,7 +3,7 @@ import 'three/examples/js/ConvexObjectBreaker';
 import 'three/examples/js/geometries/ConvexGeometry';
 
 const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
-import Physics from 'physics/worker/World';
+import PhysicsWorld from 'physics/worker/World';
 import Playground from 'demos/Playground';
 
 export default class ConvexBreak extends Playground {
@@ -22,7 +22,7 @@ export default class ConvexBreak extends Playground {
   }
 
   initPhysics () {
-    this.physics = new Physics();
+    this.physics = new PhysicsWorld();
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
 

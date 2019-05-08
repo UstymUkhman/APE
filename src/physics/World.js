@@ -3,7 +3,7 @@ import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
 import HingeBodies from './bodies/HingeBodies';
 
-// import ClothBodies from './bodies/ClothBodies';
+import ClothBodies from './bodies/ClothBodies';
 import SoftBodies from './bodies/SoftBodies';
 import RopeBodies from './bodies/RopeBodies';
 
@@ -28,12 +28,12 @@ export default class PhysicsWorld {
     }
 
     this.hinge = new HingeBodies(this.world, eventEmitter);
+    this.cloth = new ClothBodies(this.world, eventEmitter);
     this.rope = new RopeBodies(this.world, eventEmitter);
 
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
-
     this.soft = new SoftBodies(this.world);
 
     eventEmitter.on('getHingeComponents', (pinUUID, armUUID, position) => {
@@ -54,8 +54,6 @@ export default class PhysicsWorld {
           `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:`,
           'static (recommended); kinematic or dynamic.'
         );
-
-        return;
       }
 
       if (!arm) {
@@ -63,11 +61,43 @@ export default class PhysicsWorld {
           'Hinge arm\'s collider was not found.',
           `Make sure to add a dynamic body to your arm mesh [${armUUID}].`
         );
-
-        return;
       }
 
       this.hinge.addBodies(pin.body, arm.body, position);
+    });
+
+    eventEmitter.on('getClothAnchor', (targetUUID, cloth) => {
+      const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
+      let target = this.dynamic.getBodyByUUID(targetUUID);
+
+      if (!target) {
+        target = this.kinematic.getBodyByUUID(targetUUID);
+      }
+
+      if (!target) {
+        target = this.static.getBodyByUUID(targetUUID);
+      }
+
+      if (!target) {
+        target = this.soft.getBodyByUUID(targetUUID);
+      }
+
+      if (!clothBody) {
+        Logger.error(
+          'Cloth body was not found.',
+          `Make sure your mesh [${cloth.uuid}] has a cloth collider.`
+        );
+      }
+
+      if (!target) {
+        Logger.error(
+          'Target body was not found.',
+          `Make sure to add one of the following bodies to your pin mesh [${targetUUID}]:`,
+          'dynamic (recommended); kinematic; static or soft.'
+        );
+      }
+
+      this.cloth.appendAnchor(target.body, cloth);
     });
 
     eventEmitter.on('getRopeAnchor', (targetUUID, rope) => {
@@ -131,6 +161,7 @@ export default class PhysicsWorld {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
 
+    this.cloth.update();
     this.soft.update();
     this.rope.update();
 
@@ -138,17 +169,16 @@ export default class PhysicsWorld {
     this.world.stepSimulation(delta, 10);
   }
 
-  // destroy () {
-  //   delete this.kinematic;
-  //   delete this.dynamic;
-  //   delete this.static;
-  //   delete this.hinge;
+  destroy () {
+    delete this.kinematic;
+    delete this.dynamic;
+    delete this.static;
+    delete this.hinge;
 
-  //   delete this.cloth;
-  //   delete this.soft;
-  //   delete this.rope;
+    delete this.cloth;
+    delete this.soft;
+    delete this.rope;
 
-  //   delete this.worker;
-  //   delete this.clock;
-  // }
+    delete this.clock;
+  }
 }

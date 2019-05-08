@@ -63,7 +63,7 @@ export default class RopeBodies {
   }
 
   appendAnchor (target, rope) {
-    const body = find(this.bodies, { uuid: rope.uuid }).body;
+    const body = this.getBodyByUUID(rope.uuid).body;
     body.appendAnchor(rope.position, target, true, rope.influence);
   }
 
@@ -111,5 +111,9 @@ export default class RopeBodies {
     }
 
     return false;
+  }
+
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
   }
 }
