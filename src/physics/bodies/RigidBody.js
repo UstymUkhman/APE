@@ -122,23 +122,23 @@ export default class RigidBody {
     return body;
   }
 
-  // setLinearVelocity (uuid, velocity) {
-  //   const body = this.getBodyByUUID(uuid).body;
+  setLinearVelocity (mesh, velocity) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
 
-  //   body.setLinearVelocity(
-  //     new Ammo.btVector3(
-  //       velocity.x, velocity.y, velocity.z
-  //     )
-  //   );
-  // }
+    body.setLinearVelocity(
+      new Ammo.btVector3(
+        velocity.x, velocity.y, velocity.z
+      )
+    );
+  }
 
-  // setAngularVelocity (uuid, velocity) {
-  //   const body = this.getBodyByUUID(uuid).body;
+  setAngularVelocity (mesh, velocity) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
 
-  //   body.setAngularVelocity(
-  //     new Ammo.btVector3(velocity.x, velocity.y, velocity.z)
-  //   );
-  // }
+    body.setAngularVelocity(
+      new Ammo.btVector3(velocity.x, velocity.y, velocity.z)
+    );
+  }
   /* eslint-enable new-cap */
 
   // getBodyByCollider (collider) {

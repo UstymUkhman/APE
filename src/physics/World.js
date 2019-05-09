@@ -18,8 +18,12 @@ export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
     const eventEmitter = new EventEmitter();
 
-    this.clock = new Clock();
+    this._collisions = 0;
     this._gravity = gravity;
+    this.clock = new Clock();
+
+    this._collisionReport = false;
+    this._fullCollisionReport = false;
 
     if (soft) {
       this.initSoftWorld();
@@ -157,6 +161,14 @@ export default class PhysicsWorld {
     /* eslint-enable new-cap */
   }
 
+  activateBodies () {
+    this.soft.activateAll();
+    this.rope.activateAll();
+    this.hinge.activateAll();
+    this.cloth.activateAll();
+    this.dynamic.activateAll();
+  }
+
   update () {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
@@ -180,5 +192,42 @@ export default class PhysicsWorld {
     delete this.rope;
 
     delete this.clock;
+  }
+
+  set collisionReport (report) {
+    this.setCollisionReport(report);
+  }
+
+  get collisionReport () {
+    return this._collisionReport;
+  }
+
+  set fullCollisionReport (report) {
+    this.setCollisionReport(true, report);
+  }
+
+  get fullCollisionReport () {
+    return this._fullCollisionReport;
+  }
+
+  set gravity (value) {
+    this._gravity = value;
+    /* eslint-disable new-cap */
+
+    if (this._soft) {
+      this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, value, 0.0));
+    }
+
+    this.world.setGravity(new Ammo.btVector3(0.0, value, 0.0));
+    /* eslint-enable new-cap */
+    this.activateBodies();
+  }
+
+  get gravity () {
+    return this._gravity;
+  }
+
+  get collisions () {
+    return this._collisions;
   }
 }

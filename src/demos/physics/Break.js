@@ -5,6 +5,7 @@ import 'three/examples/js/geometries/ConvexGeometry';
 const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
 import Playground from 'demos/Playground';
 import Physics from 'physics/World';
+import RAF from 'core/RAF';
 
 export default class Break extends Playground {
   constructor () {
@@ -19,6 +20,9 @@ export default class Break extends Playground {
     this.initPhysics();
     this.createObjects();
     this.createUserShot();
+
+    this._update = this.update.bind(this);
+    RAF.add(this._update);
   }
 
   initPhysics () {
@@ -184,11 +188,15 @@ export default class Break extends Playground {
     this.vec3.copy(this.raycaster.ray.direction);
     this.vec3.multiplyScalar(50);
 
-    // this.physics.dynamic.setLinearVelocity(ball, this.vec3);
+    this.physics.dynamic.setLinearVelocity(ball, this.vec3);
 
     setTimeout(() => {
       this.physics.dynamic.remove(ball);
       this.scene.remove(ball);
     }, 5000);
+  }
+
+  update () {
+    this.physics.update();
   }
 }
