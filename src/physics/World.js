@@ -196,8 +196,8 @@ export default class PhysicsWorld {
       body = manifold.getBody1();
       const body1 = this.getBodyByCollider(body);
 
-      this[body0.type].addCollision(body0.uuid, body1.uuid);
-      this[body1.type].addCollision(body1.uuid, body0.uuid);
+      this[body0.type].addCollision(body0, body1.uuid);
+      this[body1.type].addCollision(body1, body0.uuid);
 
       collisions[i] = { bodies: [body0, body1] };
 
@@ -243,18 +243,31 @@ export default class PhysicsWorld {
     }
 
     collisions.forEach((collision) => {
+      let started = false;
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
-      const body0Collisions = find(lastCollisions[body0.type], collision => collision.body.uuid === body0.uuid).collisions;
-      const body0CollisionIndex = body0Collisions.indexOf(body1.uuid);
+      const body0Collisions = find(lastCollisions[body0.type], collision => collision.body.uuid === body0.uuid);
+      const body1Collisions = find(lastCollisions[body1.type], collision => collision.body.uuid === body1.uuid);
 
-      if (body0CollisionIndex > -1) {
-        collision.collisionFunction = 'onCollision';
-        body0Collisions.splice(body0CollisionIndex, 1);
-      } else {
-        collision.collisionFunction = 'onCollisionStart';
+      if (body0Collisions) {
+        const body0CollisionIndex = body0Collisions.collisions.indexOf(body1.uuid);
+
+        if (body0CollisionIndex > -1) {
+          body0Collisions.collisions.splice(body0CollisionIndex, 1);
+          started = true;
+        }
       }
+
+      if (body1Collisions) {
+        const body1CollisionIndex = body1Collisions.collisions.indexOf(body0.uuid);
+
+        if (body1CollisionIndex > -1) {
+          body1Collisions.collisions.splice(body1CollisionIndex, 1);
+        }
+      }
+
+      collision.collisionFunction = started ? 'onCollision' : 'onCollisionStart';
     });
 
     for (const type in lastCollisions) {

@@ -149,8 +149,7 @@ export default class RigidBody {
     return find(this.bodies, { uuid: uuid });
   }
 
-  addCollision (thisUUID, otherUUID) {
-    const body = this.getBodyByUUID(thisUUID);
+  addCollision (body, otherUUID) {
     body.collisions.push(otherUUID);
   }
 
@@ -158,10 +157,12 @@ export default class RigidBody {
     const collisions = [];
 
     this.bodies.forEach((body) => {
-      collisions.push({
-        collisions: [...body.collisions],
-        body: body
-      });
+      if (body.collisions.length) {
+        collisions.push({
+          collisions: [...body.collisions],
+          body: body
+        });
+      }
     });
 
     return collisions;

@@ -169,10 +169,12 @@ export default class RigidBody {
     const collisions = [];
 
     this.bodies.forEach((body) => {
-      collisions.push({
-        collisions: [...body.collisions],
-        uuid: body.uuid
-      });
+      if (body.collisions.length) {
+        collisions.push({
+          collisions: [...body.collisions],
+          uuid: body.uuid
+        });
+      }
     });
 
     return collisions;

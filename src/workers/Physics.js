@@ -277,18 +277,31 @@ class Physics {
     }
 
     collisions.forEach((collision) => {
+      let started = false;
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
-      const body0Collisions = find(lastCollisions[body0.type], { uuid: body0.uuid }).collisions;
-      const body0CollisionIndex = body0Collisions.indexOf(body1.uuid);
+      const body0Collisions = find(lastCollisions[body0.type], { uuid: body0.uuid });
+      const body1Collisions = find(lastCollisions[body1.type], { uuid: body1.uuid });
 
-      if (body0CollisionIndex > -1) {
-        collision.collisionFunction = 'onCollision';
-        body0Collisions.splice(body0CollisionIndex, 1);
-      } else {
-        collision.collisionFunction = 'onCollisionStart';
+      if (body0Collisions) {
+        const body0CollisionIndex = body0Collisions.collisions.indexOf(body1.uuid);
+
+        if (body0CollisionIndex > -1) {
+          body0Collisions.collisions.splice(body0CollisionIndex, 1);
+          started = true;
+        }
       }
+
+      if (body1Collisions) {
+        const body1CollisionIndex = body1Collisions.collisions.indexOf(body0.uuid);
+
+        if (body1CollisionIndex > -1) {
+          body1Collisions.collisions.splice(body1CollisionIndex, 1);
+        }
+      }
+
+      collision.collisionFunction = started ? 'onCollision' : 'onCollisionStart';
     });
 
     for (const type in lastCollisions) {

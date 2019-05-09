@@ -2,13 +2,12 @@ import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
-// import PhysicsWorld from 'physics/worker/World';
 import Playground from 'demos/Playground';
 import PhysicsWorld from 'physics/World';
 import RAF from 'core/RAF';
 
-const KINEMATIC_COLLISION = 0x920000;
-const STATIC_COLLISION = 0x009200;
+const START_COLLISION = 0x009200;
+const END_COLLISION = 0x920000;
 const NO_COLLISION = 0x222222;
 
 export default class CollidedBodies extends Playground {
@@ -30,24 +29,25 @@ export default class CollidedBodies extends Playground {
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
 
+    // this.physics.onCollision = this.onCollision.bind(this);
     this.physics.onCollisionEnd = this.onCollisionEnd.bind(this);
     this.physics.onCollisionStart = this.onCollisionStart.bind(this);
   }
 
   createDynamicBodies () {
-    this.dynamicBox = new Mesh(
+    const dynamicBox = new Mesh(
       new BoxGeometry(5, 5, 5),
       new MeshPhongMaterial({
         color: NO_COLLISION
       })
     );
 
-    this.dynamicBox.position.x = -4.0;
-    this.dynamicBox.position.y = 25.0;
-    this.dynamicBox.castShadow = true;
+    dynamicBox.position.x = -4.0;
+    dynamicBox.position.y = 25.0;
+    dynamicBox.castShadow = true;
 
-    this.physics.dynamic.addBox(this.dynamicBox, 10);
-    this.scene.add(this.dynamicBox);
+    this.physics.dynamic.addBox(dynamicBox, 10);
+    this.scene.add(dynamicBox);
   }
 
   createKinematicBodies () {
@@ -70,25 +70,25 @@ export default class CollidedBodies extends Playground {
 
   onCollisionStart (thisObject, otherObject, contacts) {
     console.log('onCollisionStart', thisObject.type, otherObject.type);
-
-    const staticCollision = otherObject.type === 'static';
-    const collisionColor = staticCollision ? STATIC_COLLISION : KINEMATIC_COLLISION;
-
-    this.dynamicBox.material.color.setHex(collisionColor);
+    const staticCollision = thisObject.type === 'static' || otherObject.type === 'static';
 
     if (!staticCollision) {
-      otherObject.mesh.material.color.setHex(STATIC_COLLISION);
+      otherObject.mesh.material.color.setHex(START_COLLISION);
+      thisObject.mesh.material.color.setHex(START_COLLISION);
     }
+  }
+
+  onCollision (thisObject, otherObject, contacts) {
+    console.log('onCollision', thisObject.type, otherObject.type);
   }
 
   onCollisionEnd (thisObject, otherObject, contacts) {
     console.log('onCollisionEnd', thisObject.type, otherObject.type);
-
-    const staticCollision = otherObject.type === 'static';
-    this.dynamicBox.material.color.setHex(NO_COLLISION);
+    const staticCollision = thisObject.type === 'static' || otherObject.type === 'static';
 
     if (!staticCollision) {
-      otherObject.mesh.material.color.setHex(NO_COLLISION);
+      otherObject.mesh.material.color.setHex(END_COLLISION);
+      thisObject.mesh.material.color.setHex(END_COLLISION);
     }
   }
 
