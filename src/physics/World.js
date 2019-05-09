@@ -12,6 +12,7 @@ import { GRAVITY } from 'physics/constants';
 
 import EventEmitter from 'events';
 import Logger from 'utils/Logger';
+import find from 'lodash/find';
 import Ammo from 'core/Ammo';
 
 export default class PhysicsWorld {
@@ -169,6 +170,172 @@ export default class PhysicsWorld {
     this.dynamic.activateAll();
   }
 
+  checkCollisions () {
+    const dispatcher = this.world.getDispatcher();
+    const manifolds = dispatcher.getNumManifolds();
+
+    const lastCollisions = {
+      kinematic: this.kinematic.getCollisions(),
+      dynamic: this.dynamic.getCollisions(),
+      static: this.static.getCollisions()
+    };
+
+    const collisions = new Array(manifolds);
+
+    this.kinematic.resetCollisions();
+    this.dynamic.resetCollisions();
+    this.static.resetCollisions();
+
+    for (let i = 0; i < manifolds; i++) {
+      const manifold = dispatcher.getManifoldByIndexInternal(i);
+      const collisionContacts = manifold.getNumContacts();
+
+      let body = manifold.getBody0();
+      const body0 = this.getBodyByCollider(body);
+
+      body = manifold.getBody1();
+      const body1 = this.getBodyByCollider(body);
+
+      this[body0.type].addCollision(body0.uuid, body1.uuid);
+      this[body1.type].addCollision(body1.uuid, body0.uuid);
+
+      collisions[i] = { bodies: [body0, body1] };
+
+      if (this._fullReport) {
+        collisions[i].contacts = new Array(collisionContacts);
+      } else {
+        collisions[i].contacts = collisionContacts;
+        continue;
+      }
+
+      for (let j = 0; j < collisionContacts; j++) {
+        const point = manifold.getContactPoint(j);
+        const impulse = point.getAppliedImpulse();
+        const pointDistance = point.getDistance();
+
+        const normal = point.get_m_normalWorldOnB();
+        const collisionNormal = { x: normal.x(), y: normal.y(), z: normal.z() };
+
+        let bodyPoint = point.get_m_localPointA();
+        let collisionPoint = point.get_m_positionWorldOnA();
+
+        const body0Point = { x: bodyPoint.x(), y: bodyPoint.y(), z: bodyPoint.z() };
+        const collisionPoint0 = { x: collisionPoint.x(), y: collisionPoint.y(), z: collisionPoint.z() };
+
+        bodyPoint = point.get_m_localPointB();
+        collisionPoint = point.get_m_positionWorldOnB();
+
+        const body1Point = { x: bodyPoint.x(), y: bodyPoint.y(), z: bodyPoint.z() };
+        const collisionPoint1 = { x: collisionPoint.x(), y: collisionPoint.y(), z: collisionPoint.z() };
+
+        collisions[i].bodies[0].collisionPoint = collisionPoint0;
+        collisions[i].bodies[1].collisionPoint = collisionPoint1;
+
+        collisions[i].bodies[0].bodyPoint = body0Point;
+        collisions[i].bodies[1].bodyPoint = body1Point;
+
+        collisions[i].contacts[j] = {
+          distance: pointDistance,
+          normal: collisionNormal,
+          impulse: impulse
+        };
+      }
+    }
+
+    collisions.forEach((collision) => {
+      const body0 = collision.bodies[0];
+      const body1 = collision.bodies[1];
+
+      const body0Collisions = find(lastCollisions[body0.type], collision => collision.body.uuid === body0.uuid).collisions;
+      const body0CollisionIndex = body0Collisions.indexOf(body1.uuid);
+
+      if (body0CollisionIndex > -1) {
+        collision.collisionFunction = 'onCollision';
+        body0Collisions.splice(body0CollisionIndex, 1);
+      } else {
+        collision.collisionFunction = 'onCollisionStart';
+      }
+    });
+
+    for (const type in lastCollisions) {
+      lastCollisions[type].forEach((body) => {
+        body.collisions.forEach((uuid) => {
+          const body1 = this.getBodyByUUID(uuid);
+
+          collisions.push({
+            collisionFunction: 'onCollisionEnd',
+            bodies: [body.body, body1],
+            contacts: 0
+          });
+        });
+      });
+    }
+
+    this._collisions = collisions.length;
+
+    if (this._collisions) {
+      this.reportCollisions(collisions);
+    }
+  }
+
+  reportCollisions (collisions) {
+    collisions.forEach((collision) => {
+      const body0 = collision.bodies[0];
+      const body1 = collision.bodies[1];
+
+      if (!body0 || !body1) return;
+
+      const type0 = body0.type;
+      const type1 = body1.type;
+
+      const existingBodies = body0.mesh && body1.mesh;
+      const hasContactsData = this._fullCollisionReport && !!this._collisions;
+      const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
+
+      if (existingBodies) {
+        this[collision.collisionFunction]({
+          collisionPoint: body0.collisionPoint,
+          bodyPoint: body0.bodyPoint,
+          mesh: body0.mesh,
+          type: type0
+        }, {
+          collisionPoint: body1.collisionPoint,
+          bodyPoint: body1.bodyPoint,
+          mesh: body1.mesh,
+          type: type1
+        }, contacts);
+      }
+    });
+  }
+
+  onCollisionStart (thisObject, otherObject, contacts) { }
+
+  onCollision (thisObject, otherObject, contacts) { }
+
+  onCollisionEnd (thisObject, otherObject, contacts) { }
+
+  getBodyByCollider (collider) {
+    let body = this.dynamic.getBodyByCollider(collider);
+    if (body) return body;
+
+    body = this.kinematic.getBodyByCollider(collider);
+    if (body) return body;
+
+    body = this.static.getBodyByCollider(collider);
+    return body;
+  }
+
+  getBodyByUUID (uuid) {
+    let body = this.dynamic.getBodyByUUID(uuid);
+    if (body) return body;
+
+    body = this.kinematic.getBodyByUUID(uuid);
+    if (body) return body;
+
+    body = this.static.getBodyByUUID(uuid);
+    return body;
+  }
+
   update () {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
@@ -179,6 +346,10 @@ export default class PhysicsWorld {
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);
+
+    if (this._collisionReport) {
+      this.checkCollisions();
+    }
   }
 
   destroy () {
@@ -195,7 +366,8 @@ export default class PhysicsWorld {
   }
 
   set collisionReport (report) {
-    this.setCollisionReport(report);
+    this._collisionReport = report;
+    this._fullCollisionReport = false;
   }
 
   get collisionReport () {
@@ -203,7 +375,8 @@ export default class PhysicsWorld {
   }
 
   set fullCollisionReport (report) {
-    this.setCollisionReport(true, report);
+    this._collisionReport = true;
+    this._fullCollisionReport = report;
   }
 
   get fullCollisionReport () {

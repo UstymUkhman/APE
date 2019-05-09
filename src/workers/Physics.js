@@ -315,15 +315,23 @@ class Physics {
 
   getBodyByCollider (collider) {
     let body = this.dynamic.getBodyInfo(collider, '');
-    body = this.kinematic.getBodyInfo(collider, '') || body;
-    body = this.static.getBodyInfo(collider, '') || body;
+    if (body) return body;
+
+    body = this.kinematic.getBodyInfo(collider, '');
+    if (body) return body;
+
+    body = this.static.getBodyInfo(collider, '');
     return body;
   }
 
   getBodyByUUID (uuid) {
     let body = this.dynamic.getBodyInfo(null, uuid);
-    body = this.kinematic.getBodyInfo(null, uuid) || body;
-    body = this.static.getBodyInfo(null, uuid) || body;
+    if (body) return body;
+
+    body = this.kinematic.getBodyInfo(null, uuid);
+    if (body) return body;
+
+    body = this.static.getBodyInfo(null, uuid);
     return body;
   }
 

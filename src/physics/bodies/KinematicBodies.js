@@ -12,7 +12,6 @@ export default class KinematicBodies extends RigidBody {
     super(world, 'kinematic');
 
     /* eslint-disable new-cap */
-    // this.position = new Ammo.btVector3();
     this.rotation = new Ammo.btQuaternion();
     /* eslint-enable new-cap */
   }
@@ -53,11 +52,16 @@ export default class KinematicBodies extends RigidBody {
 
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
-    // this.bodies.push({uuid: uuid, body: body, collisions: []});
-
-    this.bodies.push({uuid: mesh.uuid, mesh: mesh, body: body});
     body.setActivationState(DISABLE_DEACTIVATION);
     this.world.addRigidBody(body);
+
+    this.bodies.push({
+      type: 'kinematic',
+      uuid: mesh.uuid,
+      collisions: [],
+      mesh: mesh,
+      body: body
+    });
   }
 
   update (transform) {

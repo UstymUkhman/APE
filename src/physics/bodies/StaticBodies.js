@@ -97,8 +97,14 @@ export default class StaticBodies extends RigidBody {
     const quaternion = mesh.quaternion.clone();
 
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
-    // this.bodies.push({uuid: uuid, body: body, collisions: []});
-    this.bodies.push({uuid: mesh.uuid, mesh: mesh, body: body});
     this.world.addRigidBody(body);
+
+    this.bodies.push({
+      uuid: mesh.uuid,
+      collisions: [],
+      type: 'static',
+      mesh: mesh,
+      body: body
+    });
   }
 }

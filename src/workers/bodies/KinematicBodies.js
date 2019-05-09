@@ -12,7 +12,6 @@ export default class KinematicBodies extends RigidBody {
     super(world, 'kinematic');
 
     /* eslint-disable new-cap */
-    // this.position = new Ammo.btVector3();
     this.rotation = new Ammo.btQuaternion();
     /* eslint-enable new-cap */
   }

@@ -78,9 +78,15 @@ export default class DynamicBodies extends RigidBody {
     const quaternion = mesh.quaternion.clone();
 
     const body = this.createRigidBody(shape, mass, position, quaternion);
-    // this.bodies.push({uuid: uuid, body: body, collisions: []});
-    this.bodies.push({uuid: mesh.uuid, mesh: mesh, body: body});
     this.world.addRigidBody(body);
+
+    this.bodies.push({
+      type: 'dynamic',
+      uuid: mesh.uuid,
+      collisions: [],
+      mesh: mesh,
+      body: body
+    });
   }
 
   update (transform) {
