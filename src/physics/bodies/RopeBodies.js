@@ -67,6 +67,10 @@ export default class RopeBodies {
     body.appendAnchor(rope.position, target, true, rope.influence);
   }
 
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
+
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const positions = this.bodies[i].geometry.attributes.position.array;
@@ -96,8 +100,8 @@ export default class RopeBodies {
     });
   }
 
-  remove (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
+  remove (body) {
+    const index = findIndex(this.bodies, { uuid: body.uuid });
 
     if (index > -1) {
       const mesh = this.bodies[index];
@@ -111,9 +115,5 @@ export default class RopeBodies {
     }
 
     return false;
-  }
-
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
   }
 }

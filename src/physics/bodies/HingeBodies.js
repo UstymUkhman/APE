@@ -46,6 +46,14 @@ export default class HingeBodies {
     }
   }
 
+  activateAll () {
+    this.bodies.forEach((body) => {
+      this.world.removeConstraint(body);
+      this.world.addConstraint(body);
+      body.activate();
+    });
+  }
+
   remove (index) {
     const body = this.bodies[index];
 
@@ -56,13 +64,5 @@ export default class HingeBodies {
 
     this.bodies.splice(index, 1);
     return true;
-  }
-
-  activateAll () {
-    this.bodies.forEach((body) => {
-      this.world.removeConstraint(body);
-      this.world.addConstraint(body);
-      body.activate();
-    });
   }
 }

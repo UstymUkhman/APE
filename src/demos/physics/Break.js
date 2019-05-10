@@ -30,9 +30,10 @@ export default class Break extends Playground {
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
 
-    // this.physics.fullCollisionReport = true;
+    this.physics.fullCollisionReport = true;
     this.convexBreaker = new THREE.ConvexObjectBreaker();
-    // this.physics.onCollision = this.onCollision.bind(this);
+
+    this.physics.onCollision = this.onCollision.bind(this);
   }
 
   createObjects () {
@@ -132,7 +133,7 @@ export default class Break extends Playground {
     if (now < (this.now + 1000)) return;
 
     const impulse = contacts[0] ? contacts[0].impulse : 0;
-    const isBall = otherBody.type === 'dynamic';
+    const isBall = otherBody.mesh.name === 'ball';
     const userData = thisBody.mesh.userData;
 
     if (isBall && userData.breakable && impulse > 500) {
@@ -162,6 +163,7 @@ export default class Break extends Playground {
       new THREE.MeshPhongMaterial({ color: 0x202020 })
     );
 
+    this.ball.name = 'ball';
     this.ball.castShadow = true;
     this.ball.receiveShadow = true;
 

@@ -201,7 +201,7 @@ export default class PhysicsWorld {
 
       collisions[i] = { bodies: [body0, body1] };
 
-      if (this._fullReport) {
+      if (this._fullCollisionReport) {
         collisions[i].contacts = new Array(collisionContacts);
       } else {
         collisions[i].contacts = collisionContacts;

@@ -174,8 +174,8 @@ export default class RigidBody {
     });
   }
 
-  remove (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
+  remove (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
 
     if (index > -1) {
       const body = this.bodies[index].body;

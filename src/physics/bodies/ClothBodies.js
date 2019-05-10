@@ -92,12 +92,8 @@ export default class ClothBodies {
     body.appendAnchor(cloth.point, target, false, cloth.influence);
   }
 
-  activateAll () {
-    this.bodies.forEach((collider) => {
-      this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
-      collider.body.activate();
-    });
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
   }
 
   update () {
@@ -123,8 +119,16 @@ export default class ClothBodies {
     }
   }
 
-  remove (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
+  activateAll () {
+    this.bodies.forEach((collider) => {
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
+    });
+  }
+
+  remove (body) {
+    const index = findIndex(this.bodies, { uuid: body.uuid });
 
     if (index > -1) {
       const mesh = this.bodies[index];
@@ -138,9 +142,5 @@ export default class ClothBodies {
     }
 
     return false;
-  }
-
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
   }
 }

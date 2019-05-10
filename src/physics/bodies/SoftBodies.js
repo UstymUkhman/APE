@@ -136,6 +136,10 @@ export default class SoftBodies {
     });
   }
 
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
+
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const geometry = this.bodies[i].geometry;
@@ -186,8 +190,8 @@ export default class SoftBodies {
     });
   }
 
-  remove (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
+  remove (body) {
+    const index = findIndex(this.bodies, { uuid: body.uuid });
 
     if (index > -1) {
       const mesh = this.bodies[index];
@@ -201,9 +205,5 @@ export default class SoftBodies {
     }
 
     return false;
-  }
-
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
   }
 }
