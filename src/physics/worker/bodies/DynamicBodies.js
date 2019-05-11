@@ -48,14 +48,21 @@ export default class DynamicBodies extends RigidBody {
 
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      const body = this.getBody(bodies[i].uuid);
-      const quaternion = bodies[i].quaternion;
-      const position = bodies[i].position;
+      // const body = this.getBody(bodies[i].uuid);
+      const body = this.bodies[i];
 
-      if (body) {
+      if (body && body.uuid === bodies[i].uuid) {
+        const position = bodies[i].position;
+        const quaternion = bodies[i].quaternion;
+
         body.position.set(position.x, position.y, position.z);
         body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
       }
+
+      // if (body) {
+      //   body.position.set(position.x, position.y, position.z);
+      //   body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+      // }
     }
   }
 

@@ -8,7 +8,7 @@ import {
   SOFT_COLLISION
 } from 'physics/constants';
 
-import find from 'lodash/find';
+// import find from 'lodash/find';
 
 export default class SoftBodies {
   constructor (worker) {
@@ -47,9 +47,10 @@ export default class SoftBodies {
 
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      const body = find(this.bodies, { uuid: bodies[i].uuid });
+      // const body = find(this.bodies, { uuid: bodies[i].uuid });
+      const body = this.bodies[i];
 
-      if (body) {
+      if (body && body.uuid === bodies[i].uuid) {
         const position = body.geometry.attributes.position;
         const normal = body.geometry.attributes.normal;
 
