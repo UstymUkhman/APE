@@ -1,5 +1,4 @@
 import { Vector3 } from 'three/src/math/Vector3';
-// import find from 'lodash/find';
 
 import {
   ROPE_MARGIN,
@@ -55,7 +54,6 @@ export default class RopeBodies {
 
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      // const body = find(this.bodies, { uuid: bodies[i].uuid });
       const body = this.bodies[i];
 
       if (body && body.uuid === bodies[i].uuid) {

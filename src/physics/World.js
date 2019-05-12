@@ -19,6 +19,7 @@ export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
     const eventEmitter = new EventEmitter();
 
+    this._soft = soft;
     this._collisions = 0;
     this._gravity = gravity;
     this.clock = new Clock();
@@ -353,9 +354,11 @@ export default class PhysicsWorld {
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
 
-    this.cloth.update();
-    this.soft.update();
-    this.rope.update();
+    if (this._soft) {
+      this.cloth.update();
+      this.soft.update();
+      this.rope.update();
+    }
 
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);

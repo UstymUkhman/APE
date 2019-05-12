@@ -1,5 +1,3 @@
-// Rigid bodies class manager
-
 import RigidBody from './RigidBody';
 
 export default class DynamicBodies extends RigidBody {
@@ -48,7 +46,6 @@ export default class DynamicBodies extends RigidBody {
 
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
-      // const body = this.getBody(bodies[i].uuid);
       const body = this.bodies[i];
 
       if (body && body.uuid === bodies[i].uuid) {
@@ -58,11 +55,6 @@ export default class DynamicBodies extends RigidBody {
         body.position.set(position.x, position.y, position.z);
         body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
       }
-
-      // if (body) {
-      //   body.position.set(position.x, position.y, position.z);
-      //   body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-      // }
     }
   }
 
