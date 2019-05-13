@@ -211,9 +211,11 @@ export default class PhysicsWorld {
 
       for (let j = 0; j < collisionContacts; j++) {
         const point = manifold.getContactPoint(j);
-        const impulse = point.getAppliedImpulse();
         const pointDistance = point.getDistance();
 
+        if (pointDistance > 0) continue;
+
+        const impulse = point.getAppliedImpulse();
         const normal = point.get_m_normalWorldOnB();
         const collisionNormal = { x: normal.x(), y: normal.y(), z: normal.z() };
 
@@ -271,18 +273,20 @@ export default class PhysicsWorld {
       collision.collisionFunction = started ? 'onCollision' : 'onCollisionStart';
     });
 
-    for (const type in lastCollisions) {
-      lastCollisions[type].forEach((body) => {
-        body.collisions.forEach((uuid) => {
-          const body1 = this.getBodyByUUID(uuid);
+    if (this.onCollisionEnd) {
+      for (const type in lastCollisions) {
+        lastCollisions[type].forEach((body) => {
+          body.collisions.forEach((uuid) => {
+            const body1 = this.getBodyByUUID(uuid);
 
-          collisions.push({
-            collisionFunction: 'onCollisionEnd',
-            bodies: [body.body, body1],
-            contacts: 0
+            collisions.push({
+              collisionFunction: 'onCollisionEnd',
+              bodies: [body.body, body1],
+              contacts: 0
+            });
           });
         });
-      });
+      }
     }
 
     this._collisions = collisions.length;
@@ -303,11 +307,12 @@ export default class PhysicsWorld {
       const type1 = body1.type;
 
       const existingBodies = body0.mesh && body1.mesh;
+      const collisionFunction = this[collision.collisionFunction];
       const hasContactsData = this._fullCollisionReport && !!this._collisions;
       const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
 
-      if (existingBodies) {
-        this[collision.collisionFunction]({
+      if (existingBodies && collisionFunction) {
+        collisionFunction({
           collisionPoint: body0.collisionPoint,
           bodyPoint: body0.bodyPoint,
           mesh: body0.mesh,
@@ -321,12 +326,6 @@ export default class PhysicsWorld {
       }
     });
   }
-
-  onCollisionStart (thisObject, otherObject, contacts) { }
-
-  onCollision (thisObject, otherObject, contacts) { }
-
-  onCollisionEnd (thisObject, otherObject, contacts) { }
 
   getBodyByCollider (collider) {
     let body = this.dynamic.getBodyByCollider(collider);
@@ -351,6 +350,9 @@ export default class PhysicsWorld {
   }
 
   update () {
+    const delta = this.clock.getDelta();
+    this.world.stepSimulation(delta, 10);
+
     this.kinematic.update(this.transform);
     this.dynamic.update(this.transform);
 
@@ -359,9 +361,6 @@ export default class PhysicsWorld {
       this.soft.update();
       this.rope.update();
     }
-
-    const delta = this.clock.getDelta();
-    this.world.stepSimulation(delta, 10);
 
     if (this._collisionReport) {
       this.checkCollisions();

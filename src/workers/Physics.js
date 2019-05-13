@@ -196,8 +196,8 @@ class Physics {
   }
 
   updateBodies (props) {
-    this[props.type].update(this.transform, props.bodies);
     this.world.stepSimulation(props.delta, 10);
+    this[props.type].update(this.transform, props.bodies);
 
     if (this._reportCollisions) {
       this.checkCollisions();
@@ -244,9 +244,11 @@ class Physics {
 
       for (let j = 0; j < collisionContacts; j++) {
         const point = manifold.getContactPoint(j);
-        const impulse = point.getAppliedImpulse();
         const pointDistance = point.getDistance();
 
+        if (pointDistance > 0) continue;
+
+        const impulse = point.getAppliedImpulse();
         const normal = point.get_m_normalWorldOnB();
         const collisionNormal = { x: normal.x(), y: normal.y(), z: normal.z() };
 

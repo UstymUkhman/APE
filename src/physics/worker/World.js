@@ -89,11 +89,12 @@ export default class PhysicsWorld {
       const body1Mesh = this[type1].getBody(body1.uuid);
 
       const existingBodies = body0Mesh && body1Mesh;
+      const collisionFunction = this[collision.collisionFunction];
       const hasContactsData = this._fullCollisionReport && !!this._collisions;
       const contacts = !this._fullCollisionReport || hasContactsData ? collision.contacts : null;
 
-      if (existingBodies) {
-        this[collision.collisionFunction]({
+      if (existingBodies && collisionFunction) {
+        collisionFunction({
           collisionPoint: body0.collisionPoint,
           bodyPoint: body0.bodyPoint,
           mesh: body0Mesh,
@@ -107,12 +108,6 @@ export default class PhysicsWorld {
       }
     });
   }
-
-  onCollisionStart (thisObject, otherObject, contacts) { }
-
-  onCollision (thisObject, otherObject, contacts) { }
-
-  onCollisionEnd (thisObject, otherObject, contacts) { }
 
   destroy () {
     this.worker.removeEventListener('message', this._onMessage);

@@ -32,7 +32,6 @@ export default class Break extends Playground {
 
     this.physics.fullCollisionReport = true;
     this.convexBreaker = new THREE.ConvexObjectBreaker();
-
     this.physics.onCollision = this.onCollision.bind(this);
   }
 
