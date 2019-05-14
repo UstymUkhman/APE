@@ -28,9 +28,12 @@ export default class DynamicBodies extends RigidBody {
 
   addConcave (props) {
     const vertices = props.geometry.vertices;
+    const faces = props.geometry.faces;
     const triangles = [];
 
-    props.geometry.faces.forEach((face) => {
+    for (let f = 0, length = faces.length; f < length; f++) {
+      const face = faces[f];
+
       triangles.push([{
         x: vertices[face.a].x,
         y: vertices[face.a].y,
@@ -44,7 +47,7 @@ export default class DynamicBodies extends RigidBody {
         y: vertices[face.c].y,
         z: vertices[face.c].z
       }]);
-    });
+    }
 
     const concave = this.createConcave(triangles);
     this._addDynamicBody(props.uuid, concave, props.position, props.rotation, props.mass);
@@ -67,11 +70,13 @@ export default class DynamicBodies extends RigidBody {
   }
 
   activateAll () {
-    this.bodies.forEach((collider) => {
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      const collider = this.bodies[b];
+
       this.world.removeRigidBody(collider.body);
       this.world.addRigidBody(collider.body);
       collider.body.activate();
-    });
+    }
   }
 
   update (transform) {

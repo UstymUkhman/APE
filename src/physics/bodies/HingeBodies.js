@@ -47,11 +47,13 @@ export default class HingeBodies {
   }
 
   activateAll () {
-    this.bodies.forEach((body) => {
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      const body = this.bodies[b];
+
       this.world.removeConstraint(body);
       this.world.addConstraint(body);
       body.activate();
-    });
+    }
   }
 
   remove (index) {

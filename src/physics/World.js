@@ -213,7 +213,10 @@ export default class PhysicsWorld {
         const point = manifold.getContactPoint(j);
         const pointDistance = point.getDistance();
 
-        if (pointDistance > 0) continue;
+        if (pointDistance > 0) {
+          collisions[i].contacts[j] = null;
+          continue;
+        }
 
         const impulse = point.getAppliedImpulse();
         const normal = point.get_m_normalWorldOnB();
@@ -245,8 +248,10 @@ export default class PhysicsWorld {
       }
     }
 
-    collisions.forEach((collision) => {
+    for (let c = 0, length = collisions.length; c < length; c++) {
       let started = false;
+      const collision = collisions[c];
+
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
@@ -271,21 +276,26 @@ export default class PhysicsWorld {
       }
 
       collision.collisionFunction = started ? 'onCollision' : 'onCollisionStart';
-    });
+    }
 
     if (this.onCollisionEnd) {
       for (const type in lastCollisions) {
-        lastCollisions[type].forEach((body) => {
-          body.collisions.forEach((uuid) => {
-            const body1 = this.getBodyByUUID(uuid);
+        const lastCollision = lastCollisions[type];
+
+        for (let lc = 0, cLength = lastCollision.length; lc < cLength; lc++) {
+          const collidedBody = lastCollision[lc];
+          const uuids = collidedBody.collisions;
+
+          for (let u = 0, uLength = uuids.length; u < uLength; u++) {
+            const body1 = this.getBodyByUUID(uuids[u]);
 
             collisions.push({
               collisionFunction: 'onCollisionEnd',
-              bodies: [body.body, body1],
+              bodies: [collidedBody.body, body1],
               contacts: 0
             });
-          });
-        });
+          }
+        }
       }
     }
 
@@ -297,7 +307,8 @@ export default class PhysicsWorld {
   }
 
   reportCollisions (collisions) {
-    collisions.forEach((collision) => {
+    for (let c = 0, length = collisions.length; c < length; c++) {
+      const collision = collisions[c];
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
@@ -324,7 +335,7 @@ export default class PhysicsWorld {
           type: type1
         }, contacts);
       }
-    });
+    }
   }
 
   getBodyByCollider (collider) {

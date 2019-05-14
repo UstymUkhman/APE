@@ -189,11 +189,13 @@ export default class SoftBodies {
   }
 
   activateAll () {
-    this.bodies.forEach((collider) => {
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      const collider = this.bodies[b];
+
       this.world.removeSoftBody(collider.body);
       this.world.addSoftBody(collider.body);
       collider.body.activate();
-    });
+    }
   }
 
   remove (props) {

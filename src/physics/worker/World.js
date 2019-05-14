@@ -75,8 +75,10 @@ export default class PhysicsWorld {
 
   reportCollisions (report) {
     this._collisions = report.count;
+    const collisions = report.collisions;
 
-    report.collisions.forEach((collision) => {
+    for (let c = 0, length = collisions.length; c < length; c++) {
+      const collision = collisions[c];
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
@@ -106,7 +108,7 @@ export default class PhysicsWorld {
           type: type1
         }, contacts);
       }
-    });
+    }
   }
 
   destroy () {

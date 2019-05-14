@@ -246,7 +246,10 @@ class Physics {
         const point = manifold.getContactPoint(j);
         const pointDistance = point.getDistance();
 
-        if (pointDistance > 0) continue;
+        if (pointDistance > 0) {
+          collisions[i].contacts[j] = null;
+          continue;
+        }
 
         const impulse = point.getAppliedImpulse();
         const normal = point.get_m_normalWorldOnB();
@@ -278,8 +281,9 @@ class Physics {
       }
     }
 
-    collisions.forEach((collision) => {
+    for (let c = 0, length = collisions.length; c < length; c++) {
       let started = false;
+      const collision = collisions[c];
       const body0 = collision.bodies[0];
       const body1 = collision.bodies[1];
 
@@ -304,12 +308,19 @@ class Physics {
       }
 
       collision.collisionFunction = started ? 'onCollision' : 'onCollisionStart';
-    });
+    }
 
     for (const type in lastCollisions) {
-      lastCollisions[type].forEach((body) => {
-        body.collisions.forEach((uuid) => {
-          const body0 = this.getBodyByUUID(body.uuid);
+      const lastCollision = lastCollisions[type];
+
+      for (let lc = 0, length = lastCollision.length; lc < length; lc++) {
+        const collidedBody = lastCollision[lc];
+        const uuids = collidedBody.collisions;
+
+        for (let u = 0, length = uuids.length; u < length; u++) {
+          const uuid = uuids[u];
+
+          const body0 = this.getBodyByUUID(collidedBody.uuid);
           const body1 = this.getBodyByUUID(uuid);
 
           collisions.push({
@@ -317,8 +328,8 @@ class Physics {
             bodies: [body0, body1],
             contacts: 0
           });
-        });
-      });
+        }
+      }
     }
 
     self.postMessage({

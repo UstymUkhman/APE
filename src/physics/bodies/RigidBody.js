@@ -59,7 +59,9 @@ export default class RigidBody {
     const vec2 = new Ammo.btVector3(0.0, 0.0, 0.0);
     const vec3 = new Ammo.btVector3(0.0, 0.0, 0.0);
 
-    triangles.forEach((triangle) => {
+    for (let t = 0, length = triangles.length; t < length; t++) {
+      const triangle = triangles[t];
+
       vec1.setX(triangle[0].x);
       vec1.setY(triangle[0].y);
       vec1.setZ(triangle[0].z);
@@ -73,7 +75,7 @@ export default class RigidBody {
       vec3.setZ(triangle[2].z);
 
       mesh.addTriangle(vec1, vec2, vec3, true);
-    });
+    }
 
     const concave = new Ammo.btBvhTriangleMeshShape(mesh, true, true);
     this._checkBodyMargin(concave);
@@ -156,22 +158,24 @@ export default class RigidBody {
   getCollisions () {
     const collisions = [];
 
-    this.bodies.forEach((body) => {
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      const body = this.bodies[b];
+
       if (body.collisions.length) {
         collisions.push({
           collisions: [...body.collisions],
           body: body
         });
       }
-    });
+    }
 
     return collisions;
   }
 
   resetCollisions () {
-    this.bodies.forEach((body) => {
-      body.collisions = [];
-    });
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      this.bodies[b].collisions = [];
+    }
   }
 
   remove (mesh) {

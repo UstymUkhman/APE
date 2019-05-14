@@ -5,12 +5,13 @@ import 'three/examples/js/geometries/ConvexGeometry';
 const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
 import PhysicsWorld from 'physics/worker/World';
 import Playground from 'demos/Playground';
+import throttle from 'lodash/throttle';
 
 export default class ConvexBreak extends Playground {
   constructor () {
     super();
 
-    this.now = Date.now();
+    this.shot = Date.now();
     this.vec3 = new THREE.Vector3();
     this.vec3 = new THREE.Vector3();
     this.normal = new THREE.Vector3();
@@ -26,9 +27,9 @@ export default class ConvexBreak extends Playground {
     this.physics.static.friction = 5.0;
     this.physics.static.addBox(this.ground);
 
-    this.physics.fullCollisionReport = true;
     this.convexBreaker = new THREE.ConvexObjectBreaker();
     this.physics.onCollision = this.onCollision.bind(this);
+    this.physics.onCollisionEnd = throttle(this.onCollisionEnd.bind(this), 500);
   }
 
   createObjects () {
@@ -124,9 +125,6 @@ export default class ConvexBreak extends Playground {
   }
 
   onCollision (thisBody, otherBody, contacts) {
-    const now = Date.now();
-    if (now < (this.now + 1000)) return;
-
     const impulse = contacts[0] ? contacts[0].impulse : 0;
     const isBall = otherBody.type === 'dynamic';
     const userData = thisBody.mesh.userData;
@@ -147,8 +145,16 @@ export default class ConvexBreak extends Playground {
       }
 
       this.physics.dynamic.remove(thisBody.mesh);
+      this.physics.collisionReport = false;
       this.scene.remove(thisBody.mesh);
-      this.now = now;
+    }
+  }
+
+  onCollisionEnd () {
+    const shot = this.shot + 500;
+
+    if (shot < Date.now()) {
+      this.physics.collisionReport = false;
     }
   }
 
@@ -179,16 +185,14 @@ export default class ConvexBreak extends Playground {
     ball.quaternion.copy(this.quat);
 
     this.scene.add(ball);
+    this.shot = Date.now();
+
+    this.physics.fullCollisionReport = true;
     this.physics.dynamic.addSphere(ball, 50);
 
     this.vec3.copy(this.raycaster.ray.direction);
     this.vec3.multiplyScalar(50);
 
     this.physics.dynamic.setLinearVelocity(ball, this.vec3);
-
-    setTimeout(() => {
-      this.physics.dynamic.remove(ball);
-      this.scene.remove(ball);
-    }, 5000);
   }
 }

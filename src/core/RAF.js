@@ -13,6 +13,7 @@ class RAF {
     this.update = this.update.bind(this);
     this.listeners = [];
     this.frame = null;
+    this.length = 0;
     this.update();
   }
 
@@ -24,6 +25,7 @@ class RAF {
   add (listener) {
     if (this.listeners.indexOf(listener) < 0) {
       this.listeners.push(listener);
+      this.length++;
     }
   }
 
@@ -32,7 +34,10 @@ class RAF {
    * @description - Update all listeners every frame
    */
   update () {
-    this.listeners.forEach((listener) => { listener(); });
+    for (let l = 0; l < this.length; l++) {
+      this.listeners[l]();
+    }
+
     this.frame = requestAnimationFrame(this.update);
   }
 
@@ -43,8 +48,15 @@ class RAF {
    */
   remove (listener) {
     const index = this.listeners.indexOf(listener);
-    if (index > -1) this.listeners.splice(index, 1);
-    if (!this.listeners.length) this.cancel();
+
+    if (index > -1) {
+      this.listeners.splice(index, 1);
+      this.length--;
+    }
+
+    if (!this.length) {
+      this.cancel();
+    }
   }
 
   /**
@@ -54,6 +66,7 @@ class RAF {
   cancel () {
     cancelAnimationFrame(this.frame);
     this.listeners = [];
+    this.length = 0;
   }
 }
 
