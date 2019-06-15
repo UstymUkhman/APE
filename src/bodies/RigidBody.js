@@ -124,8 +124,8 @@ export default class RigidBody {
     return body;
   }
 
-  setLinearVelocity (uuid, velocity) {
-    const body = this.getBodyByUUID(uuid).body;
+  setLinearVelocity (mesh, velocity) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
 
     body.setLinearVelocity(
       new Ammo.btVector3(
@@ -134,8 +134,8 @@ export default class RigidBody {
     );
   }
 
-  setAngularVelocity (uuid, velocity) {
-    const body = this.getBodyByUUID(uuid).body;
+  setAngularVelocity (mesh, velocity) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
 
     body.setAngularVelocity(
       new Ammo.btVector3(velocity.x, velocity.y, velocity.z)
@@ -151,19 +151,7 @@ export default class RigidBody {
     return find(this.bodies, { uuid: uuid });
   }
 
-  getBodyInfo (collider, uuid) {
-    const body = !collider ?
-      this.getBodyByUUID(uuid) :
-      this.getBodyByCollider(collider);
-
-    return !body ? null : {
-      uuid: body.uuid,
-      type: this.type
-    };
-  }
-
-  addCollision (thisUUID, otherUUID) {
-    const body = this.getBodyByUUID(thisUUID);
+  addCollision (body, otherUUID) {
     body.collisions.push(otherUUID);
   }
 
@@ -176,7 +164,7 @@ export default class RigidBody {
       if (body.collisions.length) {
         collisions.push({
           collisions: [...body.collisions],
-          uuid: body.uuid
+          body: body
         });
       }
     }
@@ -190,8 +178,8 @@ export default class RigidBody {
     }
   }
 
-  remove (props) {
-    const index = findIndex(this.bodies, { uuid: props.uuid });
+  remove (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
 
     if (index > -1) {
       const body = this.bodies[index].body;
@@ -209,23 +197,5 @@ export default class RigidBody {
     if (this.margin !== MARGIN) {
       shape.setMargin(this.margin);
     }
-  }
-
-  set constants (values) {
-    for (const constant in values) {
-      this[constant] = values[constant];
-    }
-  }
-
-  get constants () {
-    return {
-      angularDamping: this.angularDamping,
-      linearDamping: this.linearDamping,
-      angularFactor: this.angularFactor,
-      linearFactor: this.linearFactor,
-      restitution: this.restitution,
-      friction: this.friction,
-      margin: this.margin
-    };
   }
 }

@@ -3,6 +3,7 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
 import { equalBufferVertices } from 'utils/Buffer';
+import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
 import Ammo from 'utils/Ammo';
 
@@ -99,14 +100,14 @@ export default class SoftBodies {
     return bufferGeometry;
   }
 
-  addBody (props) {
-    this._initGeometry(props.geometry);
+  addBody (mesh, mass, pressure) {
+    this._initGeometry(mesh.geometry);
 
     const body = this.helpers.CreateFromTriMesh(
       this.world.getWorldInfo(),
-      props.geometry.ammoVertices,
-      props.geometry.ammoIndices,
-      props.geometry.ammoIndices.length / 3,
+      mesh.geometry.ammoVertices,
+      mesh.geometry.ammoIndices,
+      mesh.geometry.ammoIndices.length / 3,
       true
     );
 
@@ -116,35 +117,37 @@ export default class SoftBodies {
     bodyConfig.set_piterations(this.piterations);
     bodyConfig.set_collisions(this.collisions);
 
-    bodyConfig.set_kPR(props.pressure);
     bodyConfig.set_kDF(this.friction);
     bodyConfig.set_kDP(this.damping);
+    bodyConfig.set_kPR(pressure);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.get_m_materials().at(0).set_m_kLST(this.stiffness);
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(props.mass, false);
+    body.setTotalMass(mass, false);
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
-      geometry: props.geometry,
-      uuid: props.uuid,
+      geometry: mesh.geometry,
+      uuid: mesh.uuid,
       body: body
     });
   }
 
-  update () {
-    const update = [];
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
+  }
 
+  update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const geometry = this.bodies[i].geometry;
       const nodes = this.bodies[i].body.get_m_nodes();
 
+      const normals = geometry.attributes.normal.array;
       const association = geometry.ammoIndexAssociation;
-      const volumeNormals = geometry.attributes.normal.array;
-      const volumePositions = geometry.attributes.position.array;
+      const positions = geometry.attributes.position.array;
 
       for (let j = 0; j < association.length; j++) {
         const node = nodes.at(j);
@@ -164,28 +167,19 @@ export default class SoftBodies {
           const ivY = ivX + 1;
           const ivZ = ivY + 1;
 
-          volumeNormals[ivX] = nX;
-          volumeNormals[ivY] = nY;
-          volumeNormals[ivZ] = nZ;
+          positions[ivX] = pX;
+          positions[ivY] = pY;
+          positions[ivZ] = pZ;
 
-          volumePositions[ivX] = pX;
-          volumePositions[ivY] = pY;
-          volumePositions[ivZ] = pZ;
+          normals[ivX] = nX;
+          normals[ivY] = nY;
+          normals[ivZ] = nZ;
         }
       }
 
-      update.push({
-        positions: volumePositions,
-        uuid: this.bodies[i].uuid,
-        normals: volumeNormals
-      });
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.normal.needsUpdate = true;
     }
-
-    self.postMessage({
-      action: 'updateBodies',
-      bodies: update,
-      type: 'soft'
-    });
   }
 
   activateAll () {
@@ -198,21 +192,20 @@ export default class SoftBodies {
     }
   }
 
-  remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
+  remove (body) {
+    const index = findIndex(this.bodies, { uuid: body.uuid });
 
-    if (mesh === -1) return false;
+    if (index > -1) {
+      const mesh = this.bodies[index];
 
-    this.world.removeSoftBody(mesh.body);
-    Ammo.destroy(mesh.body);
-    delete mesh.geometry;
+      this.world.removeSoftBody(mesh.body);
+      Ammo.destroy(mesh.body);
+      delete mesh.geometry;
 
-    this.bodies.splice(index, 1);
-    return true;
-  }
+      this.bodies.splice(index, 1);
+      return true;
+    }
 
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    return false;
   }
 }

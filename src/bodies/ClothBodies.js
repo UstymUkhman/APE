@@ -1,3 +1,5 @@
+import { Vector3 } from 'three/src/math/Vector3';
+import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
 import Ammo from 'utils/Ammo';
 
@@ -13,9 +15,10 @@ import {
 } from '@/constants';
 
 export default class ClothBodies {
-  constructor (world) {
+  constructor (world, events) {
     this.bodies = [];
     this.world = world;
+    this.events = events;
 
     this.friction = FRICTION;
     this.margin = CLOTH_MARGIN;
@@ -30,18 +33,18 @@ export default class ClothBodies {
     /* eslint-enable new-cap */
   }
 
-  addBody (props) {
-    const heightSegments = props.geometry.parameters.heightSegments;
-    const widthSegments = props.geometry.parameters.widthSegments;
+  addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
+    const heightSegments = mesh.geometry.parameters.heightSegments;
+    const widthSegments = mesh.geometry.parameters.widthSegments;
 
-    const height = props.geometry.parameters.height;
-    const width = props.geometry.parameters.width;
+    const height = mesh.geometry.parameters.height;
+    const width = mesh.geometry.parameters.width;
 
     /* eslint-disable new-cap */
-    const clothCorner00 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z);
-    const clothCorner01 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z - width);
-    const clothCorner10 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
-    const clothCorner11 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z - width);
+    const clothCorner00 = new Ammo.btVector3(position.x, position.y + height, position.z);
+    const clothCorner01 = new Ammo.btVector3(position.x, position.y + height, position.z - width);
+    const clothCorner10 = new Ammo.btVector3(position.x, position.y, position.z);
+    const clothCorner11 = new Ammo.btVector3(position.x, position.y, position.z - width);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreatePatch(
@@ -66,34 +69,34 @@ export default class ClothBodies {
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(props.mass, false);
+    body.setTotalMass(mass, false);
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
-      geometry: props.geometry,
-      uuid: props.uuid,
+      geometry: mesh.geometry,
+      uuid: mesh.uuid,
       body: body
     });
   }
 
-  append (props) {
-    const body = find(this.bodies, { uuid: props.uuid }).body;
-    body.appendAnchor(props.point, props.target, false, props.influence);
+  append (mesh, point, target, influence = 0.5) {
+    this.events.emit('getClothAnchor', target.uuid, {
+      influence: influence,
+      uuid: mesh.uuid,
+      point: point
+    });
   }
 
-  activateAll () {
-    for (let b = 0, length = this.bodies.length; b < length; b++) {
-      const collider = this.bodies[b];
+  appendAnchor (target, cloth) {
+    const body = this.getBodyByUUID(cloth.uuid).body;
+    body.appendAnchor(cloth.point, target, false, cloth.influence);
+  }
 
-      this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
-      collider.body.activate();
-    }
+  getBodyByUUID (uuid) {
+    return find(this.bodies, { uuid: uuid });
   }
 
   update () {
-    const update = [];
-
     for (let i = 0; i < this.bodies.length; i++) {
       const body = this.bodies[i].body;
       const geometry = this.bodies[i].geometry;
@@ -110,33 +113,36 @@ export default class ClothBodies {
         positions[index + 2] = nodePosition.z();
       }
 
-      update.push({
-        uuid: this.bodies[i].uuid,
-        positions: positions
-      });
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.normal.needsUpdate = true;
+      geometry.computeVertexNormals();
+    }
+  }
+
+  activateAll () {
+    for (let b = 0, length = this.bodies.length; b < length; b++) {
+      const collider = this.bodies[b];
+
+      this.world.removeSoftBody(collider.body);
+      this.world.addSoftBody(collider.body);
+      collider.body.activate();
+    }
+  }
+
+  remove (body) {
+    const index = findIndex(this.bodies, { uuid: body.uuid });
+
+    if (index > -1) {
+      const mesh = this.bodies[index];
+
+      this.world.removeSoftBody(mesh.body);
+      Ammo.destroy(mesh.body);
+      delete mesh.geometry;
+
+      this.bodies.splice(index, 1);
+      return true;
     }
 
-    self.postMessage({
-      action: 'updateBodies',
-      bodies: update,
-      type: 'cloth'
-    });
-  }
-
-  remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
-
-    if (mesh === -1) return false;
-
-    this.world.removeSoftBody(mesh.body);
-    Ammo.destroy(mesh.body);
-
-    this.bodies.splice(index, 1);
-    return true;
-  }
-
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    return false;
   }
 }

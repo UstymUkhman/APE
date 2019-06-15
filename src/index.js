@@ -1,17 +1,19 @@
-// import CollidedBodies from 'demos/physics/CollidedBodies';
-// import RigidBodies from 'demos/physics/RigidBodies';
-import ConvexBreak from 'demos/physics/ConvexBreak';
-// import ClothBody from 'demos/physics/ClothBody';
-// import Break from 'demos/physics/Break';
-// import Soft from 'demos/physics/Soft';
+// import CollidedBodies from 'demos/collisions/CollidedBodies';
+import ConvexBreak from 'demos/collisions/ConvexBreak';
+// import Break from 'demos/collisions/Break';
+
+// import RigidBodies from 'demos/bodies/RigidBodies';
+// import ClothBody from 'demos/bodies/ClothBody';
+// import Soft from 'demos/bodies/Soft';
 
 export default class SWAGE {
   static createStage () {
     // return new CollidedBodies();
-    // return new RigidBodies();
     return new ConvexBreak();
-    // return new ClothBody();
     // return new Break();
+
+    // return new RigidBodies();
+    // return new ClothBody();
     // return new Soft();
   }
 };

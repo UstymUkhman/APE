@@ -1,11 +1,11 @@
 import RigidBody from './RigidBody';
-import Ammo from 'core/Ammo';
+import Ammo from 'utils/Ammo';
 
 import {
   ZERO_MASS,
   KINEMATIC_COLLISION,
   DISABLE_DEACTIVATION
-} from 'physics/constants';
+} from '@/constants';
 
 export default class KinematicBodies extends RigidBody {
   constructor (world) {

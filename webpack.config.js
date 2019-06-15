@@ -56,7 +56,8 @@ module.exports = {
     extensions: ['.json', '.js'],
 
     alias: {
-      'THREE': path.resolve('./node_modules/three/src/Three.js')
+      'THREE': path.resolve('./node_modules/three/src/Three.js'),
+      '@': path.resolve('./src')
     }
   },
 
