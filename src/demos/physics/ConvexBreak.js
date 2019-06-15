@@ -1,4 +1,4 @@
-import 'three/examples/js/QuickHull';
+import 'three/examples/js/math/ConvexHull';
 import 'three/examples/js/ConvexObjectBreaker';
 import 'three/examples/js/geometries/ConvexGeometry';
 

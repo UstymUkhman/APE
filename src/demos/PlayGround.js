@@ -6,16 +6,14 @@ import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { AmbientLight } from 'three/src/lights/AmbientLight';
 import { GridHelper } from 'three/src/helpers/GridHelper';
-import ThreeOrbitControls from 'three-orbit-controls';
 
+import 'three/examples/js/controls/OrbitControls';
 import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
 import Stats from 'stats.js';
 import RAF from 'core/RAF';
-
-const OrbitControls = ThreeOrbitControls(THREE);
 
 const WHITE = 0xFFFFFF;
 const GRAY = 0xA0A0A0;
@@ -129,7 +127,6 @@ export default class Playground {
 
   createGround () {
     this.ground = new Mesh(
-      // new PlaneBufferGeometry(500, 500),
       new BoxGeometry(500, 500, 1),
       new MeshPhongMaterial({
         depthWrite: false,
@@ -157,7 +154,7 @@ export default class Playground {
   }
 
   createControls () {
-    this.orbitControls = new OrbitControls(this.camera);
+    this.orbitControls = new THREE.OrbitControls(this.camera);
     this.orbitControls.target.set(0, 0, 25);
     this.orbitControls.update();
   }
