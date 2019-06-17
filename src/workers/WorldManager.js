@@ -444,12 +444,20 @@ class WorldManager {
     this.activateBodies();
   }
 
-  setAngularVelocity (props) {
-    this[props.type].setAngularVelocity(props.uuid, props.velocity);
+  setLinearFactor (props) {
+    this[props.type].setLinearFactor(props.uuid, props.factor);
+  }
+
+  setAngularFactor (props) {
+    this[props.type].setAngularFactor(props.uuid, props.factor);
   }
 
   setLinearVelocity (props) {
     this[props.type].setLinearVelocity(props.uuid, props.velocity);
+  }
+
+  setAngularVelocity (props) {
+    this[props.type].setAngularVelocity(props.uuid, props.velocity);
   }
 }
 

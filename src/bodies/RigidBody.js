@@ -124,6 +124,26 @@ export default class RigidBody {
     return body;
   }
 
+  setLinearFactor (mesh, factor) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+
+    body.setLinearFactor(
+      new Ammo.btVector3(
+        factor.x, factor.y, factor.z
+      )
+    );
+  }
+
+  setAngularFactor (mesh, factor) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+
+    body.setAngularFactor(
+      new Ammo.btVector3(
+        factor.x, factor.y, factor.z
+      )
+    );
+  }
+
   setLinearVelocity (mesh, velocity) {
     const body = this.getBodyByUUID(mesh.uuid).body;
 
