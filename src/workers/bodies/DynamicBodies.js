@@ -1,5 +1,6 @@
-import RigidBody from './RigidBody';
 import { ZERO_MASS } from '@/constants';
+import RigidBody from './RigidBody';
+import Ammo from 'utils/Ammo';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
@@ -68,6 +69,30 @@ export default class DynamicBodies extends RigidBody {
     this.bodies.push({uuid: uuid, body: body, collisions: []});
     this.world.addRigidBody(body);
   }
+
+  /* eslint-disable new-cap */
+  setLinearFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+  }
+
+  setAngularFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+  }
+
+  setLinearVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
+
+  setAngularVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
+  /* eslint-enable new-cap */
 
   activateAll () {
     for (let b = 0, length = this.bodies.length; b < length; b++) {

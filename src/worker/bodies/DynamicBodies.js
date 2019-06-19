@@ -44,6 +44,54 @@ export default class DynamicBodies extends RigidBody {
     super.addBody('Sphere', mesh, { mass: mass });
   }
 
+  setLinearFactor (mesh, factor) {
+    this.worker.postMessage({
+      action: 'setLinearFactor',
+
+      params: {
+        factor: factor,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setAngularFactor (mesh, factor) {
+    this.worker.postMessage({
+      action: 'setAngularFactor',
+
+      params: {
+        factor: factor,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setLinearVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setLinearVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setAngularVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setAngularVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   update (bodies) {
     for (let i = 0; i < bodies.length; i++) {
       const body = this.bodies[i];

@@ -123,42 +123,6 @@ export default class RigidBody {
     body.setFriction(this.friction);
     return body;
   }
-
-  setLinearFactor (uuid, factor) {
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setLinearFactor(
-      new Ammo.btVector3(
-        factor.x, factor.y, factor.z
-      )
-    );
-  }
-
-  setAngularFactor (uuid, factor) {
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setAngularFactor(
-      new Ammo.btVector3(factor.x, factor.y, factor.z)
-    );
-  }
-
-  setLinearVelocity (uuid, velocity) {
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setLinearVelocity(
-      new Ammo.btVector3(
-        velocity.x, velocity.y, velocity.z
-      )
-    );
-  }
-
-  setAngularVelocity (uuid, velocity) {
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setAngularVelocity(
-      new Ammo.btVector3(velocity.x, velocity.y, velocity.z)
-    );
-  }
   /* eslint-enable new-cap */
 
   getBodyByCollider (collider) {
