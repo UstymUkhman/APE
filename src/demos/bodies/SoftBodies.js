@@ -15,7 +15,7 @@ import Playground from 'demos/Playground';
 import PhysicsWorld from 'PhysicsWorld';
 import RAF from 'utils/RAF';
 
-export default class Soft extends Playground {
+export default class SoftBodies extends Playground {
   constructor () {
     super();
 

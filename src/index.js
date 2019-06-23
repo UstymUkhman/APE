@@ -1,29 +1,39 @@
 import CollidedBodies from 'demos/collisions/CollidedBodies';
 import ConvexBreak from 'demos/collisions/ConvexBreak';
-// import Break from 'demos/collisions/Break';
+import Break from 'demos/collisions/Break';
 
 import RigidBodies from 'demos/bodies/RigidBodies';
-// import ClothBody from 'demos/bodies/ClothBody';
-// import Soft from 'demos/bodies/Soft';
+import SoftBodies from 'demos/bodies/SoftBodies';
+import ClothBody from 'demos/bodies/ClothBody';
 
-export default class APE {
-  static startDemo (demo) {
-    // return new CollidedBodies();
-    // return new ConvexBreak();
-    // return new Break();
+window.addEventListener('DOMContentLoaded', () => {
+  const demo = (window.location.hash || '#rigid_bodies').slice(1);
 
-    // return new RigidBodies();
-    // return new ClothBody();
-    // return new Soft();
+  /* eslint-disable no-new */
+  switch (demo) {
+    case 'collided_bodies':
+      new CollidedBodies();
+      break;
 
-    switch (demo) {
-      case 'rigid_bodies':
-        return new RigidBodies();
+    case 'convex_break':
+      new ConvexBreak();
+      break;
 
-      case 'convex_break':
-        return new ConvexBreak();
-    }
+    case 'rigid_bodies':
+      new RigidBodies();
+      break;
 
-    return new CollidedBodies();
+    case 'cloth_body':
+      new ClothBody();
+      break;
+
+    case 'soft_bodies':
+      new SoftBodies();
+      break;
+
+    case 'break':
+      new Break();
+      break;
   }
-};
+  /* eslint-enable no-new */
+});

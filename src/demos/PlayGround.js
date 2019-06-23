@@ -190,7 +190,6 @@ export default class Playground {
     RAF.remove(this._render);
 
     delete this.orbitControls;
-    delete this.container;
     delete this.renderer;
     delete this.camera;
     delete this.scene;
