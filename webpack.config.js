@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const env = require('yargs').argv.env;
 const minimize = webpack.optimize.minimize;
 
-const libraryName = 'SWAGE';
+const libraryName = 'APE';
 
 let plugins = [
     new webpack.ProvidePlugin({

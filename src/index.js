@@ -6,8 +6,8 @@ import RigidBodies from 'demos/bodies/RigidBodies';
 // import ClothBody from 'demos/bodies/ClothBody';
 // import Soft from 'demos/bodies/Soft';
 
-export default class SWAGE {
-  static createStage () {
+export default class APE {
+  static createDemo () {
     // return new CollidedBodies();
     // return new ConvexBreak();
     // return new Break();

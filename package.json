@@ -1,9 +1,9 @@
 {
-  "name": "SWAGE",
-  "version": "0.0.1",
+  "name": "APE",
+  "version": "0.1.0",
   "description": "Simple Web Adapted Game Engine",
   "author": "Ustym Ukhman",
-  "homepage": "https://github.com/UstymUkhman/SWAGE",
+  "homepage": "https://github.com/UstymUkhman/APE",
   "license": "MIT",
   "main": "index.js",
   "scripts": {

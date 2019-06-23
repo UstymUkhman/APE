@@ -1,10 +1,10 @@
-# SWAGE #
+# APE #
 
-*Simple Web Adapted Game Engine*
+*Ammo.js Physics Engine*
 
-``git clone https://github.com/UstymUkhman/SWAGE.git``
+``git clone https://github.com/UstymUkhman/APE.git``
 
-``cd SWAGE``
+``cd APE``
 
 ``npm i --save`` (or ``yarn``)
 
