@@ -2,9 +2,6 @@
 logs
 *.log
 
-# Animation files:
-*.fbx
-
 # Dependency directory:
 node_modules
 
@@ -13,7 +10,7 @@ build/*.js
 build/*.map
 
 # Leave external JS library:
-!build/inflate.min.js
+!build/APE.js
 
 # Common IDE working directories:
 .idea
