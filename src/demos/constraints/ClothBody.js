@@ -57,7 +57,10 @@ export default class ClothBody extends Playground {
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    const hingeIndex = this.physics.hinge.add(pylon, this.arm, axis, pinPivot, armPivot);
+    const hingeIndex = this.physics.hinge.addBodies(
+      pylon, this.arm, axis,
+      pinPivot, armPivot
+    );
 
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {

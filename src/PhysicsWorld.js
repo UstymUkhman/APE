@@ -1,7 +1,8 @@
+import HingeConstraints from './constraints/HingeConstraints';
+
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
-import HingeBodies from './bodies/HingeBodies';
 
 import ClothBodies from './bodies/ClothBodies';
 import SoftBodies from './bodies/SoftBodies';
@@ -16,120 +17,35 @@ import Ammo from 'utils/Ammo';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
-    const eventEmitter = new EventEmitter();
-
     this._soft = soft;
     this._collisions = 0;
     this._gravity = gravity;
+
     this.clock = new Clock();
+    this._events = new EventEmitter();
 
     this._collisionReport = false;
     this._fullCollisionReport = false;
 
-    if (soft) {
+    if (this._soft) {
       this.initSoftWorld();
     } else {
       this.initRigidWorld();
     }
 
-    this.hinge = new HingeBodies(this.world, eventEmitter);
-    this.cloth = new ClothBodies(this.world, eventEmitter);
-    this.rope = new RopeBodies(this.world, eventEmitter);
+    this.hinge = new HingeConstraints(this.world, this._events);
 
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
-    this.soft = new SoftBodies(this.world);
 
-    eventEmitter.on('getHingeComponents', (pinUUID, armUUID, position) => {
-      let arm = this.dynamic.getBodyByUUID(armUUID);
-      let pin = this.static.getBodyByUUID(pinUUID);
+    if (this._soft) {
+      this.cloth = new ClothBodies(this.world, this._events);
+      this.rope = new RopeBodies(this.world, this._events);
+      this.soft = new SoftBodies(this.world);
+    }
 
-      if (!pin) {
-        pin = this.kinematic.getBodyByUUID(pinUUID);
-      }
-
-      if (!pin) {
-        pin = this.dynamic.getBodyByUUID(pinUUID);
-      }
-
-      if (!pin) {
-        console.error(
-          'Hinge pin\'s collider was not found.',
-          `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:`,
-          'static (recommended); kinematic or dynamic.'
-        );
-      }
-
-      if (!arm) {
-        console.error(
-          'Hinge arm\'s collider was not found.',
-          `Make sure to add a dynamic body to your arm mesh [${armUUID}].`
-        );
-      }
-
-      this.hinge.addBodies(pin.body, arm.body, position);
-    });
-
-    eventEmitter.on('getClothAnchor', (targetUUID, cloth) => {
-      const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
-      let target = this.dynamic.getBodyByUUID(targetUUID);
-
-      if (!target) {
-        target = this.kinematic.getBodyByUUID(targetUUID);
-      }
-
-      if (!target) {
-        target = this.static.getBodyByUUID(targetUUID);
-      }
-
-      if (!target) {
-        target = this.soft.getBodyByUUID(targetUUID);
-      }
-
-      if (!clothBody) {
-        console.error(
-          'Cloth body was not found.',
-          `Make sure your mesh [${cloth.uuid}] has a cloth collider.`
-        );
-      }
-
-      if (!target) {
-        console.error(
-          'Target body was not found.',
-          `Make sure to add one of the following bodies to your pin mesh [${targetUUID}]:`,
-          'dynamic (recommended); kinematic; static or soft.'
-        );
-      }
-
-      this.cloth.appendAnchor(target.body, cloth);
-    });
-
-    eventEmitter.on('getRopeAnchor', (targetUUID, rope) => {
-      let target = this.dynamic.getBodyByUUID(targetUUID);
-
-      if (!target) {
-        target = this.kinematic.getBodyByUUID(targetUUID);
-      }
-
-      if (!target) {
-        target = this.static.getBodyByUUID(targetUUID);
-      }
-
-      if (!target) {
-        target = this.soft.getBodyByUUID(targetUUID);
-      }
-
-      if (!target) {
-        console.error(
-          'Target body was not found.',
-          `Make sure to add one of the following bodies to your rope mesh [${targetUUID}]:`,
-          'dynamic (recommended); kinematic; static or soft.'
-        );
-      }
-
-      this.rope.appendAnchor(target.body, rope);
-    });
+    this.initPhysicsEvents();
   }
 
   initSoftWorld () {
@@ -162,12 +78,88 @@ export default class PhysicsWorld {
     /* eslint-enable new-cap */
   }
 
-  activateBodies () {
-    this.soft.activateAll();
-    this.rope.activateAll();
-    this.hinge.activateAll();
-    this.cloth.activateAll();
-    this.dynamic.activateAll();
+  initPhysicsEvents () {
+    this._events.on('getRopeAnchor', this.getRopeAnchor.bind(this));
+    this._events.on('getClothAnchor', this.getClothAnchor.bind(this));
+
+    this._events.on('getHingeBody', this.getHingeBody.bind(this));
+    this._events.on('getHingeBodies', this.getHingeBodies.bind(this));
+  }
+
+  getRopeAnchor (targetUUID, rope) {
+    const target = this.kinematic.getBodyByUUID(targetUUID) ||
+                   this.dynamic.getBodyByUUID(targetUUID) ||
+                   this.static.getBodyByUUID(targetUUID) ||
+                   this.soft.getBodyByUUID(targetUUID);
+
+    if (!target) {
+      console.error(
+        'Target body was not found.\n',
+        `Make sure to add one of the following bodies to your rope mesh [${targetUUID}]:\n`,
+        'dynamic (recommended); kinematic; static or soft.'
+      );
+    } else {
+      this.rope.appendAnchor(target.body, rope);
+    }
+  }
+
+  getClothAnchor (targetUUID, cloth) {
+    const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
+    const target = this.kinematic.getBodyByUUID(targetUUID) ||
+                   this.dynamic.getBodyByUUID(targetUUID) ||
+                   this.static.getBodyByUUID(targetUUID) ||
+                   this.soft.getBodyByUUID(targetUUID);
+
+    if (!clothBody) {
+      console.error(
+        'Cloth body was not found.\n',
+        `Make sure your mesh [${cloth.uuid}] has a cloth collider.`
+      );
+    } else if (!target) {
+      console.error(
+        'Target body was not found.\n',
+        `Make sure to add one of the following bodies to your pin mesh [${targetUUID}]:\n`,
+        'dynamic (recommended); kinematic; static or soft.'
+      );
+    } else {
+      this.cloth.appendAnchor(target.body, cloth);
+    }
+  }
+
+  getHingeBody (bodyUUID, position) {
+    const dynamicBody = this.dynamic.getBodyByUUID(bodyUUID);
+
+    if (!dynamicBody) {
+      console.error(
+        'Hinge body\'s collider was not found.\n',
+        `Make sure to add a dynamic body to your mesh [${bodyUUID}].`
+      );
+    } else {
+      this.hinge.hingeBody(dynamicBody.body, position);
+    }
+  }
+
+  getHingeBodies (pinUUID, armUUID, position) {
+    const arm = this.dynamic.getBodyByUUID(armUUID);
+    const pin = this.static.getBodyByUUID(pinUUID) ||
+                this.dynamic.getBodyByUUID(pinUUID) ||
+                this.kinematic.getBodyByUUID(pinUUID);
+
+    if (!pin) {
+      console.error(
+        'Hinge pin\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:\n`,
+        'static (recommended); kinematic or dynamic.'
+      );
+    } else if (!arm) {
+      console.error(
+        'Hinge arm\'s collider was not found.\n',
+        `Make sure to add a dynamic body to your arm mesh [${armUUID}]\n`,
+        'or use \'PhysicsWorld.hinge.addBody\' method if you want to constraint only one body.'
+      );
+    } else {
+      this.hinge.hingeBodies(pin.body, arm.body, position);
+    }
   }
 
   checkCollisions () {
@@ -359,6 +351,17 @@ export default class PhysicsWorld {
     return body;
   }
 
+  activateBodies () {
+    this.dynamic.activateAll();
+    this.hinge.activateAll();
+
+    if (this._soft) {
+      this.cloth.activateAll();
+      this.soft.activateAll();
+      this.rope.activateAll();
+    }
+  }
+
   update () {
     const delta = this.clock.getDelta();
     this.world.stepSimulation(delta, 10);
@@ -383,11 +386,13 @@ export default class PhysicsWorld {
     delete this.static;
     delete this.hinge;
 
-    delete this.cloth;
-    delete this.soft;
-    delete this.rope;
-
     delete this.clock;
+
+    if (this._soft) {
+      delete this.cloth;
+      delete this.soft;
+      delete this.rope;
+    }
   }
 
   set collisionReport (report) {

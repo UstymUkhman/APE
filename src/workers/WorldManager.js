@@ -101,13 +101,13 @@ class WorldManager {
       staticType = false;
 
       console.warn(
-        'You\'re using a static plane in a soft world. It may not work as expected.',
+        'You\'re using a static plane in a soft world. It may not work as expected.\n',
         'Kinematic box collider was used automatically as fallback for a PlaneGeometry.'
       );
     } else if (staticType && plane) {
       console.warn(
-        'You\'re using a static plane which may have some issues with',
-        '\'Concave\' and \'Convex\' rigid bodies and collisions detection.',
+        'You\'re using a static plane which may have some issues with\n',
+        '\'Concave\' and \'Convex\' rigid bodies and collisions detection.\n',
         'It\'s recommended to use a BoxGeometry with static box collider instead.'
       );
     }
@@ -149,8 +149,8 @@ class WorldManager {
 
     if (!target) {
       console.error(
-        'Target body was not found.',
-        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:`,
+        'Target body was not found.\n',
+        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:\n`,
         'dynamic (recommended); kinematic; static or soft.'
       );
     }
@@ -177,15 +177,15 @@ class WorldManager {
 
     if (!cloth) {
       console.error(
-        'Cloth body was not found.',
+        'Cloth body was not found.\n',
         `Make sure your mesh [${props.uuid}] has a cloth collider.`
       );
     }
 
     if (!target) {
       console.error(
-        'Target body was not found.',
-        `Make sure to add one of the following bodies to your pin mesh [${props.target}]:`,
+        'Target body was not found.\n',
+        `Make sure to add one of the following bodies to your pin mesh [${props.target}]:\n`,
         'dynamic (recommended); kinematic; static or soft.'
       );
     }
@@ -392,15 +392,15 @@ class WorldManager {
 
     if (!pin) {
       console.error(
-        'Hinge pin\'s collider was not found.',
-        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:`,
+        'Hinge pin\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:\n`,
         'static (recommended); kinematic or dynamic.'
       );
     }
 
     if (!arm) {
       console.error(
-        'Hinge arm\'s collider was not found.',
+        'Hinge arm\'s collider was not found.\n',
         `Make sure to add a dynamic body to your arm mesh [${props.arm}].`
       );
     }
@@ -474,7 +474,7 @@ self.addEventListener('message', (event) => {
     const args = params.length && array ? params.join(', ') : !array ? params : '';
 
     console.error(
-      `Cannot call Physics.${action}(${args})`,
+      `Cannot call \'PhysicsWorld.${action}(${args})\'\n`,
       'Physics is not initialized.'
     );
   }
