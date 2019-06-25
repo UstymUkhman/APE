@@ -68115,7 +68115,7 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "34e45fb8e7c394c3c12a.worker.js");
+  return new Worker(__webpack_require__.p + "909d17e3df549227fd2b.worker.js");
 };
 
 /***/ }),
@@ -68875,6 +68875,10 @@ var _WorldManager = __webpack_require__(/*! worker-loader!workers/WorldManager.j
 
 var _WorldManager2 = _interopRequireDefault(_WorldManager);
 
+var _PointConstraints = __webpack_require__(/*! ./constraints/PointConstraints */ "./src/worker/constraints/PointConstraints.js");
+
+var _PointConstraints2 = _interopRequireDefault(_PointConstraints);
+
 var _HingeConstraints = __webpack_require__(/*! ./constraints/HingeConstraints */ "./src/worker/constraints/HingeConstraints.js");
 
 var _HingeConstraints2 = _interopRequireDefault(_HingeConstraints);
@@ -68940,6 +68944,7 @@ var PhysicsWorld = function () {
     this.dynamic = new _DynamicBodies2.default(this.worker);
     this.static = new _StaticBodies2.default(this.worker);
 
+    this.point = new _PointConstraints2.default(this.worker);
     this.hinge = new _HingeConstraints2.default(this.worker);
 
     if (this._soft) {
@@ -70158,8 +70163,8 @@ var HingeConstraints = function () {
   function HingeConstraints(worker) {
     _classCallCheck(this, HingeConstraints);
 
-    this._bodies = 0;
     this.worker = worker;
+    this._constraints = 0;
 
     this.constants = { force: _constants.HINGE_FORCE };
     worker.postMessage({ action: 'initHingeConstraints' });
@@ -70168,21 +70173,21 @@ var HingeConstraints = function () {
   _createClass(HingeConstraints, [{
     key: 'addBody',
     value: function addBody(bodyMesh, axis) {
-      var bodyPivot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
+      var pivot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
 
       this.worker.postMessage({
         action: 'addConstraint',
 
         params: {
-          bodyPivot: bodyPivot,
           method: 'hingeBody',
           body: bodyMesh.uuid,
           type: 'hinge',
+          pivot: pivot,
           axis: axis
         }
       });
 
-      return this._bodies++;
+      return this._constraints++;
     }
   }, {
     key: 'addBodies',
@@ -70204,7 +70209,7 @@ var HingeConstraints = function () {
         }
       });
 
-      return this._bodies++;
+      return this._constraints++;
     }
   }, {
     key: 'update',
@@ -70236,6 +70241,97 @@ var HingeConstraints = function () {
 }();
 
 exports.default = HingeConstraints;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/worker/constraints/PointConstraints.js":
+/*!****************************************************!*\
+  !*** ./src/worker/constraints/PointConstraints.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PointConstraints = function () {
+  function PointConstraints(worker) {
+    _classCallCheck(this, PointConstraints);
+
+    this.worker = worker;
+    this._constraints = 0;
+
+    worker.postMessage({ action: 'initPointConstraints' });
+  }
+
+  _createClass(PointConstraints, [{
+    key: 'addBody',
+    value: function addBody(bodyMesh) {
+      var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
+
+      this.worker.postMessage({
+        action: 'addConstraint',
+
+        params: {
+          method: 'attachBody',
+          body: bodyMesh.uuid,
+          position: position,
+          type: 'point'
+        }
+      });
+
+      return this._constraints++;
+    }
+  }, {
+    key: 'addBodies',
+    value: function addBodies(body0, body1) {
+      var position0 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
+      var position1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : new _Vector.Vector3();
+
+      this.worker.postMessage({
+        action: 'addConstraint',
+
+        params: {
+          method: 'attachBodies',
+          position0: position0,
+          position1: position1,
+          body0: body0.uuid,
+          body1: body1.uuid,
+          type: 'point'
+        }
+      });
+
+      return this._constraints++;
+    }
+  }, {
+    key: 'remove',
+    value: function remove(index) {
+      this.worker.postMessage({
+        action: 'removeConstraint',
+
+        params: {
+          index: index,
+          type: 'point'
+        }
+      });
+    }
+  }]);
+
+  return PointConstraints;
+}();
+
+exports.default = PointConstraints;
 module.exports = exports.default;
 
 /***/ })

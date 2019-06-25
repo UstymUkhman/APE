@@ -11,14 +11,12 @@ export default class HingeConstraints extends Constraint {
   hingeBody (props) {
     /* eslint-disable new-cap */
     const hinge = new Ammo.btHingeConstraint(props.body,
-      new Ammo.btVector3(props.bodyPivot.x, props.bodyPivot.y, props.bodyPivot.z),
+      new Ammo.btVector3(props.pivot.x, props.pivot.y, props.pivot.z),
       new Ammo.btVector3(props.axis.x, props.axis.y, props.axis.z)
     );
-    /* eslint-enable new-cap */
 
-    this.world.addConstraint(hinge, true);
-    this.constraints.push(hinge);
-    hinge.enableFeedback();
+    /* eslint-enable new-cap */
+    this.add(hinge);
   }
 
   hingeBodies (props) {
@@ -33,9 +31,7 @@ export default class HingeConstraints extends Constraint {
     );
 
     /* eslint-enable new-cap */
-    this.world.addConstraint(hinge, true);
-    this.constraints.push(hinge);
-    hinge.enableFeedback();
+    this.add(hinge);
   }
 
   update (params) {
@@ -44,26 +40,5 @@ export default class HingeConstraints extends Constraint {
     if (constraint) {
       constraint.enableAngularMotor(true, params.direction, this.force);
     }
-  }
-
-  activateAll () {
-    for (let c = 0, length = this.constraints.length; c < length; c++) {
-      const constraint = this.constraints[c];
-
-      this.world.removeConstraint(constraint);
-      this.world.addConstraint(constraint);
-      constraint.activate();
-    }
-  }
-
-  remove (index) {
-    const constraint = this.constraints[index];
-    if (!constraint) return false;
-
-    this.world.removeConstraint(constraint);
-    Ammo.destroy(constraint);
-
-    this.constraints.splice(index, 1);
-    return true;
   }
 }

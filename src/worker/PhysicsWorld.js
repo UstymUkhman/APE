@@ -1,5 +1,6 @@
 import WorldManager from 'worker-loader!workers/WorldManager.js';
 
+import PointConstraints from './constraints/PointConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 
 import KinematicBodies from './bodies/KinematicBodies';
@@ -37,6 +38,7 @@ export default class PhysicsWorld {
     this.dynamic = new DynamicBodies(this.worker);
     this.static = new StaticBodies(this.worker);
 
+    this.point = new PointConstraints(this.worker);
     this.hinge = new HingeConstraints(this.worker);
 
     if (this._soft) {

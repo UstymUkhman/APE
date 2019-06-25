@@ -1,3 +1,4 @@
+import PointConstraints from './constraints/PointConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 
 import KinematicBodies from './bodies/KinematicBodies';
@@ -33,6 +34,7 @@ export default class PhysicsWorld {
       this.initRigidWorld();
     }
 
+    this.point = new PointConstraints(this.world, this._events);
     this.hinge = new HingeConstraints(this.world, this._events);
 
     this.kinematic = new KinematicBodies(this.world);
@@ -82,6 +84,9 @@ export default class PhysicsWorld {
     this._events.on('getRopeAnchor', this.getRopeAnchor.bind(this));
     this._events.on('getClothAnchor', this.getClothAnchor.bind(this));
 
+    this._events.on('getPointBody', this.getPointBody.bind(this));
+    this._events.on('getPointBodies', this.getPointBodies.bind(this));
+
     this._events.on('getHingeBody', this.getHingeBody.bind(this));
     this._events.on('getHingeBodies', this.getHingeBodies.bind(this));
   }
@@ -96,7 +101,7 @@ export default class PhysicsWorld {
       console.error(
         'Target body was not found.\n',
         `Make sure to add one of the following bodies to your rope mesh [${targetUUID}]:\n`,
-        'dynamic (recommended); kinematic; static or soft.'
+        'dynamic (recommended), kinematic, static or soft.'
       );
     } else {
       this.rope.appendAnchor(target.body, rope);
@@ -107,8 +112,7 @@ export default class PhysicsWorld {
     const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
     const target = this.kinematic.getBodyByUUID(targetUUID) ||
                    this.dynamic.getBodyByUUID(targetUUID) ||
-                   this.static.getBodyByUUID(targetUUID) ||
-                   this.soft.getBodyByUUID(targetUUID);
+                   this.static.getBodyByUUID(targetUUID);
 
     if (!clothBody) {
       console.error(
@@ -119,42 +123,90 @@ export default class PhysicsWorld {
       console.error(
         'Target body was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${targetUUID}]:\n`,
-        'dynamic (recommended); kinematic; static or soft.'
+        'dynamic; kinematic or static.'
       );
     } else {
       this.cloth.appendAnchor(target.body, cloth);
     }
   }
 
-  getHingeBody (bodyUUID, position) {
-    const dynamicBody = this.dynamic.getBodyByUUID(bodyUUID);
+  getPointBody (bodyUUID, position) {
+    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
+                 this.dynamic.getBodyByUUID(bodyUUID) ||
+                 this.static.getBodyByUUID(bodyUUID);
 
-    if (!dynamicBody) {
+    if (!body) {
       console.error(
-        'Hinge body\'s collider was not found.\n',
-        `Make sure to add a dynamic body to your mesh [${bodyUUID}].`
+        'PointConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
+        'dynamic, kinematic or static.'
       );
     } else {
-      this.hinge.hingeBody(dynamicBody.body, position);
+      this.point.attachBody(body.body, position);
+    }
+  }
+
+  getPointBodies (body0UUID, body1UUID, positions) {
+    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
+                  this.dynamic.getBodyByUUID(body0UUID) ||
+                  this.static.getBodyByUUID(body0UUID);
+
+    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
+                  this.dynamic.getBodyByUUID(body1UUID) ||
+                  this.static.getBodyByUUID(body1UUID);
+
+    if (!body0) {
+      console.error(
+        'PointConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else if (!body1) {
+      console.error(
+        'PointConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        'or use \'PhysicsWorld.point.addBody\' method if you want to constraint only one body.'
+      );
+    } else {
+      this.point.attachBodies(body0.body, body1.body, positions);
+    }
+  }
+
+  getHingeBody (bodyUUID, position) {
+    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
+                 this.dynamic.getBodyByUUID(bodyUUID) ||
+                 this.static.getBodyByUUID(bodyUUID);
+
+    if (!body) {
+      console.error(
+        'HingeConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
+        'dynamic (recommended), kinematic or static.'
+      );
+    } else {
+      this.hinge.hingeBody(body.body, position);
     }
   }
 
   getHingeBodies (pinUUID, armUUID, position) {
-    const arm = this.dynamic.getBodyByUUID(armUUID);
-    const pin = this.static.getBodyByUUID(pinUUID) ||
+    const pin = this.kinematic.getBodyByUUID(pinUUID) ||
                 this.dynamic.getBodyByUUID(pinUUID) ||
-                this.kinematic.getBodyByUUID(pinUUID);
+                this.static.getBodyByUUID(pinUUID);
+
+    const arm = this.kinematic.getBodyByUUID(armUUID) ||
+                this.dynamic.getBodyByUUID(armUUID) ||
+                this.static.getBodyByUUID(armUUID);
 
     if (!pin) {
       console.error(
-        'Hinge pin\'s collider was not found.\n',
+        'HingeConstraint pin\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:\n`,
         'static (recommended); kinematic or dynamic.'
       );
     } else if (!arm) {
       console.error(
-        'Hinge arm\'s collider was not found.\n',
-        `Make sure to add a dynamic body to your arm mesh [${armUUID}]\n`,
+        'HingeConstraint arm\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your arm mesh [${armUUID}]: dynamic (recommended), kinematic or static;\n`,
         'or use \'PhysicsWorld.hinge.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -353,6 +405,7 @@ export default class PhysicsWorld {
 
   activateBodies () {
     this.dynamic.activateAll();
+    this.point.activateAll();
     this.hinge.activateAll();
 
     if (this._soft) {

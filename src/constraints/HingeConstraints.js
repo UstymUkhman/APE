@@ -11,10 +11,10 @@ export default class HingeConstraints extends Constraint {
     this.force = HINGE_FORCE;
   }
 
-  addBody (bodyMesh, axis, bodyPivot = new Vector3()) {
+  addBody (bodyMesh, axis, pivot = new Vector3()) {
     this.events.emit('getHingeBody',
       bodyMesh.uuid, {
-        bodyPivot: bodyPivot,
+        pivot: pivot,
         axis: axis
       }
     );
@@ -37,14 +37,12 @@ export default class HingeConstraints extends Constraint {
   hingeBody (body, position) {
     /* eslint-disable new-cap */
     const hinge = new Ammo.btHingeConstraint(body,
-      new Ammo.btVector3(position.bodyPivot.x, position.bodyPivot.y, position.bodyPivot.z),
+      new Ammo.btVector3(position.pivot.x, position.pivot.y, position.pivot.z),
       new Ammo.btVector3(position.axis.x, position.axis.y, position.axis.z)
     );
-    /* eslint-enable new-cap */
 
-    this.world.addConstraint(hinge, true);
-    this.constraints.push(hinge);
-    hinge.enableFeedback();
+    /* eslint-enable new-cap */
+    this.add(hinge);
   }
 
   hingeBodies (pin, arm, position) {
@@ -59,9 +57,7 @@ export default class HingeConstraints extends Constraint {
     );
 
     /* eslint-enable new-cap */
-    this.world.addConstraint(hinge, true);
-    this.constraints.push(hinge);
-    hinge.enableFeedback();
+    this.add(hinge);
   }
 
   update (index, direction) {
@@ -70,26 +66,5 @@ export default class HingeConstraints extends Constraint {
     if (constraint) {
       constraint.enableAngularMotor(true, direction, this.force);
     }
-  }
-
-  activateAll () {
-    for (let c = 0, length = this.constraints.length; c < length; c++) {
-      const constraint = this.constraints[c];
-
-      this.world.removeConstraint(constraint);
-      this.world.addConstraint(constraint);
-      constraint.activate();
-    }
-  }
-
-  remove (index) {
-    const constraint = this.constraints[index];
-    if (!constraint) return false;
-
-    this.world.removeConstraint(constraint);
-    Ammo.destroy(constraint);
-
-    this.constraints.splice(index, 1);
-    return true;
   }
 }
