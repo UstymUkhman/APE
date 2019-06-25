@@ -4,8 +4,4 @@ export default class Constraint {
     this.world = world;
     this.constraints = [];
   }
-
-  getConstraint (index) {
-    return this.constraints[index] || null;
-  }
 }

@@ -1,7 +1,8 @@
+import HingeConstraints from './constraints/HingeConstraints';
+
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
-import HingeBodies from './bodies/HingeBodies';
 
 import ClothBodies from './bodies/ClothBodies';
 import SoftBodies from './bodies/SoftBodies';
@@ -66,8 +67,8 @@ class WorldManager {
     this.rope = new RopeBodies(this.world);
   }
 
-  initHingeBodies () {
-    this.hinge = new HingeBodies(this.world);
+  initHingeConstraints () {
+    this.hinge = new HingeConstraints(this.world);
   }
 
   initClothBodies () {
@@ -112,10 +113,6 @@ class WorldManager {
       );
     }
 
-    if (props.type === 'hinge') {
-      this.updateHingeProps(props);
-    }
-
     this[props.type][method](props);
     const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
 
@@ -132,20 +129,60 @@ class WorldManager {
     }
   }
 
+  addConstraint (props) {
+    if (props.method === 'hingeBodies') {
+      this.setHingeBodies(props);
+    }
+
+    if (props.method === 'hingeBody') {
+      this.setHingeBody(props);
+    }
+
+    this[props.type][props.method](props);
+  }
+
+  setHingeBodies (props) {
+    const arm = this.dynamic.getBodyByUUID(props.arm);
+    const pin = this.static.getBodyByUUID(props.pin) ||
+                this.dynamic.getBodyByUUID(props.pin) ||
+                this.kinematic.getBodyByUUID(props.pin);
+
+    if (!pin) {
+      console.error(
+        'Hinge pin\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:\n`,
+        'static (recommended); kinematic or dynamic.'
+      );
+    } else if (!arm) {
+      console.error(
+        'Hinge arm\'s collider was not found.\n',
+        `Make sure to add a dynamic body to your arm mesh [${props.arm}]\n`,
+        'or use \'PhysicsWorld.hinge.addBody\' method if you want to constraint only one body.',
+      );
+    } else {
+      props.pin = pin.body;
+      props.arm = arm.body;
+    }
+  }
+
+  setHingeBody (props) {
+    const body = this.dynamic.getBodyByUUID(props.body);
+
+    if (!body) {
+      console.error(
+        'Hinge body\'s collider was not found.\n',
+        `Make sure to add a dynamic body to your mesh [${props.body}]`
+      );
+    } else {
+      props.body = body.body;
+    }
+  }
+
   appendRope (props) {
-    let target = this.dynamic.getBodyByUUID(props.target);
-
-    if (!target) {
-      target = this.kinematic.getBodyByUUID(props.target);
-    }
-
-    if (!target) {
-      target = this.static.getBodyByUUID(props.target);
-    }
-
-    if (!target) {
-      target = this.soft.getBodyByUUID(props.target);
-    }
+    const target = this.kinematic.getBodyByUUID(props.target) ||
+                   this.dynamic.getBodyByUUID(props.target) ||
+                   this.static.getBodyByUUID(props.target) ||
+                   this.soft.getBodyByUUID(props.target);
 
     if (!target) {
       console.error(
@@ -153,45 +190,34 @@ class WorldManager {
         `Make sure to add one of the following bodies to your rope mesh [${props.target}]:\n`,
         'dynamic (recommended); kinematic; static or soft.'
       );
+    } else {
+      props.target = target.body;
+      this.rope.append(props);
     }
-
-    props.target = target.body;
-    this.rope.append(props);
   }
 
   appendCloth (props) {
-    let target = this.dynamic.getBodyByUUID(props.target);
     const cloth = this.cloth.getBodyByUUID(props.uuid);
-
-    if (!target) {
-      target = this.kinematic.getBodyByUUID(props.target);
-    }
-
-    if (!target) {
-      target = this.static.getBodyByUUID(props.target);
-    }
-
-    if (!target) {
-      target = this.soft.getBodyByUUID(props.target);
-    }
+    const target = this.kinematic.getBodyByUUID(props.target) ||
+                   this.dynamic.getBodyByUUID(props.target) ||
+                   this.static.getBodyByUUID(props.target) ||
+                   this.soft.getBodyByUUID(props.target);
 
     if (!cloth) {
       console.error(
         'Cloth body was not found.\n',
         `Make sure your mesh [${props.uuid}] has a cloth collider.`
       );
-    }
-
-    if (!target) {
+    } else if (!target) {
       console.error(
         'Target body was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${props.target}]:\n`,
         'dynamic (recommended); kinematic; static or soft.'
       );
+    } else {
+      props.target = target.body;
+      this.cloth.append(props);
     }
-
-    props.target = target.body;
-    this.cloth.append(props);
   }
 
   updateBodies (props) {
@@ -201,6 +227,10 @@ class WorldManager {
     if (this._reportCollisions) {
       this.checkCollisions();
     }
+  }
+
+  updateConstraints (props) {
+    this[props.type].update(props);
   }
 
   checkCollisions () {
@@ -378,47 +408,15 @@ class WorldManager {
     }
   }
 
-  updateHingeProps (props) {
-    let arm = this.dynamic.getBodyByUUID(props.arm);
-    let pin = this.static.getBodyByUUID(props.pin);
-
-    if (!pin) {
-      pin = this.kinematic.getBodyByUUID(props.pin);
-    }
-
-    if (!pin) {
-      pin = this.dynamic.getBodyByUUID(props.pin);
-    }
-
-    if (!pin) {
-      console.error(
-        'Hinge pin\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:\n`,
-        'static (recommended); kinematic or dynamic.'
-      );
-    }
-
-    if (!arm) {
-      console.error(
-        'Hinge arm\'s collider was not found.\n',
-        `Make sure to add a dynamic body to your arm mesh [${props.arm}].`
-      );
-    }
-
-    props.pin = pin.body;
-    props.arm = arm.body;
-  }
-
-  updateHingeBodies (props) {
-    this.hinge.update(props);
-  }
-
   activateBodies () {
-    this.soft.activateAll();
-    this.rope.activateAll();
-    this.hinge.activateAll();
-    this.cloth.activateAll();
     this.dynamic.activateAll();
+    this.hinge.activateAll();
+
+    if (this._soft) {
+      this.cloth.activateAll();
+      this.soft.activateAll();
+      this.rope.activateAll();
+    }
   }
 
   removeBody (props) {
@@ -427,6 +425,16 @@ class WorldManager {
     if (!found) {
       console.warn(
         `There\'s no \'${props.type}\' collider attached to your mesh [${props.uuid}].`
+      );
+    }
+  }
+
+  removeConstraint (props) {
+    const found = this[props.type].remove(props.index);
+
+    if (!found) {
+      console.warn(
+        `There\'s no \'${props.type}\' constraint with index \'${props.index}\'.`
       );
     }
   }

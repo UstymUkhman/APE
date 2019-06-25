@@ -1,9 +1,10 @@
 import WorldManager from 'worker-loader!workers/WorldManager.js';
 
+import HingeConstraints from './constraints/HingeConstraints';
+
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
-import HingeBodies from './bodies/HingeBodies';
 
 import ClothBodies from './bodies/ClothBodies';
 import SoftBodies from './bodies/SoftBodies';
@@ -17,8 +18,10 @@ export default class PhysicsWorld {
     this.worker = new WorldManager();
     this.clock = new Clock();
 
+    this._soft = soft;
     this._collisions = 0;
     this._gravity = gravity;
+
     this._collisionReport = false;
     this._fullCollisionReport = false;
 
@@ -33,9 +36,10 @@ export default class PhysicsWorld {
     this.kinematic = new KinematicBodies(this.worker);
     this.dynamic = new DynamicBodies(this.worker);
     this.static = new StaticBodies(this.worker);
-    this.hinge = new HingeBodies(this.worker);
 
-    if (soft) {
+    this.hinge = new HingeConstraints(this.worker);
+
+    if (this._soft) {
       this.cloth = new ClothBodies(this.worker);
       this.rope = new RopeBodies(this.worker);
       this.soft = new SoftBodies(this.worker);
@@ -119,12 +123,14 @@ export default class PhysicsWorld {
     delete this.static;
     delete this.hinge;
 
-    delete this.cloth;
-    delete this.soft;
-    delete this.rope;
-
     delete this.worker;
     delete this.clock;
+
+    if (this._soft) {
+      delete this.cloth;
+      delete this.soft;
+      delete this.rope;
+    }
   }
 
   set collisionReport (report) {
@@ -152,11 +158,11 @@ export default class PhysicsWorld {
     });
   }
 
-  get gravity () {
-    return this._gravity;
-  }
-
   get collisions () {
     return this._collisions;
+  }
+
+  get gravity () {
+    return this._gravity;
   }
 }

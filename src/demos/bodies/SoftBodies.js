@@ -11,9 +11,8 @@ import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
+import PhysicsWorld from 'worker/PhysicsWorld';
 import Playground from 'demos/Playground';
-import PhysicsWorld from 'PhysicsWorld';
-import RAF from 'utils/RAF';
 
 export default class SoftBodies extends Playground {
   constructor () {
@@ -22,9 +21,6 @@ export default class SoftBodies extends Playground {
     this.initPhysics();
     this.createObjects();
     this.createSoftObjects();
-
-    this._update = this.update.bind(this);
-    RAF.add(this._update);
   }
 
   initPhysics () {
@@ -62,7 +58,10 @@ export default class SoftBodies extends Playground {
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    const hingeIndex = this.physics.hinge.add(pylon, this.arm, axis, pinPivot, armPivot);
+    const hingeIndex = this.physics.hinge.addBodies(
+      pylon, this.arm, axis,
+      pinPivot, armPivot
+    );
 
     let quat = new Quaternion(0, 0, 0, 1);
     let pos = new Vector3(0, 0, 0);
@@ -179,9 +178,5 @@ export default class SoftBodies extends Playground {
 
     this.scene.add(mesh);
     return mesh;
-  }
-
-  update () {
-    this.physics.update();
   }
 }
