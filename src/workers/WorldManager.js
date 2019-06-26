@@ -529,6 +529,18 @@ class WorldManager {
   setAngularVelocity (props) {
     this[props.type].setAngularVelocity(props.uuid, props.velocity);
   }
+
+  setRestitution (props) {
+    this[props.type].setRestitution(props.uuid, props.restitution);
+  }
+
+  setFriction (props) {
+    this[props.type].setFriction(props.uuid, props.friction);
+  }
+
+  setDamping (props) {
+    this[props.type].setDamping(props.uuid, props.linear, props.angular);
+  }
 }
 
 self.addEventListener('message', (event) => {

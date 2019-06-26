@@ -466,6 +466,10 @@ export default class PhysicsWorld {
     return this._fullCollisionReport;
   }
 
+  get collisions () {
+    return this._collisions;
+  }
+
   set gravity (value) {
     this._gravity = value;
     /* eslint-disable new-cap */
@@ -481,9 +485,5 @@ export default class PhysicsWorld {
 
   get gravity () {
     return this._gravity;
-  }
-
-  get collisions () {
-    return this._collisions;
   }
 }

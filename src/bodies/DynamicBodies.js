@@ -1,10 +1,12 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import { ZERO_MASS } from '@/constants';
 import RigidBody from './RigidBody';
-import Ammo from 'utils/Ammo';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
     super(world, 'dynamic');
+    this.linearVelocity = new Vector3();
+    this.angularVelocity = new Vector3();
   }
 
   addBox (mesh, mass) {
@@ -93,30 +95,6 @@ export default class DynamicBodies extends RigidBody {
     });
   }
 
-  /* eslint-disable new-cap */
-  setLinearFactor (mesh, factor) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
-  }
-
-  setAngularFactor (mesh, factor) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
-  }
-
-  setLinearVelocity (mesh, velocity) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
-    body.activate();
-  }
-
-  setAngularVelocity (mesh, velocity) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
-    body.activate();
-  }
-  /* eslint-enable new-cap */
-
   update (transform) {
     for (let i = 0; i < this.bodies.length; i++) {
       const body = this.bodies[i].body;
@@ -131,12 +109,6 @@ export default class DynamicBodies extends RigidBody {
 
         mesh.position.set(origin.x(), origin.y(), origin.z());
         mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-
-        // const linearVelocity = body.getLinearVelocity();
-        // const angularVelocity = body.getAngularVelocity();
-
-        // { x: linearVelocity.x(), y: linearVelocity.y(), z: linearVelocity.z() }
-        // { x: angularVelocity.x(), y: angularVelocity.y(), z: angularVelocity.z() }
       }
     }
   }
@@ -149,5 +121,32 @@ export default class DynamicBodies extends RigidBody {
       this.world.addRigidBody(collider.body);
       collider.body.activate();
     }
+  }
+
+  getAngularVelocity (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    const angularVelocity = body.getAngularVelocity();
+
+    return this.angularVelocity.set(
+      angularVelocity.x(),
+      angularVelocity.y(),
+      angularVelocity.z()
+    );
+  }
+
+  getLinearVelocity (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    const linearVelocity = body.getLinearVelocity();
+
+    return this.linearVelocity.set(
+      linearVelocity.x(),
+      linearVelocity.y(),
+      linearVelocity.z()
+    );
+  }
+
+  getGravity (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    return body.getGravity().length();
   }
 }

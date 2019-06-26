@@ -49,6 +49,91 @@ export default class RigidBody {
     });
   }
 
+  setLinearFactor (mesh, factor) {
+    this.worker.postMessage({
+      action: 'setLinearFactor',
+
+      params: {
+        factor: factor,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setAngularFactor (mesh, factor) {
+    this.worker.postMessage({
+      action: 'setAngularFactor',
+
+      params: {
+        factor: factor,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setLinearVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setLinearVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setAngularVelocity (mesh, velocity) {
+    this.worker.postMessage({
+      action: 'setAngularVelocity',
+
+      params: {
+        velocity: velocity,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setRestitution (mesh, restitution) {
+    this.worker.postMessage({
+      action: 'setRestitution',
+
+      params: {
+        restitution: restitution,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setFriction (mesh, friction) {
+    this.worker.postMessage({
+      action: 'setFriction',
+
+      params: {
+        friction: friction,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setDamping (mesh, linear, angular) {
+    this.worker.postMessage({
+      action: 'setDamping',
+
+      params: {
+        linear: linear,
+        angular: angular,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   getBody (uuid) {
     return find(this.bodies, { uuid });
   }

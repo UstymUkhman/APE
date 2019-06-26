@@ -123,7 +123,49 @@ export default class RigidBody {
     body.setFriction(this.friction);
     return body;
   }
+
+  setLinearFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+    body.activate();
+  }
+
+  setAngularFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+    body.activate();
+  }
+
+  setLinearVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
+
+  setAngularVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
   /* eslint-enable new-cap */
+
+  setRestitution (uuid, restitution) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setRestitution(restitution);
+    body.activate();
+  }
+
+  setFriction (uuid, friction) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setFriction(friction);
+    body.activate();
+  }
+
+  setDamping (uuid, linear, angular) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setDamping(linear, angular);
+    body.activate();
+  }
 
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });
