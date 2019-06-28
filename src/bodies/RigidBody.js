@@ -1,4 +1,6 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import findIndex from 'lodash/findIndex';
+
 import find from 'lodash/find';
 import Ammo from 'utils/Ammo';
 
@@ -124,48 +126,73 @@ export default class RigidBody {
     return body;
   }
 
-  setLinearFactor (mesh, factor) {
+  setLinearFactor (mesh, factor = ONE_VECTOR3) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
     body.activate();
   }
 
-  setAngularFactor (mesh, factor) {
+  setAngularFactor (mesh, factor = ONE_VECTOR3) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
     body.activate();
   }
 
-  setLinearVelocity (mesh, velocity) {
+  setLinearVelocity (mesh, velocity = new Vector3()) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
     body.activate();
   }
 
-  setAngularVelocity (mesh, velocity) {
+  setAngularVelocity (mesh, velocity = new Vector3()) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
     body.activate();
   }
   /* eslint-enable new-cap */
 
-  setRestitution (mesh, restitution) {
+  setRestitution (mesh, restitution = RESTITUTION) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setRestitution(restitution);
     body.activate();
   }
 
-  setFriction (mesh, friction) {
+  setFriction (mesh, friction = FRICTION) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setFriction(friction);
     body.activate();
   }
 
-  setDamping (mesh, linear, angular) {
+  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.setDamping(linear, angular);
     body.activate();
   }
+
+  /* eslint-disable new-cap */
+  applyTorque (mesh, torque = new Vector3()) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
+    body.activate();
+  }
+
+  applyForce (mesh, force = new Vector3(), offset = new Vector3()) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+
+    body.applyForce(
+      new Ammo.btVector3(force.x, force.y, force.z),
+      new Ammo.btVector3(offset.x, offset.y, offset.z)
+    );
+
+    body.activate();
+  }
+
+  applyCentralForce (mesh, force = new Vector3()) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.applyCentralForce(new Ammo.btVector3(force.x, force.y, force.z));
+    body.activate();
+  }
+  /* eslint-enable new-cap */
 
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });

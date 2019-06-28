@@ -167,6 +167,31 @@ export default class RigidBody {
     body.activate();
   }
 
+  /* eslint-disable new-cap */
+  applyTorque (uuid, torque) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
+    body.activate();
+  }
+
+  applyForce (uuid, force, offset) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.applyForce(
+      new Ammo.btVector3(force.x, force.y, force.z),
+      new Ammo.btVector3(offset.x, offset.y, offset.z)
+    );
+
+    body.activate();
+  }
+
+  applyCentralForce (uuid, force) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyCentralForce(new Ammo.btVector3(force.x, force.y, force.z));
+    body.activate();
+  }
+  /* eslint-enable new-cap */
+
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });
   }

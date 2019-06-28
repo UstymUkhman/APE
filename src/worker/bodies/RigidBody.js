@@ -1,3 +1,4 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
 
@@ -49,7 +50,7 @@ export default class RigidBody {
     });
   }
 
-  setLinearFactor (mesh, factor) {
+  setLinearFactor (mesh, factor = ONE_VECTOR3) {
     this.worker.postMessage({
       action: 'setLinearFactor',
 
@@ -61,7 +62,7 @@ export default class RigidBody {
     });
   }
 
-  setAngularFactor (mesh, factor) {
+  setAngularFactor (mesh, factor = ONE_VECTOR3) {
     this.worker.postMessage({
       action: 'setAngularFactor',
 
@@ -73,7 +74,7 @@ export default class RigidBody {
     });
   }
 
-  setLinearVelocity (mesh, velocity) {
+  setLinearVelocity (mesh, velocity = new Vector3()) {
     this.worker.postMessage({
       action: 'setLinearVelocity',
 
@@ -85,7 +86,7 @@ export default class RigidBody {
     });
   }
 
-  setAngularVelocity (mesh, velocity) {
+  setAngularVelocity (mesh, velocity = new Vector3()) {
     this.worker.postMessage({
       action: 'setAngularVelocity',
 
@@ -97,7 +98,7 @@ export default class RigidBody {
     });
   }
 
-  setRestitution (mesh, restitution) {
+  setRestitution (mesh, restitution = RESTITUTION) {
     this.worker.postMessage({
       action: 'setRestitution',
 
@@ -109,7 +110,7 @@ export default class RigidBody {
     });
   }
 
-  setFriction (mesh, friction) {
+  setFriction (mesh, friction = FRICTION) {
     this.worker.postMessage({
       action: 'setFriction',
 
@@ -121,13 +122,50 @@ export default class RigidBody {
     });
   }
 
-  setDamping (mesh, linear, angular) {
+  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
     this.worker.postMessage({
       action: 'setDamping',
 
       params: {
         linear: linear,
         angular: angular,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  applyTorque (mesh, torque = new Vector3()) {
+    this.worker.postMessage({
+      action: 'applyTorque',
+
+      params: {
+        torque: torque,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  applyForce (mesh, force = new Vector3(), offset = new Vector3()) {
+    this.worker.postMessage({
+      action: 'applyForce',
+
+      params: {
+        force: force,
+        offset: offset,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  applyCentralForce (mesh, force = new Vector3()) {
+    this.worker.postMessage({
+      action: 'applyCentralForce',
+
+      params: {
+        force: force,
         uuid: mesh.uuid,
         type: this.type
       }

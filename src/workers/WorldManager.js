@@ -541,6 +541,18 @@ class WorldManager {
   setDamping (props) {
     this[props.type].setDamping(props.uuid, props.linear, props.angular);
   }
+
+  applyTorque (props) {
+    this[props.type].applyTorque(props.uuid, props.torque);
+  }
+
+  applyForce (props) {
+    this[props.type].applyForce(props.uuid, props.force, props.offset);
+  }
+
+  applyCentralForce (props) {
+    this[props.type].applyCentralForce(props.uuid, props.force);
+  }
 }
 
 self.addEventListener('message', (event) => {
