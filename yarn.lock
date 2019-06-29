@@ -305,7 +305,7 @@ ajv@^6.1.0, ajv@^6.5.3, ajv@^6.9.1:
 
 ammo.js@kripken/ammo.js:
   version "0.0.2"
-  resolved "https://codeload.github.com/kripken/ammo.js/tar.gz/767f5420257fd6f47cda8b972ca583bfdcb2738a"
+  resolved "https://codeload.github.com/kripken/ammo.js/tar.gz/b4955ecc63e6c20f7681412f6773dc75800653bb"
 
 ansi-escapes@^3.2.0:
   version "3.2.0"
