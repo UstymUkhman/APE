@@ -72528,39 +72528,6 @@ var RigidBody = function () {
       body.setAngularVelocity(new _Ammo2.default.btVector3(velocity.x, velocity.y, velocity.z));
       body.activate();
     }
-    /* eslint-enable new-cap */
-
-  }, {
-    key: 'setRestitution',
-    value: function setRestitution(mesh) {
-      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.RESTITUTION;
-
-      var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setRestitution(restitution);
-      body.activate();
-    }
-  }, {
-    key: 'setFriction',
-    value: function setFriction(mesh) {
-      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.FRICTION;
-
-      var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setFriction(friction);
-      body.activate();
-    }
-  }, {
-    key: 'setDamping',
-    value: function setDamping(mesh) {
-      var linear = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.LINEAR_DAMPING;
-      var angular = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constants.ANGULAR_DAMPING;
-
-      var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setDamping(linear, angular);
-      body.activate();
-    }
-
-    /* eslint-disable new-cap */
-
   }, {
     key: 'applyTorque',
     value: function applyTorque(mesh) {
@@ -72614,6 +72581,52 @@ var RigidBody = function () {
     }
     /* eslint-enable new-cap */
 
+  }, {
+    key: 'setCcdSweptSphereRadius',
+    value: function setCcdSweptSphereRadius(mesh) {
+      var radius = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.5;
+
+      var body = this.getBodyByUUID(mesh.uuid).body;
+      body.setCcdSweptSphereRadius(radius);
+      body.activate();
+    }
+  }, {
+    key: 'setCcdMotionThreshold',
+    value: function setCcdMotionThreshold(mesh) {
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CCD_MOTION_THRESHOLD;
+
+      var body = this.getBodyByUUID(mesh.uuid).body;
+      body.setCcdMotionThreshold(threshold);
+      body.activate();
+    }
+  }, {
+    key: 'setRestitution',
+    value: function setRestitution(mesh) {
+      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.RESTITUTION;
+
+      var body = this.getBodyByUUID(mesh.uuid).body;
+      body.setRestitution(restitution);
+      body.activate();
+    }
+  }, {
+    key: 'setFriction',
+    value: function setFriction(mesh) {
+      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.FRICTION;
+
+      var body = this.getBodyByUUID(mesh.uuid).body;
+      body.setFriction(friction);
+      body.activate();
+    }
+  }, {
+    key: 'setDamping',
+    value: function setDamping(mesh) {
+      var linear = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.LINEAR_DAMPING;
+      var angular = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constants.ANGULAR_DAMPING;
+
+      var body = this.getBodyByUUID(mesh.uuid).body;
+      body.setDamping(linear, angular);
+      body.activate();
+    }
   }, {
     key: 'getBodyByCollider',
     value: function getBodyByCollider(collider) {
@@ -73271,7 +73284,7 @@ module.exports = exports.default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ONE_VECTOR3 = exports.DISABLE_SIMULATION = exports.DISABLE_DEACTIVATION = exports.WANTS_DEACTIVATION = exports.ISLAND_SLEEPING = exports.ACTIVE_TAG = exports.SOFT_COLLISION = exports.IGNORED_COLLISION = exports.KINEMATIC_COLLISION = exports.STATIC_COLLISION = exports.SUSPENSION_COMPRESSION = exports.SUSPENSION_STIFFNESS = exports.SUSPENSION_DAMPING = exports.FRICTION_SLIP = exports.SUSPENSION_REST = exports.ROLL_INFLUENCE = exports.ENGINE_FORCE = exports.STEERING_CLAMP = exports.STEERING_STEP = exports.BREAK_FORCE = exports.ROPE_PITERATIONS = exports.ROPE_VITERATIONS = exports.ROPE_MARGIN = exports.CLOTH_PITERATIONS = exports.CLOTH_VITERATIONS = exports.CLOTH_STIFFNESS = exports.CLOTH_DAMPING = exports.CLOTH_MARGIN = exports.SOFT_PITERATIONS = exports.SOFT_VITERATIONS = exports.SOFT_STIFFNESS = exports.SOFT_DAMPING = exports.SOFT_MARGIN = exports.ANGULAR_DAMPING = exports.LINEAR_DAMPING = exports.RESTITUTION = exports.FRICTION = exports.MARGIN = exports.HINGE_FORCE = exports.POWER16 = exports.ZERO_MASS = exports.GRAVITY = undefined;
+exports.ONE_VECTOR3 = exports.DISABLE_SIMULATION = exports.DISABLE_DEACTIVATION = exports.WANTS_DEACTIVATION = exports.ISLAND_SLEEPING = exports.ACTIVE_TAG = exports.CCD_MOTION_THRESHOLD = exports.SOFT_COLLISION = exports.IGNORED_COLLISION = exports.KINEMATIC_COLLISION = exports.STATIC_COLLISION = exports.SUSPENSION_COMPRESSION = exports.SUSPENSION_STIFFNESS = exports.SUSPENSION_DAMPING = exports.FRICTION_SLIP = exports.SUSPENSION_REST = exports.ROLL_INFLUENCE = exports.ENGINE_FORCE = exports.STEERING_CLAMP = exports.STEERING_STEP = exports.BREAK_FORCE = exports.ROPE_PITERATIONS = exports.ROPE_VITERATIONS = exports.ROPE_MARGIN = exports.CLOTH_PITERATIONS = exports.CLOTH_VITERATIONS = exports.CLOTH_STIFFNESS = exports.CLOTH_DAMPING = exports.CLOTH_MARGIN = exports.SOFT_PITERATIONS = exports.SOFT_VITERATIONS = exports.SOFT_STIFFNESS = exports.SOFT_DAMPING = exports.SOFT_MARGIN = exports.ANGULAR_DAMPING = exports.LINEAR_DAMPING = exports.RESTITUTION = exports.FRICTION = exports.MARGIN = exports.HINGE_FORCE = exports.POWER16 = exports.ZERO_MASS = exports.GRAVITY = undefined;
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
@@ -73325,6 +73338,7 @@ var STATIC_COLLISION = exports.STATIC_COLLISION = 1;
 var KINEMATIC_COLLISION = exports.KINEMATIC_COLLISION = 2;
 var IGNORED_COLLISION = exports.IGNORED_COLLISION = 4;
 var SOFT_COLLISION = exports.SOFT_COLLISION = 0x11;
+var CCD_MOTION_THRESHOLD = exports.CCD_MOTION_THRESHOLD = 1e-5;
 
 // Activation state constants:
 var ACTIVE_TAG = exports.ACTIVE_TAG = 1;

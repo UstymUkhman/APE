@@ -530,18 +530,6 @@ class WorldManager {
     this[props.type].setAngularVelocity(props.uuid, props.velocity);
   }
 
-  setRestitution (props) {
-    this[props.type].setRestitution(props.uuid, props.restitution);
-  }
-
-  setFriction (props) {
-    this[props.type].setFriction(props.uuid, props.friction);
-  }
-
-  setDamping (props) {
-    this[props.type].setDamping(props.uuid, props.linear, props.angular);
-  }
-
   applyTorque (props) {
     this[props.type].applyTorque(props.uuid, props.torque);
   }
@@ -560,6 +548,26 @@ class WorldManager {
 
   applyCentralImpulse (props) {
     this[props.type].applyCentralImpulse(props.uuid, props.impulse);
+  }
+
+  setCcdSweptSphereRadius (props) {
+    this[props.type].setCcdSweptSphereRadius(props.uuid, props.radius);
+  }
+
+  setCcdMotionThreshold (props) {
+    this[props.type].setCcdMotionThreshold(props.uuid, props.threshold);
+  }
+
+  setRestitution (props) {
+    this[props.type].setRestitution(props.uuid, props.restitution);
+  }
+
+  setFriction (props) {
+    this[props.type].setFriction(props.uuid, props.friction);
+  }
+
+  setDamping (props) {
+    this[props.type].setDamping(props.uuid, props.linear, props.angular);
   }
 }
 

@@ -147,27 +147,7 @@ export default class RigidBody {
     body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
     body.activate();
   }
-  /* eslint-enable new-cap */
 
-  setRestitution (uuid, restitution) {
-    const body = this.getBodyByUUID(uuid).body;
-    body.setRestitution(restitution);
-    body.activate();
-  }
-
-  setFriction (uuid, friction) {
-    const body = this.getBodyByUUID(uuid).body;
-    body.setFriction(friction);
-    body.activate();
-  }
-
-  setDamping (uuid, linear, angular) {
-    const body = this.getBodyByUUID(uuid).body;
-    body.setDamping(linear, angular);
-    body.activate();
-  }
-
-  /* eslint-disable new-cap */
   applyTorque (uuid, torque) {
     const body = this.getBodyByUUID(uuid).body;
     body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
@@ -208,6 +188,36 @@ export default class RigidBody {
     body.activate();
   }
   /* eslint-enable new-cap */
+
+  setCcdSweptSphereRadius (uuid, radius) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setCcdSweptSphereRadius(radius);
+    body.activate();
+  }
+
+  setCcdMotionThreshold (uuid, threshold) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setCcdMotionThreshold(threshold);
+    body.activate();
+  }
+
+  setRestitution (uuid, restitution) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setRestitution(restitution);
+    body.activate();
+  }
+
+  setFriction (uuid, friction) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setFriction(friction);
+    body.activate();
+  }
+
+  setDamping (uuid, linear, angular) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setDamping(linear, angular);
+    body.activate();
+  }
 
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });

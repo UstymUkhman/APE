@@ -8,7 +8,8 @@ import {
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
-  ANGULAR_DAMPING
+  ANGULAR_DAMPING,
+  CCD_MOTION_THRESHOLD
 } from '@/constants';
 
 export default class RigidBody {
@@ -98,43 +99,6 @@ export default class RigidBody {
     });
   }
 
-  setRestitution (mesh, restitution = RESTITUTION) {
-    this.worker.postMessage({
-      action: 'setRestitution',
-
-      params: {
-        restitution: restitution,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setFriction (mesh, friction = FRICTION) {
-    this.worker.postMessage({
-      action: 'setFriction',
-
-      params: {
-        friction: friction,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
-    this.worker.postMessage({
-      action: 'setDamping',
-
-      params: {
-        linear: linear,
-        angular: angular,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
   applyTorque (mesh, torque = new Vector3()) {
     this.worker.postMessage({
       action: 'applyTorque',
@@ -191,6 +155,67 @@ export default class RigidBody {
 
       params: {
         impulse: impulse,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setCcdSweptSphereRadius (mesh, radius = 0.5) {
+    this.worker.postMessage({
+      action: 'setCcdSweptSphereRadius',
+
+      params: {
+        radius: radius,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
+    this.worker.postMessage({
+      action: 'setCcdMotionThreshold',
+
+      params: {
+        threshold: threshold,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setRestitution (mesh, restitution = RESTITUTION) {
+    this.worker.postMessage({
+      action: 'setRestitution',
+
+      params: {
+        restitution: restitution,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setFriction (mesh, friction = FRICTION) {
+    this.worker.postMessage({
+      action: 'setFriction',
+
+      params: {
+        friction: friction,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
+    this.worker.postMessage({
+      action: 'setDamping',
+
+      params: {
+        linear: linear,
+        angular: angular,
         uuid: mesh.uuid,
         type: this.type
       }

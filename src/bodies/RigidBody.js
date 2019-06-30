@@ -11,7 +11,8 @@ import {
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
-  ANGULAR_DAMPING
+  ANGULAR_DAMPING,
+  CCD_MOTION_THRESHOLD
 } from '@/constants';
 
 export default class RigidBody {
@@ -149,27 +150,7 @@ export default class RigidBody {
     body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
     body.activate();
   }
-  /* eslint-enable new-cap */
 
-  setRestitution (mesh, restitution = RESTITUTION) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setRestitution(restitution);
-    body.activate();
-  }
-
-  setFriction (mesh, friction = FRICTION) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setFriction(friction);
-    body.activate();
-  }
-
-  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setDamping(linear, angular);
-    body.activate();
-  }
-
-  /* eslint-disable new-cap */
   applyTorque (mesh, torque = new Vector3()) {
     const body = this.getBodyByUUID(mesh.uuid).body;
     body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
@@ -210,6 +191,36 @@ export default class RigidBody {
     body.activate();
   }
   /* eslint-enable new-cap */
+
+  setCcdSweptSphereRadius (mesh, radius = 0.5) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.setCcdSweptSphereRadius(radius);
+    body.activate();
+  }
+
+  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.setCcdMotionThreshold(threshold);
+    body.activate();
+  }
+
+  setRestitution (mesh, restitution = RESTITUTION) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.setRestitution(restitution);
+    body.activate();
+  }
+
+  setFriction (mesh, friction = FRICTION) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.setFriction(friction);
+    body.activate();
+  }
+
+  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
+    const body = this.getBodyByUUID(mesh.uuid).body;
+    body.setDamping(linear, angular);
+    body.activate();
+  }
 
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });
