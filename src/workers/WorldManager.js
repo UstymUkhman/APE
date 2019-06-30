@@ -553,6 +553,14 @@ class WorldManager {
   applyCentralForce (props) {
     this[props.type].applyCentralForce(props.uuid, props.force);
   }
+
+  applyImpulse (props) {
+    this[props.type].applyImpulse(props.uuid, props.impulse, props.offset);
+  }
+
+  applyCentralImpulse (props) {
+    this[props.type].applyCentralImpulse(props.uuid, props.impulse);
+  }
 }
 
 self.addEventListener('message', (event) => {

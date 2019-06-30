@@ -190,6 +190,23 @@ export default class RigidBody {
     body.applyCentralForce(new Ammo.btVector3(force.x, force.y, force.z));
     body.activate();
   }
+
+  applyImpulse (uuid, impulse, offset) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.applyImpulse(
+      new Ammo.btVector3(impulse.x, impulse.y, impulse.z),
+      new Ammo.btVector3(offset.x, offset.y, offset.z)
+    );
+
+    body.activate();
+  }
+
+  applyCentralImpulse (uuid, impulse) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyCentralImpulse(new Ammo.btVector3(impulse.x, impulse.y, impulse.z));
+    body.activate();
+  }
   /* eslint-enable new-cap */
 
   getBodyByCollider (collider) {

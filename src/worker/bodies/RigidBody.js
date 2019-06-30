@@ -172,6 +172,31 @@ export default class RigidBody {
     });
   }
 
+  applyImpulse (mesh, impulse = new Vector3(), offset = new Vector3()) {
+    this.worker.postMessage({
+      action: 'applyImpulse',
+
+      params: {
+        impulse: impulse,
+        offset: offset,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  applyCentralImpulse (mesh, impulse = new Vector3()) {
+    this.worker.postMessage({
+      action: 'applyCentralImpulse',
+
+      params: {
+        impulse: impulse,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   getBody (uuid) {
     return find(this.bodies, { uuid });
   }
