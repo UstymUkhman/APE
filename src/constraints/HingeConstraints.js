@@ -1,7 +1,8 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import { HINGE_FORCE } from '@/constants';
+
 import Constraint from './Constraint';
-import Ammo from 'utils/Ammo';
+import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraint {
   constructor (world, events) {

@@ -11,10 +11,10 @@ import RopeBodies from './bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from '@/constants';
-import EventEmitter from 'events';
 
+import EventEmitter from 'events';
+import { Ammo } from '@/utils';
 import find from 'lodash/find';
-import Ammo from 'utils/Ammo';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {

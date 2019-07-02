@@ -1,7 +1,8 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import findIndex from 'lodash/findIndex';
+
+import { Ammo } from '@/utils';
 import find from 'lodash/find';
-import Ammo from 'utils/Ammo';
 
 import {
   ROPE_MARGIN,

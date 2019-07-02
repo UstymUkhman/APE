@@ -2,9 +2,9 @@ import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
-import { equalBufferVertices } from 'utils/Buffer';
+import { equalBufferVertices } from '@/utils';
+import { Ammo } from '@/utils';
 import find from 'lodash/find';
-import Ammo from 'utils/Ammo';
 
 import {
   POWER16,

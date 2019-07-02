@@ -1,5 +1,5 @@
+import { Ammo } from '@/utils';
 import find from 'lodash/find';
-import Ammo from 'utils/Ammo';
 
 import {
   FRICTION,

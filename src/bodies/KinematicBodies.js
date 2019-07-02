@@ -1,5 +1,5 @@
 import RigidBody from './RigidBody';
-import Ammo from 'utils/Ammo';
+import { Ammo } from '@/utils';
 
 import {
   ZERO_MASS,

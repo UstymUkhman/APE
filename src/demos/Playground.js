@@ -12,8 +12,9 @@ import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
+
 import Stats from 'stats.js';
-import RAF from 'utils/RAF';
+import RAF from 'demos/RAF';
 
 const WHITE = 0xFFFFFF;
 const GRAY = 0xA0A0A0;

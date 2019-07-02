@@ -4,7 +4,7 @@ import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
 import PhysicsWorld from 'PhysicsWorld';
-import RAF from 'utils/RAF';
+import RAF from 'demos/RAF';
 
 const START_COLLISION = 0x009200;
 const END_COLLISION = 0x920000;

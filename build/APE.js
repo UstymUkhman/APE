@@ -11602,7 +11602,7 @@ function LensFlare() {
 /*!*****************************************!*\
   !*** ./node_modules/three/src/Three.js ***!
   \*****************************************/
-/*! exports provided: WebGLMultisampleRenderTarget, WebGLRenderTargetCube, WebGLRenderTarget, WebGLRenderer, ShaderLib, UniformsLib, UniformsUtils, ShaderChunk, FogExp2, Fog, Scene, Sprite, LOD, SkinnedMesh, Skeleton, Bone, Mesh, LineSegments, LineLoop, Line, Points, Group, VideoTexture, DataTexture, DataTexture2DArray, DataTexture3D, CompressedTexture, CubeTexture, CanvasTexture, DepthTexture, Texture, WireframeGeometry, ParametricGeometry, ParametricBufferGeometry, TetrahedronGeometry, TetrahedronBufferGeometry, OctahedronGeometry, OctahedronBufferGeometry, IcosahedronGeometry, IcosahedronBufferGeometry, DodecahedronGeometry, DodecahedronBufferGeometry, PolyhedronGeometry, PolyhedronBufferGeometry, TubeGeometry, TubeBufferGeometry, TorusKnotGeometry, TorusKnotBufferGeometry, TorusGeometry, TorusBufferGeometry, TextGeometry, TextBufferGeometry, SphereGeometry, SphereBufferGeometry, RingGeometry, RingBufferGeometry, PlaneGeometry, PlaneBufferGeometry, LatheGeometry, LatheBufferGeometry, ShapeGeometry, ShapeBufferGeometry, ExtrudeGeometry, ExtrudeBufferGeometry, EdgesGeometry, ConeGeometry, ConeBufferGeometry, CylinderGeometry, CylinderBufferGeometry, CircleGeometry, CircleBufferGeometry, BoxGeometry, BoxBufferGeometry, ShadowMaterial, SpriteMaterial, RawShaderMaterial, ShaderMaterial, PointsMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshPhongMaterial, MeshToonMaterial, MeshNormalMaterial, MeshLambertMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshBasicMaterial, MeshMatcapMaterial, LineDashedMaterial, LineBasicMaterial, Material, AnimationLoader, CompressedTextureLoader, DataTextureLoader, CubeTextureLoader, TextureLoader, ObjectLoader, MaterialLoader, BufferGeometryLoader, DefaultLoadingManager, LoadingManager, ImageLoader, ImageBitmapLoader, FontLoader, FileLoader, Loader, LoaderUtils, Cache, AudioLoader, SpotLightShadow, SpotLight, PointLight, RectAreaLight, HemisphereLight, HemisphereLightProbe, DirectionalLightShadow, DirectionalLight, AmbientLight, AmbientLightProbe, LightShadow, Light, LightProbe, StereoCamera, PerspectiveCamera, OrthographicCamera, CubeCamera, ArrayCamera, Camera, AudioListener, PositionalAudio, AudioContext, AudioAnalyser, Audio, VectorKeyframeTrack, StringKeyframeTrack, QuaternionKeyframeTrack, NumberKeyframeTrack, ColorKeyframeTrack, BooleanKeyframeTrack, PropertyMixer, PropertyBinding, KeyframeTrack, AnimationUtils, AnimationObjectGroup, AnimationMixer, AnimationClip, Uniform, InstancedBufferGeometry, BufferGeometry, Geometry, InterleavedBufferAttribute, InstancedInterleavedBuffer, InterleavedBuffer, InstancedBufferAttribute, Float64BufferAttribute, Float32BufferAttribute, Uint32BufferAttribute, Int32BufferAttribute, Uint16BufferAttribute, Int16BufferAttribute, Uint8ClampedBufferAttribute, Uint8BufferAttribute, Int8BufferAttribute, BufferAttribute, Face3, Object3D, Raycaster, Layers, EventDispatcher, Clock, QuaternionLinearInterpolant, LinearInterpolant, DiscreteInterpolant, CubicInterpolant, Interpolant, Triangle, Math, Spherical, Cylindrical, Plane, Frustum, Sphere, Ray, Matrix4, Matrix3, Box3, Box2, Line3, Euler, Vector4, Vector3, Vector2, Quaternion, Color, SphericalHarmonics3, ImmediateRenderObject, VertexNormalsHelper, SpotLightHelper, SkeletonHelper, PointLightHelper, RectAreaLightHelper, HemisphereLightHelper, LightProbeHelper, GridHelper, PolarGridHelper, PositionalAudioHelper, FaceNormalsHelper, DirectionalLightHelper, CameraHelper, BoxHelper, Box3Helper, PlaneHelper, ArrowHelper, AxesHelper, ArcCurve, CatmullRomCurve3, CubicBezierCurve, CubicBezierCurve3, EllipseCurve, LineCurve, LineCurve3, QuadraticBezierCurve, QuadraticBezierCurve3, SplineCurve, Shape, Path, ShapePath, Font, CurvePath, Curve, ImageUtils, ShapeUtils, WebGLUtils, REVISION, MOUSE, CullFaceNone, CullFaceBack, CullFaceFront, CullFaceFrontBack, FrontFaceDirectionCW, FrontFaceDirectionCCW, BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, FrontSide, BackSide, DoubleSide, FlatShading, SmoothShading, NoColors, FaceColors, VertexColors, NoBlending, NormalBlending, AdditiveBlending, SubtractiveBlending, MultiplyBlending, CustomBlending, AddEquation, SubtractEquation, ReverseSubtractEquation, MinEquation, MaxEquation, ZeroFactor, OneFactor, SrcColorFactor, OneMinusSrcColorFactor, SrcAlphaFactor, OneMinusSrcAlphaFactor, DstAlphaFactor, OneMinusDstAlphaFactor, DstColorFactor, OneMinusDstColorFactor, SrcAlphaSaturateFactor, NeverDepth, AlwaysDepth, LessDepth, LessEqualDepth, EqualDepth, GreaterEqualDepth, GreaterDepth, NotEqualDepth, MultiplyOperation, MixOperation, AddOperation, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, ACESFilmicToneMapping, UVMapping, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping, SphericalReflectionMapping, CubeUVReflectionMapping, CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping, NearestFilter, NearestMipMapNearestFilter, NearestMipMapLinearFilter, LinearFilter, LinearMipMapNearestFilter, LinearMipMapLinearFilter, UnsignedByteType, ByteType, ShortType, UnsignedShortType, IntType, UnsignedIntType, FloatType, HalfFloatType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShort565Type, UnsignedInt248Type, AlphaFormat, RGBFormat, RGBAFormat, LuminanceFormat, LuminanceAlphaFormat, RGBEFormat, DepthFormat, DepthStencilFormat, RedFormat, RGB_S3TC_DXT1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGB_PVRTC_4BPPV1_Format, RGB_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_PVRTC_2BPPV1_Format, RGB_ETC1_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_5x4_Format, RGBA_ASTC_5x5_Format, RGBA_ASTC_6x5_Format, RGBA_ASTC_6x6_Format, RGBA_ASTC_8x5_Format, RGBA_ASTC_8x6_Format, RGBA_ASTC_8x8_Format, RGBA_ASTC_10x5_Format, RGBA_ASTC_10x6_Format, RGBA_ASTC_10x8_Format, RGBA_ASTC_10x10_Format, RGBA_ASTC_12x10_Format, RGBA_ASTC_12x12_Format, LoopOnce, LoopRepeat, LoopPingPong, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, ZeroCurvatureEnding, ZeroSlopeEnding, WrapAroundEnding, TrianglesDrawMode, TriangleStripDrawMode, TriangleFanDrawMode, LinearEncoding, sRGBEncoding, GammaEncoding, RGBEEncoding, LogLuvEncoding, RGBM7Encoding, RGBM16Encoding, RGBDEncoding, BasicDepthPacking, RGBADepthPacking, TangentSpaceNormalMap, ObjectSpaceNormalMap, CubeGeometry, Face4, LineStrip, LinePieces, MeshFaceMaterial, MultiMaterial, PointCloud, Particle, ParticleSystem, PointCloudMaterial, ParticleBasicMaterial, ParticleSystemMaterial, Vertex, DynamicBufferAttribute, Int8Attribute, Uint8Attribute, Uint8ClampedAttribute, Int16Attribute, Uint16Attribute, Int32Attribute, Uint32Attribute, Float32Attribute, Float64Attribute, ClosedSplineCurve3, SplineCurve3, Spline, AxisHelper, BoundingBoxHelper, EdgesHelper, WireframeHelper, XHRLoader, BinaryTextureLoader, GeometryUtils, CanvasRenderer, JSONLoader, SceneUtils, LensFlare */
+/*! exports provided: WebGLMultisampleRenderTarget, WebGLRenderTargetCube, WebGLRenderTarget, WebGLRenderer, ShaderLib, UniformsLib, UniformsUtils, ShaderChunk, FogExp2, Fog, Scene, Sprite, LOD, SkinnedMesh, Skeleton, Bone, Mesh, LineSegments, LineLoop, Line, Points, Group, VideoTexture, DataTexture, DataTexture2DArray, DataTexture3D, CompressedTexture, CubeTexture, CanvasTexture, DepthTexture, Texture, AnimationLoader, CompressedTextureLoader, DataTextureLoader, CubeTextureLoader, TextureLoader, ObjectLoader, MaterialLoader, BufferGeometryLoader, DefaultLoadingManager, LoadingManager, ImageLoader, ImageBitmapLoader, FontLoader, FileLoader, Loader, LoaderUtils, Cache, AudioLoader, SpotLightShadow, SpotLight, PointLight, RectAreaLight, HemisphereLight, HemisphereLightProbe, DirectionalLightShadow, DirectionalLight, AmbientLight, AmbientLightProbe, LightShadow, Light, LightProbe, StereoCamera, PerspectiveCamera, OrthographicCamera, CubeCamera, ArrayCamera, Camera, AudioListener, PositionalAudio, AudioContext, AudioAnalyser, Audio, VectorKeyframeTrack, StringKeyframeTrack, QuaternionKeyframeTrack, NumberKeyframeTrack, ColorKeyframeTrack, BooleanKeyframeTrack, PropertyMixer, PropertyBinding, KeyframeTrack, AnimationUtils, AnimationObjectGroup, AnimationMixer, AnimationClip, Uniform, InstancedBufferGeometry, BufferGeometry, Geometry, InterleavedBufferAttribute, InstancedInterleavedBuffer, InterleavedBuffer, InstancedBufferAttribute, Face3, Object3D, Raycaster, Layers, EventDispatcher, Clock, QuaternionLinearInterpolant, LinearInterpolant, DiscreteInterpolant, CubicInterpolant, Interpolant, Triangle, Math, Spherical, Cylindrical, Plane, Frustum, Sphere, Ray, Matrix4, Matrix3, Box3, Box2, Line3, Euler, Vector4, Vector3, Vector2, Quaternion, Color, SphericalHarmonics3, ImmediateRenderObject, VertexNormalsHelper, SpotLightHelper, SkeletonHelper, PointLightHelper, RectAreaLightHelper, HemisphereLightHelper, LightProbeHelper, GridHelper, PolarGridHelper, PositionalAudioHelper, FaceNormalsHelper, DirectionalLightHelper, CameraHelper, BoxHelper, Box3Helper, PlaneHelper, ArrowHelper, AxesHelper, Shape, Path, ShapePath, Font, CurvePath, Curve, ImageUtils, ShapeUtils, WebGLUtils, WireframeGeometry, ParametricGeometry, ParametricBufferGeometry, TetrahedronGeometry, TetrahedronBufferGeometry, OctahedronGeometry, OctahedronBufferGeometry, IcosahedronGeometry, IcosahedronBufferGeometry, DodecahedronGeometry, DodecahedronBufferGeometry, PolyhedronGeometry, PolyhedronBufferGeometry, TubeGeometry, TubeBufferGeometry, TorusKnotGeometry, TorusKnotBufferGeometry, TorusGeometry, TorusBufferGeometry, TextGeometry, TextBufferGeometry, SphereGeometry, SphereBufferGeometry, RingGeometry, RingBufferGeometry, PlaneGeometry, PlaneBufferGeometry, LatheGeometry, LatheBufferGeometry, ShapeGeometry, ShapeBufferGeometry, ExtrudeGeometry, ExtrudeBufferGeometry, EdgesGeometry, ConeGeometry, ConeBufferGeometry, CylinderGeometry, CylinderBufferGeometry, CircleGeometry, CircleBufferGeometry, BoxGeometry, BoxBufferGeometry, ShadowMaterial, SpriteMaterial, RawShaderMaterial, ShaderMaterial, PointsMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshPhongMaterial, MeshToonMaterial, MeshNormalMaterial, MeshLambertMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshBasicMaterial, MeshMatcapMaterial, LineDashedMaterial, LineBasicMaterial, Material, Float64BufferAttribute, Float32BufferAttribute, Uint32BufferAttribute, Int32BufferAttribute, Uint16BufferAttribute, Int16BufferAttribute, Uint8ClampedBufferAttribute, Uint8BufferAttribute, Int8BufferAttribute, BufferAttribute, ArcCurve, CatmullRomCurve3, CubicBezierCurve, CubicBezierCurve3, EllipseCurve, LineCurve, LineCurve3, QuadraticBezierCurve, QuadraticBezierCurve3, SplineCurve, REVISION, MOUSE, CullFaceNone, CullFaceBack, CullFaceFront, CullFaceFrontBack, FrontFaceDirectionCW, FrontFaceDirectionCCW, BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, FrontSide, BackSide, DoubleSide, FlatShading, SmoothShading, NoColors, FaceColors, VertexColors, NoBlending, NormalBlending, AdditiveBlending, SubtractiveBlending, MultiplyBlending, CustomBlending, AddEquation, SubtractEquation, ReverseSubtractEquation, MinEquation, MaxEquation, ZeroFactor, OneFactor, SrcColorFactor, OneMinusSrcColorFactor, SrcAlphaFactor, OneMinusSrcAlphaFactor, DstAlphaFactor, OneMinusDstAlphaFactor, DstColorFactor, OneMinusDstColorFactor, SrcAlphaSaturateFactor, NeverDepth, AlwaysDepth, LessDepth, LessEqualDepth, EqualDepth, GreaterEqualDepth, GreaterDepth, NotEqualDepth, MultiplyOperation, MixOperation, AddOperation, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, ACESFilmicToneMapping, UVMapping, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping, SphericalReflectionMapping, CubeUVReflectionMapping, CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping, NearestFilter, NearestMipMapNearestFilter, NearestMipMapLinearFilter, LinearFilter, LinearMipMapNearestFilter, LinearMipMapLinearFilter, UnsignedByteType, ByteType, ShortType, UnsignedShortType, IntType, UnsignedIntType, FloatType, HalfFloatType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShort565Type, UnsignedInt248Type, AlphaFormat, RGBFormat, RGBAFormat, LuminanceFormat, LuminanceAlphaFormat, RGBEFormat, DepthFormat, DepthStencilFormat, RedFormat, RGB_S3TC_DXT1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGB_PVRTC_4BPPV1_Format, RGB_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_PVRTC_2BPPV1_Format, RGB_ETC1_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_5x4_Format, RGBA_ASTC_5x5_Format, RGBA_ASTC_6x5_Format, RGBA_ASTC_6x6_Format, RGBA_ASTC_8x5_Format, RGBA_ASTC_8x6_Format, RGBA_ASTC_8x8_Format, RGBA_ASTC_10x5_Format, RGBA_ASTC_10x6_Format, RGBA_ASTC_10x8_Format, RGBA_ASTC_10x10_Format, RGBA_ASTC_12x10_Format, RGBA_ASTC_12x12_Format, LoopOnce, LoopRepeat, LoopPingPong, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, ZeroCurvatureEnding, ZeroSlopeEnding, WrapAroundEnding, TrianglesDrawMode, TriangleStripDrawMode, TriangleFanDrawMode, LinearEncoding, sRGBEncoding, GammaEncoding, RGBEEncoding, LogLuvEncoding, RGBM7Encoding, RGBM16Encoding, RGBDEncoding, BasicDepthPacking, RGBADepthPacking, TangentSpaceNormalMap, ObjectSpaceNormalMap, CubeGeometry, Face4, LineStrip, LinePieces, MeshFaceMaterial, MultiMaterial, PointCloud, Particle, ParticleSystem, PointCloudMaterial, ParticleBasicMaterial, ParticleSystemMaterial, Vertex, DynamicBufferAttribute, Int8Attribute, Uint8Attribute, Uint8ClampedAttribute, Int16Attribute, Uint16Attribute, Int32Attribute, Uint32Attribute, Float32Attribute, Float64Attribute, ClosedSplineCurve3, SplineCurve3, Spline, AxisHelper, BoundingBoxHelper, EdgesHelper, WireframeHelper, XHRLoader, BinaryTextureLoader, GeometryUtils, CanvasRenderer, JSONLoader, SceneUtils, LensFlare */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -71341,13 +71341,11 @@ var _events = __webpack_require__(/*! events */ "./node_modules/events/events.js
 
 var _events2 = _interopRequireDefault(_events);
 
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
-
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -71396,32 +71394,32 @@ var PhysicsWorld = function () {
     key: 'initSoftWorld',
     value: function initSoftWorld() {
       /* eslint-disable new-cap */
-      var broadphase = new _Ammo2.default.btDbvtBroadphase();
-      var softSolver = new _Ammo2.default.btDefaultSoftBodySolver();
-      var solver = new _Ammo2.default.btSequentialImpulseConstraintSolver();
+      var broadphase = new _utils.Ammo.btDbvtBroadphase();
+      var softSolver = new _utils.Ammo.btDefaultSoftBodySolver();
+      var solver = new _utils.Ammo.btSequentialImpulseConstraintSolver();
 
-      var collisionConfiguration = new _Ammo2.default.btSoftBodyRigidBodyCollisionConfiguration();
-      var dispatcher = new _Ammo2.default.btCollisionDispatcher(collisionConfiguration);
+      var collisionConfiguration = new _utils.Ammo.btSoftBodyRigidBodyCollisionConfiguration();
+      var dispatcher = new _utils.Ammo.btCollisionDispatcher(collisionConfiguration);
 
-      this.world = new _Ammo2.default.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
-      this.world.getWorldInfo().set_m_gravity(new _Ammo2.default.btVector3(0.0, this._gravity, 0.0));
-      this.world.setGravity(new _Ammo2.default.btVector3(0.0, this._gravity, 0.0));
-      this.transform = new _Ammo2.default.btTransform();
+      this.world = new _utils.Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
+      this.world.getWorldInfo().set_m_gravity(new _utils.Ammo.btVector3(0.0, this._gravity, 0.0));
+      this.world.setGravity(new _utils.Ammo.btVector3(0.0, this._gravity, 0.0));
+      this.transform = new _utils.Ammo.btTransform();
       /* eslint-enable new-cap */
     }
   }, {
     key: 'initRigidWorld',
     value: function initRigidWorld() {
       /* eslint-disable new-cap */
-      var broadphase = new _Ammo2.default.btDbvtBroadphase();
-      var solver = new _Ammo2.default.btSequentialImpulseConstraintSolver();
+      var broadphase = new _utils.Ammo.btDbvtBroadphase();
+      var solver = new _utils.Ammo.btSequentialImpulseConstraintSolver();
 
-      var collisionConfiguration = new _Ammo2.default.btDefaultCollisionConfiguration();
-      var dispatcher = new _Ammo2.default.btCollisionDispatcher(collisionConfiguration);
+      var collisionConfiguration = new _utils.Ammo.btDefaultCollisionConfiguration();
+      var dispatcher = new _utils.Ammo.btCollisionDispatcher(collisionConfiguration);
 
-      this.world = new _Ammo2.default.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-      this.world.setGravity(new _Ammo2.default.btVector3(0.0, this._gravity, 0.0));
-      this.transform = new _Ammo2.default.btTransform();
+      this.world = new _utils.Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+      this.world.setGravity(new _utils.Ammo.btVector3(0.0, this._gravity, 0.0));
+      this.transform = new _utils.Ammo.btTransform();
       /* eslint-enable new-cap */
     }
   }, {
@@ -71792,10 +71790,10 @@ var PhysicsWorld = function () {
       /* eslint-disable new-cap */
 
       if (this._soft) {
-        this.world.getWorldInfo().set_m_gravity(new _Ammo2.default.btVector3(0.0, value, 0.0));
+        this.world.getWorldInfo().set_m_gravity(new _utils.Ammo.btVector3(0.0, value, 0.0));
       }
 
-      this.world.setGravity(new _Ammo2.default.btVector3(0.0, value, 0.0));
+      this.world.setGravity(new _utils.Ammo.btVector3(0.0, value, 0.0));
       /* eslint-enable new-cap */
       this.activateBodies();
     },
@@ -71834,13 +71832,11 @@ var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lod
 
 var _findIndex2 = _interopRequireDefault(_findIndex);
 
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
-
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -71865,7 +71861,7 @@ var ClothBodies = function () {
     this.piterations = _constants.CLOTH_PITERATIONS;
 
     /* eslint-disable new-cap */
-    this.helpers = new _Ammo2.default.btSoftBodyHelpers();
+    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
     /* eslint-enable new-cap */
   }
 
@@ -71881,10 +71877,10 @@ var ClothBodies = function () {
       var width = mesh.geometry.parameters.width;
 
       /* eslint-disable new-cap */
-      var clothCorner00 = new _Ammo2.default.btVector3(position.x, position.y + height, position.z);
-      var clothCorner01 = new _Ammo2.default.btVector3(position.x, position.y + height, position.z - width);
-      var clothCorner10 = new _Ammo2.default.btVector3(position.x, position.y, position.z);
-      var clothCorner11 = new _Ammo2.default.btVector3(position.x, position.y, position.z - width);
+      var clothCorner00 = new _utils.Ammo.btVector3(position.x, position.y + height, position.z);
+      var clothCorner01 = new _utils.Ammo.btVector3(position.x, position.y + height, position.z - width);
+      var clothCorner10 = new _utils.Ammo.btVector3(position.x, position.y, position.z);
+      var clothCorner11 = new _utils.Ammo.btVector3(position.x, position.y, position.z - width);
       /* eslint-enable new-cap */
 
       var body = this.helpers.CreatePatch(this.world.getWorldInfo(), clothCorner00, clothCorner01, clothCorner10, clothCorner11, widthSegments + 1, heightSegments + 1, 0, true);
@@ -71898,7 +71894,7 @@ var ClothBodies = function () {
       bodyConfig.set_kDF(this.friction);
       bodyConfig.set_kDP(this.damping);
 
-      _Ammo2.default.castObject(body, _Ammo2.default.btCollisionObject).getCollisionShape().setMargin(this.margin);
+      _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
       body.get_m_materials().at(0).set_m_kLST(this.stiffness);
       body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
@@ -71978,7 +71974,7 @@ var ClothBodies = function () {
         var mesh = this.bodies[index];
 
         this.world.removeSoftBody(mesh.body);
-        _Ammo2.default.destroy(mesh.body);
+        _utils.Ammo.destroy(mesh.body);
         delete mesh.geometry;
 
         this.bodies.splice(index, 1);
@@ -72220,9 +72216,7 @@ var _RigidBody2 = __webpack_require__(/*! ./RigidBody */ "./src/bodies/RigidBody
 
 var _RigidBody3 = _interopRequireDefault(_RigidBody2);
 
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -72243,7 +72237,7 @@ var KinematicBodies = function (_RigidBody) {
     /* eslint-disable new-cap */
     var _this = _possibleConstructorReturn(this, (KinematicBodies.__proto__ || Object.getPrototypeOf(KinematicBodies)).call(this, world, 'kinematic'));
 
-    _this.rotation = new _Ammo2.default.btQuaternion();
+    _this.rotation = new _utils.Ammo.btQuaternion();
     /* eslint-enable new-cap */
     return _this;
   }
@@ -72352,13 +72346,11 @@ var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lod
 
 var _findIndex2 = _interopRequireDefault(_findIndex);
 
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
-
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -72391,39 +72383,39 @@ var RigidBody = function () {
   _createClass(RigidBody, [{
     key: 'createBox',
     value: function createBox(size) {
-      var box = new _Ammo2.default.btBoxShape(new _Ammo2.default.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
+      var box = new _utils.Ammo.btBoxShape(new _utils.Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
       this._checkBodyMargin(box);
       return box;
     }
   }, {
     key: 'createCylinder',
     value: function createCylinder(size) {
-      var cylinder = new _Ammo2.default.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
+      var cylinder = new _utils.Ammo.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
       this._checkBodyMargin(cylinder);
       return cylinder;
     }
   }, {
     key: 'createCapsule',
     value: function createCapsule(size) {
-      var capsule = new _Ammo2.default.btCapsuleShape(size.width, size.height / 2.0);
+      var capsule = new _utils.Ammo.btCapsuleShape(size.width, size.height / 2.0);
       this._checkBodyMargin(capsule);
       return capsule;
     }
   }, {
     key: 'createCone',
     value: function createCone(size) {
-      var cone = new _Ammo2.default.btConeShape(size.width, size.height / 2.0);
+      var cone = new _utils.Ammo.btConeShape(size.width, size.height / 2.0);
       this._checkBodyMargin(cone);
       return cone;
     }
   }, {
     key: 'createConcave',
     value: function createConcave(triangles) {
-      var mesh = new _Ammo2.default.btTriangleMesh();
+      var mesh = new _utils.Ammo.btTriangleMesh();
 
-      var vec1 = new _Ammo2.default.btVector3(0.0, 0.0, 0.0);
-      var vec2 = new _Ammo2.default.btVector3(0.0, 0.0, 0.0);
-      var vec3 = new _Ammo2.default.btVector3(0.0, 0.0, 0.0);
+      var vec1 = new _utils.Ammo.btVector3(0.0, 0.0, 0.0);
+      var vec2 = new _utils.Ammo.btVector3(0.0, 0.0, 0.0);
+      var vec3 = new _utils.Ammo.btVector3(0.0, 0.0, 0.0);
 
       for (var t = 0, length = triangles.length; t < length; t++) {
         var triangle = triangles[t];
@@ -72443,15 +72435,15 @@ var RigidBody = function () {
         mesh.addTriangle(vec1, vec2, vec3, true);
       }
 
-      var concave = new _Ammo2.default.btBvhTriangleMeshShape(mesh, true, true);
+      var concave = new _utils.Ammo.btBvhTriangleMeshShape(mesh, true, true);
       this._checkBodyMargin(concave);
       return concave;
     }
   }, {
     key: 'createConvex',
     value: function createConvex(coords) {
-      var convex = new _Ammo2.default.btConvexHullShape();
-      var vec = new _Ammo2.default.btVector3(0.0, 0.0, 0.0);
+      var convex = new _utils.Ammo.btConvexHullShape();
+      var vec = new _utils.Ammo.btVector3(0.0, 0.0, 0.0);
 
       for (var i = 0, last = coords.length - 3; i < coords.length; i += 3) {
         vec.setValue(coords[i], coords[i + 1], coords[i + 2]);
@@ -72464,28 +72456,28 @@ var RigidBody = function () {
   }, {
     key: 'createSphere',
     value: function createSphere(radius) {
-      var sphere = new _Ammo2.default.btSphereShape(radius);
+      var sphere = new _utils.Ammo.btSphereShape(radius);
       this._checkBodyMargin(sphere);
       return sphere;
     }
   }, {
     key: 'createRigidBody',
     value: function createRigidBody(shape, mass, position, quaternion) {
-      var transform = new _Ammo2.default.btTransform();
+      var transform = new _utils.Ammo.btTransform();
       transform.setIdentity();
-      transform.setOrigin(new _Ammo2.default.btVector3(position.x, position.y, position.z));
-      transform.setRotation(new _Ammo2.default.btQuaternion(quaternion._x, quaternion._y, quaternion._z, quaternion._w));
+      transform.setOrigin(new _utils.Ammo.btVector3(position.x, position.y, position.z));
+      transform.setRotation(new _utils.Ammo.btQuaternion(quaternion._x, quaternion._y, quaternion._z, quaternion._w));
 
-      var motion = new _Ammo2.default.btDefaultMotionState(transform);
-      var inertia = new _Ammo2.default.btVector3(0.0, 0.0, 0.0);
+      var motion = new _utils.Ammo.btDefaultMotionState(transform);
+      var inertia = new _utils.Ammo.btVector3(0.0, 0.0, 0.0);
 
       if (mass > _constants.ZERO_MASS) {
         shape.calculateLocalInertia(mass, inertia);
       }
 
-      var body = new _Ammo2.default.btRigidBody(new _Ammo2.default.btRigidBodyConstructionInfo(mass, motion, shape, inertia));
-      body.setLinearFactor(new _Ammo2.default.btVector3(this.linearFactor.x, this.linearFactor.y, this.linearFactor.z));
-      body.setAngularFactor(new _Ammo2.default.btVector3(this.angularFactor.x, this.angularFactor.y, this.angularFactor.z));
+      var body = new _utils.Ammo.btRigidBody(new _utils.Ammo.btRigidBodyConstructionInfo(mass, motion, shape, inertia));
+      body.setLinearFactor(new _utils.Ammo.btVector3(this.linearFactor.x, this.linearFactor.y, this.linearFactor.z));
+      body.setAngularFactor(new _utils.Ammo.btVector3(this.angularFactor.x, this.angularFactor.y, this.angularFactor.z));
 
       body.setDamping(this.linearDamping, this.angularDamping);
       body.setRestitution(this.restitution);
@@ -72498,7 +72490,7 @@ var RigidBody = function () {
       var factor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.ONE_VECTOR3;
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setLinearFactor(new _Ammo2.default.btVector3(factor.x, factor.y, factor.z));
+      body.setLinearFactor(new _utils.Ammo.btVector3(factor.x, factor.y, factor.z));
       body.activate();
     }
   }, {
@@ -72507,7 +72499,7 @@ var RigidBody = function () {
       var factor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.ONE_VECTOR3;
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setAngularFactor(new _Ammo2.default.btVector3(factor.x, factor.y, factor.z));
+      body.setAngularFactor(new _utils.Ammo.btVector3(factor.x, factor.y, factor.z));
       body.activate();
     }
   }, {
@@ -72516,7 +72508,7 @@ var RigidBody = function () {
       var velocity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setLinearVelocity(new _Ammo2.default.btVector3(velocity.x, velocity.y, velocity.z));
+      body.setLinearVelocity(new _utils.Ammo.btVector3(velocity.x, velocity.y, velocity.z));
       body.activate();
     }
   }, {
@@ -72525,7 +72517,7 @@ var RigidBody = function () {
       var velocity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.setAngularVelocity(new _Ammo2.default.btVector3(velocity.x, velocity.y, velocity.z));
+      body.setAngularVelocity(new _utils.Ammo.btVector3(velocity.x, velocity.y, velocity.z));
       body.activate();
     }
   }, {
@@ -72534,7 +72526,7 @@ var RigidBody = function () {
       var torque = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.applyTorque(new _Ammo2.default.btVector3(torque.x, torque.y, torque.z));
+      body.applyTorque(new _utils.Ammo.btVector3(torque.x, torque.y, torque.z));
       body.activate();
     }
   }, {
@@ -72545,7 +72537,7 @@ var RigidBody = function () {
 
       var body = this.getBodyByUUID(mesh.uuid).body;
 
-      body.applyForce(new _Ammo2.default.btVector3(force.x, force.y, force.z), new _Ammo2.default.btVector3(offset.x, offset.y, offset.z));
+      body.applyForce(new _utils.Ammo.btVector3(force.x, force.y, force.z), new _utils.Ammo.btVector3(offset.x, offset.y, offset.z));
 
       body.activate();
     }
@@ -72555,7 +72547,7 @@ var RigidBody = function () {
       var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.applyCentralForce(new _Ammo2.default.btVector3(force.x, force.y, force.z));
+      body.applyCentralForce(new _utils.Ammo.btVector3(force.x, force.y, force.z));
       body.activate();
     }
   }, {
@@ -72566,7 +72558,7 @@ var RigidBody = function () {
 
       var body = this.getBodyByUUID(mesh.uuid).body;
 
-      body.applyImpulse(new _Ammo2.default.btVector3(impulse.x, impulse.y, impulse.z), new _Ammo2.default.btVector3(offset.x, offset.y, offset.z));
+      body.applyImpulse(new _utils.Ammo.btVector3(impulse.x, impulse.y, impulse.z), new _utils.Ammo.btVector3(offset.x, offset.y, offset.z));
 
       body.activate();
     }
@@ -72576,7 +72568,7 @@ var RigidBody = function () {
       var impulse = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
 
       var body = this.getBodyByUUID(mesh.uuid).body;
-      body.applyCentralImpulse(new _Ammo2.default.btVector3(impulse.x, impulse.y, impulse.z));
+      body.applyCentralImpulse(new _utils.Ammo.btVector3(impulse.x, impulse.y, impulse.z));
       body.activate();
     }
     /* eslint-enable new-cap */
@@ -72675,7 +72667,7 @@ var RigidBody = function () {
       if (index > -1) {
         var body = this.bodies[index].body;
         this.world.removeRigidBody(body);
-        _Ammo2.default.destroy(body);
+        _utils.Ammo.destroy(body);
 
         this.bodies.splice(index, 1);
         return true;
@@ -72722,13 +72714,11 @@ var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lod
 
 var _findIndex2 = _interopRequireDefault(_findIndex);
 
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
-
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -72749,7 +72739,7 @@ var RopeBodies = function () {
     this.piterations = _constants.ROPE_PITERATIONS;
 
     /* eslint-disable new-cap */
-    this.helpers = new _Ammo2.default.btSoftBodyHelpers();
+    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
     /* eslint-enable new-cap */
   }
 
@@ -72761,8 +72751,8 @@ var RopeBodies = function () {
       var segments = mesh.geometry.attributes.position.array.length / 3 - 2;
 
       /* eslint-disable new-cap */
-      var start = new _Ammo2.default.btVector3(position.x, position.y, position.z);
-      var end = new _Ammo2.default.btVector3(position.x, position.y + length, position.z);
+      var start = new _utils.Ammo.btVector3(position.x, position.y, position.z);
+      var end = new _utils.Ammo.btVector3(position.x, position.y + length, position.z);
       /* eslint-enable new-cap */
 
       var body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
@@ -72773,7 +72763,7 @@ var RopeBodies = function () {
       config.set_viterations(this.viterations);
       config.set_piterations(this.piterations);
 
-      _Ammo2.default.castObject(body, _Ammo2.default.btCollisionObject).getCollisionShape().setMargin(this.margin);
+      _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
       body.setActivationState(_constants.DISABLE_DEACTIVATION);
       this.world.addSoftBody(body, 1, -1);
 
@@ -72850,7 +72840,7 @@ var RopeBodies = function () {
         var mesh = this.bodies[index];
 
         this.world.removeSoftBody(mesh.body);
-        _Ammo2.default.destroy(mesh.body);
+        _utils.Ammo.destroy(mesh.body);
         delete mesh.geometry;
 
         this.bodies.splice(index, 1);
@@ -72891,7 +72881,7 @@ var _BufferGeometry = __webpack_require__(/*! three/src/core/BufferGeometry */ "
 
 var _Geometry = __webpack_require__(/*! three/src/core/Geometry */ "./node_modules/three/src/core/Geometry.js");
 
-var _Buffer = __webpack_require__(/*! utils/Buffer */ "./src/utils/Buffer.js");
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
 
@@ -72900,10 +72890,6 @@ var _findIndex2 = _interopRequireDefault(_findIndex);
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
-
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -72927,7 +72913,7 @@ var SoftBodies = function () {
     this.piterations = _constants.SOFT_PITERATIONS;
 
     /* eslint-disable new-cap */
-    this.helpers = new _Ammo2.default.btSoftBodyHelpers();
+    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
     /* eslint-enable new-cap */
   }
 
@@ -72955,7 +72941,7 @@ var SoftBodies = function () {
         for (var j = 0; j < _vertices; j++) {
           var j3 = j * 3;
 
-          if ((0, _Buffer.equalBufferVertices)(indexedVertices, i3, vertices, j3)) {
+          if ((0, _utils.equalBufferVertices)(indexedVertices, i3, vertices, j3)) {
             association.push(j3);
           }
         }
@@ -73013,7 +72999,7 @@ var SoftBodies = function () {
       bodyConfig.set_kDP(this.damping);
       bodyConfig.set_kPR(pressure);
 
-      _Ammo2.default.castObject(body, _Ammo2.default.btCollisionObject).getCollisionShape().setMargin(this.margin);
+      _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
       body.get_m_materials().at(0).set_m_kLST(this.stiffness);
       body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
@@ -73095,7 +73081,7 @@ var SoftBodies = function () {
         var mesh = this.bodies[index];
 
         this.world.removeSoftBody(mesh.body);
-        _Ammo2.default.destroy(mesh.body);
+        _utils.Ammo.destroy(mesh.body);
         delete mesh.geometry;
 
         this.bodies.splice(index, 1);
@@ -73136,9 +73122,7 @@ var _RigidBody2 = __webpack_require__(/*! ./RigidBody */ "./src/bodies/RigidBody
 
 var _RigidBody3 = _interopRequireDefault(_RigidBody2);
 
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -73162,8 +73146,8 @@ var StaticBodies = function (_RigidBody) {
     value: function addPlane(mesh) {
       /* eslint-disable new-cap */
       var z = mesh.rotation.x / -Math.PI * 2.0;
-      var rotation = new _Ammo2.default.btVector3(0.0, 0.0, z);
-      var plane = new _Ammo2.default.btStaticPlaneShape(rotation, 0.0);
+      var rotation = new _utils.Ammo.btVector3(0.0, 0.0, z);
+      var plane = new _utils.Ammo.btStaticPlaneShape(rotation, 0.0);
       /* eslint-enable new-cap */
 
       this._checkBodyMargin(plane);
@@ -73221,7 +73205,7 @@ var StaticBodies = function (_RigidBody) {
       var width = mesh.geometry.parameters.widthSegments + 1;
       var depth = mesh.geometry.parameters.widthSegments + 1;
 
-      var data = _Ammo2.default._malloc(4.0 * width * depth);
+      var data = _utils.Ammo._malloc(4.0 * width * depth);
       var heightData = [];
 
       for (var i = 0, length = vertices.length / 3; i < length; i++) {
@@ -73230,14 +73214,14 @@ var StaticBodies = function (_RigidBody) {
 
       for (var _i = 0, p1 = 0, p2 = 0; _i < depth; _i++) {
         for (var j = 0; j < width; j++, p1++, p2 += 4) {
-          _Ammo2.default.HEAPF32[data + p2 >> 2] = heightData[p1];
+          _utils.Ammo.HEAPF32[data + p2 >> 2] = heightData[p1];
         }
       }
 
       /* eslint-disable new-cap */
-      var heightFieldShape = new _Ammo2.default.btHeightfieldTerrainShape(width, depth, data, 1.0, minHeight, maxHeight, 1.0, 'PHY_FLOAT', false);
+      var heightFieldShape = new _utils.Ammo.btHeightfieldTerrainShape(width, depth, data, 1.0, minHeight, maxHeight, 1.0, 'PHY_FLOAT', false);
 
-      heightFieldShape.setLocalScaling(new _Ammo2.default.btVector3(mesh.geometry.parameters.width / (width - 1), 1.0, mesh.geometry.parameters.height / (depth - 1)));
+      heightFieldShape.setLocalScaling(new _utils.Ammo.btVector3(mesh.geometry.parameters.width / (width - 1), 1.0, mesh.geometry.parameters.height / (depth - 1)));
 
       return heightFieldShape;
       /* eslint-enable new-cap */
@@ -73446,9 +73430,7 @@ var _Constraint2 = __webpack_require__(/*! ./Constraint */ "./src/constraints/Co
 
 var _Constraint3 = _interopRequireDefault(_Constraint2);
 
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -73501,7 +73483,7 @@ var HingeConstraints = function (_Constraint) {
     key: 'hingeBody',
     value: function hingeBody(body, position) {
       /* eslint-disable new-cap */
-      var hinge = new _Ammo2.default.btHingeConstraint(body, new _Ammo2.default.btVector3(position.pivot.x, position.pivot.y, position.pivot.z), new _Ammo2.default.btVector3(position.axis.x, position.axis.y, position.axis.z));
+      var hinge = new _utils.Ammo.btHingeConstraint(body, new _utils.Ammo.btVector3(position.pivot.x, position.pivot.y, position.pivot.z), new _utils.Ammo.btVector3(position.axis.x, position.axis.y, position.axis.z));
 
       /* eslint-enable new-cap */
       this.add(hinge);
@@ -73510,9 +73492,9 @@ var HingeConstraints = function (_Constraint) {
     key: 'hingeBodies',
     value: function hingeBodies(pin, arm, position) {
       /* eslint-disable new-cap */
-      var armAxis = new _Ammo2.default.btVector3(position.axis.x, position.axis.y, position.axis.z);
+      var armAxis = new _utils.Ammo.btVector3(position.axis.x, position.axis.y, position.axis.z);
 
-      var hinge = new _Ammo2.default.btHingeConstraint(pin, arm, new _Ammo2.default.btVector3(position.pinPivot.x, position.pinPivot.y, position.pinPivot.z), new _Ammo2.default.btVector3(position.armPivot.x, position.armPivot.y, position.armPivot.z), armAxis, armAxis, true);
+      var hinge = new _utils.Ammo.btHingeConstraint(pin, arm, new _utils.Ammo.btVector3(position.pinPivot.x, position.pinPivot.y, position.pinPivot.z), new _utils.Ammo.btVector3(position.armPivot.x, position.armPivot.y, position.armPivot.z), armAxis, armAxis, true);
 
       /* eslint-enable new-cap */
       this.add(hinge);
@@ -73558,9 +73540,7 @@ var _Constraint2 = __webpack_require__(/*! ./Constraint */ "./src/constraints/Co
 
 var _Constraint3 = _interopRequireDefault(_Constraint2);
 
-var _Ammo = __webpack_require__(/*! utils/Ammo */ "./src/utils/Ammo.js");
-
-var _Ammo2 = _interopRequireDefault(_Ammo);
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -73605,7 +73585,7 @@ var PointConstraints = function (_Constraint) {
     key: 'attachBody',
     value: function attachBody(body, position) {
       /* eslint-disable new-cap */
-      var point = new _Ammo2.default.btPoint2PointConstraint(body, new _Ammo2.default.btVector3(position.x, position.y, position.z));
+      var point = new _utils.Ammo.btPoint2PointConstraint(body, new _utils.Ammo.btVector3(position.x, position.y, position.z));
 
       /* eslint-enable new-cap */
       this.add(point);
@@ -73614,7 +73594,7 @@ var PointConstraints = function (_Constraint) {
     key: 'attachBodies',
     value: function attachBodies(body0, body1, positions) {
       /* eslint-disable new-cap */
-      var point = new _Ammo2.default.btPoint2PointConstraint(body0, body1, new _Ammo2.default.btVector3(positions[0].x, positions[0].y, positions[0].z), new _Ammo2.default.btVector3(positions[1].x, positions[1].y, positions[1].z));
+      var point = new _utils.Ammo.btPoint2PointConstraint(body0, body1, new _utils.Ammo.btVector3(positions[0].x, positions[0].y, positions[0].z), new _utils.Ammo.btVector3(positions[1].x, positions[1].y, positions[1].z));
 
       /* eslint-enable new-cap */
       this.add(point);
@@ -73675,7 +73655,7 @@ var _stats = __webpack_require__(/*! stats.js */ "./node_modules/stats.js/build/
 
 var _stats2 = _interopRequireDefault(_stats);
 
-var _RAF = __webpack_require__(/*! utils/RAF */ "./src/utils/RAF.js");
+var _RAF = __webpack_require__(/*! demos/RAF */ "./src/demos/RAF.js");
 
 var _RAF2 = _interopRequireDefault(_RAF);
 
@@ -73883,6 +73863,119 @@ module.exports = exports.default;
 
 /***/ }),
 
+/***/ "./src/demos/RAF.js":
+/*!**************************!*\
+  !*** ./src/demos/RAF.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * RAF - requestAnimationFrame loop class manager
+ * Allows to add/udpate/remove functions to/in/from requestAnimationFrame loop
+ * It's also possible to remove all functions and stop the main loop
+ */
+
+var RAF = function () {
+  /**
+   * @constructs RAF
+   * @description - Initialize main requestAnimationFrame loop and listeners array to call on every frame update
+   */
+  function RAF() {
+    _classCallCheck(this, RAF);
+
+    this.update = this.update.bind(this);
+    this.listeners = [];
+    this.frame = null;
+    this.length = 0;
+    this.update();
+  }
+
+  /**
+   * @public
+   * @description - Add new listener to call every frame
+   * @param {function} listener - function to add to requestAnimationFrame loop
+   */
+
+
+  _createClass(RAF, [{
+    key: "add",
+    value: function add(listener) {
+      if (this.listeners.indexOf(listener) < 0) {
+        this.listeners.push(listener);
+        this.length++;
+      }
+    }
+
+    /**
+     * @public
+     * @description - Update all listeners every frame
+     */
+
+  }, {
+    key: "update",
+    value: function update() {
+      for (var l = 0; l < this.length; l++) {
+        this.listeners[l]();
+      }
+
+      this.frame = requestAnimationFrame(this.update);
+    }
+
+    /**
+     * @public
+     * @description - Remove passed listener from being called every frame
+     * @param {function} listener - function to remove from requestAnimationFrame loop
+     */
+
+  }, {
+    key: "remove",
+    value: function remove(listener) {
+      var index = this.listeners.indexOf(listener);
+
+      if (index > -1) {
+        this.listeners.splice(index, 1);
+        this.length--;
+      }
+
+      if (!this.length) {
+        this.cancel();
+      }
+    }
+
+    /**
+     * @public
+     * @description - Remove all listeners and stop requestAnimationFrame loop
+     */
+
+  }, {
+    key: "cancel",
+    value: function cancel() {
+      cancelAnimationFrame(this.frame);
+      this.listeners = [];
+      this.length = 0;
+    }
+  }]);
+
+  return RAF;
+}();
+
+exports.default = new RAF();
+module.exports = exports.default;
+
+/***/ }),
+
 /***/ "./src/demos/bodies/RigidBodies.js":
 /*!*****************************************!*\
   !*** ./src/demos/bodies/RigidBodies.js ***!
@@ -73913,7 +74006,7 @@ var _PhysicsWorld = __webpack_require__(/*! PhysicsWorld */ "./src/PhysicsWorld.
 
 var _PhysicsWorld2 = _interopRequireDefault(_PhysicsWorld);
 
-var _RAF = __webpack_require__(/*! utils/RAF */ "./src/utils/RAF.js");
+var _RAF = __webpack_require__(/*! demos/RAF */ "./src/demos/RAF.js");
 
 var _RAF2 = _interopRequireDefault(_RAF);
 
@@ -74077,10 +74170,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
 /***/ }),
 
-/***/ "./src/utils/Ammo.js":
-/*!***************************!*\
-  !*** ./src/utils/Ammo.js ***!
-  \***************************/
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -74090,6 +74183,7 @@ window.addEventListener('DOMContentLoaded', function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.equalBufferVertices = exports.Ammo = undefined;
 
 var _ammo = __webpack_require__(/*! ammo.js */ "./node_modules/ammo.js/builds/ammo.js");
 
@@ -74097,35 +74191,11 @@ var _ammo2 = _interopRequireDefault(_ammo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Ammo = null; // Ammo.js ES6 export wrapper
-
-(0, _ammo2.default)().then(function (AmmoJS) {
-  Ammo = AmmoJS;
-});
-
-exports.default = Ammo;
-module.exports = exports.default;
-
-/***/ }),
-
-/***/ "./src/utils/Buffer.js":
-/*!*****************************!*\
-  !*** ./src/utils/Buffer.js ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-// Browser's float approximation:
 var DELTA = 0.000001;
+var Ammo = null;
 
 /**
- * @description - check if 2 vertices from different buffers are equal
+ * @description - checks if 2 vertices from different buffers are equal
  * @param {Object} b1 - first vertices buffer
  * @param {number} x1 - x coord index in the first buffer
  * @param {Object} b2 - second vertices buffer
@@ -74136,120 +74206,11 @@ var equalBufferVertices = function equalBufferVertices(b1, x1, b2, x2) {
   return Math.abs(b2[x2 + 2] - b1[x1 + 2]) < DELTA && Math.abs(b2[x2 + 1] - b1[x1 + 1]) < DELTA && Math.abs(b2[x2] - b1[x1]) < DELTA;
 };
 
-exports.equalBufferVertices = equalBufferVertices;
-
-/***/ }),
-
-/***/ "./src/utils/RAF.js":
-/*!**************************!*\
-  !*** ./src/utils/RAF.js ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
+(0, _ammo2.default)().then(function (AmmoJS) {
+  exports.Ammo = Ammo = AmmoJS;
 });
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * RAF - requestAnimationFrame loop class manager
- * Allows to add/udpate/remove functions to/in/from requestAnimationFrame loop
- * It's also possible to remove all functions and stop the main loop
- */
-
-var RAF = function () {
-  /**
-   * @constructs RAF
-   * @description - Initialize main requestAnimationFrame loop and listeners array to call on every frame update
-   */
-  function RAF() {
-    _classCallCheck(this, RAF);
-
-    this.update = this.update.bind(this);
-    this.listeners = [];
-    this.frame = null;
-    this.length = 0;
-    this.update();
-  }
-
-  /**
-   * @public
-   * @description - Add new listener to call every frame
-   * @param {function} listener - function to add to requestAnimationFrame loop
-   */
-
-
-  _createClass(RAF, [{
-    key: "add",
-    value: function add(listener) {
-      if (this.listeners.indexOf(listener) < 0) {
-        this.listeners.push(listener);
-        this.length++;
-      }
-    }
-
-    /**
-     * @public
-     * @description - Update all listeners every frame
-     */
-
-  }, {
-    key: "update",
-    value: function update() {
-      for (var l = 0; l < this.length; l++) {
-        this.listeners[l]();
-      }
-
-      this.frame = requestAnimationFrame(this.update);
-    }
-
-    /**
-     * @public
-     * @description - Remove passed listener from being called every frame
-     * @param {function} listener - function to remove from requestAnimationFrame loop
-     */
-
-  }, {
-    key: "remove",
-    value: function remove(listener) {
-      var index = this.listeners.indexOf(listener);
-
-      if (index > -1) {
-        this.listeners.splice(index, 1);
-        this.length--;
-      }
-
-      if (!this.length) {
-        this.cancel();
-      }
-    }
-
-    /**
-     * @public
-     * @description - Remove all listeners and stop requestAnimationFrame loop
-     */
-
-  }, {
-    key: "cancel",
-    value: function cancel() {
-      cancelAnimationFrame(this.frame);
-      this.listeners = [];
-      this.length = 0;
-    }
-  }]);
-
-  return RAF;
-}();
-
-exports.default = new RAF();
-module.exports = exports.default;
+exports.Ammo = Ammo;
+exports.equalBufferVertices = equalBufferVertices;
 
 /***/ })
 

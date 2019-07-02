@@ -1,6 +1,6 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import Constraint from './Constraint';
-import Ammo from 'utils/Ammo';
+import { Ammo } from '@/utils';
 
 export default class PointConstraints extends Constraint {
   constructor (world, events) {

@@ -4,7 +4,7 @@ import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
 import PhysicsWorld from 'PhysicsWorld';
-import RAF from 'utils/RAF';
+import RAF from 'demos/RAF';
 
 export default class RigidBodies extends Playground {
   constructor () {
