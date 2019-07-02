@@ -3,7 +3,7 @@ import 'three/examples/js/ConvexObjectBreaker';
 import 'three/examples/js/geometries/ConvexGeometry';
 
 const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
-import PhysicsWorld from 'worker/PhysicsWorld';
+import PhysicsWorld from 'workers/PhysicsWorld';
 import Playground from 'demos/Playground';
 import throttle from 'lodash/throttle';
 

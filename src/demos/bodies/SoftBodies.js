@@ -11,7 +11,7 @@ import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
-import PhysicsWorld from 'worker/PhysicsWorld';
+import PhysicsWorld from 'workers/PhysicsWorld';
 import Playground from 'demos/Playground';
 
 export default class SoftBodies extends Playground {

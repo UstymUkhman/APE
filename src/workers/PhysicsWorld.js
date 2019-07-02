@@ -1,22 +1,22 @@
-import WorldManager from 'worker-loader!workers/WorldManager.js';
+import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
 
-import PointConstraints from './constraints/PointConstraints';
-import HingeConstraints from './constraints/HingeConstraints';
+import PointConstraints from './web/constraints/PointConstraints';
+import HingeConstraints from './web/constraints/HingeConstraints';
 
-import KinematicBodies from './bodies/KinematicBodies';
-import DynamicBodies from './bodies/DynamicBodies';
-import StaticBodies from './bodies/StaticBodies';
+import KinematicBodies from './web/bodies/KinematicBodies';
+import DynamicBodies from './web/bodies/DynamicBodies';
+import StaticBodies from './web/bodies/StaticBodies';
 
-import ClothBodies from './bodies/ClothBodies';
-import SoftBodies from './bodies/SoftBodies';
-import RopeBodies from './bodies/RopeBodies';
+import ClothBodies from './web/bodies/ClothBodies';
+import SoftBodies from './web/bodies/SoftBodies';
+import RopeBodies from './web/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
-import { GRAVITY } from '../constants';
+import { GRAVITY } from '@/constants';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
-    this.worker = new WorldManager();
+    this.worker = new PhysicsWorker();
     this.clock = new Clock();
 
     this._soft = soft;

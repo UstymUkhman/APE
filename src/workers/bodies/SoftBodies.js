@@ -142,9 +142,9 @@ export default class SoftBodies {
       const geometry = this.bodies[i].geometry;
       const nodes = this.bodies[i].body.get_m_nodes();
 
+      const normals = geometry.attributes.normal.array;
       const association = geometry.ammoIndexAssociation;
-      const volumeNormals = geometry.attributes.normal.array;
-      const volumePositions = geometry.attributes.position.array;
+      const positions = geometry.attributes.position.array;
 
       for (let j = 0; j < association.length; j++) {
         const node = nodes.at(j);
@@ -164,20 +164,20 @@ export default class SoftBodies {
           const ivY = ivX + 1;
           const ivZ = ivY + 1;
 
-          volumeNormals[ivX] = nX;
-          volumeNormals[ivY] = nY;
-          volumeNormals[ivZ] = nZ;
+          positions[ivX] = pX;
+          positions[ivY] = pY;
+          positions[ivZ] = pZ;
 
-          volumePositions[ivX] = pX;
-          volumePositions[ivY] = pY;
-          volumePositions[ivZ] = pZ;
+          normals[ivX] = nX;
+          normals[ivY] = nY;
+          normals[ivZ] = nZ;
         }
       }
 
       update.push({
-        positions: volumePositions,
         uuid: this.bodies[i].uuid,
-        normals: volumeNormals
+        positions: positions,
+        normals: normals
       });
     }
 

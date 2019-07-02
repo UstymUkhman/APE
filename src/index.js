@@ -11,6 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   /* eslint-disable no-new */
   new RigidBodies();
+  // new ConvexBreak();
   // new SoftBodies();
   // new ClothBody();
 

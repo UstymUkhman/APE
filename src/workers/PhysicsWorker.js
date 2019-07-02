@@ -15,7 +15,7 @@ import find from 'lodash/find';
 
 let physics = null;
 
-class WorldManager {
+class PhysicsWorker {
   constructor (soft, gravity) {
     this._soft = soft;
     this._gravity = gravity;
@@ -578,7 +578,7 @@ self.addEventListener('message', (event) => {
   if (physics) {
     physics[action](params);
   } else if (action === 'init') {
-    physics = new WorldManager(params[0], params[1]);
+    physics = new PhysicsWorker(params[0], params[1]);
   } else {
     const array = typeof params === 'object';
     const args = params.length && array ? params.join(', ') : !array ? params : '';
