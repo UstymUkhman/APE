@@ -1,7 +1,5 @@
-import { Vector3 } from 'three/src/math/Vector3';
+import { Ammo, webWorker } from '@/utils';
 import findIndex from 'lodash/findIndex';
-
-import { Ammo } from '@/utils';
 import find from 'lodash/find';
 
 import {
@@ -11,15 +9,16 @@ import {
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
-  ANGULAR_DAMPING,
-  CCD_MOTION_THRESHOLD
+  ANGULAR_DAMPING
 } from '@/constants';
 
 export default class RigidBody {
   constructor (world, type) {
     this.type = type;
     this.bodies = [];
+
     this.world = world;
+    this.worker = webWorker();
 
     this.margin = MARGIN;
     this.friction = FRICTION;
@@ -126,101 +125,7 @@ export default class RigidBody {
     body.setFriction(this.friction);
     return body;
   }
-
-  setLinearFactor (mesh, factor = ONE_VECTOR3) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
-    body.activate();
-  }
-
-  setAngularFactor (mesh, factor = ONE_VECTOR3) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
-    body.activate();
-  }
-
-  setLinearVelocity (mesh, velocity = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
-    body.activate();
-  }
-
-  setAngularVelocity (mesh, velocity = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
-    body.activate();
-  }
-
-  applyTorque (mesh, torque = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
-    body.activate();
-  }
-
-  applyForce (mesh, force = new Vector3(), offset = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-
-    body.applyForce(
-      new Ammo.btVector3(force.x, force.y, force.z),
-      new Ammo.btVector3(offset.x, offset.y, offset.z)
-    );
-
-    body.activate();
-  }
-
-  applyCentralForce (mesh, force = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.applyCentralForce(new Ammo.btVector3(force.x, force.y, force.z));
-    body.activate();
-  }
-
-  applyImpulse (mesh, impulse = new Vector3(), offset = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-
-    body.applyImpulse(
-      new Ammo.btVector3(impulse.x, impulse.y, impulse.z),
-      new Ammo.btVector3(offset.x, offset.y, offset.z)
-    );
-
-    body.activate();
-  }
-
-  applyCentralImpulse (mesh, impulse = new Vector3()) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.applyCentralImpulse(new Ammo.btVector3(impulse.x, impulse.y, impulse.z));
-    body.activate();
-  }
   /* eslint-enable new-cap */
-
-  setCcdSweptSphereRadius (mesh, radius = 0.5) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setCcdSweptSphereRadius(radius);
-    body.activate();
-  }
-
-  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setCcdMotionThreshold(threshold);
-    body.activate();
-  }
-
-  setRestitution (mesh, restitution = RESTITUTION) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setRestitution(restitution);
-    body.activate();
-  }
-
-  setFriction (mesh, friction = FRICTION) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setFriction(friction);
-    body.activate();
-  }
-
-  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
-    const body = this.getBodyByUUID(mesh.uuid).body;
-    body.setDamping(linear, angular);
-    body.activate();
-  }
 
   getBodyByCollider (collider) {
     return find(this.bodies, { body: collider });
@@ -230,7 +135,19 @@ export default class RigidBody {
     return find(this.bodies, { uuid: uuid });
   }
 
-  addCollision (body, otherUUID) {
+  getBodyInfo (collider, uuid) {
+    const body = !collider ?
+      this.getBodyByUUID(uuid) :
+      this.getBodyByCollider(collider);
+
+    return !body ? null : {
+      uuid: body.uuid,
+      type: this.type
+    };
+  }
+
+  addCollision (bodyUUID, otherUUID) {
+    const body = this.worker ? this.getBodyByUUID(bodyUUID) : bodyUUID;
     body.collisions.push(otherUUID);
   }
 
@@ -241,10 +158,12 @@ export default class RigidBody {
       const body = this.bodies[b];
 
       if (body.collisions.length) {
-        collisions.push({
-          collisions: [...body.collisions],
-          body: body
-        });
+        const collisionsInfo = { collisions: [...body.collisions] };
+
+        if (this.worker) collisionsInfo.uuid = body.uuid;
+        else collisionsInfo.body = body;
+
+        collisions.push(collisionsInfo);
       }
     }
 
@@ -276,5 +195,23 @@ export default class RigidBody {
     if (this.margin !== MARGIN) {
       shape.setMargin(this.margin);
     }
+  }
+
+  set constants (values) {
+    for (const constant in values) {
+      this[constant] = values[constant];
+    }
+  }
+
+  get constants () {
+    return {
+      angularDamping: this.angularDamping,
+      linearDamping: this.linearDamping,
+      angularFactor: this.angularFactor,
+      linearFactor: this.linearFactor,
+      restitution: this.restitution,
+      friction: this.friction,
+      margin: this.margin
+    };
   }
 }

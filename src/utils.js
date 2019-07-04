@@ -9,7 +9,7 @@ let Ammo = null;
  * @param {number} x1 - x coord index in the first buffer
  * @param {Object} b2 - second vertices buffer
  * @param {number} x2 - x coord index in the second buffer
- * @returns {bool}
+ * @returns {boolean}
  */
 const equalBufferVertices = (b1, x1, b2, x2) => {
   return Math.abs(b2[x2 + 2] - b1[x1 + 2]) < DELTA &&
@@ -17,5 +17,15 @@ const equalBufferVertices = (b1, x1, b2, x2) => {
          Math.abs(b2[x2] - b1[x1]) < DELTA;
 };
 
+/**
+ * @description - checks if the script is executing in a web worker
+ * @returns {boolean}
+ */
+const webWorker = () => {
+  return typeof WorkerGlobalScope !== 'undefined';
+};
+
+// Ammo.js export wrapper:
 AmmoJS().then(AmmoJS => { Ammo = AmmoJS; });
-export { Ammo, equalBufferVertices };
+
+export { Ammo, equalBufferVertices, webWorker };

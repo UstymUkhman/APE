@@ -2,9 +2,8 @@ import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
-import { equalBufferVertices } from '@/utils';
-import { Ammo } from '@/utils';
-import find from 'lodash/find';
+import { Ammo, equalBufferVertices } from '@/utils';
+import findIndex from 'lodash/findIndex';
 
 import {
   POWER16,
@@ -135,6 +134,11 @@ export default class SoftBodies {
     });
   }
 
+  getBodyByUUID (uuid) {
+    const index = findIndex(this.bodies, { uuid: uuid });
+    return index > -1 ? this.bodies[index] : null;
+  }
+
   update () {
     const update = [];
 
@@ -199,20 +203,19 @@ export default class SoftBodies {
   }
 
   remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
+    const index = findIndex(this.bodies, { uuid: props.uuid });
 
-    if (mesh === -1) return false;
+    if (index > -1) {
+      const mesh = this.bodies[index];
 
-    this.world.removeSoftBody(mesh.body);
-    Ammo.destroy(mesh.body);
-    delete mesh.geometry;
+      this.world.removeSoftBody(mesh.body);
+      Ammo.destroy(mesh.body);
+      delete mesh.geometry;
 
-    this.bodies.splice(index, 1);
-    return true;
-  }
+      this.bodies.splice(index, 1);
+      return true;
+    }
 
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    return false;
   }
 }

@@ -14,6 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // new ConvexBreak();
   // new SoftBodies();
   // new ClothBody();
+  // new Break();
 
   // switch (demo) {
   //   case 'collided_bodies':

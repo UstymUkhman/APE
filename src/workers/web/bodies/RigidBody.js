@@ -1,4 +1,3 @@
-import { Vector3 } from 'three/src/math/Vector3';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
 
@@ -8,8 +7,7 @@ import {
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
-  ANGULAR_DAMPING,
-  CCD_MOTION_THRESHOLD
+  ANGULAR_DAMPING
 } from '@/constants';
 
 export default class RigidBody {
@@ -51,179 +49,25 @@ export default class RigidBody {
     });
   }
 
-  setLinearFactor (mesh, factor = ONE_VECTOR3) {
-    this.worker.postMessage({
-      action: 'setLinearFactor',
-
-      params: {
-        factor: factor,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setAngularFactor (mesh, factor = ONE_VECTOR3) {
-    this.worker.postMessage({
-      action: 'setAngularFactor',
-
-      params: {
-        factor: factor,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setLinearVelocity (mesh, velocity = new Vector3()) {
-    this.worker.postMessage({
-      action: 'setLinearVelocity',
-
-      params: {
-        velocity: velocity,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setAngularVelocity (mesh, velocity = new Vector3()) {
-    this.worker.postMessage({
-      action: 'setAngularVelocity',
-
-      params: {
-        velocity: velocity,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  applyTorque (mesh, torque = new Vector3()) {
-    this.worker.postMessage({
-      action: 'applyTorque',
-
-      params: {
-        torque: torque,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  applyForce (mesh, force = new Vector3(), offset = new Vector3()) {
-    this.worker.postMessage({
-      action: 'applyForce',
-
-      params: {
-        force: force,
-        offset: offset,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  applyCentralForce (mesh, force = new Vector3()) {
-    this.worker.postMessage({
-      action: 'applyCentralForce',
-
-      params: {
-        force: force,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  applyImpulse (mesh, impulse = new Vector3(), offset = new Vector3()) {
-    this.worker.postMessage({
-      action: 'applyImpulse',
-
-      params: {
-        impulse: impulse,
-        offset: offset,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  applyCentralImpulse (mesh, impulse = new Vector3()) {
-    this.worker.postMessage({
-      action: 'applyCentralImpulse',
-
-      params: {
-        impulse: impulse,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setCcdSweptSphereRadius (mesh, radius = 0.5) {
-    this.worker.postMessage({
-      action: 'setCcdSweptSphereRadius',
-
-      params: {
-        radius: radius,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
-    this.worker.postMessage({
-      action: 'setCcdMotionThreshold',
-
-      params: {
-        threshold: threshold,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setRestitution (mesh, restitution = RESTITUTION) {
-    this.worker.postMessage({
-      action: 'setRestitution',
-
-      params: {
-        restitution: restitution,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setFriction (mesh, friction = FRICTION) {
-    this.worker.postMessage({
-      action: 'setFriction',
-
-      params: {
-        friction: friction,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
-  setDamping (mesh, linear = LINEAR_DAMPING, angular = ANGULAR_DAMPING) {
-    this.worker.postMessage({
-      action: 'setDamping',
-
-      params: {
-        linear: linear,
-        angular: angular,
-        uuid: mesh.uuid,
-        type: this.type
-      }
-    });
-  }
-
   getBody (uuid) {
     return find(this.bodies, { uuid });
+  }
+
+  remove (mesh) {
+    const body = this.bodies.indexOf(mesh);
+
+    if (body !== -1) {
+      this.bodies.splice(body, 1);
+
+      this.worker.postMessage({
+        action: 'removeBody',
+
+        params: {
+          uuid: mesh.uuid,
+          type: this.type
+        }
+      });
+    }
   }
 
   _updateConstants () {

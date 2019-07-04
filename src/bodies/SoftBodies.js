@@ -2,10 +2,8 @@ import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
-import { equalBufferVertices } from '@/utils';
+import { Ammo, equalBufferVertices } from '@/utils';
 import findIndex from 'lodash/findIndex';
-import { Ammo } from '@/utils';
-import find from 'lodash/find';
 
 import {
   POWER16,
@@ -137,7 +135,8 @@ export default class SoftBodies {
   }
 
   getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    const index = findIndex(this.bodies, { uuid: uuid });
+    return index > -1 ? this.bodies[index] : null;
   }
 
   update () {

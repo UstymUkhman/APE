@@ -1,5 +1,6 @@
+import RigidBody from '@/bodies/RigidBody';
 import { ZERO_MASS } from '@/constants';
-import RigidBody from './RigidBody';
+import { Ammo } from '@/utils';
 
 export default class DynamicBodies extends RigidBody {
   constructor (world) {
@@ -67,6 +68,102 @@ export default class DynamicBodies extends RigidBody {
     const body = this.createRigidBody(shape, mass, position, quaternion);
     this.bodies.push({uuid: uuid, body: body, collisions: []});
     this.world.addRigidBody(body);
+  }
+
+  /* eslint-disable new-cap */
+  setLinearFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+    body.activate();
+  }
+
+  setAngularFactor (uuid, factor) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularFactor(new Ammo.btVector3(factor.x, factor.y, factor.z));
+    body.activate();
+  }
+
+  setLinearVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setLinearVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
+
+  setAngularVelocity (uuid, velocity) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setAngularVelocity(new Ammo.btVector3(velocity.x, velocity.y, velocity.z));
+    body.activate();
+  }
+
+  applyTorque (uuid, torque) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyTorque(new Ammo.btVector3(torque.x, torque.y, torque.z));
+    body.activate();
+  }
+
+  applyForce (uuid, force, offset) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.applyForce(
+      new Ammo.btVector3(force.x, force.y, force.z),
+      new Ammo.btVector3(offset.x, offset.y, offset.z)
+    );
+
+    body.activate();
+  }
+
+  applyCentralForce (uuid, force) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyCentralForce(new Ammo.btVector3(force.x, force.y, force.z));
+    body.activate();
+  }
+
+  applyImpulse (uuid, impulse, offset) {
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.applyImpulse(
+      new Ammo.btVector3(impulse.x, impulse.y, impulse.z),
+      new Ammo.btVector3(offset.x, offset.y, offset.z)
+    );
+
+    body.activate();
+  }
+
+  applyCentralImpulse (uuid, impulse) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.applyCentralImpulse(new Ammo.btVector3(impulse.x, impulse.y, impulse.z));
+    body.activate();
+  }
+  /* eslint-enable new-cap */
+
+  setCcdSweptSphereRadius (uuid, radius) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setCcdSweptSphereRadius(radius);
+    body.activate();
+  }
+
+  setCcdMotionThreshold (uuid, threshold) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setCcdMotionThreshold(threshold);
+    body.activate();
+  }
+
+  setRestitution (uuid, restitution) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setRestitution(restitution);
+    body.activate();
+  }
+
+  setFriction (uuid, friction) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setFriction(friction);
+    body.activate();
+  }
+
+  setDamping (uuid, linear, angular) {
+    const body = this.getBodyByUUID(uuid).body;
+    body.setDamping(linear, angular);
+    body.activate();
   }
 
   activateAll () {

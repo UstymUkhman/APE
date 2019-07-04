@@ -48,21 +48,4 @@ export default class StaticBodies extends RigidBody {
   addSphere (mesh) {
     super.addBody('Sphere', mesh);
   }
-
-  remove (mesh) {
-    const body = this.bodies.indexOf(mesh);
-
-    if (body !== -1) {
-      this.bodies.splice(body, 1);
-
-      this.worker.postMessage({
-        action: 'removeBody',
-
-        params: {
-          uuid: mesh.uuid,
-          type: 'static'
-        }
-      });
-    }
-  }
 }
