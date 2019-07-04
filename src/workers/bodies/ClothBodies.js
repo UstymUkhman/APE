@@ -1,5 +1,5 @@
+import findIndex from 'lodash/findIndex';
 import { Ammo } from '@/utils';
-import find from 'lodash/find';
 
 import {
   FRICTION,
@@ -77,7 +77,7 @@ export default class ClothBodies {
   }
 
   append (props) {
-    const body = find(this.bodies, { uuid: props.uuid }).body;
+    const body = this.getBodyByUUID(props.uuid).body;
     body.appendAnchor(props.point, props.target, false, props.influence);
   }
 
@@ -89,6 +89,11 @@ export default class ClothBodies {
       this.world.addSoftBody(collider.body);
       collider.body.activate();
     }
+  }
+
+  getBodyByUUID (uuid) {
+    const index = findIndex(this.bodies, { uuid: uuid });
+    return index > -1 ? this.bodies[index] : null;
   }
 
   update () {
@@ -124,19 +129,18 @@ export default class ClothBodies {
   }
 
   remove (props) {
-    const mesh = find(this.bodies, { uuid: props.uuid });
-    const index = this.bodies.indexOf(mesh);
+    const index = findIndex(this.bodies, { uuid: props.uuid });
 
-    if (mesh === -1) return false;
+    if (index > -1) {
+      const mesh = this.bodies[index];
 
-    this.world.removeSoftBody(mesh.body);
-    Ammo.destroy(mesh.body);
+      this.world.removeSoftBody(mesh.body);
+      Ammo.destroy(mesh.body);
 
-    this.bodies.splice(index, 1);
-    return true;
-  }
+      this.bodies.splice(index, 1);
+      return true;
+    }
 
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    return false;
   }
 }

@@ -2,7 +2,7 @@ import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 
-import { Ammo, equalBufferVertices } from '@/utils';
+import { Ammo, equalBufferVertices, webWorker } from '@/utils';
 import findIndex from 'lodash/findIndex';
 
 import {
@@ -21,6 +21,7 @@ export default class SoftBodies {
   constructor (world) {
     this.bodies = [];
     this.world = world;
+    this.worker = webWorker();
 
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
@@ -98,7 +99,7 @@ export default class SoftBodies {
     return bufferGeometry;
   }
 
-  addBody (mesh, mass, pressure) {
+  addBody (mesh, mass = 0, pressure = 0) {
     this._initGeometry(mesh.geometry);
 
     const body = this.helpers.CreateFromTriMesh(
@@ -115,16 +116,16 @@ export default class SoftBodies {
     bodyConfig.set_piterations(this.piterations);
     bodyConfig.set_collisions(this.collisions);
 
+    bodyConfig.set_kPR(pressure || mesh.pressure);
     bodyConfig.set_kDF(this.friction);
     bodyConfig.set_kDP(this.damping);
-    bodyConfig.set_kPR(pressure);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.get_m_materials().at(0).set_m_kLST(this.stiffness);
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass, false);
+    body.setTotalMass(mass || mesh.mass, false);
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
@@ -140,6 +141,8 @@ export default class SoftBodies {
   }
 
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
       const geometry = this.bodies[i].geometry;
       const nodes = this.bodies[i].body.get_m_nodes();
@@ -176,8 +179,24 @@ export default class SoftBodies {
         }
       }
 
-      geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.normal.needsUpdate = true;
+      if (this.worker) {
+        update.push({
+          uuid: this.bodies[i].uuid,
+          positions: positions,
+          normals: normals
+        });
+      } else {
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.normal.needsUpdate = true;
+      }
+    }
+
+    if (this.worker) {
+      self.postMessage({
+        action: 'updateBodies',
+        bodies: update,
+        type: 'soft'
+      });
     }
   }
 

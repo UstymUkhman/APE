@@ -13,6 +13,7 @@ import { Mesh } from 'three/src/objects/Mesh';
 
 import PhysicsWorld from 'workers/PhysicsWorld';
 import Playground from 'demos/Playground';
+// import RAF from 'demos/RAF';
 
 export default class SoftBodies extends Playground {
   constructor () {
@@ -21,6 +22,9 @@ export default class SoftBodies extends Playground {
     this.initPhysics();
     this.createObjects();
     this.createSoftObjects();
+
+    // this._update = this.update.bind(this);
+    // RAF.add(this._update);
   }
 
   initPhysics () {
@@ -178,5 +182,9 @@ export default class SoftBodies extends Playground {
 
     this.scene.add(mesh);
     return mesh;
+  }
+
+  update () {
+    this.physics.update();
   }
 }

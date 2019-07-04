@@ -71831,10 +71831,6 @@ var _findIndex2 = _interopRequireDefault(_findIndex);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
-var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
-
-var _find2 = _interopRequireDefault(_find);
-
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -71925,7 +71921,8 @@ var ClothBodies = function () {
   }, {
     key: 'getBodyByUUID',
     value: function getBodyByUUID(uuid) {
-      return (0, _find2.default)(this.bodies, { uuid: uuid });
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
+      return index > -1 ? this.bodies[index] : null;
     }
   }, {
     key: 'update',
@@ -72479,10 +72476,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
-var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
-
-var _findIndex2 = _interopRequireDefault(_findIndex);
-
 var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
 var _find2 = _interopRequireDefault(_find);
@@ -72678,12 +72671,13 @@ var RigidBody = function () {
   }, {
     key: 'remove',
     value: function remove(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
+      var body = this.getBodyByUUID(mesh.uuid);
 
-      if (index > -1) {
-        var body = this.bodies[index].body;
-        this.world.removeRigidBody(body);
-        _utils.Ammo.destroy(body);
+      if (body) {
+        var index = this.bodies.indexOf(body);
+
+        this.world.removeRigidBody(body.body);
+        _utils.Ammo.destroy(body.body);
 
         this.bodies.splice(index, 1);
         return true;
@@ -72749,10 +72743,6 @@ var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lod
 var _findIndex2 = _interopRequireDefault(_findIndex);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
-
-var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
-
-var _find2 = _interopRequireDefault(_find);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -72830,7 +72820,8 @@ var RopeBodies = function () {
   }, {
     key: 'getBodyByUUID',
     value: function getBodyByUUID(uuid) {
-      return (0, _find2.default)(this.bodies, { uuid: uuid });
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
+      return index > -1 ? this.bodies[index] : null;
     }
   }, {
     key: 'update',
@@ -72933,6 +72924,7 @@ var SoftBodies = function () {
 
     this.bodies = [];
     this.world = world;
+    this.worker = (0, _utils.webWorker)();
 
     this.friction = _constants.FRICTION;
     this.margin = _constants.SOFT_MARGIN;
@@ -73014,7 +73006,10 @@ var SoftBodies = function () {
     }
   }, {
     key: 'addBody',
-    value: function addBody(mesh, mass, pressure) {
+    value: function addBody(mesh) {
+      var mass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var pressure = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
       this._initGeometry(mesh.geometry);
 
       var body = this.helpers.CreateFromTriMesh(this.world.getWorldInfo(), mesh.geometry.ammoVertices, mesh.geometry.ammoIndices, mesh.geometry.ammoIndices.length / 3, true);
@@ -73025,16 +73020,16 @@ var SoftBodies = function () {
       bodyConfig.set_piterations(this.piterations);
       bodyConfig.set_collisions(this.collisions);
 
+      bodyConfig.set_kPR(pressure || mesh.pressure);
       bodyConfig.set_kDF(this.friction);
       bodyConfig.set_kDP(this.damping);
-      bodyConfig.set_kPR(pressure);
 
       _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
       body.get_m_materials().at(0).set_m_kLST(this.stiffness);
       body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
       body.setActivationState(_constants.DISABLE_DEACTIVATION);
-      body.setTotalMass(mass, false);
+      body.setTotalMass(mass || mesh.mass, false);
       this.world.addSoftBody(body, 1, -1);
 
       this.bodies.push({
@@ -73052,6 +73047,8 @@ var SoftBodies = function () {
   }, {
     key: 'update',
     value: function update() {
+      var update = [];
+
       for (var i = 0; i < this.bodies.length; i++) {
         var geometry = this.bodies[i].geometry;
         var nodes = this.bodies[i].body.get_m_nodes();
@@ -73088,8 +73085,24 @@ var SoftBodies = function () {
           }
         }
 
-        geometry.attributes.position.needsUpdate = true;
-        geometry.attributes.normal.needsUpdate = true;
+        if (this.worker) {
+          update.push({
+            uuid: this.bodies[i].uuid,
+            positions: positions,
+            normals: normals
+          });
+        } else {
+          geometry.attributes.position.needsUpdate = true;
+          geometry.attributes.normal.needsUpdate = true;
+        }
+      }
+
+      if (this.worker) {
+        self.postMessage({
+          action: 'updateBodies',
+          bodies: update,
+          type: 'soft'
+        });
       }
     }
   }, {

@@ -1,5 +1,4 @@
 import { Ammo, webWorker } from '@/utils';
-import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
 
 import {
@@ -177,12 +176,13 @@ export default class RigidBody {
   }
 
   remove (mesh) {
-    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+    const body = this.getBodyByUUID(mesh.uuid);
 
-    if (index > -1) {
-      const body = this.bodies[index].body;
-      this.world.removeRigidBody(body);
-      Ammo.destroy(body);
+    if (body) {
+      const index = this.bodies.indexOf(body);
+
+      this.world.removeRigidBody(body.body);
+      Ammo.destroy(body.body);
 
       this.bodies.splice(index, 1);
       return true;

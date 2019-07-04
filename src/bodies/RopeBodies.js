@@ -1,8 +1,6 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import findIndex from 'lodash/findIndex';
-
 import { Ammo } from '@/utils';
-import find from 'lodash/find';
 
 import {
   ROPE_MARGIN,
@@ -69,7 +67,8 @@ export default class RopeBodies {
   }
 
   getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    const index = findIndex(this.bodies, { uuid: uuid });
+    return index > -1 ? this.bodies[index] : null;
   }
 
   update () {

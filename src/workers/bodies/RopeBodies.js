@@ -1,6 +1,5 @@
 import findIndex from 'lodash/findIndex';
 import { Ammo } from '@/utils';
-import find from 'lodash/find';
 
 import {
   ROPE_MARGIN,
@@ -51,8 +50,13 @@ export default class RopeBodies {
   }
 
   append (props) {
-    const body = find(this.bodies, { uuid: props.uuid }).body;
+    const body = this.getBodyByUUID(props.uuid).body;
     body.appendAnchor(props.position, props.target, true, props.influence);
+  }
+
+  getBodyByUUID (uuid) {
+    const index = findIndex(this.bodies, { uuid: uuid });
+    return index > -1 ? this.bodies[index] : null;
   }
 
   activateAll () {
