@@ -14,6 +14,7 @@ import {
   SOFT_STIFFNESS,
   SOFT_VITERATIONS,
   SOFT_PITERATIONS,
+  CCD_MOTION_THRESHOLD,
   DISABLE_DEACTIVATION
 } from '@/constants';
 
@@ -133,6 +134,38 @@ export default class SoftBodies {
       uuid: mesh.uuid,
       body: body
     });
+  }
+
+  setCcdSweptSphereRadius (mesh, radius = 0.5) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setCcdSweptSphereRadius(radius);
+    body.activate();
+  }
+
+  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setCcdMotionThreshold(threshold);
+    body.activate();
+  }
+
+  setRestitution (mesh, restitution = this.restitution) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setRestitution(restitution);
+    body.activate();
+  }
+
+  setFriction (mesh, friction = this.friction) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
+
+    body.setFriction(friction);
+    body.activate();
   }
 
   getBodyByUUID (uuid) {

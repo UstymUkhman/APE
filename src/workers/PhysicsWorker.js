@@ -6,8 +6,8 @@ import DynamicBodies from './bodies/DynamicBodies';
 import StaticBodies from './bodies/StaticBodies';
 
 import ClothBodies from './bodies/ClothBodies';
-import SoftBodies from '@/bodies/SoftBodies';
 import RopeBodies from './bodies/RopeBodies';
+import SoftBodies from '@/bodies/SoftBodies';
 
 import assign from 'lodash/assign';
 import { Ammo } from '@/utils';

@@ -3,16 +3,16 @@
 // import Break from 'demos/collisions/Break';
 
 // import ClothBody from 'demos/constraints/ClothBody';
-import RigidBodies from 'demos/bodies/RigidBodies';
-// import SoftBodies from 'demos/bodies/SoftBodies';
+// import RigidBodies from 'demos/bodies/RigidBodies';
+import SoftBodies from 'demos/bodies/SoftBodies';
 
 window.addEventListener('DOMContentLoaded', () => {
   // const demo = (window.location.hash || '#rigid_bodies').slice(1);
 
   /* eslint-disable no-new */
-  new RigidBodies();
+  // new RigidBodies();
   // new ConvexBreak();
-  // new SoftBodies();
+  new SoftBodies();
   // new ClothBody();
   // new Break();
 

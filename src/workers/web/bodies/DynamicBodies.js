@@ -51,9 +51,9 @@ export default class DynamicBodies extends RigidBody {
       action: 'setLinearFactor',
 
       params: {
-        factor: factor,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        factor: factor
       }
     });
   }
@@ -63,9 +63,9 @@ export default class DynamicBodies extends RigidBody {
       action: 'setAngularFactor',
 
       params: {
-        factor: factor,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        factor: factor
       }
     });
   }
@@ -99,9 +99,9 @@ export default class DynamicBodies extends RigidBody {
       action: 'applyTorque',
 
       params: {
-        torque: torque,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        torque: torque
       }
     });
   }
@@ -111,10 +111,10 @@ export default class DynamicBodies extends RigidBody {
       action: 'applyForce',
 
       params: {
-        force: force,
-        offset: offset,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        offset: offset,
+        force: force
       }
     });
   }
@@ -124,9 +124,9 @@ export default class DynamicBodies extends RigidBody {
       action: 'applyCentralForce',
 
       params: {
-        force: force,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        force: force
       }
     });
   }
@@ -137,9 +137,9 @@ export default class DynamicBodies extends RigidBody {
 
       params: {
         impulse: impulse,
-        offset: offset,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        offset: offset
       }
     });
   }
@@ -161,9 +161,9 @@ export default class DynamicBodies extends RigidBody {
       action: 'setCcdSweptSphereRadius',
 
       params: {
-        radius: radius,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        radius: radius
       }
     });
   }
@@ -209,10 +209,10 @@ export default class DynamicBodies extends RigidBody {
       action: 'setDamping',
 
       params: {
-        linear: linear,
         angular: angular,
         uuid: mesh.uuid,
-        type: this.type
+        type: this.type,
+        linear: linear
       }
     });
   }

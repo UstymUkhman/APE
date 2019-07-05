@@ -73039,6 +73039,50 @@ var SoftBodies = function () {
       });
     }
   }, {
+    key: 'setCcdSweptSphereRadius',
+    value: function setCcdSweptSphereRadius(mesh) {
+      var radius = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.5;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setCcdSweptSphereRadius(radius);
+      body.activate();
+    }
+  }, {
+    key: 'setCcdMotionThreshold',
+    value: function setCcdMotionThreshold(mesh) {
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CCD_MOTION_THRESHOLD;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setCcdMotionThreshold(threshold);
+      body.activate();
+    }
+  }, {
+    key: 'setRestitution',
+    value: function setRestitution(mesh) {
+      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.restitution;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setRestitution(restitution);
+      body.activate();
+    }
+  }, {
+    key: 'setFriction',
+    value: function setFriction(mesh) {
+      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.friction;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setFriction(friction);
+      body.activate();
+    }
+  }, {
     key: 'getBodyByUUID',
     value: function getBodyByUUID(uuid) {
       var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
@@ -74020,10 +74064,10 @@ module.exports = exports.default;
 
 /***/ }),
 
-/***/ "./src/demos/bodies/RigidBodies.js":
-/*!*****************************************!*\
-  !*** ./src/demos/bodies/RigidBodies.js ***!
-  \*****************************************/
+/***/ "./src/demos/bodies/SoftBodies.js":
+/*!****************************************!*\
+  !*** ./src/demos/bodies/SoftBodies.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -74031,14 +74075,28 @@ module.exports = exports.default;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _SphereGeometry = __webpack_require__(/*! three/src/geometries/SphereGeometry */ "./node_modules/three/src/geometries/SphereGeometry.js");
+
 var _MeshPhongMaterial = __webpack_require__(/*! three/src/materials/MeshPhongMaterial */ "./node_modules/three/src/materials/MeshPhongMaterial.js");
 
+var _LineBasicMaterial = __webpack_require__(/*! three/src/materials/LineBasicMaterial */ "./node_modules/three/src/materials/LineBasicMaterial.js");
+
+var _BufferAttribute = __webpack_require__(/*! three/src/core/BufferAttribute */ "./node_modules/three/src/core/BufferAttribute.js");
+
 var _BoxGeometry = __webpack_require__(/*! three/src/geometries/BoxGeometry */ "./node_modules/three/src/geometries/BoxGeometry.js");
+
+var _BufferGeometry = __webpack_require__(/*! three/src/core/BufferGeometry */ "./node_modules/three/src/core/BufferGeometry.js");
+
+var _LineSegments = __webpack_require__(/*! three/src/objects/LineSegments */ "./node_modules/three/src/objects/LineSegments.js");
+
+var _Quaternion = __webpack_require__(/*! three/src/math/Quaternion */ "./node_modules/three/src/math/Quaternion.js");
+
+var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
 var _Mesh = __webpack_require__(/*! three/src/objects/Mesh */ "./node_modules/three/src/objects/Mesh.js");
 
@@ -74062,94 +74120,191 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var RigidBodies = function (_Playground) {
-  _inherits(RigidBodies, _Playground);
+// import PhysicsWorld from 'workers/PhysicsWorld';
 
-  function RigidBodies() {
-    _classCallCheck(this, RigidBodies);
 
-    var _this = _possibleConstructorReturn(this, (RigidBodies.__proto__ || Object.getPrototypeOf(RigidBodies)).call(this));
+var SoftBodies = function (_Playground) {
+    _inherits(SoftBodies, _Playground);
 
-    _this.initPhysics();
-    _this.createDynamicBodies();
-    _this.createKinematicBodies();
+    function SoftBodies() {
+        _classCallCheck(this, SoftBodies);
 
-    _this._update = _this.update.bind(_this);
-    _RAF2.default.add(_this._update);
-    return _this;
-  }
+        var _this = _possibleConstructorReturn(this, (SoftBodies.__proto__ || Object.getPrototypeOf(SoftBodies)).call(this));
 
-  _createClass(RigidBodies, [{
-    key: 'initPhysics',
-    value: function initPhysics() {
-      this.physics = new _PhysicsWorld2.default();
-      this.physics.static.friction = 5.0;
-      this.physics.static.addBox(this.ground);
+        _this.initPhysics();
+        _this.createObjects();
+        _this.createSoftObjects();
+
+        _this._update = _this.update.bind(_this);
+        _RAF2.default.add(_this._update);
+        return _this;
     }
-  }, {
-    key: 'createDynamicBodies',
-    value: function createDynamicBodies() {
-      var dynamicBox = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(5, 5, 5), new _MeshPhongMaterial.MeshPhongMaterial({
-        color: 0x222222
-      }));
 
-      dynamicBox.castShadow = true;
-      dynamicBox.position.y = 15;
+    _createClass(SoftBodies, [{
+        key: 'initPhysics',
+        value: function initPhysics() {
+            this.physics = new _PhysicsWorld2.default(true);
+            this.physics.static.friction = 5.0;
+            this.physics.static.addBox(this.ground);
+        }
+    }, {
+        key: 'createObjects',
+        value: function createObjects() {
+            var _this2 = this;
 
-      this.physics.dynamic.addBox(dynamicBox, 10);
-      this.scene.add(dynamicBox);
-    }
-  }, {
-    key: 'createKinematicBodies',
-    value: function createKinematicBodies() {
-      this.kinematicBox = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(5, 5, 5), new _MeshPhongMaterial.MeshPhongMaterial({
-        color: 0x222222
-      }));
+            var material = new _MeshPhongMaterial.MeshPhongMaterial({ color: 0x606060 });
+            var ropePosition = new _Vector.Vector3(-3, 2, 0);
+            var position = new _Vector.Vector3(-3, 0.1, -5.5);
 
-      this.kinematicBox.castShadow = true;
-      this.kinematicBox.position.x = 2.5;
-      this.kinematicBox.position.y = 5;
+            var pylonHeight = 10;
+            var armLength = 5.5;
 
-      this.physics.kinematic.addBox(this.kinematicBox);
-      this.scene.add(this.kinematicBox);
+            var base = this.createMesh(1, 0.2, 1, 0, position, material);
+            position.set(ropePosition.x, 0.5 * pylonHeight, ropePosition.z - armLength);
 
-      this._onKeyDown = this.onKeyDown.bind(this);
-      document.addEventListener('keydown', this._onKeyDown);
-    }
-  }, {
-    key: 'onKeyDown',
-    value: function onKeyDown(event) {
-      var code = event.keyCode;
+            base.receiveShadow = true;
+            base.castShadow = true;
 
-      switch (code) {
-        case 87:
-          this.kinematicBox.position.y += 1;
-          break;
+            var pylon = this.createMesh(0.5, pylonHeight, 0.5, 0, position, material);
+            position.set(ropePosition.x, pylonHeight, ropePosition.z - 0.5 * armLength);
 
-        case 83:
-          this.kinematicBox.position.y -= 1;
-          break;
+            pylon.receiveShadow = true;
+            pylon.castShadow = true;
 
-        case 65:
-          this.kinematicBox.position.x += 1;
-          break;
+            this.arm = this.createMesh(0.5, 0.5, armLength + 0.5, 2.0, position, material);
 
-        case 68:
-          this.kinematicBox.position.x -= 1;
-          break;
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      this.physics.update();
-    }
-  }]);
+            this.arm.receiveShadow = true;
+            this.arm.castShadow = true;
 
-  return RigidBodies;
+            var armPivot = { x: 0.0, y: -0.2, z: -armLength * 0.5 };
+            var pinPivot = { x: 0.0, y: pylonHeight * 0.5, z: 0.0 };
+            var axis = { x: 0, y: 1, z: 0 };
+
+            var hingeIndex = this.physics.hinge.addBodies(pylon, this.arm, axis, pinPivot, armPivot);
+
+            var quat = new _Quaternion.Quaternion(0, 0, 0, 1);
+            var pos = new _Vector.Vector3(0, 0, 0);
+
+            var ballRadius = 0.6;
+            var ballMass = 1.2;
+
+            var ball = new _Mesh.Mesh(new _SphereGeometry.SphereGeometry(ballRadius, 20, 20), new _MeshPhongMaterial.MeshPhongMaterial({ color: 0x202020 }));
+            pos.set(-3, 2, 0);
+            quat.set(0, 0, 0, 1);
+            ball.position.set(pos.x, pos.y, pos.z);
+            ball.quaternion.set(quat.x, quat.y, quat.z, quat.w);
+            ball.receiveShadow = true;
+            ball.castShadow = true;
+
+            this.physics.dynamic.addSphere(ball, ballMass);
+            // this.physics.kinematic.addSphere(ball, ballMass);
+            this.scene.add(ball);
+
+            var ropePos = ball.position.clone();
+            var ropeNumSegments = 20;
+            var ropeLength = 8;
+
+            var ropeMaterial = new _LineBasicMaterial.LineBasicMaterial({ color: 0x000000 });
+            var segmentLength = ropeLength / ropeNumSegments;
+            var ropeGeometry = new _BufferGeometry.BufferGeometry();
+            var ropePositions = [];
+            var ropeIndices = [];
+
+            for (var i = 0; i < ropeNumSegments + 1; i++) {
+                ropePositions.push(ropePos.x, ropePos.y + i * segmentLength, ropePos.z);
+            }
+
+            for (var _i = 0; _i < ropeNumSegments;) {
+                ropeIndices.push(_i, ++_i);
+            }
+
+            ropeGeometry.setIndex(new _BufferAttribute.BufferAttribute(new Uint16Array(ropeIndices), 1));
+            ropeGeometry.addAttribute('position', new _BufferAttribute.BufferAttribute(new Float32Array(ropePositions), 3));
+            ropeGeometry.computeBoundingSphere();
+
+            var rope = new _LineSegments.LineSegments(ropeGeometry, ropeMaterial);
+            rope.receiveShadow = true;
+            rope.castShadow = true;
+            this.scene.add(rope);
+
+            position = ropePos.clone();
+            position.y += 0.1;
+
+            this.physics.rope.addBody(rope, ropeLength, 0.5, position);
+
+            this.physics.rope.append(rope, this.arm);
+            this.physics.rope.append(rope, ball, false);
+
+            window.addEventListener('keydown', function (event) {
+                switch (event.keyCode) {
+                    case 81:
+                        _this2.physics.hinge.update(hingeIndex, 1);
+                        // ball.position.z += 1;
+                        break;
+
+                    case 65:
+                        _this2.physics.hinge.update(hingeIndex, -1);
+                        // ball.position.z -= 1;
+                        break;
+                }
+            }, false);
+
+            window.addEventListener('keyup', function () {
+                _this2.physics.hinge.update(hingeIndex, 0);
+            }, false);
+        }
+    }, {
+        key: 'createSoftObjects',
+        value: function createSoftObjects() {
+            var sphereGeometry = new _SphereGeometry.SphereBufferGeometry(3, 20, 20);
+            var boxGeometry = new _BufferGeometry.BufferGeometry().fromGeometry(new _BoxGeometry.BoxGeometry(2, 2, 2, 4, 4, 20));
+
+            sphereGeometry.translate(2.5, 15, 0);
+            boxGeometry.translate(5, 10, 0);
+
+            var softSphere = new _Mesh.Mesh(sphereGeometry, new _MeshPhongMaterial.MeshPhongMaterial({
+                color: 0x222222
+            }));
+
+            var softBox = new _Mesh.Mesh(boxGeometry, new _MeshPhongMaterial.MeshPhongMaterial({
+                color: 0x222222
+            }));
+
+            this.physics.soft.addBody(softSphere, 10, 80);
+            this.physics.soft.addBody(softBox, 10, 100);
+
+            softSphere.castShadow = true;
+            softBox.castShadow = true;
+
+            this.scene.add(softSphere);
+            this.scene.add(softBox);
+        }
+    }, {
+        key: 'createMesh',
+        value: function createMesh(sx, sy, sz, mass, pos, material) {
+            var mesh = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+            mesh.position.set(pos.x, pos.y, pos.z);
+
+            if (mass) {
+                this.physics.dynamic.addBox(mesh, mass);
+            } else {
+                this.physics.static.addBox(mesh);
+            }
+
+            this.scene.add(mesh);
+            return mesh;
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+            this.physics.update();
+        }
+    }]);
+
+    return SoftBodies;
 }(_Playground3.default);
 
-exports.default = RigidBodies;
+exports.default = SoftBodies;
 module.exports = exports.default;
 
 /***/ }),
@@ -74164,21 +74319,19 @@ module.exports = exports.default;
 "use strict";
 
 
-var _RigidBodies = __webpack_require__(/*! demos/bodies/RigidBodies */ "./src/demos/bodies/RigidBodies.js");
+var _SoftBodies = __webpack_require__(/*! demos/bodies/SoftBodies */ "./src/demos/bodies/SoftBodies.js");
 
-var _RigidBodies2 = _interopRequireDefault(_RigidBodies);
+var _SoftBodies2 = _interopRequireDefault(_SoftBodies);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import SoftBodies from 'demos/bodies/SoftBodies';
 
 window.addEventListener('DOMContentLoaded', function () {
   // const demo = (window.location.hash || '#rigid_bodies').slice(1);
 
   /* eslint-disable no-new */
-  new _RigidBodies2.default();
+  // new RigidBodies();
   // new ConvexBreak();
-  // new SoftBodies();
+  new _SoftBodies2.default();
   // new ClothBody();
   // new Break();
 
@@ -74213,6 +74366,7 @@ window.addEventListener('DOMContentLoaded', function () {
 // import Break from 'demos/collisions/Break';
 
 // import ClothBody from 'demos/constraints/ClothBody';
+// import RigidBodies from 'demos/bodies/RigidBodies';
 
 /***/ }),
 

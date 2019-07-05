@@ -1,11 +1,13 @@
 import {
   FRICTION,
   STIFFNESS,
+  RESTITUTION,
   VITERATIONS,
   PITERATIONS,
   SOFT_MARGIN,
   SOFT_DAMPING,
-  SOFT_COLLISION
+  SOFT_COLLISION,
+  CCD_MOTION_THRESHOLD
 } from '@/constants';
 
 export default class SoftBodies {
@@ -41,6 +43,54 @@ export default class SoftBodies {
     });
 
     this.bodies.push(mesh);
+  }
+
+  setCcdSweptSphereRadius (mesh, radius = 0.5) {
+    this.worker.postMessage({
+      action: 'setCcdSweptSphereRadius',
+
+      params: {
+        uuid: mesh.uuid,
+        radius: radius,
+        type: 'soft'
+      }
+    });
+  }
+
+  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
+    this.worker.postMessage({
+      action: 'setCcdMotionThreshold',
+
+      params: {
+        threshold: threshold,
+        uuid: mesh.uuid,
+        type: 'soft'
+      }
+    });
+  }
+
+  setRestitution (mesh, restitution = RESTITUTION) {
+    this.worker.postMessage({
+      action: 'setRestitution',
+
+      params: {
+        restitution: restitution,
+        uuid: mesh.uuid,
+        type: 'soft'
+      }
+    });
+  }
+
+  setFriction (mesh, friction = this.constants.friction) {
+    this.worker.postMessage({
+      action: 'setFriction',
+
+      params: {
+        friction: friction,
+        uuid: mesh.uuid,
+        type: 'soft'
+      }
+    });
   }
 
   update (bodies) {
