@@ -8,6 +8,7 @@ import findIndex from 'lodash/findIndex';
 import {
   POWER16,
   FRICTION,
+  ACTIVE_TAG,
   SOFT_MARGIN,
   SOFT_DAMPING,
   SOFT_COLLISION,
@@ -178,50 +179,10 @@ export default class SoftBodies {
     const update = [];
 
     for (let i = 0; i < this.bodies.length; i++) {
-      const geometry = this.bodies[i].geometry;
-      const nodes = this.bodies[i].body.get_m_nodes();
-
-      const normals = geometry.attributes.normal.array;
-      const association = geometry.ammoIndexAssociation;
-      const positions = geometry.attributes.position.array;
-
-      for (let j = 0; j < association.length; j++) {
-        const node = nodes.at(j);
-        const nodeNormal = node.get_m_n();
-        const nodePosition = node.get_m_x();
-
-        const nX = nodeNormal.x();
-        const nY = nodeNormal.y();
-        const nZ = nodeNormal.z();
-
-        const pX = nodePosition.x();
-        const pY = nodePosition.y();
-        const pZ = nodePosition.z();
-
-        for (let k = 0; k < association[j].length; k++) {
-          const ivX = association[j][k];
-          const ivY = ivX + 1;
-          const ivZ = ivY + 1;
-
-          positions[ivX] = pX;
-          positions[ivY] = pY;
-          positions[ivZ] = pZ;
-
-          normals[ivX] = nX;
-          normals[ivY] = nY;
-          normals[ivZ] = nZ;
-        }
-      }
+      const body = this.updateBody(i);
 
       if (this.worker) {
-        update.push({
-          uuid: this.bodies[i].uuid,
-          positions: positions,
-          normals: normals
-        });
-      } else {
-        geometry.attributes.position.needsUpdate = true;
-        geometry.attributes.normal.needsUpdate = true;
+        update.push(body);
       }
     }
 
@@ -234,6 +195,56 @@ export default class SoftBodies {
     }
   }
 
+  updateBody (index) {
+    const geometry = this.bodies[index].geometry;
+    const nodes = this.bodies[index].body.get_m_nodes();
+
+    const normals = geometry.attributes.normal.array;
+    const association = geometry.ammoIndexAssociation;
+    const positions = geometry.attributes.position.array;
+
+    for (let j = 0; j < association.length; j++) {
+      const node = nodes.at(j);
+      const nodeNormal = node.get_m_n();
+      const nodePosition = node.get_m_x();
+
+      const nX = nodeNormal.x();
+      const nY = nodeNormal.y();
+      const nZ = nodeNormal.z();
+
+      const pX = nodePosition.x();
+      const pY = nodePosition.y();
+      const pZ = nodePosition.z();
+
+      for (let k = 0; k < association[j].length; k++) {
+        const ivX = association[j][k];
+        const ivY = ivX + 1;
+        const ivZ = ivY + 1;
+
+        positions[ivX] = pX;
+        positions[ivY] = pY;
+        positions[ivZ] = pZ;
+
+        normals[ivX] = nX;
+        normals[ivY] = nY;
+        normals[ivZ] = nZ;
+      }
+    }
+
+    if (this.worker) {
+      return {
+        uuid: this.bodies[index].uuid,
+        positions: positions,
+        normals: normals
+      };
+    }
+
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.normal.needsUpdate = true;
+
+    return null;
+  }
+
   activateAll () {
     for (let b = 0, length = this.bodies.length; b < length; b++) {
       const collider = this.bodies[b];
@@ -241,6 +252,29 @@ export default class SoftBodies {
       this.world.removeSoftBody(collider.body);
       this.world.addSoftBody(collider.body);
       collider.body.activate();
+    }
+  }
+
+  enable (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+
+    if (index > -1) {
+      const body = this.bodies[index].body;
+
+      body.forceActivationState(ACTIVE_TAG);
+      this.world.addSoftBody(body, 1, -1);
+
+      this.updateBody(index);
+      body.activate();
+    }
+  }
+
+  disable (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
     }
   }
 

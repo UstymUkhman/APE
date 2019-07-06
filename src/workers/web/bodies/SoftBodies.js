@@ -110,6 +110,28 @@ export default class SoftBodies {
     }
   }
 
+  enable (mesh) {
+    this.worker.postMessage({
+      action: 'enableBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: 'soft'
+      }
+    });
+  }
+
+  disable (mesh) {
+    this.worker.postMessage({
+      action: 'disableBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: 'soft'
+      }
+    });
+  }
+
   remove (mesh) {
     const body = this.bodies.indexOf(mesh);
 

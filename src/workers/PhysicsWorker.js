@@ -569,6 +569,14 @@ class PhysicsWorker {
   setDamping (props) {
     this[props.type].setDamping(props.uuid, props.linear, props.angular);
   }
+
+  enableBody (props) {
+    this[props.type].enable(props);
+  }
+
+  disableBody (props) {
+    this[props.type].disable(props);
+  }
 }
 
 self.addEventListener('message', (event) => {

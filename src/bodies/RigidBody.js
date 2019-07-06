@@ -182,6 +182,14 @@ export default class RigidBody {
     }
   }
 
+  // enable (mesh) {
+
+  // }
+
+  // disable (mesh) {
+
+  // }
+
   remove (mesh) {
     const body = this.getBodyByUUID(mesh.uuid);
 
