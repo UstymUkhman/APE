@@ -5,11 +5,13 @@ import {
   MARGIN,
   FRICTION,
   ZERO_MASS,
+  ACTIVE_TAG,
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
   ANGULAR_DAMPING,
-  DISABLE_SIMULATION
+  DISABLE_SIMULATION,
+  DISABLE_DEACTIVATION
 } from '@/constants';
 
 export default class RigidBody {
@@ -27,6 +29,11 @@ export default class RigidBody {
     this.angularFactor = ONE_VECTOR3;
     this.linearDamping = LINEAR_DAMPING;
     this.angularDamping = ANGULAR_DAMPING;
+
+    /* eslint-disable new-cap */
+    this.rotation = new Ammo.btQuaternion();
+    this.transform = new Ammo.btTransform();
+    /* eslint-enable new-cap */
   }
 
   _checkBodyMargin (shape) {
@@ -182,13 +189,38 @@ export default class RigidBody {
     }
   }
 
-  // enable (mesh) {
+  enable (mesh) {
+    const kinematic = this.type === 'kinematic';
+    const body = this.getBodyByUUID(mesh.uuid);
 
-  // }
+    if (body) {
+      body.body.forceActivationState(kinematic ? DISABLE_DEACTIVATION : ACTIVE_TAG);
+      this.world.addRigidBody(body.body);
 
-  // disable (mesh) {
+      this.rotation.setValue(mesh.quaternion._x, mesh.quaternion._y, mesh.quaternion._z, mesh.quaternion._w);
+      this.transform.getOrigin().setValue(mesh.position.x, mesh.position.y, mesh.position.z);
+      this.transform.setRotation(this.rotation);
 
-  // }
+      if (kinematic) {
+        const motionState = body.body.getMotionState();
+
+        if (motionState) {
+          motionState.setWorldTransform(this.transform);
+        }
+      }
+
+      body.body.activate();
+    }
+  }
+
+  disable (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeRigidBody(body.body);
+    }
+  }
 
   remove (mesh) {
     const body = this.getBodyByUUID(mesh.uuid);

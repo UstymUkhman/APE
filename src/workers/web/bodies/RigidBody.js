@@ -53,6 +53,30 @@ export default class RigidBody {
     return find(this.bodies, { uuid });
   }
 
+  enable (mesh) {
+    this.worker.postMessage({
+      action: 'enableBody',
+
+      params: {
+        quaternion: mesh.quaternion.clone(),
+        position: mesh.position.clone(),
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  disable (mesh) {
+    this.worker.postMessage({
+      action: 'disableBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   remove (mesh) {
     const body = this.bodies.indexOf(mesh);
 

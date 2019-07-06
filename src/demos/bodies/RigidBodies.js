@@ -3,6 +3,7 @@ import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
+// import PhysicsWorld from 'workers/PhysicsWorld';
 import PhysicsWorld from 'PhysicsWorld';
 import RAF from 'demos/RAF';
 
@@ -37,6 +38,16 @@ export default class RigidBodies extends Playground {
 
     this.physics.dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
+
+    // setTimeout(() => {
+    //   console.log('Dynamic disable');
+    //   this.physics.dynamic.disable(dynamicBox);
+    // }, 3000);
+
+    // setTimeout(() => {
+    //   console.log('Dynamic enable');
+    //   this.physics.dynamic.enable(dynamicBox);
+    // }, 10000);
   }
 
   createKinematicBodies () {
@@ -56,6 +67,21 @@ export default class RigidBodies extends Playground {
 
     this._onKeyDown = this.onKeyDown.bind(this);
     document.addEventListener('keydown', this._onKeyDown);
+
+    // setTimeout(() => {
+    //   console.log('Kinematic disable');
+    //   this.physics.kinematic.disable(this.kinematicBox);
+    // }, 3000);
+
+    // setTimeout(() => {
+    //   console.log('Kinematic enable');
+    //   this.physics.kinematic.enable(this.kinematicBox);
+    // }, 10000);
+
+    // setTimeout(() => {
+    //   console.log('Static disable');
+    //   this.physics.static.disable(this.ground);
+    // }, 5000);
   }
 
   onKeyDown (event) {
