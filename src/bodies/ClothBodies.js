@@ -8,8 +8,9 @@ import {
   CLOTH_DAMPING,
   SOFT_COLLISION,
   CLOTH_STIFFNESS,
-  CLOTH_VITERATIONS,
   CLOTH_PITERATIONS,
+  CLOTH_VITERATIONS,
+  DISABLE_SIMULATION,
   DISABLE_DEACTIVATION
 } from '@/constants';
 
@@ -24,8 +25,8 @@ export default class ClothBodies {
     this.damping = CLOTH_DAMPING;
     this.stiffness = CLOTH_STIFFNESS;
     this.collisions = SOFT_COLLISION;
-    this.viterations = CLOTH_VITERATIONS;
     this.piterations = CLOTH_PITERATIONS;
+    this.viterations = CLOTH_VITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -56,8 +57,8 @@ export default class ClothBodies {
 
     const bodyConfig = body.get_m_cfg();
 
-    bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_collisions(this.collisions);
 
     bodyConfig.set_kDF(this.friction);
@@ -129,15 +130,17 @@ export default class ClothBodies {
     }
   }
 
-  remove (body) {
-    const index = findIndex(this.bodies, { uuid: body.uuid });
+  remove (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
 
     if (index > -1) {
-      const mesh = this.bodies[index];
+      const body = this.bodies[index];
 
-      this.world.removeSoftBody(mesh.body);
-      Ammo.destroy(mesh.body);
-      delete mesh.geometry;
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
+
+      Ammo.destroy(body.body);
+      delete body.geometry;
 
       this.bodies.splice(index, 1);
       return true;

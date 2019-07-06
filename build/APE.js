@@ -71850,8 +71850,8 @@ var ClothBodies = function () {
     this.damping = _constants.CLOTH_DAMPING;
     this.stiffness = _constants.CLOTH_STIFFNESS;
     this.collisions = _constants.SOFT_COLLISION;
-    this.viterations = _constants.CLOTH_VITERATIONS;
     this.piterations = _constants.CLOTH_PITERATIONS;
+    this.viterations = _constants.CLOTH_VITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new _utils.Ammo.btSoftBodyHelpers();
@@ -71880,8 +71880,8 @@ var ClothBodies = function () {
 
       var bodyConfig = body.get_m_cfg();
 
-      bodyConfig.set_viterations(this.viterations);
       bodyConfig.set_piterations(this.piterations);
+      bodyConfig.set_viterations(this.viterations);
       bodyConfig.set_collisions(this.collisions);
 
       bodyConfig.set_kDF(this.friction);
@@ -71961,15 +71961,17 @@ var ClothBodies = function () {
     }
   }, {
     key: 'remove',
-    value: function remove(body) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: body.uuid });
+    value: function remove(mesh) {
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
 
       if (index > -1) {
-        var mesh = this.bodies[index];
+        var body = this.bodies[index];
 
-        this.world.removeSoftBody(mesh.body);
-        _utils.Ammo.destroy(mesh.body);
-        delete mesh.geometry;
+        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
+        this.world.removeSoftBody(body.body);
+
+        _utils.Ammo.destroy(body.body);
+        delete body.geometry;
 
         this.bodies.splice(index, 1);
         return true;
@@ -72507,10 +72509,17 @@ var RigidBody = function () {
     this.angularDamping = _constants.ANGULAR_DAMPING;
   }
 
-  /* eslint-disable new-cap */
-
-
   _createClass(RigidBody, [{
+    key: '_checkBodyMargin',
+    value: function _checkBodyMargin(shape) {
+      if (this.margin !== _constants.MARGIN) {
+        shape.setMargin(this.margin);
+      }
+    }
+
+    /* eslint-disable new-cap */
+
+  }, {
     key: 'createBox',
     value: function createBox(size) {
       var box = new _utils.Ammo.btBoxShape(new _utils.Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
@@ -72676,6 +72685,7 @@ var RigidBody = function () {
       if (body) {
         var index = this.bodies.indexOf(body);
 
+        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
         this.world.removeRigidBody(body.body);
         _utils.Ammo.destroy(body.body);
 
@@ -72684,13 +72694,6 @@ var RigidBody = function () {
       }
 
       return false;
-    }
-  }, {
-    key: '_checkBodyMargin',
-    value: function _checkBodyMargin(shape) {
-      if (this.margin !== _constants.MARGIN) {
-        shape.setMargin(this.margin);
-      }
     }
   }, {
     key: 'constants',
@@ -72759,8 +72762,8 @@ var RopeBodies = function () {
     this.events = events;
 
     this.margin = _constants.ROPE_MARGIN;
-    this.viterations = _constants.ROPE_VITERATIONS;
     this.piterations = _constants.ROPE_PITERATIONS;
+    this.viterations = _constants.ROPE_VITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new _utils.Ammo.btSoftBodyHelpers();
@@ -72784,8 +72787,8 @@ var RopeBodies = function () {
 
       body.setTotalMass(mass, false);
 
-      config.set_viterations(this.viterations);
       config.set_piterations(this.piterations);
+      config.set_viterations(this.viterations);
 
       _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
       body.setActivationState(_constants.DISABLE_DEACTIVATION);
@@ -72858,15 +72861,17 @@ var RopeBodies = function () {
     }
   }, {
     key: 'remove',
-    value: function remove(body) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: body.uuid });
+    value: function remove(mesh) {
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
 
       if (index > -1) {
-        var mesh = this.bodies[index];
+        var body = this.bodies[index];
 
-        this.world.removeSoftBody(mesh.body);
-        _utils.Ammo.destroy(mesh.body);
-        delete mesh.geometry;
+        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
+        this.world.removeSoftBody(body.body);
+
+        _utils.Ammo.destroy(body.body);
+        delete body.geometry;
 
         this.bodies.splice(index, 1);
         return true;
@@ -73162,15 +73167,17 @@ var SoftBodies = function () {
     }
   }, {
     key: 'remove',
-    value: function remove(body) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: body.uuid });
+    value: function remove(mesh) {
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
 
       if (index > -1) {
-        var mesh = this.bodies[index];
+        var body = this.bodies[index];
 
-        this.world.removeSoftBody(mesh.body);
-        _utils.Ammo.destroy(mesh.body);
-        delete mesh.geometry;
+        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
+        this.world.removeSoftBody(body.body);
+
+        _utils.Ammo.destroy(body.body);
+        delete body.geometry;
 
         this.bodies.splice(index, 1);
         return true;
@@ -73356,7 +73363,7 @@ module.exports = exports.default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ONE_VECTOR3 = exports.DISABLE_SIMULATION = exports.DISABLE_DEACTIVATION = exports.WANTS_DEACTIVATION = exports.ISLAND_SLEEPING = exports.ACTIVE_TAG = exports.CCD_MOTION_THRESHOLD = exports.SOFT_COLLISION = exports.IGNORED_COLLISION = exports.KINEMATIC_COLLISION = exports.STATIC_COLLISION = exports.SUSPENSION_COMPRESSION = exports.SUSPENSION_STIFFNESS = exports.SUSPENSION_DAMPING = exports.FRICTION_SLIP = exports.SUSPENSION_REST = exports.ROLL_INFLUENCE = exports.ENGINE_FORCE = exports.STEERING_CLAMP = exports.STEERING_STEP = exports.BREAK_FORCE = exports.ROPE_PITERATIONS = exports.ROPE_VITERATIONS = exports.ROPE_MARGIN = exports.CLOTH_PITERATIONS = exports.CLOTH_VITERATIONS = exports.CLOTH_STIFFNESS = exports.CLOTH_DAMPING = exports.CLOTH_MARGIN = exports.SOFT_PITERATIONS = exports.SOFT_VITERATIONS = exports.SOFT_STIFFNESS = exports.SOFT_DAMPING = exports.SOFT_MARGIN = exports.ANGULAR_DAMPING = exports.LINEAR_DAMPING = exports.RESTITUTION = exports.FRICTION = exports.MARGIN = exports.HINGE_FORCE = exports.POWER16 = exports.ZERO_MASS = exports.GRAVITY = undefined;
+exports.ONE_VECTOR3 = exports.DISABLE_SIMULATION = exports.DISABLE_DEACTIVATION = exports.WANTS_DEACTIVATION = exports.ISLAND_SLEEPING = exports.ACTIVE_TAG = exports.CCD_MOTION_THRESHOLD = exports.SOFT_COLLISION = exports.IGNORED_COLLISION = exports.KINEMATIC_COLLISION = exports.STATIC_COLLISION = exports.SUSPENSION_COMPRESSION = exports.SUSPENSION_STIFFNESS = exports.SUSPENSION_DAMPING = exports.FRICTION_SLIP = exports.SUSPENSION_REST = exports.ROLL_INFLUENCE = exports.ENGINE_FORCE = exports.STEERING_CLAMP = exports.STEERING_STEP = exports.BREAK_FORCE = exports.ROPE_VITERATIONS = exports.ROPE_PITERATIONS = exports.ROPE_MARGIN = exports.CLOTH_VITERATIONS = exports.CLOTH_PITERATIONS = exports.CLOTH_STIFFNESS = exports.CLOTH_DAMPING = exports.CLOTH_MARGIN = exports.SOFT_VITERATIONS = exports.SOFT_PITERATIONS = exports.SOFT_STIFFNESS = exports.SOFT_DAMPING = exports.SOFT_MARGIN = exports.ANGULAR_DAMPING = exports.LINEAR_DAMPING = exports.RESTITUTION = exports.FRICTION = exports.MARGIN = exports.HINGE_FORCE = exports.POWER16 = exports.ZERO_MASS = exports.GRAVITY = undefined;
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
@@ -73377,20 +73384,20 @@ var ANGULAR_DAMPING = exports.ANGULAR_DAMPING = 0.0;
 var SOFT_MARGIN = exports.SOFT_MARGIN = 0.05;
 var SOFT_DAMPING = exports.SOFT_DAMPING = 0.01;
 var SOFT_STIFFNESS = exports.SOFT_STIFFNESS = 0.9;
-var SOFT_VITERATIONS = exports.SOFT_VITERATIONS = 40;
 var SOFT_PITERATIONS = exports.SOFT_PITERATIONS = 40;
+var SOFT_VITERATIONS = exports.SOFT_VITERATIONS = 40;
 
 // Cloth Body constants:
 var CLOTH_MARGIN = exports.CLOTH_MARGIN = 0.06;
 var CLOTH_DAMPING = exports.CLOTH_DAMPING = 0.01;
 var CLOTH_STIFFNESS = exports.CLOTH_STIFFNESS = 1.0;
-var CLOTH_VITERATIONS = exports.CLOTH_VITERATIONS = 10;
 var CLOTH_PITERATIONS = exports.CLOTH_PITERATIONS = 10;
+var CLOTH_VITERATIONS = exports.CLOTH_VITERATIONS = 10;
 
 // Rope Body constants:
 var ROPE_MARGIN = exports.ROPE_MARGIN = 0.1;
-var ROPE_VITERATIONS = exports.ROPE_VITERATIONS = 10;
 var ROPE_PITERATIONS = exports.ROPE_PITERATIONS = 10;
+var ROPE_VITERATIONS = exports.ROPE_VITERATIONS = 10;
 
 // Vehicle Body constants:
 var BREAK_FORCE = exports.BREAK_FORCE = 100.0;

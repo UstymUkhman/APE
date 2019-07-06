@@ -3,8 +3,9 @@ import { Ammo } from '@/utils';
 
 import {
   ROPE_MARGIN,
-  ROPE_VITERATIONS,
   ROPE_PITERATIONS,
+  ROPE_VITERATIONS,
+  DISABLE_SIMULATION,
   DISABLE_DEACTIVATION
 } from '@/constants';
 
@@ -14,8 +15,8 @@ export default class RopeBodies {
     this.world = world;
 
     this.margin = ROPE_MARGIN;
-    this.viterations = ROPE_VITERATIONS;
     this.piterations = ROPE_PITERATIONS;
+    this.viterations = ROPE_VITERATIONS;
 
     /* eslint-disable new-cap */
     this.helpers = new Ammo.btSoftBodyHelpers();
@@ -35,8 +36,8 @@ export default class RopeBodies {
 
     body.setTotalMass(props.mass, false);
 
-    config.set_viterations(this.viterations);
     config.set_piterations(this.piterations);
+    config.set_viterations(this.viterations);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.setActivationState(DISABLE_DEACTIVATION);
@@ -105,11 +106,13 @@ export default class RopeBodies {
     const index = findIndex(this.bodies, { uuid: props.uuid });
 
     if (index > -1) {
-      const mesh = this.bodies[index];
+      const body = this.bodies[index];
 
-      this.world.removeSoftBody(mesh.body);
-      Ammo.destroy(mesh.body);
-      delete mesh.geometry;
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
+
+      Ammo.destroy(body.body);
+      delete body.geometry;
 
       this.bodies.splice(index, 1);
       return true;

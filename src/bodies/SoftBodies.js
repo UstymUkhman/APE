@@ -12,8 +12,9 @@ import {
   SOFT_DAMPING,
   SOFT_COLLISION,
   SOFT_STIFFNESS,
-  SOFT_VITERATIONS,
   SOFT_PITERATIONS,
+  SOFT_VITERATIONS,
+  DISABLE_SIMULATION,
   CCD_MOTION_THRESHOLD,
   DISABLE_DEACTIVATION
 } from '@/constants';
@@ -243,15 +244,17 @@ export default class SoftBodies {
     }
   }
 
-  remove (body) {
-    const index = findIndex(this.bodies, { uuid: body.uuid });
+  remove (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
 
     if (index > -1) {
-      const mesh = this.bodies[index];
+      const body = this.bodies[index];
 
-      this.world.removeSoftBody(mesh.body);
-      Ammo.destroy(mesh.body);
-      delete mesh.geometry;
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
+
+      Ammo.destroy(body.body);
+      delete body.geometry;
 
       this.bodies.splice(index, 1);
       return true;

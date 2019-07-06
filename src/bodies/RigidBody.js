@@ -8,7 +8,8 @@ import {
   ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
-  ANGULAR_DAMPING
+  ANGULAR_DAMPING,
+  DISABLE_SIMULATION
 } from '@/constants';
 
 export default class RigidBody {
@@ -26,6 +27,12 @@ export default class RigidBody {
     this.angularFactor = ONE_VECTOR3;
     this.linearDamping = LINEAR_DAMPING;
     this.angularDamping = ANGULAR_DAMPING;
+  }
+
+  _checkBodyMargin (shape) {
+    if (this.margin !== MARGIN) {
+      shape.setMargin(this.margin);
+    }
   }
 
   /* eslint-disable new-cap */
@@ -181,6 +188,7 @@ export default class RigidBody {
     if (body) {
       const index = this.bodies.indexOf(body);
 
+      body.body.forceActivationState(DISABLE_SIMULATION);
       this.world.removeRigidBody(body.body);
       Ammo.destroy(body.body);
 
@@ -189,12 +197,6 @@ export default class RigidBody {
     }
 
     return false;
-  }
-
-  _checkBodyMargin (shape) {
-    if (this.margin !== MARGIN) {
-      shape.setMargin(this.margin);
-    }
   }
 
   set constants (values) {
