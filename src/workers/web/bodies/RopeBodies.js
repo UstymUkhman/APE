@@ -64,11 +64,23 @@ export default class RopeBodies {
     }
   }
 
-  _updateConstants () {
+  enable (mesh) {
     this.worker.postMessage({
-      action: 'updateConstants',
+      action: 'enableBody',
+
       params: {
-        constants: this.constants,
+        uuid: mesh.uuid,
+        type: 'rope'
+      }
+    });
+  }
+
+  disable (mesh) {
+    this.worker.postMessage({
+      action: 'disableBody',
+
+      params: {
+        uuid: mesh.uuid,
         type: 'rope'
       }
     });
@@ -89,6 +101,16 @@ export default class RopeBodies {
         }
       });
     }
+  }
+
+  _updateConstants () {
+    this.worker.postMessage({
+      action: 'updateConstants',
+      params: {
+        constants: this.constants,
+        type: 'rope'
+      }
+    });
   }
 
   set margin (value) {

@@ -2,6 +2,7 @@ import findIndex from 'lodash/findIndex';
 import { Ammo } from '@/utils';
 
 import {
+  ACTIVE_TAG,
   ROPE_MARGIN,
   ROPE_PITERATIONS,
   ROPE_VITERATIONS,
@@ -74,20 +75,7 @@ export default class RopeBodies {
     const update = [];
 
     for (let i = 0; i < this.bodies.length; i++) {
-      const positions = this.bodies[i].geometry.attributes.position.array;
-      const vertices = positions.length / 3;
-
-      const body = this.bodies[i].body;
-      const nodes = body.get_m_nodes();
-
-      for (let j = 0, index = 0; j < vertices; j++, index += 3) {
-        const node = nodes.at(j);
-        const nodePosition = node.get_m_x();
-
-        positions[index] = nodePosition.x();
-        positions[index + 1] = nodePosition.y();
-        positions[index + 2] = nodePosition.z();
-      }
+      const positions = this.updateBody(i);
 
       update.push({
         uuid: this.bodies[i].uuid,
@@ -100,6 +88,48 @@ export default class RopeBodies {
       bodies: update,
       type: 'rope'
     });
+  }
+
+  updateBody (index) {
+    const positions = this.bodies[index].geometry.attributes.position.array;
+    const vertices = positions.length / 3;
+
+    const body = this.bodies[index].body;
+    const nodes = body.get_m_nodes();
+
+    for (let j = 0, p = 0; j < vertices; j++, p += 3) {
+      const node = nodes.at(j);
+      const nodePosition = node.get_m_x();
+
+      positions[p] = nodePosition.x();
+      positions[p + 1] = nodePosition.y();
+      positions[p + 2] = nodePosition.z();
+    }
+
+    return positions;
+  }
+
+  enable (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+
+    if (index > -1) {
+      const body = this.bodies[index].body;
+
+      body.forceActivationState(ACTIVE_TAG);
+      this.world.addSoftBody(body, 1, -1);
+
+      this.updateBody(index);
+      body.activate();
+    }
+  }
+
+  disable (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
+    }
   }
 
   remove (props) {
