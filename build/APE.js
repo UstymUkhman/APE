@@ -72833,7 +72833,7 @@ var RopeBodies = function () {
 
   _createClass(RopeBodies, [{
     key: 'addBody',
-    value: function addBody(mesh, length, mass) {
+    value: function addBody(mesh, mass, length) {
       var position = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : new _Vector.Vector3();
 
       var segments = mesh.geometry.attributes.position.array.length / 3 - 2;
@@ -74260,7 +74260,7 @@ var SoftBodies = function (_Playground) {
 
     _this.initPhysics();
     _this.createObjects();
-    // this.createSoftObjects();
+    _this.createSoftObjects();
 
     _this._update = _this.update.bind(_this);
     _RAF2.default.add(_this._update);
@@ -74357,7 +74357,7 @@ var SoftBodies = function (_Playground) {
       position = ropePos.clone();
       position.y += 0.1;
 
-      this.physics.rope.addBody(rope, ropeLength, 0.5, position);
+      this.physics.rope.addBody(rope, 0.5, ropeLength, position);
 
       this.physics.rope.append(rope, this.arm);
       this.physics.rope.append(rope, ball, false);
@@ -74380,15 +74380,15 @@ var SoftBodies = function (_Playground) {
         _this2.physics.hinge.update(hingeIndex, 0);
       }, false);
 
-      setTimeout(function () {
-        console.log('Rope disable');
-        _this2.physics.rope.disable(rope);
-      }, 10000);
+      // setTimeout(() => {
+      //   console.log('Rope disable');
+      //   this.physics.rope.disable(rope);
+      // }, 10000);
 
-      setTimeout(function () {
-        console.log('Rope enable');
-        _this2.physics.rope.enable(rope);
-      }, 18000);
+      // setTimeout(() => {
+      //   console.log('Rope enable');
+      //   this.physics.rope.enable(rope);
+      // }, 18000);
     }
   }, {
     key: 'createSoftObjects',

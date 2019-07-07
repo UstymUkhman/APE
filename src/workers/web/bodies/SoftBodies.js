@@ -1,3 +1,5 @@
+import SoftBody from './SoftBody';
+
 import {
   FRICTION,
   STIFFNESS,
@@ -10,12 +12,9 @@ import {
   CCD_MOTION_THRESHOLD
 } from '@/constants';
 
-export default class SoftBodies {
+export default class SoftBodies extends SoftBody {
   constructor (worker) {
-    this.bodies = [];
-    this.worker = worker;
-
-    this.constants = {
+    super('Soft', worker, {
       friction: FRICTION,
       margin: SOFT_MARGIN,
       stiffness: STIFFNESS,
@@ -23,26 +22,13 @@ export default class SoftBodies {
       viterations: VITERATIONS,
       piterations: PITERATIONS,
       collisions: SOFT_COLLISION
-    };
-
-    worker.postMessage({action: 'initSoftBodies'});
+    });
   }
 
   addBody (mesh, mass, pressure) {
-    this.worker.postMessage({
-      action: 'addBody',
-
-      params: {
-        geometry: mesh.geometry,
-        pressure: pressure,
-        collider: 'Body',
-        uuid: mesh.uuid,
-        type: 'soft',
-        mass: mass
-      }
+    super.addBody(mesh, mass, {
+      pressure: pressure
     });
-
-    this.bodies.push(mesh);
   }
 
   setCcdSweptSphereRadius (mesh, radius = 0.5) {
@@ -110,64 +96,6 @@ export default class SoftBodies {
     }
   }
 
-  enable (mesh) {
-    this.worker.postMessage({
-      action: 'enableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'soft'
-      }
-    });
-  }
-
-  disable (mesh) {
-    this.worker.postMessage({
-      action: 'disableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'soft'
-      }
-    });
-  }
-
-  remove (mesh) {
-    const body = this.bodies.indexOf(mesh);
-
-    if (body !== -1) {
-      this.bodies.splice(body, 1);
-
-      this.worker.postMessage({
-        action: 'removeBody',
-
-        params: {
-          uuid: mesh.uuid,
-          type: 'soft'
-        }
-      });
-    }
-  }
-
-  _updateConstants () {
-    this.worker.postMessage({
-      action: 'updateConstants',
-      params: {
-        constants: this.constants,
-        type: 'soft'
-      }
-    });
-  }
-
-  set margin (value) {
-    this.constants.margin = value;
-    this._updateConstants();
-  }
-
-  get margin () {
-    return this.constants.margin;
-  }
-
   set friction (value) {
     this.constants.friction = value;
     this._updateConstants();
@@ -193,24 +121,6 @@ export default class SoftBodies {
 
   get damping () {
     return this.constants.damping;
-  }
-
-  set viterations (value) {
-    this.constants.viterations = value;
-    this._updateConstants();
-  }
-
-  get viterations () {
-    return this.constants.viterations;
-  }
-
-  set piterations (value) {
-    this.constants.piterations = value;
-    this._updateConstants();
-  }
-
-  get piterations () {
-    return this.constants.piterations;
   }
 
   set collisions (value) {

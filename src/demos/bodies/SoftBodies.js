@@ -116,7 +116,7 @@ export default class SoftBodies extends Playground {
     position = ropePos.clone();
     position.y += 0.1;
 
-    this.physics.rope.addBody(rope, ropeLength, 0.5, position);
+    this.physics.rope.addBody(rope, 0.5, ropeLength, position);
 
     this.physics.rope.append(rope, this.arm);
     this.physics.rope.append(rope, ball, false);

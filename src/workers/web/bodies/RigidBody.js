@@ -29,7 +29,7 @@ export default class RigidBody {
     };
   }
 
-  addBody (collider, mesh, additionalParams) {
+  addBody (collider, mesh, additionalParams = {}) {
     const params = {
       rotation: mesh.quaternion.clone(),
       position: mesh.position.clone(),

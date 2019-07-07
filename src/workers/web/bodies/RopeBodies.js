@@ -1,4 +1,5 @@
 import { Vector3 } from 'three/src/math/Vector3';
+import SoftBody from './SoftBody';
 
 import {
   ROPE_MARGIN,
@@ -6,36 +7,20 @@ import {
   ROPE_PITERATIONS
 } from '@/constants';
 
-export default class RopeBodies {
+export default class RopeBodies extends SoftBody {
   constructor (worker) {
-    this.bodies = [];
-    this.worker = worker;
-
-    this.constants = {
+    super('Rope', worker, {
       margin: ROPE_MARGIN,
-      viterations: ROPE_VITERATIONS,
-      piterations: ROPE_PITERATIONS
-    };
-
-    worker.postMessage({action: 'initRopeBodies'});
+      piterations: ROPE_PITERATIONS,
+      viterations: ROPE_VITERATIONS
+    });
   }
 
-  addBody (mesh, length, mass, position = new Vector3()) {
-    this.worker.postMessage({
-      action: 'addBody',
-
-      params: {
-        geometry: mesh.geometry,
-        position: position,
-        collider: 'Body',
-        uuid: mesh.uuid,
-        length: length,
-        type: 'rope',
-        mass: mass
-      }
+  addBody (mesh, mass, length, position = new Vector3()) {
+    super.addBody(mesh, mass, {
+      position: position,
+      length: length
     });
-
-    this.bodies.push(mesh);
   }
 
   append (mesh, target, top = true, influence = 1) {
@@ -62,81 +47,5 @@ export default class RopeBodies {
         position.needsUpdate = true;
       }
     }
-  }
-
-  enable (mesh) {
-    this.worker.postMessage({
-      action: 'enableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'rope'
-      }
-    });
-  }
-
-  disable (mesh) {
-    this.worker.postMessage({
-      action: 'disableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'rope'
-      }
-    });
-  }
-
-  remove (mesh) {
-    const body = this.bodies.indexOf(mesh);
-
-    if (body !== -1) {
-      this.bodies.splice(body, 1);
-
-      this.worker.postMessage({
-        action: 'removeBody',
-
-        params: {
-          uuid: mesh.uuid,
-          type: 'rope'
-        }
-      });
-    }
-  }
-
-  _updateConstants () {
-    this.worker.postMessage({
-      action: 'updateConstants',
-      params: {
-        constants: this.constants,
-        type: 'rope'
-      }
-    });
-  }
-
-  set margin (value) {
-    this.constants.margin = value;
-    this._updateConstants();
-  }
-
-  get margin () {
-    return this.constants.margin;
-  }
-
-  set viterations (value) {
-    this.constants.viterations = value;
-    this._updateConstants();
-  }
-
-  get viterations () {
-    return this.constants.viterations;
-  }
-
-  set piterations (value) {
-    this.constants.piterations = value;
-    this._updateConstants();
-  }
-
-  get piterations () {
-    return this.constants.piterations;
   }
 }

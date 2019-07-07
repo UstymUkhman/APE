@@ -26,7 +26,7 @@ export default class RopeBodies {
     /* eslint-enable new-cap */
   }
 
-  addBody (mesh, length, mass, position = new Vector3()) {
+  addBody (mesh, mass, length, position = new Vector3()) {
     const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
 
     /* eslint-disable new-cap */

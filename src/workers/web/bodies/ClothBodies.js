@@ -1,30 +1,25 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import { SOFT_MARGIN } from '@/constants';
+import SoftBody from './SoftBody';
 
-export default class ClothBodies {
+import {
+  CLOTH_MARGIN,
+  CLOTH_PITERATIONS,
+  CLOTH_VITERATIONS
+} from '@/constants';
+
+export default class ClothBodies extends SoftBody {
   constructor (worker) {
-    this.bodies = [];
-    this.worker = worker;
-
-    this.constants = { margin: SOFT_MARGIN };
-    worker.postMessage({action: 'initClothBodies'});
+    super('Cloth', worker, {
+      margin: CLOTH_MARGIN,
+      piterations: CLOTH_PITERATIONS,
+      viterations: CLOTH_VITERATIONS
+    });
   }
 
   addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
-    this.worker.postMessage({
-      action: 'addBody',
-
-      params: {
-        geometry: mesh.geometry,
-        position: position,
-        collider: 'Body',
-        uuid: mesh.uuid,
-        type: 'cloth',
-        mass: mass
-      }
+    super.addBody(mesh, mass, {
+      position: position
     });
-
-    this.bodies.push(mesh);
   }
 
   append (mesh, point, target, influence = 0.5) {
@@ -55,63 +50,5 @@ export default class ClothBodies {
         body.geometry.computeVertexNormals();
       }
     }
-  }
-
-  enable (mesh) {
-    this.worker.postMessage({
-      action: 'enableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'cloth'
-      }
-    });
-  }
-
-  disable (mesh) {
-    this.worker.postMessage({
-      action: 'disableBody',
-
-      params: {
-        uuid: mesh.uuid,
-        type: 'cloth'
-      }
-    });
-  }
-
-  remove (mesh) {
-    const body = this.bodies.indexOf(mesh);
-
-    if (body !== -1) {
-      this.bodies.splice(body, 1);
-
-      this.worker.postMessage({
-        action: 'removeBody',
-
-        params: {
-          uuid: mesh.uuid,
-          type: 'cloth'
-        }
-      });
-    }
-  }
-
-  _updateConstants () {
-    this.worker.postMessage({
-      action: 'updateConstants',
-      params: {
-        constants: this.constants,
-        type: 'cloth'
-      }
-    });
-  }
-
-  set margin (value) {
-    this.constants.margin = value;
-    this._updateConstants();
-  }
-
-  get margin () {
-    return this.constants.margin;
   }
 }
