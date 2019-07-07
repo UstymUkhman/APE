@@ -4,6 +4,7 @@ import { Ammo } from '@/utils';
 
 import {
   FRICTION,
+  ACTIVE_TAG,
   CLOTH_MARGIN,
   CLOTH_DAMPING,
   SOFT_COLLISION,
@@ -99,25 +100,29 @@ export default class ClothBodies {
 
   update () {
     for (let i = 0; i < this.bodies.length; i++) {
-      const body = this.bodies[i].body;
-      const geometry = this.bodies[i].geometry;
-      const positions = geometry.attributes.position.array;
-
-      const vertices = positions.length / 3;
-      const nodes = body.get_m_nodes();
-
-      for (let j = 0, index = 0; j < vertices; j++, index += 3) {
-        const nodePosition = nodes.at(j).get_m_x();
-
-        positions[index] = nodePosition.x();
-        positions[index + 1] = nodePosition.y();
-        positions[index + 2] = nodePosition.z();
-      }
-
-      geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.normal.needsUpdate = true;
-      geometry.computeVertexNormals();
+      this.updateBody(i);
     }
+  }
+
+  updateBody (index) {
+    const body = this.bodies[index].body;
+    const geometry = this.bodies[index].geometry;
+    const positions = geometry.attributes.position.array;
+
+    const vertices = positions.length / 3;
+    const nodes = body.get_m_nodes();
+
+    for (let j = 0, p = 0; j < vertices; j++, p += 3) {
+      const nodePosition = nodes.at(j).get_m_x();
+
+      positions[p] = nodePosition.x();
+      positions[p + 1] = nodePosition.y();
+      positions[p + 2] = nodePosition.z();
+    }
+
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.normal.needsUpdate = true;
+    geometry.computeVertexNormals();
   }
 
   activateAll () {
@@ -125,8 +130,31 @@ export default class ClothBodies {
       const collider = this.bodies[b];
 
       this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
+      this.world.addSoftBody(collider.body, 1, -1);
       collider.body.activate();
+    }
+  }
+
+  enable (mesh) {
+    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+
+    if (index > -1) {
+      const body = this.bodies[index].body;
+
+      body.forceActivationState(ACTIVE_TAG);
+      this.world.addSoftBody(body, 1, -1);
+
+      this.updateBody(index);
+      body.activate();
+    }
+  }
+
+  disable (mesh) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      body.body.forceActivationState(DISABLE_SIMULATION);
+      this.world.removeSoftBody(body.body);
     }
   }
 

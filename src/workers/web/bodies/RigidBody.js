@@ -1,14 +1,16 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
 
 import {
   MARGIN,
   FRICTION,
-  ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
   ANGULAR_DAMPING
 } from '@/constants';
+
+const VECTOR1 = new Vector3(1.0, 1.0, 1.0);
 
 export default class RigidBody {
   constructor (type, worker) {
@@ -19,9 +21,9 @@ export default class RigidBody {
     this.constants = {
       margin: MARGIN,
       friction: FRICTION,
+      linearFactor: VECTOR1,
+      angularFactor: VECTOR1,
       restitution: RESTITUTION,
-      linearFactor: ONE_VECTOR3,
-      angularFactor: ONE_VECTOR3,
       linearDamping: LINEAR_DAMPING,
       angularDamping: ANGULAR_DAMPING
     };

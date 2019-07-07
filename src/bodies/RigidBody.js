@@ -1,3 +1,4 @@
+import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo, webWorker } from '@/utils';
 import find from 'lodash/find';
 
@@ -6,13 +7,14 @@ import {
   FRICTION,
   ZERO_MASS,
   ACTIVE_TAG,
-  ONE_VECTOR3,
   RESTITUTION,
   LINEAR_DAMPING,
   ANGULAR_DAMPING,
   DISABLE_SIMULATION,
   DISABLE_DEACTIVATION
 } from '@/constants';
+
+const VECTOR1 = new Vector3(1.0, 1.0, 1.0);
 
 export default class RigidBody {
   constructor (world, type) {
@@ -24,9 +26,9 @@ export default class RigidBody {
 
     this.margin = MARGIN;
     this.friction = FRICTION;
+    this.linearFactor = VECTOR1;
+    this.angularFactor = VECTOR1;
     this.restitution = RESTITUTION;
-    this.linearFactor = ONE_VECTOR3;
-    this.angularFactor = ONE_VECTOR3;
     this.linearDamping = LINEAR_DAMPING;
     this.angularDamping = ANGULAR_DAMPING;
 
@@ -36,35 +38,21 @@ export default class RigidBody {
     /* eslint-enable new-cap */
   }
 
-  _checkBodyMargin (shape) {
-    if (this.margin !== MARGIN) {
-      shape.setMargin(this.margin);
-    }
-  }
-
   /* eslint-disable new-cap */
   createBox (size) {
-    const box = new Ammo.btBoxShape(new Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
-    this._checkBodyMargin(box);
-    return box;
+    return new Ammo.btBoxShape(new Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
   }
 
   createCylinder (size) {
-    const cylinder = new Ammo.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
-    this._checkBodyMargin(cylinder);
-    return cylinder;
+    return new Ammo.btCylinderShape(size.width, size.height / 2.0, size.depth / 2.0);
   }
 
   createCapsule (size) {
-    const capsule = new Ammo.btCapsuleShape(size.width, size.height / 2.0);
-    this._checkBodyMargin(capsule);
-    return capsule;
+    return new Ammo.btCapsuleShape(size.width, size.height / 2.0);
   }
 
   createCone (size) {
-    const cone = new Ammo.btConeShape(size.width, size.height / 2.0);
-    this._checkBodyMargin(cone);
-    return cone;
+    return new Ammo.btConeShape(size.width, size.height / 2.0);
   }
 
   createConcave (triangles) {
@@ -92,9 +80,7 @@ export default class RigidBody {
       mesh.addTriangle(vec1, vec2, vec3, true);
     }
 
-    const concave = new Ammo.btBvhTriangleMeshShape(mesh, true, true);
-    this._checkBodyMargin(concave);
-    return concave;
+    return new Ammo.btBvhTriangleMeshShape(mesh, true, true);
   }
 
   createConvex (coords) {
@@ -106,14 +92,11 @@ export default class RigidBody {
       convex.addPoint(vec, i >= last);
     }
 
-    this._checkBodyMargin(convex);
     return convex;
   }
 
   createSphere (radius) {
-    const sphere = new Ammo.btSphereShape(radius);
-    this._checkBodyMargin(sphere);
-    return sphere;
+    return new Ammo.btSphereShape(radius);
   }
 
   createRigidBody (shape, mass, position, quaternion) {
@@ -127,6 +110,10 @@ export default class RigidBody {
 
     if (mass > ZERO_MASS) {
       shape.calculateLocalInertia(mass, inertia);
+    }
+
+    if (this.margin !== MARGIN) {
+      shape.setMargin(this.margin);
     }
 
     const body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(mass, motion, shape, inertia));

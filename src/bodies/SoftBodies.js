@@ -250,7 +250,7 @@ export default class SoftBodies {
       const collider = this.bodies[b];
 
       this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body);
+      this.world.addSoftBody(collider.body, 1, -1);
       collider.body.activate();
     }
   }

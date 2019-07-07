@@ -57,6 +57,28 @@ export default class ClothBodies {
     }
   }
 
+  enable (mesh) {
+    this.worker.postMessage({
+      action: 'enableBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: 'cloth'
+      }
+    });
+  }
+
+  disable (mesh) {
+    this.worker.postMessage({
+      action: 'disableBody',
+
+      params: {
+        uuid: mesh.uuid,
+        type: 'cloth'
+      }
+    });
+  }
+
   remove (mesh) {
     const body = this.bodies.indexOf(mesh);
 
