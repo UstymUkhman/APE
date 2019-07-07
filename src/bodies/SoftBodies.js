@@ -1,30 +1,26 @@
 import { BufferAttribute } from 'three/src/core/BufferAttribute';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
-import { Geometry } from 'three/src/core/Geometry';
 
-import { Ammo, equalBufferVertices, webWorker } from '@/utils';
-import findIndex from 'lodash/findIndex';
+import { Ammo, equalBufferVertices } from '@/utils';
+import { Geometry } from 'three/src/core/Geometry';
+import SoftBody from '@/bodies/SoftBody';
 
 import {
   POWER16,
   FRICTION,
-  ACTIVE_TAG,
   SOFT_MARGIN,
   SOFT_DAMPING,
   SOFT_COLLISION,
   SOFT_STIFFNESS,
   SOFT_PITERATIONS,
   SOFT_VITERATIONS,
-  DISABLE_SIMULATION,
   CCD_MOTION_THRESHOLD,
   DISABLE_DEACTIVATION
 } from '@/constants';
 
-export default class SoftBodies {
+export default class SoftBodies extends SoftBody {
   constructor (world) {
-    this.bodies = [];
-    this.world = world;
-    this.worker = webWorker();
+    super(world);
 
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
@@ -33,10 +29,42 @@ export default class SoftBodies {
     this.collisions = SOFT_COLLISION;
     this.viterations = SOFT_VITERATIONS;
     this.piterations = SOFT_PITERATIONS;
+  }
 
-    /* eslint-disable new-cap */
-    this.helpers = new Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+  addBody (mesh, mass = 0, pressure = 0) {
+    this._initGeometry(mesh.geometry);
+
+    const body = this.helpers.CreateFromTriMesh(
+      this.world.getWorldInfo(),
+      mesh.geometry.ammoVertices,
+      mesh.geometry.ammoIndices,
+      mesh.geometry.ammoIndices.length / 3,
+      true
+    );
+
+    const bodyConfig = body.get_m_cfg();
+
+    bodyConfig.set_viterations(this.viterations);
+    bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_collisions(this.collisions);
+
+    bodyConfig.set_kPR(pressure || mesh.pressure);
+    bodyConfig.set_kDF(this.friction);
+    bodyConfig.set_kDP(this.damping);
+
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
+    body.get_m_materials().at(0).set_m_kLST(this.stiffness);
+    body.get_m_materials().at(0).set_m_kAST(this.stiffness);
+
+    body.setActivationState(DISABLE_DEACTIVATION);
+    body.setTotalMass(mass || mesh.mass, false);
+    this.world.addSoftBody(body, 1, -1);
+
+    this.bodies.push({
+      geometry: mesh.geometry,
+      uuid: mesh.uuid,
+      body: body
+    });
   }
 
   _initGeometry (bufferGeometry) {
@@ -100,79 +128,6 @@ export default class SoftBodies {
     bufferGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
     bufferGeometry.setIndex(new BufferAttribute(indices, 1));
     return bufferGeometry;
-  }
-
-  addBody (mesh, mass = 0, pressure = 0) {
-    this._initGeometry(mesh.geometry);
-
-    const body = this.helpers.CreateFromTriMesh(
-      this.world.getWorldInfo(),
-      mesh.geometry.ammoVertices,
-      mesh.geometry.ammoIndices,
-      mesh.geometry.ammoIndices.length / 3,
-      true
-    );
-
-    const bodyConfig = body.get_m_cfg();
-
-    bodyConfig.set_viterations(this.viterations);
-    bodyConfig.set_piterations(this.piterations);
-    bodyConfig.set_collisions(this.collisions);
-
-    bodyConfig.set_kPR(pressure || mesh.pressure);
-    bodyConfig.set_kDF(this.friction);
-    bodyConfig.set_kDP(this.damping);
-
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
-    body.get_m_materials().at(0).set_m_kLST(this.stiffness);
-    body.get_m_materials().at(0).set_m_kAST(this.stiffness);
-
-    body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass || mesh.mass, false);
-    this.world.addSoftBody(body, 1, -1);
-
-    this.bodies.push({
-      geometry: mesh.geometry,
-      uuid: mesh.uuid,
-      body: body
-    });
-  }
-
-  setCcdSweptSphereRadius (mesh, radius = 0.5) {
-    const uuid = this.worker ? mesh : mesh.uuid;
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setCcdSweptSphereRadius(radius);
-    body.activate();
-  }
-
-  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
-    const uuid = this.worker ? mesh : mesh.uuid;
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setCcdMotionThreshold(threshold);
-    body.activate();
-  }
-
-  setRestitution (mesh, restitution = this.restitution) {
-    const uuid = this.worker ? mesh : mesh.uuid;
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setRestitution(restitution);
-    body.activate();
-  }
-
-  setFriction (mesh, friction = this.friction) {
-    const uuid = this.worker ? mesh : mesh.uuid;
-    const body = this.getBodyByUUID(uuid).body;
-
-    body.setFriction(friction);
-    body.activate();
-  }
-
-  getBodyByUUID (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
-    return index > -1 ? this.bodies[index] : null;
   }
 
   update () {
@@ -245,55 +200,35 @@ export default class SoftBodies {
     return null;
   }
 
-  activateAll () {
-    for (let b = 0, length = this.bodies.length; b < length; b++) {
-      const collider = this.bodies[b];
+  setFriction (mesh, friction = this.friction) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
 
-      this.world.removeSoftBody(collider.body);
-      this.world.addSoftBody(collider.body, 1, -1);
-      collider.body.activate();
-    }
+    body.setFriction(friction);
+    body.activate();
   }
 
-  enable (mesh) {
-    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+  setRestitution (mesh, restitution = this.restitution) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
 
-    if (index > -1) {
-      const body = this.bodies[index].body;
-
-      body.forceActivationState(ACTIVE_TAG);
-      this.world.addSoftBody(body, 1, -1);
-
-      this.updateBody(index);
-      body.activate();
-    }
+    body.setRestitution(restitution);
+    body.activate();
   }
 
-  disable (mesh) {
-    const body = this.getBodyByUUID(mesh.uuid);
+  setCcdMotionThreshold (mesh, threshold = CCD_MOTION_THRESHOLD) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
 
-    if (body) {
-      body.body.forceActivationState(DISABLE_SIMULATION);
-      this.world.removeSoftBody(body.body);
-    }
+    body.setCcdMotionThreshold(threshold);
+    body.activate();
   }
 
-  remove (mesh) {
-    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+  setCcdSweptSphereRadius (mesh, radius = 0.5) {
+    const uuid = this.worker ? mesh : mesh.uuid;
+    const body = this.getBodyByUUID(uuid).body;
 
-    if (index > -1) {
-      const body = this.bodies[index];
-
-      body.body.forceActivationState(DISABLE_SIMULATION);
-      this.world.removeSoftBody(body.body);
-
-      Ammo.destroy(body.body);
-      delete body.geometry;
-
-      this.bodies.splice(index, 1);
-      return true;
-    }
-
-    return false;
+    body.setCcdSweptSphereRadius(radius);
+    body.activate();
   }
 }

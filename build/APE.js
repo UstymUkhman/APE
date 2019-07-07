@@ -71828,9 +71828,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
+var _SoftBody2 = __webpack_require__(/*! @/bodies/SoftBody */ "./src/bodies/SoftBody.js");
 
-var _findIndex2 = _interopRequireDefault(_findIndex);
+var _SoftBody3 = _interopRequireDefault(_SoftBody2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -71840,25 +71840,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ClothBodies = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ClothBodies = function (_SoftBody) {
+  _inherits(ClothBodies, _SoftBody);
+
   function ClothBodies(world, events) {
     _classCallCheck(this, ClothBodies);
 
-    this.bodies = [];
-    this.world = world;
-    this.events = events;
+    var _this = _possibleConstructorReturn(this, (ClothBodies.__proto__ || Object.getPrototypeOf(ClothBodies)).call(this, world));
 
-    this.friction = _constants.FRICTION;
-    this.margin = _constants.CLOTH_MARGIN;
-    this.damping = _constants.CLOTH_DAMPING;
-    this.stiffness = _constants.CLOTH_STIFFNESS;
-    this.collisions = _constants.SOFT_COLLISION;
-    this.piterations = _constants.CLOTH_PITERATIONS;
-    this.viterations = _constants.CLOTH_VITERATIONS;
+    _this.events = events;
 
-    /* eslint-disable new-cap */
-    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+    _this.friction = _constants.FRICTION;
+    _this.margin = _constants.CLOTH_MARGIN;
+    _this.damping = _constants.CLOTH_DAMPING;
+    _this.stiffness = _constants.CLOTH_STIFFNESS;
+    _this.collisions = _constants.SOFT_COLLISION;
+    _this.piterations = _constants.CLOTH_PITERATIONS;
+    _this.viterations = _constants.CLOTH_VITERATIONS;
+    return _this;
   }
 
   _createClass(ClothBodies, [{
@@ -71922,12 +71925,6 @@ var ClothBodies = function () {
       body.appendAnchor(cloth.point, target, false, cloth.influence);
     }
   }, {
-    key: 'getBodyByUUID',
-    value: function getBodyByUUID(uuid) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
-      return index > -1 ? this.bodies[index] : null;
-    }
-  }, {
     key: 'update',
     value: function update() {
       for (var i = 0; i < this.bodies.length; i++) {
@@ -71956,66 +71953,10 @@ var ClothBodies = function () {
       geometry.attributes.normal.needsUpdate = true;
       geometry.computeVertexNormals();
     }
-  }, {
-    key: 'activateAll',
-    value: function activateAll() {
-      for (var b = 0, length = this.bodies.length; b < length; b++) {
-        var collider = this.bodies[b];
-
-        this.world.removeSoftBody(collider.body);
-        this.world.addSoftBody(collider.body, 1, -1);
-        collider.body.activate();
-      }
-    }
-  }, {
-    key: 'enable',
-    value: function enable(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
-
-      if (index > -1) {
-        var body = this.bodies[index].body;
-
-        body.forceActivationState(_constants.ACTIVE_TAG);
-        this.world.addSoftBody(body, 1, -1);
-
-        this.updateBody(index);
-        body.activate();
-      }
-    }
-  }, {
-    key: 'disable',
-    value: function disable(mesh) {
-      var body = this.getBodyByUUID(mesh.uuid);
-
-      if (body) {
-        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
-        this.world.removeSoftBody(body.body);
-      }
-    }
-  }, {
-    key: 'remove',
-    value: function remove(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
-
-      if (index > -1) {
-        var body = this.bodies[index];
-
-        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
-        this.world.removeSoftBody(body.body);
-
-        _utils.Ammo.destroy(body.body);
-        delete body.geometry;
-
-        this.bodies.splice(index, 1);
-        return true;
-      }
-
-      return false;
-    }
   }]);
 
   return ClothBodies;
-}();
+}(_SoftBody3.default);
 
 exports.default = ClothBodies;
 module.exports = exports.default;
@@ -72802,9 +72743,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
+var _SoftBody2 = __webpack_require__(/*! @/bodies/SoftBody */ "./src/bodies/SoftBody.js");
 
-var _findIndex2 = _interopRequireDefault(_findIndex);
+var _SoftBody3 = _interopRequireDefault(_SoftBody2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -72814,21 +72755,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var RopeBodies = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var RopeBodies = function (_SoftBody) {
+  _inherits(RopeBodies, _SoftBody);
+
   function RopeBodies(world, events) {
     _classCallCheck(this, RopeBodies);
 
-    this.bodies = [];
-    this.world = world;
-    this.events = events;
+    var _this = _possibleConstructorReturn(this, (RopeBodies.__proto__ || Object.getPrototypeOf(RopeBodies)).call(this, world));
 
-    this.margin = _constants.ROPE_MARGIN;
-    this.piterations = _constants.ROPE_PITERATIONS;
-    this.viterations = _constants.ROPE_VITERATIONS;
+    _this.events = events;
 
-    /* eslint-disable new-cap */
-    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+    _this.margin = _constants.ROPE_MARGIN;
+    _this.piterations = _constants.ROPE_PITERATIONS;
+    _this.viterations = _constants.ROPE_VITERATIONS;
+    return _this;
   }
 
   _createClass(RopeBodies, [{
@@ -72882,12 +72826,6 @@ var RopeBodies = function () {
       body.appendAnchor(rope.position, target, true, rope.influence);
     }
   }, {
-    key: 'getBodyByUUID',
-    value: function getBodyByUUID(uuid) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
-      return index > -1 ? this.bodies[index] : null;
-    }
-  }, {
     key: 'update',
     value: function update() {
       for (var i = 0; i < this.bodies.length; i++) {
@@ -72904,8 +72842,7 @@ var RopeBodies = function () {
       var nodes = body.get_m_nodes();
 
       for (var j = 0, p = 0; j < vertices; j++, p += 3) {
-        var node = nodes.at(j);
-        var nodePosition = node.get_m_x();
+        var nodePosition = nodes.at(j).get_m_x();
 
         positions[p] = nodePosition.x();
         positions[p + 1] = nodePosition.y();
@@ -72914,66 +72851,10 @@ var RopeBodies = function () {
 
       this.bodies[index].geometry.attributes.position.needsUpdate = true;
     }
-  }, {
-    key: 'activateAll',
-    value: function activateAll() {
-      for (var b = 0, length = this.bodies.length; b < length; b++) {
-        var collider = this.bodies[b];
-
-        this.world.removeSoftBody(collider.body);
-        this.world.addSoftBody(collider.body, 1, -1);
-        collider.body.activate();
-      }
-    }
-  }, {
-    key: 'enable',
-    value: function enable(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
-
-      if (index > -1) {
-        var body = this.bodies[index].body;
-
-        body.forceActivationState(_constants.ACTIVE_TAG);
-        this.world.addSoftBody(body, 1, -1);
-
-        this.updateBody(index);
-        body.activate();
-      }
-    }
-  }, {
-    key: 'disable',
-    value: function disable(mesh) {
-      var body = this.getBodyByUUID(mesh.uuid);
-
-      if (body) {
-        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
-        this.world.removeSoftBody(body.body);
-      }
-    }
-  }, {
-    key: 'remove',
-    value: function remove(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
-
-      if (index > -1) {
-        var body = this.bodies[index];
-
-        body.body.forceActivationState(_constants.DISABLE_SIMULATION);
-        this.world.removeSoftBody(body.body);
-
-        _utils.Ammo.destroy(body.body);
-        delete body.geometry;
-
-        this.bodies.splice(index, 1);
-        return true;
-      }
-
-      return false;
-    }
   }]);
 
   return RopeBodies;
-}();
+}(_SoftBody3.default);
 
 exports.default = RopeBodies;
 module.exports = exports.default;
@@ -73000,13 +72881,13 @@ var _BufferAttribute = __webpack_require__(/*! three/src/core/BufferAttribute */
 
 var _BufferGeometry = __webpack_require__(/*! three/src/core/BufferGeometry */ "./node_modules/three/src/core/BufferGeometry.js");
 
-var _Geometry = __webpack_require__(/*! three/src/core/Geometry */ "./node_modules/three/src/core/Geometry.js");
-
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
-var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
+var _Geometry = __webpack_require__(/*! three/src/core/Geometry */ "./node_modules/three/src/core/Geometry.js");
 
-var _findIndex2 = _interopRequireDefault(_findIndex);
+var _SoftBody2 = __webpack_require__(/*! @/bodies/SoftBody */ "./src/bodies/SoftBody.js");
+
+var _SoftBody3 = _interopRequireDefault(_SoftBody2);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -73014,28 +72895,63 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SoftBodies = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SoftBodies = function (_SoftBody) {
+  _inherits(SoftBodies, _SoftBody);
+
   function SoftBodies(world) {
     _classCallCheck(this, SoftBodies);
 
-    this.bodies = [];
-    this.world = world;
-    this.worker = (0, _utils.webWorker)();
+    var _this = _possibleConstructorReturn(this, (SoftBodies.__proto__ || Object.getPrototypeOf(SoftBodies)).call(this, world));
 
-    this.friction = _constants.FRICTION;
-    this.margin = _constants.SOFT_MARGIN;
-    this.damping = _constants.SOFT_DAMPING;
-    this.stiffness = _constants.SOFT_STIFFNESS;
-    this.collisions = _constants.SOFT_COLLISION;
-    this.viterations = _constants.SOFT_VITERATIONS;
-    this.piterations = _constants.SOFT_PITERATIONS;
-
-    /* eslint-disable new-cap */
-    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
-    /* eslint-enable new-cap */
+    _this.friction = _constants.FRICTION;
+    _this.margin = _constants.SOFT_MARGIN;
+    _this.damping = _constants.SOFT_DAMPING;
+    _this.stiffness = _constants.SOFT_STIFFNESS;
+    _this.collisions = _constants.SOFT_COLLISION;
+    _this.viterations = _constants.SOFT_VITERATIONS;
+    _this.piterations = _constants.SOFT_PITERATIONS;
+    return _this;
   }
 
   _createClass(SoftBodies, [{
+    key: 'addBody',
+    value: function addBody(mesh) {
+      var mass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var pressure = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      this._initGeometry(mesh.geometry);
+
+      var body = this.helpers.CreateFromTriMesh(this.world.getWorldInfo(), mesh.geometry.ammoVertices, mesh.geometry.ammoIndices, mesh.geometry.ammoIndices.length / 3, true);
+
+      var bodyConfig = body.get_m_cfg();
+
+      bodyConfig.set_viterations(this.viterations);
+      bodyConfig.set_piterations(this.piterations);
+      bodyConfig.set_collisions(this.collisions);
+
+      bodyConfig.set_kPR(pressure || mesh.pressure);
+      bodyConfig.set_kDF(this.friction);
+      bodyConfig.set_kDP(this.damping);
+
+      _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
+      body.get_m_materials().at(0).set_m_kLST(this.stiffness);
+      body.get_m_materials().at(0).set_m_kAST(this.stiffness);
+
+      body.setActivationState(_constants.DISABLE_DEACTIVATION);
+      body.setTotalMass(mass || mesh.mass, false);
+      this.world.addSoftBody(body, 1, -1);
+
+      this.bodies.push({
+        geometry: mesh.geometry,
+        uuid: mesh.uuid,
+        body: body
+      });
+    }
+  }, {
     key: '_initGeometry',
     value: function _initGeometry(bufferGeometry) {
       var geometry = new _Geometry.Geometry().fromBufferGeometry(bufferGeometry);
@@ -73099,90 +73015,6 @@ var SoftBodies = function () {
       bufferGeometry.addAttribute('position', new _BufferAttribute.BufferAttribute(vertices, 3));
       bufferGeometry.setIndex(new _BufferAttribute.BufferAttribute(indices, 1));
       return bufferGeometry;
-    }
-  }, {
-    key: 'addBody',
-    value: function addBody(mesh) {
-      var mass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var pressure = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-      this._initGeometry(mesh.geometry);
-
-      var body = this.helpers.CreateFromTriMesh(this.world.getWorldInfo(), mesh.geometry.ammoVertices, mesh.geometry.ammoIndices, mesh.geometry.ammoIndices.length / 3, true);
-
-      var bodyConfig = body.get_m_cfg();
-
-      bodyConfig.set_viterations(this.viterations);
-      bodyConfig.set_piterations(this.piterations);
-      bodyConfig.set_collisions(this.collisions);
-
-      bodyConfig.set_kPR(pressure || mesh.pressure);
-      bodyConfig.set_kDF(this.friction);
-      bodyConfig.set_kDP(this.damping);
-
-      _utils.Ammo.castObject(body, _utils.Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
-      body.get_m_materials().at(0).set_m_kLST(this.stiffness);
-      body.get_m_materials().at(0).set_m_kAST(this.stiffness);
-
-      body.setActivationState(_constants.DISABLE_DEACTIVATION);
-      body.setTotalMass(mass || mesh.mass, false);
-      this.world.addSoftBody(body, 1, -1);
-
-      this.bodies.push({
-        geometry: mesh.geometry,
-        uuid: mesh.uuid,
-        body: body
-      });
-    }
-  }, {
-    key: 'setCcdSweptSphereRadius',
-    value: function setCcdSweptSphereRadius(mesh) {
-      var radius = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.5;
-
-      var uuid = this.worker ? mesh : mesh.uuid;
-      var body = this.getBodyByUUID(uuid).body;
-
-      body.setCcdSweptSphereRadius(radius);
-      body.activate();
-    }
-  }, {
-    key: 'setCcdMotionThreshold',
-    value: function setCcdMotionThreshold(mesh) {
-      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CCD_MOTION_THRESHOLD;
-
-      var uuid = this.worker ? mesh : mesh.uuid;
-      var body = this.getBodyByUUID(uuid).body;
-
-      body.setCcdMotionThreshold(threshold);
-      body.activate();
-    }
-  }, {
-    key: 'setRestitution',
-    value: function setRestitution(mesh) {
-      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.restitution;
-
-      var uuid = this.worker ? mesh : mesh.uuid;
-      var body = this.getBodyByUUID(uuid).body;
-
-      body.setRestitution(restitution);
-      body.activate();
-    }
-  }, {
-    key: 'setFriction',
-    value: function setFriction(mesh) {
-      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.friction;
-
-      var uuid = this.worker ? mesh : mesh.uuid;
-      var body = this.getBodyByUUID(uuid).body;
-
-      body.setFriction(friction);
-      body.activate();
-    }
-  }, {
-    key: 'getBodyByUUID',
-    value: function getBodyByUUID(uuid) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
-      return index > -1 ? this.bodies[index] : null;
     }
   }, {
     key: 'update',
@@ -73257,6 +73089,107 @@ var SoftBodies = function () {
       return null;
     }
   }, {
+    key: 'setFriction',
+    value: function setFriction(mesh) {
+      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.friction;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setFriction(friction);
+      body.activate();
+    }
+  }, {
+    key: 'setRestitution',
+    value: function setRestitution(mesh) {
+      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.restitution;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setRestitution(restitution);
+      body.activate();
+    }
+  }, {
+    key: 'setCcdMotionThreshold',
+    value: function setCcdMotionThreshold(mesh) {
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CCD_MOTION_THRESHOLD;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setCcdMotionThreshold(threshold);
+      body.activate();
+    }
+  }, {
+    key: 'setCcdSweptSphereRadius',
+    value: function setCcdSweptSphereRadius(mesh) {
+      var radius = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.5;
+
+      var uuid = this.worker ? mesh : mesh.uuid;
+      var body = this.getBodyByUUID(uuid).body;
+
+      body.setCcdSweptSphereRadius(radius);
+      body.activate();
+    }
+  }]);
+
+  return SoftBodies;
+}(_SoftBody3.default);
+
+exports.default = SoftBodies;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/bodies/SoftBody.js":
+/*!********************************!*\
+  !*** ./src/bodies/SoftBody.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
+
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
+var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
+
+var _findIndex2 = _interopRequireDefault(_findIndex);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SoftBody = function () {
+  function SoftBody(world) {
+    _classCallCheck(this, SoftBody);
+
+    this.bodies = [];
+    this.world = world;
+    this.worker = (0, _utils.webWorker)();
+
+    /* eslint-disable new-cap */
+    this.helpers = new _utils.Ammo.btSoftBodyHelpers();
+    /* eslint-enable new-cap */
+  }
+
+  _createClass(SoftBody, [{
+    key: 'getBodyByUUID',
+    value: function getBodyByUUID(uuid) {
+      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
+      return index > -1 ? this.bodies[index] : null;
+    }
+  }, {
     key: 'activateAll',
     value: function activateAll() {
       for (var b = 0, length = this.bodies.length; b < length; b++) {
@@ -73314,10 +73247,10 @@ var SoftBodies = function () {
     }
   }]);
 
-  return SoftBodies;
+  return SoftBody;
 }();
 
-exports.default = SoftBodies;
+exports.default = SoftBody;
 module.exports = exports.default;
 
 /***/ }),
