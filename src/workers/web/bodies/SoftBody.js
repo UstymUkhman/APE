@@ -1,5 +1,3 @@
-import assign from 'lodash/assign';
-
 export default class SoftBody {
   constructor (type, worker, constants = null) {
     this.bodies = [];
@@ -11,19 +9,16 @@ export default class SoftBody {
   }
 
   addBody (mesh, mass, additionalParams = {}) {
-    const params = {
-      geometry: mesh.geometry,
-      collider: 'Body',
-      uuid: mesh.uuid,
-      type: this.type,
-      mass: mass
-    };
-
-    assign(params, additionalParams);
-
     this.worker.postMessage({
       action: 'addBody',
-      params: params
+      params: {
+        geometry: mesh.geometry,
+        ...additionalParams,
+        collider: 'Body',
+        uuid: mesh.uuid,
+        type: this.type,
+        mass: mass
+      }
     });
 
     this.bodies.push(mesh);

@@ -93,12 +93,11 @@ export default class ClothBodies extends SoftBody {
   }
 
   updateBody (index) {
-    const body = this.bodies[index].body;
     const geometry = this.bodies[index].geometry;
     const positions = geometry.attributes.position.array;
 
+    const nodes = this.bodies[index].body.get_m_nodes();
     const vertices = positions.length / 3;
-    const nodes = body.get_m_nodes();
 
     for (let j = 0, p = 0; j < vertices; j++, p += 3) {
       const nodePosition = nodes.at(j).get_m_x();

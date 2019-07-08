@@ -9,7 +9,6 @@ import ClothBodies from './bodies/ClothBodies';
 import RopeBodies from './bodies/RopeBodies';
 import SoftBodies from '@/bodies/SoftBodies';
 
-import assign from 'lodash/assign';
 import { Ammo } from '@/utils';
 import find from 'lodash/find';
 
@@ -102,7 +101,7 @@ class PhysicsWorker {
 
     if (boxFallback) {
       this.kinematic.constants = this.static.constants;
-      assign(props.size, { depth: 0.25 });
+      props.size = { ...props.size, depth: 0.25 };
       props.type = 'kinematic';
       staticType = false;
 

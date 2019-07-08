@@ -73156,15 +73156,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// import findIndex from 'lodash/findIndex';
+
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
-var _findIndex = __webpack_require__(/*! lodash/findIndex */ "./node_modules/lodash/findIndex.js");
+var _find = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
 
-var _findIndex2 = _interopRequireDefault(_findIndex);
+var _find2 = _interopRequireDefault(_find);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -73186,8 +73190,7 @@ var SoftBody = function () {
   _createClass(SoftBody, [{
     key: 'getBodyByUUID',
     value: function getBodyByUUID(uuid) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: uuid });
-      return index > -1 ? this.bodies[index] : null;
+      return (0, _find2.default)(this.bodies, { uuid: uuid });
     }
   }, {
     key: 'activateAll',
@@ -73203,16 +73206,19 @@ var SoftBody = function () {
   }, {
     key: 'enable',
     value: function enable(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
+      var body = this.getBodyByUUID(mesh.uuid);
 
-      if (index > -1) {
-        var body = this.bodies[index].body;
+      if (body) {
+        var index = this.bodies.indexOf(body);
+        // const body = this.bodies[index].body;
 
-        body.forceActivationState(_constants.ACTIVE_TAG);
-        this.world.addSoftBody(body, 1, -1);
+        body.body.forceActivationState(_constants.ACTIVE_TAG);
+        this.world.addSoftBody(body.body, 1, -1);
+
+        console.log(_typeof(this.updateBody), this.updateBody);
 
         this.updateBody(index);
-        body.activate();
+        body.body.activate();
       }
     }
   }, {
@@ -73228,10 +73234,12 @@ var SoftBody = function () {
   }, {
     key: 'remove',
     value: function remove(mesh) {
-      var index = (0, _findIndex2.default)(this.bodies, { uuid: mesh.uuid });
+      // const index = findIndex(this.bodies, { uuid: mesh.uuid });
+      var body = this.getBodyByUUID(mesh.uuid);
 
-      if (index > -1) {
-        var body = this.bodies[index];
+      if (body) {
+        var index = this.bodies.indexOf(body);
+        // const body = this.bodies[index];
 
         body.body.forceActivationState(_constants.DISABLE_SIMULATION);
         this.world.removeSoftBody(body.body);
@@ -74313,15 +74321,15 @@ var SoftBodies = function (_Playground) {
         _this2.physics.hinge.update(hingeIndex, 0);
       }, false);
 
-      // setTimeout(() => {
-      //   console.log('Rope disable');
-      //   this.physics.rope.disable(rope);
-      // }, 10000);
+      setTimeout(function () {
+        console.log('Rope disable');
+        _this2.physics.rope.disable(rope);
+      }, 10000);
 
-      // setTimeout(() => {
-      //   console.log('Rope enable');
-      //   this.physics.rope.enable(rope);
-      // }, 18000);
+      setTimeout(function () {
+        console.log('Rope enable');
+        _this2.physics.rope.enable(rope);
+      }, 18000);
     }
   }, {
     key: 'createSoftObjects',

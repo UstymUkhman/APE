@@ -1,5 +1,4 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import assign from 'lodash/assign';
 import find from 'lodash/find';
 
 import {
@@ -30,25 +29,20 @@ export default class RigidBody {
   }
 
   addBody (collider, mesh, additionalParams = {}) {
-    const params = {
-      rotation: mesh.quaternion.clone(),
-      position: mesh.position.clone(),
-      size: mesh.geometry.parameters,
-      uuid: mesh.uuid
-    };
-
-    const props = {
-      collider: collider,
-      type: this.type
-    };
-
-    assign(props, params, additionalParams);
-    this.bodies.push(mesh);
-
     this.worker.postMessage({
       action: 'addBody',
-      params: props
+      params: {
+        rotation: mesh.quaternion.clone(),
+        position: mesh.position.clone(),
+        size: mesh.geometry.parameters,
+        ...additionalParams,
+        collider: collider,
+        uuid: mesh.uuid,
+        type: this.type
+      }
     });
+
+    this.bodies.push(mesh);
   }
 
   getBody (uuid) {

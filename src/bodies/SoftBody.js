@@ -1,6 +1,6 @@
 import { ACTIVE_TAG, DISABLE_SIMULATION } from '@/constants';
 import { Ammo, webWorker } from '@/utils';
-import findIndex from 'lodash/findIndex';
+import find from 'lodash/find';
 
 export default class SoftBody {
   constructor (world) {
@@ -14,8 +14,7 @@ export default class SoftBody {
   }
 
   getBodyByUUID (uuid) {
-    const index = findIndex(this.bodies, { uuid: uuid });
-    return index > -1 ? this.bodies[index] : null;
+    return find(this.bodies, { uuid: uuid });
   }
 
   activateAll () {
@@ -29,16 +28,16 @@ export default class SoftBody {
   }
 
   enable (mesh) {
-    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+    const body = this.getBodyByUUID(mesh.uuid);
 
-    if (index > -1) {
-      const body = this.bodies[index].body;
+    if (body) {
+      const index = this.bodies.indexOf(body);
 
-      body.forceActivationState(ACTIVE_TAG);
-      this.world.addSoftBody(body, 1, -1);
+      body.body.forceActivationState(ACTIVE_TAG);
+      this.world.addSoftBody(body.body, 1, -1);
 
       this.updateBody(index);
-      body.activate();
+      body.body.activate();
     }
   }
 
@@ -52,10 +51,10 @@ export default class SoftBody {
   }
 
   remove (mesh) {
-    const index = findIndex(this.bodies, { uuid: mesh.uuid });
+    const body = this.getBodyByUUID(mesh.uuid);
 
-    if (index > -1) {
-      const body = this.bodies[index];
+    if (body) {
+      const index = this.bodies.indexOf(body);
 
       body.body.forceActivationState(DISABLE_SIMULATION);
       this.world.removeSoftBody(body.body);
