@@ -1,35 +1,15 @@
+const libraryName = 'APE';
 const path = require('path');
 const webpack = require('webpack');
-const env = require('yargs').argv.env;
-const minimize = webpack.optimize.minimize;
+const build = require('yargs').argv.env === 'build';
 
-const libraryName = 'APE';
-
-let plugins = [
-    new webpack.ProvidePlugin({
-      'THREE': 'THREE'
-    })
-  ], outputFile;
-
-if (env === 'build') {
-  plugins.push(minimize);
-  outputFile = libraryName + '.min.js';
-} else {
-  outputFile = libraryName + '.js';
-}
+const plugins = [new webpack.ProvidePlugin({ 'THREE': 'THREE' })];
+const outputFile = libraryName + (build ? '.min' : '') + '.js';
 
 module.exports = {
   entry: __dirname + '/src/index.js',
   devtool: 'source-map',
   mode: 'development',
-
-  output: {
-    path: __dirname + '/build',
-    filename: outputFile,
-    library: libraryName,
-    umdNamedDefine: true,
-    libraryTarget: 'umd'
-  },
 
   module: {
     rules: [{
@@ -59,6 +39,18 @@ module.exports = {
       'THREE': path.resolve('./node_modules/three/src/Three.js'),
       '@': path.resolve('./src')
     }
+  },
+
+  optimization: {
+    minimize: build
+  },
+
+  output: {
+    path: __dirname + '/build',
+    filename: outputFile,
+    library: libraryName,
+    umdNamedDefine: true,
+    libraryTarget: 'umd'
   },
 
   plugins: plugins

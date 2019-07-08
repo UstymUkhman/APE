@@ -1,5 +1,5 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import find from 'lodash/find';
+import find from 'lodash.find';
 
 import {
   MARGIN,

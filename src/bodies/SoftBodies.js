@@ -3,7 +3,7 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry';
 
 import { Ammo, equalBufferVertices } from '@/utils';
 import { Geometry } from 'three/src/core/Geometry';
-import SoftBody from '@/bodies/SoftBody';
+import SoftBody from '@/super/SoftBody';
 
 import {
   POWER16,

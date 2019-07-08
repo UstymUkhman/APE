@@ -1,5 +1,5 @@
+import Constraint from '@/super/Constraint';
 import { HINGE_FORCE } from '@/constants';
-import Constraint from './Constraint';
 import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraint {

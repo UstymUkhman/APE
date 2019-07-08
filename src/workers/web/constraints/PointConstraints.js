@@ -1,5 +1,5 @@
+import Constraint from '@/super/workers/Constraint.js';
 import { Vector3 } from 'three/src/math/Vector3';
-import Constraint from './Constraint.js';
 
 export default class PointConstraints extends Constraint {
   constructor (worker) {

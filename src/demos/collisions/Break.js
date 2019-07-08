@@ -6,7 +6,7 @@ const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
 import Playground from 'demos/Playground';
 import PhysicsWorld from 'PhysicsWorld';
 
-import throttle from 'lodash/throttle';
+import throttle from 'lodash.throttle';
 import RAF from 'demos/RAF';
 
 export default class Break extends Playground {

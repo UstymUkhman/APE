@@ -1,5 +1,5 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import SoftBody from '@/bodies/SoftBody';
+import SoftBody from '@/super/SoftBody';
 import { Ammo } from '@/utils';
 
 import {

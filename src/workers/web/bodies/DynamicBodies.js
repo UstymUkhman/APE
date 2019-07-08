@@ -1,6 +1,6 @@
 import { CCD_MOTION_THRESHOLD } from '@/constants';
+import RigidBody from '@/super/workers/RigidBody';
 import { Vector3 } from 'three/src/math/Vector3';
-import RigidBody from './RigidBody';
 
 export default class DynamicBodies extends RigidBody {
   constructor (worker) {

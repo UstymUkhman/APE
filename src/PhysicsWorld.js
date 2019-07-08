@@ -14,7 +14,7 @@ import { GRAVITY } from '@/constants';
 
 import EventEmitter from 'events';
 import { Ammo } from '@/utils';
-import find from 'lodash/find';
+import find from 'lodash.find';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {

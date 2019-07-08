@@ -5,7 +5,7 @@ import 'three/examples/js/geometries/ConvexGeometry';
 const VECTOR_ZERO = new THREE.Vector3(0.0, 0.0, 0.0);
 import PhysicsWorld from 'workers/PhysicsWorld';
 import Playground from 'demos/Playground';
-import throttle from 'lodash/throttle';
+import throttle from 'lodash.throttle';
 
 export default class ConvexBreak extends Playground {
   constructor () {

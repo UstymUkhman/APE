@@ -1,4 +1,4 @@
-import RigidBody from './RigidBody';
+import RigidBody from '@/super/RigidBody';
 import { Ammo } from '@/utils';
 
 import {

@@ -1,5 +1,5 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import SoftBody from './SoftBody';
+import SoftBody from '@/super/workers/SoftBody';
 
 import {
   ROPE_MARGIN,

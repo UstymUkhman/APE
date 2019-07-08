@@ -1,4 +1,4 @@
-import SoftBody from '@/bodies/SoftBody';
+import SoftBody from '@/super/SoftBody';
 import { Ammo } from '@/utils';
 
 import {

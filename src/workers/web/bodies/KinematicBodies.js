@@ -1,4 +1,4 @@
-import RigidBody from './RigidBody';
+import RigidBody from '@/super/workers/RigidBody';
 
 export default class KinematicBodies extends RigidBody {
   constructor (worker) {

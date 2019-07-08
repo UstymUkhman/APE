@@ -1,6 +1,6 @@
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo, webWorker } from '@/utils';
-import find from 'lodash/find';
+import find from 'lodash.find';
 
 import {
   MARGIN,

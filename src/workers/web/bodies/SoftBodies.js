@@ -1,4 +1,4 @@
-import SoftBody from './SoftBody';
+import SoftBody from '@/super/workers/SoftBody';
 
 import {
   FRICTION,

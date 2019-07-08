@@ -10,7 +10,7 @@ import RopeBodies from './bodies/RopeBodies';
 import SoftBodies from '@/bodies/SoftBodies';
 
 import { Ammo } from '@/utils';
-import find from 'lodash/find';
+import find from 'lodash.find';
 
 let physics = null;
 

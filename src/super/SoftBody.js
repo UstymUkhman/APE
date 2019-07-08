@@ -1,6 +1,6 @@
 import { ACTIVE_TAG, DISABLE_SIMULATION } from '@/constants';
 import { Ammo, webWorker } from '@/utils';
-import find from 'lodash/find';
+import find from 'lodash.find';
 
 export default class SoftBody {
   constructor (world) {
