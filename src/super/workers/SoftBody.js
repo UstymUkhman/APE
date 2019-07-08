@@ -24,6 +24,30 @@ export default class SoftBody {
     this.bodies.push(mesh);
   }
 
+  setPiterations (mesh, piterations = this.constants.piterations) {
+    this.worker.postMessage({
+      action: 'setPiterations',
+
+      params: {
+        piterations: piterations,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setViterations (mesh, viterations = this.constants.viterations) {
+    this.worker.postMessage({
+      action: 'setViterations',
+
+      params: {
+        viterations: viterations,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   enable (mesh) {
     this.worker.postMessage({
       action: 'enableBody',

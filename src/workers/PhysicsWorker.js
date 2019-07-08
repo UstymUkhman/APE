@@ -569,6 +569,14 @@ class PhysicsWorker {
     this[props.type].setDamping(props.uuid, props.linear, props.angular);
   }
 
+  setPiterations (props) {
+    this[props.type].setPiterations(props);
+  }
+
+  setViterations (props) {
+    this[props.type].setViterations(props);
+  }
+
   enableBody (props) {
     this[props.type].enable(props);
   }

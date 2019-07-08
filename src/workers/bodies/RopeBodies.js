@@ -26,12 +26,12 @@ export default class RopeBodies extends SoftBody {
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
-    const config = body.get_m_cfg();
+    const bodyConfig = body.get_m_cfg();
 
     body.setTotalMass(props.mass, false);
 
-    config.set_piterations(this.piterations);
-    config.set_viterations(this.viterations);
+    bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_viterations(this.viterations);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.setActivationState(DISABLE_DEACTIVATION);

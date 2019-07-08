@@ -13,6 +13,28 @@ export default class SoftBody {
     /* eslint-enable new-cap */
   }
 
+  setPiterations (mesh, piterations = this.piterations) {
+    const body = this.getBodyByUUID(mesh.uuid);
+    piterations = mesh.piterations || piterations;
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_piterations(piterations);
+      body.body.activate();
+    }
+  }
+
+  setViterations (mesh, viterations = this.viterations) {
+    const body = this.getBodyByUUID(mesh.uuid);
+    viterations = mesh.viterations || viterations;
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_viterations(viterations);
+      body.body.activate();
+    }
+  }
+
   getBodyByUUID (uuid) {
     return find(this.bodies, { uuid: uuid });
   }

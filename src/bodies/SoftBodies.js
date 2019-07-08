@@ -44,8 +44,8 @@ export default class SoftBodies extends SoftBody {
 
     const bodyConfig = body.get_m_cfg();
 
-    bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_piterations(this.piterations);
+    bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_collisions(this.collisions);
 
     bodyConfig.set_kPR(pressure || mesh.pressure);
