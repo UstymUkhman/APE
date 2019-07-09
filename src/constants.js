@@ -14,13 +14,12 @@ export const ANGULAR_DAMPING = 0.0;
 // Soft Body constants:
 export const SOFT_MARGIN = 0.05;
 export const SOFT_DAMPING = 0.01;
-export const SOFT_STIFFNESS = 0.9;
+export const SOFT_STIFFNESS = 1.0;
 export const SOFT_PITERATIONS = 40;
 export const SOFT_VITERATIONS = 40;
 
 // Cloth Body constants:
 export const CLOTH_MARGIN = 0.06;
-export const CLOTH_STIFFNESS = 1.0;
 export const CLOTH_PITERATIONS = 10;
 export const CLOTH_VITERATIONS = 10;
 

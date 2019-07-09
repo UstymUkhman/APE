@@ -5,6 +5,7 @@ import {
   FRICTION,
   ACTIVE_TAG,
   SOFT_DAMPING,
+  SOFT_STIFFNESS,
   SOFT_COLLISION,
   DISABLE_SIMULATION
 } from '@/constants';
@@ -50,6 +51,17 @@ export default class SoftBody {
     }
   }
 
+  setStiffness (mesh, stiffness = SOFT_STIFFNESS) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      const materials = body.body.get_m_materials().at(0);
+      materials.set_m_kLST(mesh.stiffness || stiffness);
+      materials.set_m_kAST(mesh.stiffness || stiffness);
+      body.body.activate();
+    }
+  }
+
   setPressure (mesh, pressure = 0) {
     const body = this.getBodyByUUID(mesh.uuid);
 
@@ -76,6 +88,15 @@ export default class SoftBody {
     if (body) {
       const config = body.body.get_m_cfg();
       config.set_kDP(mesh.damping || damping);
+      body.body.activate();
+    }
+  }
+
+  setMargin (mesh, margin = this.margin) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      Ammo.castObject(body.body, Ammo.btCollisionObject).getCollisionShape().setMargin(mesh.margin || margin);
       body.body.activate();
     }
   }

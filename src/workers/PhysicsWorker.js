@@ -581,6 +581,10 @@ class PhysicsWorker {
     this[props.type].setCollisions(props);
   }
 
+  setStiffness (props) {
+    this[props.type].setStiffness(props);
+  }
+
   setPressure (props) {
     this[props.type].setPressure(props);
   }
@@ -591,6 +595,10 @@ class PhysicsWorker {
 
   setDamping (props) {
     this[props.type].setDamping(props);
+  }
+
+  setMargin (props) {
+    this[props.type].setMargin(props);
   }
 
   enableBody (props) {

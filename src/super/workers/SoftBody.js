@@ -1,6 +1,7 @@
 import {
   FRICTION,
   SOFT_DAMPING,
+  SOFT_STIFFNESS,
   SOFT_COLLISION
 } from '@/constants';
 
@@ -66,6 +67,18 @@ export default class SoftBody {
     });
   }
 
+  setStiffness (mesh, stiffness = SOFT_STIFFNESS) {
+    this.worker.postMessage({
+      action: 'setStiffness',
+
+      params: {
+        stiffness: stiffness,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
   setPressure (mesh, pressure = 0) {
     this.worker.postMessage({
       action: 'setPressure',
@@ -98,6 +111,18 @@ export default class SoftBody {
         damping: damping,
         uuid: mesh.uuid,
         type: this.type
+      }
+    });
+  }
+
+  setMargin (mesh, margin = this.constants.margin) {
+    this.worker.postMessage({
+      action: 'setMargin',
+
+      params: {
+        uuid: mesh.uuid,
+        type: this.type,
+        margin: margin
       }
     });
   }

@@ -6,8 +6,8 @@ import {
   FRICTION,
   SOFT_DAMPING,
   CLOTH_MARGIN,
+  SOFT_STIFFNESS,
   SOFT_COLLISION,
-  CLOTH_STIFFNESS,
   CLOTH_PITERATIONS,
   CLOTH_VITERATIONS,
   DISABLE_DEACTIVATION
@@ -21,7 +21,7 @@ export default class ClothBodies extends SoftBody {
     this.friction = FRICTION;
     this.margin = CLOTH_MARGIN;
     this.damping = SOFT_DAMPING;
-    this.stiffness = CLOTH_STIFFNESS;
+    this.stiffness = SOFT_STIFFNESS;
     this.collisions = SOFT_COLLISION;
     this.piterations = CLOTH_PITERATIONS;
     this.viterations = CLOTH_VITERATIONS;
