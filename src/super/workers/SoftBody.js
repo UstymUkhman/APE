@@ -1,3 +1,9 @@
+import {
+  FRICTION,
+  SOFT_DAMPING,
+  SOFT_COLLISION
+} from '@/constants';
+
 export default class SoftBody {
   constructor (type, worker, constants = null) {
     this.bodies = [];
@@ -42,6 +48,54 @@ export default class SoftBody {
 
       params: {
         viterations: viterations,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setCollisions (mesh, collisions = SOFT_COLLISION) {
+    this.worker.postMessage({
+      action: 'setCollisions',
+
+      params: {
+        collisions: collisions,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setPressure (mesh, pressure = 0) {
+    this.worker.postMessage({
+      action: 'setPressure',
+
+      params: {
+        pressure: pressure,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setFriction (mesh, friction = FRICTION) {
+    this.worker.postMessage({
+      action: 'setFriction',
+
+      params: {
+        friction: friction,
+        uuid: mesh.uuid,
+        type: this.type
+      }
+    });
+  }
+
+  setDamping (mesh, damping = SOFT_DAMPING) {
+    this.worker.postMessage({
+      action: 'setDamping',
+
+      params: {
+        damping: damping,
         uuid: mesh.uuid,
         type: this.type
       }

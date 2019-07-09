@@ -20,7 +20,6 @@ export const SOFT_VITERATIONS = 40;
 
 // Cloth Body constants:
 export const CLOTH_MARGIN = 0.06;
-export const CLOTH_DAMPING = 0.01;
 export const CLOTH_STIFFNESS = 1.0;
 export const CLOTH_PITERATIONS = 10;
 export const CLOTH_VITERATIONS = 10;

@@ -1,6 +1,13 @@
-import { ACTIVE_TAG, DISABLE_SIMULATION } from '@/constants';
 import { Ammo, webWorker } from '@/utils';
 import find from 'lodash.find';
+
+import {
+  FRICTION,
+  ACTIVE_TAG,
+  SOFT_DAMPING,
+  SOFT_COLLISION,
+  DISABLE_SIMULATION
+} from '@/constants';
 
 export default class SoftBody {
   constructor (world) {
@@ -15,22 +22,60 @@ export default class SoftBody {
 
   setPiterations (mesh, piterations = this.piterations) {
     const body = this.getBodyByUUID(mesh.uuid);
-    piterations = mesh.piterations || piterations;
 
     if (body) {
       const config = body.body.get_m_cfg();
-      config.set_piterations(piterations);
+      config.set_piterations(mesh.piterations || piterations);
       body.body.activate();
     }
   }
 
   setViterations (mesh, viterations = this.viterations) {
     const body = this.getBodyByUUID(mesh.uuid);
-    viterations = mesh.viterations || viterations;
 
     if (body) {
       const config = body.body.get_m_cfg();
-      config.set_viterations(viterations);
+      config.set_viterations(mesh.viterations || viterations);
+      body.body.activate();
+    }
+  }
+
+  setCollisions (mesh, collisions = SOFT_COLLISION) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_collisions(mesh.collisions || collisions);
+      body.body.activate();
+    }
+  }
+
+  setPressure (mesh, pressure = 0) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_kPR(mesh.pressure || pressure);
+      body.body.activate();
+    }
+  }
+
+  setFriction (mesh, friction = FRICTION) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_kDF(mesh.friction || friction);
+      body.body.activate();
+    }
+  }
+
+  setDamping (mesh, damping = SOFT_DAMPING) {
+    const body = this.getBodyByUUID(mesh.uuid);
+
+    if (body) {
+      const config = body.body.get_m_cfg();
+      config.set_kDP(mesh.damping || damping);
       body.body.activate();
     }
   }

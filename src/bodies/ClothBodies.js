@@ -4,8 +4,8 @@ import { Ammo } from '@/utils';
 
 import {
   FRICTION,
+  SOFT_DAMPING,
   CLOTH_MARGIN,
-  CLOTH_DAMPING,
   SOFT_COLLISION,
   CLOTH_STIFFNESS,
   CLOTH_PITERATIONS,
@@ -20,7 +20,7 @@ export default class ClothBodies extends SoftBody {
 
     this.friction = FRICTION;
     this.margin = CLOTH_MARGIN;
-    this.damping = CLOTH_DAMPING;
+    this.damping = SOFT_DAMPING;
     this.stiffness = CLOTH_STIFFNESS;
     this.collisions = SOFT_COLLISION;
     this.piterations = CLOTH_PITERATIONS;

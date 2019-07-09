@@ -577,6 +577,22 @@ class PhysicsWorker {
     this[props.type].setViterations(props);
   }
 
+  setCollisions (props) {
+    this[props.type].setCollisions(props);
+  }
+
+  setPressure (props) {
+    this[props.type].setPressure(props);
+  }
+
+  setFriction (props) {
+    this[props.type].setFriction(props);
+  }
+
+  setDamping (props) {
+    this[props.type].setDamping(props);
+  }
+
   enableBody (props) {
     this[props.type].enable(props);
   }

@@ -48,7 +48,7 @@ export default class SoftBodies extends SoftBody {
     bodyConfig.set_viterations(this.viterations);
     bodyConfig.set_collisions(this.collisions);
 
-    bodyConfig.set_kPR(pressure || mesh.pressure);
+    bodyConfig.set_kPR(mesh.pressure || pressure);
     bodyConfig.set_kDF(this.friction);
     bodyConfig.set_kDP(this.damping);
 
@@ -57,7 +57,7 @@ export default class SoftBodies extends SoftBody {
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass || mesh.mass, false);
+    body.setTotalMass(mesh.mass || mass, false);
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
