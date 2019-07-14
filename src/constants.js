@@ -5,26 +5,26 @@ export const POWER16 = 0xFFFF;
 export const HINGE_FORCE = 100;
 
 // Rigid Body constants:
-export const MARGIN = 0.04;
+export const MARGIN = 0.01;
 export const FRICTION = 0.5;
 export const RESTITUTION = 0.0;
 export const LINEAR_DAMPING = 0.0;
 export const ANGULAR_DAMPING = 0.0;
 
 // Soft Body constants:
-export const SOFT_MARGIN = 0.05;
+export const SOFT_MARGIN = 0.02;
 export const SOFT_DAMPING = 0.01;
 export const SOFT_STIFFNESS = 1.0;
 export const SOFT_PITERATIONS = 40;
 export const SOFT_VITERATIONS = 40;
 
 // Cloth Body constants:
-export const CLOTH_MARGIN = 0.06;
+export const CLOTH_MARGIN = 0.03;
 export const CLOTH_PITERATIONS = 10;
 export const CLOTH_VITERATIONS = 10;
 
 // Rope Body constants:
-export const ROPE_MARGIN = 0.1;
+export const ROPE_MARGIN = 0.05;
 export const ROPE_PITERATIONS = 10;
 export const ROPE_VITERATIONS = 10;
 

@@ -1,5 +1,9 @@
 import { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
+import { CylinderGeometry } from 'three/src/geometries/CylinderGeometry';
+import { SphereGeometry } from 'three/src/geometries/SphereGeometry';
 import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
+
+import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
@@ -14,6 +18,7 @@ export default class RigidBodies extends Playground {
     this.initPhysics();
     this.createDynamicBodies();
     this.createKinematicBodies();
+    this.createPhysicsRayCaster();
 
     this._update = this.update.bind(this);
     RAF.add(this._update);
@@ -65,8 +70,8 @@ export default class RigidBodies extends Playground {
     this.physics.kinematic.addBox(this.kinematicBox);
     this.scene.add(this.kinematicBox);
 
-    this._onKeyDown = this.onKeyDown.bind(this);
-    document.addEventListener('keydown', this._onKeyDown);
+    // this._onKeyDown = this.onKeyDown.bind(this);
+    // document.addEventListener('keydown', this._onKeyDown);
 
     // setTimeout(() => {
     //   console.log('Kinematic disable');
@@ -84,29 +89,74 @@ export default class RigidBodies extends Playground {
     // }, 5000);
   }
 
+  createPhysicsRayCaster () {
+    this.fly = new Mesh(
+      new SphereGeometry(1, 20, 20),
+      new MeshPhongMaterial({ color: 0x222222 })
+    );
+
+    this.fly.receiveShadow = true;
+    this.fly.castShadow = true;
+
+    this.fly.rotation.x = Math.PI;
+    // this.fly.rotation.y = 0.35;
+    this.fly.position.y = 5;
+
+    this.scene.add(this.fly);
+
+    this.ray = new THREE.Vector3(0, 0.5, -6);
+    const length = this.ray.length();
+
+    const geometry = new CylinderGeometry(0.2, 0.2, length, 8);
+
+    geometry.translate(0, -0.5 * length, 0);
+    geometry.rotateX(-Math.PI * 0.5);
+    geometry.lookAt(this.ray);
+
+    const cylinder = new Mesh(geometry,
+      new MeshPhongMaterial({
+        color: 0x00CC00
+      })
+    );
+
+    this.rayTarget = new Vector3();
+    cylinder.receiveShadow = true;
+    cylinder.castShadow = true;
+    this.fly.add(cylinder);
+
+    this._onKeyDown = this.onKeyDown.bind(this);
+    document.addEventListener('keydown', this._onKeyDown);
+  }
+
   onKeyDown (event) {
     const code = event.keyCode;
 
     switch (code) {
       case 87:
-        this.kinematicBox.position.y += 1;
+        // this.kinematicBox.position.y += 1;
+        this.fly.position.z += 0.5;
         break;
 
       case 83:
-        this.kinematicBox.position.y -= 1;
+        // this.kinematicBox.position.y -= 1;
+        this.fly.position.z -= 0.5;
         break;
 
       case 65:
-        this.kinematicBox.position.x += 1;
+        // this.kinematicBox.position.x += 1;
+        this.fly.position.x += 0.5;
         break;
 
       case 68:
-        this.kinematicBox.position.x -= 1;
+        // this.kinematicBox.position.x -= 1;
+        this.fly.position.x -= 0.5;
         break;
     }
   }
 
   update () {
+    this.rayTarget.copy(this.ray).applyMatrix4(this.fly.matrixWorld);
+    this.physics.ray.cast(this.fly.position, this.rayTarget);
     this.physics.update();
   }
 }

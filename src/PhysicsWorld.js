@@ -12,6 +12,7 @@ import RopeBodies from './bodies/RopeBodies';
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from '@/constants';
 
+import PhysicsRay from './PhysicsRay';
 import EventEmitter from 'events';
 import { Ammo } from '@/utils';
 import find from 'lodash.find';
@@ -41,6 +42,8 @@ export default class PhysicsWorld {
     this.dynamic = new DynamicBodies(this.world);
     this.static = new StaticBodies(this.world);
 
+    this.ray = new PhysicsRay(this.world);
+
     if (this._soft) {
       this.cloth = new ClothBodies(this.world, this._events);
       this.rope = new RopeBodies(this.world, this._events);
@@ -63,11 +66,9 @@ export default class PhysicsWorld {
     this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     this.transform = new Ammo.btTransform();
-    /* eslint-enable new-cap */
   }
 
   initRigidWorld () {
-    /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();
 
