@@ -69268,7 +69268,7 @@ module.exports = function(module) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -69278,57 +69278,70 @@ var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var PhysicsRay = function () {
-  function PhysicsRay(world) {
-    _classCallCheck(this, PhysicsRay);
+    function PhysicsRay(world) {
+        _classCallCheck(this, PhysicsRay);
 
-    this.world = world;
+        this.world = world;
+        this.worker = (0, _utils.webWorker)();
 
-    /* eslint-disable new-cap */
-    this.origin = new _utils.Ammo.btVector3();
-    this.target = new _utils.Ammo.btVector3();
-    this.closestResult = new _utils.Ammo.ClosestRayResultCallback(this.origin, this.target);
-    /* eslint-enable new-cap */
-  }
-
-  _createClass(PhysicsRay, [{
-    key: 'cast',
-    value: function cast(origin, target) {
-      var hitPoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var hitNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-
-      var rayCallBack = _utils.Ammo.castObject(this.closestResult, _utils.Ammo.RayResultCallback);
-      rayCallBack.set_m_closestHitFraction(1);
-      rayCallBack.set_m_collisionObject(null);
-
-      this.origin.setValue(origin.x, origin.y, origin.z);
-      this.target.setValue(target.x, target.y, target.z);
-
-      this.closestResult.get_m_rayToWorld().setValue(target.x, target.y, target.z);
-      this.closestResult.get_m_rayFromWorld().setValue(origin.x, origin.y, origin.z);
-
-      this.world.rayTest(this.origin, this.target, this.closestResult);
-
-      // console.log(this.closestResult.hasHit());
-
-      if (this.closestResult.hasHit()) {
-        if (hitPoint) {
-          var point = this.closestResult.get_m_hitPointWorld();
-          hitPoint.set(point.x(), point.y(), point.z());
-        }
-
-        if (hitNormal) {
-          var normal = this.closestResult.get_m_hitNormalWorld();
-          hitNormal.set(normal.x(), normal.y(), normal.z());
-        }
-
-        return true;
-      }
-
-      return false;
+        /* eslint-disable new-cap */
+        this.origin = new _utils.Ammo.btVector3();
+        this.target = new _utils.Ammo.btVector3();
+        this.closestResult = new _utils.Ammo.ClosestRayResultCallback(this.origin, this.target);
+        /* eslint-enable new-cap */
     }
-  }]);
 
-  return PhysicsRay;
+    _createClass(PhysicsRay, [{
+        key: 'cast',
+        value: function cast(origin, target) {
+            var hitPoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+            var hitNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            var rayCallBack = _utils.Ammo.castObject(this.closestResult, _utils.Ammo.RayResultCallback);
+
+            rayCallBack.set_m_closestHitFraction(1);
+            rayCallBack.set_m_collisionObject(null);
+
+            // Add filter function:
+            // rayCallBack.set_m_collisionFilterGroup
+            // rayCallBack.set_m_collisionFilterMask
+
+            this.origin.setValue(origin.x, origin.y, origin.z);
+            this.target.setValue(target.x, target.y, target.z);
+
+            this.closestResult.get_m_rayToWorld().setValue(target.x, target.y, target.z);
+            this.closestResult.get_m_rayFromWorld().setValue(origin.x, origin.y, origin.z);
+
+            this.world.rayTest(this.origin, this.target, this.closestResult);
+
+            var hasHit = this.closestResult.hasHit();
+
+            if (hasHit && hitNormal) {
+                var normal = this.closestResult.get_m_hitNormalWorld();
+
+                hitNormal.x = normal.x();
+                hitNormal.y = normal.y();
+                hitNormal.z = normal.z();
+            }
+
+            if (hasHit && hitPoint) {
+                var point = this.closestResult.get_m_hitPointWorld();
+
+                hitPoint.x = point.x();
+                hitPoint.y = point.y();
+                hitPoint.z = point.z();
+            }
+
+            return !this.worker ? hasHit : self.postMessage({
+                action: 'setRayResult',
+                normal: hitNormal,
+                point: hitPoint,
+                hasHit: hasHit
+            });
+        }
+    }]);
+
+    return PhysicsRay;
 }();
 
 exports.default = PhysicsRay;
@@ -69417,7 +69430,7 @@ var PhysicsWorld = function () {
     this._collisions = 0;
     this._gravity = gravity;
 
-    this.clock = new _Clock.Clock();
+    this._clock = new _Clock.Clock();
     this._events = new _events2.default();
 
     this._collisionReport = false;
@@ -69783,7 +69796,7 @@ var PhysicsWorld = function () {
   }, {
     key: 'update',
     value: function update() {
-      var delta = this.clock.getDelta();
+      var delta = this._clock.getDelta();
       this.world.stepSimulation(delta, 10);
 
       this.kinematic.update(this.transform);
@@ -69807,7 +69820,8 @@ var PhysicsWorld = function () {
       delete this.static;
       delete this.hinge;
 
-      delete this.clock;
+      delete this._clock;
+      delete this.ray;
 
       if (this._soft) {
         delete this.cloth;
@@ -69827,6 +69841,10 @@ var PhysicsWorld = function () {
   }, {
     key: 'fullCollisionReport',
     set: function set(report) {
+      if (report) {
+        console.warn('`fullCollisionReport` can significantly reduce the performance of a web page.\n', 'Please use this option with caution.');
+      }
+
       this._collisionReport = true;
       this._fullCollisionReport = report;
     },
@@ -71747,7 +71765,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-// import PhysicsWorld from 'workers/PhysicsWorld';
+// import PhysicsWorld from 'worker/PhysicsWorld';
 
 
 var RigidBodies = function (_Playground) {
@@ -71840,11 +71858,12 @@ var RigidBodies = function (_Playground) {
 
       this.fly.rotation.x = Math.PI;
       // this.fly.rotation.y = 0.35;
+      this.fly.position.z = -10;
       this.fly.position.y = 5;
 
       this.scene.add(this.fly);
 
-      this.ray = new THREE.Vector3(0, 0.5, -6);
+      this.ray = new THREE.Vector3(0, 0, -6);
       var length = this.ray.length();
 
       var geometry = new _CylinderGeometry.CylinderGeometry(0.2, 0.2, length, 8);
@@ -71896,8 +71915,10 @@ var RigidBodies = function (_Playground) {
     key: 'update',
     value: function update() {
       this.rayTarget.copy(this.ray).applyMatrix4(this.fly.matrixWorld);
-      this.physics.ray.cast(this.fly.position, this.rayTarget);
+      var hit = this.physics.ray.cast(this.fly.position, this.rayTarget);
+
       this.physics.update();
+      console.log(hit);
     }
   }]);
 

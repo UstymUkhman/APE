@@ -6,7 +6,7 @@ import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
-import PhysicsWorld from 'workers/PhysicsWorld';
+import PhysicsWorld from 'worker/PhysicsWorld';
 import Playground from 'demos/Playground';
 // import PhysicsWorld from 'PhysicsWorld';
 // import RAF from 'demos/RAF';

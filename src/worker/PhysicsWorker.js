@@ -9,6 +9,8 @@ import ClothBodies from './bodies/ClothBodies';
 import RopeBodies from './bodies/RopeBodies';
 import SoftBodies from '@/bodies/SoftBodies';
 
+import PhysicsRay from '@/PhysicsRay';
+
 import { Ammo } from '@/utils';
 import find from 'lodash.find';
 
@@ -57,6 +59,10 @@ class PhysicsWorker {
     this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     this.transform = new Ammo.btTransform();
     /* eslint-enable new-cap */
+  }
+
+  initPhysicsRay () {
+    this.ray = new PhysicsRay(this.world);
   }
 
   initSoftBodies () {
@@ -498,6 +504,10 @@ class PhysicsWorker {
         `There\'s no \'${props.type}\' constraint with index \'${props.index}\'.`
       );
     }
+  }
+
+  castRay (props) {
+    this.ray.cast(props.origin, props.target, props.hitPoint, props.hitNormal);
   }
 
   setGravity (props) {

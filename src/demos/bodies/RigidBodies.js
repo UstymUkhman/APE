@@ -7,7 +7,7 @@ import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
-// import PhysicsWorld from 'workers/PhysicsWorld';
+// import PhysicsWorld from 'worker/PhysicsWorld';
 import PhysicsWorld from 'PhysicsWorld';
 import RAF from 'demos/RAF';
 
@@ -100,11 +100,12 @@ export default class RigidBodies extends Playground {
 
     this.fly.rotation.x = Math.PI;
     // this.fly.rotation.y = 0.35;
+    this.fly.position.z = -10;
     this.fly.position.y = 5;
 
     this.scene.add(this.fly);
 
-    this.ray = new THREE.Vector3(0, 0.5, -6);
+    this.ray = new THREE.Vector3(0, 0, -6);
     const length = this.ray.length();
 
     const geometry = new CylinderGeometry(0.2, 0.2, length, 8);
@@ -156,7 +157,9 @@ export default class RigidBodies extends Playground {
 
   update () {
     this.rayTarget.copy(this.ray).applyMatrix4(this.fly.matrixWorld);
-    this.physics.ray.cast(this.fly.position, this.rayTarget);
+    const hit = this.physics.ray.cast(this.fly.position, this.rayTarget);
+
     this.physics.update();
+    console.log(hit);
   }
 }

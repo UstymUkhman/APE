@@ -23,7 +23,7 @@ export default class PhysicsWorld {
     this._collisions = 0;
     this._gravity = gravity;
 
-    this.clock = new Clock();
+    this._clock = new Clock();
     this._events = new EventEmitter();
 
     this._collisionReport = false;
@@ -417,7 +417,7 @@ export default class PhysicsWorld {
   }
 
   update () {
-    const delta = this.clock.getDelta();
+    const delta = this._clock.getDelta();
     this.world.stepSimulation(delta, 10);
 
     this.kinematic.update(this.transform);
@@ -440,7 +440,8 @@ export default class PhysicsWorld {
     delete this.static;
     delete this.hinge;
 
-    delete this.clock;
+    delete this._clock;
+    delete this.ray;
 
     if (this._soft) {
       delete this.cloth;
@@ -459,6 +460,13 @@ export default class PhysicsWorld {
   }
 
   set fullCollisionReport (report) {
+    if (report) {
+      console.warn(
+        '`fullCollisionReport` can significantly reduce the performance of a web page.\n',
+        'Please use this option with caution.'
+      );
+    }
+
     this._collisionReport = true;
     this._fullCollisionReport = report;
   }

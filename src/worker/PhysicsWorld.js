@@ -1,4 +1,4 @@
-import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
+import PhysicsWorker from 'worker-loader!worker/PhysicsWorker.js';
 
 import PointConstraints from './web/constraints/PointConstraints';
 import HingeConstraints from './web/constraints/HingeConstraints';
@@ -12,12 +12,13 @@ import SoftBodies from './web/bodies/SoftBodies';
 import RopeBodies from './web/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
+import PhysicsRay from './web/PhysicsRay';
 import { GRAVITY } from '@/constants';
 
 export default class PhysicsWorld {
   constructor (soft = false, gravity = GRAVITY) {
     this.worker = new PhysicsWorker();
-    this.clock = new Clock();
+    this._clock = new Clock();
 
     this._soft = soft;
     this._collisions = 0;
@@ -41,6 +42,8 @@ export default class PhysicsWorld {
     this.point = new PointConstraints(this.worker);
     this.hinge = new HingeConstraints(this.worker);
 
+    this.ray = new PhysicsRay(this.worker);
+
     if (this._soft) {
       this.cloth = new ClothBodies(this.worker);
       this.rope = new RopeBodies(this.worker);
@@ -54,8 +57,8 @@ export default class PhysicsWorld {
   }
 
   updateBodies (data) {
-    const delta = this.clock.getDelta();
     const bodies = this[data.type].update(data.bodies);
+    const delta = this._clock.getDelta();
 
     this.worker.postMessage({
       action: 'updateBodies',
@@ -65,6 +68,10 @@ export default class PhysicsWorld {
         delta: delta
       }
     });
+  }
+
+  setRayResult (data) {
+    this.ray.setResult(data);
   }
 
   setCollisionReport (report, fullReport = false) {
@@ -126,7 +133,8 @@ export default class PhysicsWorld {
     delete this.hinge;
 
     delete this.worker;
-    delete this.clock;
+    delete this._clock;
+    delete this.ray;
 
     if (this._soft) {
       delete this.cloth;
@@ -144,6 +152,13 @@ export default class PhysicsWorld {
   }
 
   set fullCollisionReport (report) {
+    if (report) {
+      console.warn(
+        '`fullCollisionReport` can significantly reduce the performance of a web page.\n',
+        'Please use this option with caution.'
+      );
+    }
+
     this.setCollisionReport(true, report);
   }
 
