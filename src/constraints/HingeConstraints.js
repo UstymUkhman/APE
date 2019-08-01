@@ -20,7 +20,7 @@ export default class HingeConstraints extends Constraint {
       }
     );
 
-    return this.constraints.length - 1;
+    return this._uuid;
   }
 
   addBodies (pinMesh, armMesh, axis, pinPivot = new Vector3(), armPivot = new Vector3()) {
@@ -32,7 +32,7 @@ export default class HingeConstraints extends Constraint {
       }
     );
 
-    return this.constraints.length - 1;
+    return this._uuid;
   }
 
   hingeBody (body, position) {
@@ -61,8 +61,8 @@ export default class HingeConstraints extends Constraint {
     this.add(hinge);
   }
 
-  update (index, direction) {
-    const constraint = this.constraints[index];
+  update (uuid, direction) {
+    const constraint = this.getConstraintByUUID(uuid);
 
     if (constraint) {
       constraint.enableAngularMotor(true, direction, this.force);

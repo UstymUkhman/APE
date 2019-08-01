@@ -1,5 +1,8 @@
+import { _Math } from 'three/src/math/Math.js';
+
 export default class Constraint {
   constructor (world, type) {
+    this.uuids = [];
     this.type = type;
     this.world = world;
     this.constraints = [];
@@ -21,16 +24,28 @@ export default class Constraint {
     }
   }
 
-  remove (index) {
-    const constraint = this.constraints[index];
-    if (!constraint) return false;
+  remove (uuid) {
+    const index = this.uuids.indexOf(uuid);
 
-    this.world.removeConstraint(constraint);
-    this.constraints[index] = null;
-    return true;
+    if (index > -1) {
+      const constraint = this.constraints[index];
+      this.world.removeConstraint(constraint);
+      this.constraints.splice(index, 1);
+      this.uuids.splice(index, 1);
+      return true;
+    }
+
+    return false;
   }
 
-  getConstraint (index) {
-    return this.constraints[index] || null;
+  getConstraintByUUID (uuid) {
+    const index = this.uuids.indexOf(uuid);
+    return index > -1 ? this.constraints[index] : null;
+  }
+
+  get _uuid () {
+    const uuid = _Math.generateUUID();
+    this.uuids.push(uuid);
+    return uuid;
   }
 }

@@ -1,5 +1,8 @@
+import { _Math } from 'three/src/math/Math.js';
+
 export default class Constraint {
   constructor (type, worker) {
+    this.uuids = [];
     this.worker = worker;
     this._constraints = 0;
 
@@ -17,17 +20,23 @@ export default class Constraint {
       }
     });
 
-    return this._constraints++;
+    return this._uuid;
   }
 
-  remove (index) {
+  remove (uuid) {
     this.worker.postMessage({
       action: 'removeConstraint',
 
       params: {
         type: this.type,
-        index: index
+        uuid: uuid
       }
     });
+  }
+
+  get _uuid () {
+    const uuid = _Math.generateUUID();
+    this.uuids.push(uuid);
+    return uuid;
   }
 }

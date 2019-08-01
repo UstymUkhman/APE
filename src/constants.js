@@ -48,6 +48,21 @@ export const WANTS_DEACTIVATION = 3;
 export const DISABLE_DEACTIVATION = 4;
 export const DISABLE_SIMULATION = 5;
 
+// Group constants:
+export const DYNAMIC_GROUP = 1;
+export const STATIC_GROUP = 2;
+export const KINEMATIC_GROUP = 4;
+// export const CLOTH_GROUP = ;
+// export const SOFT_GROUP = ;
+
+// Mask constants:
+export const STATIC_MASK = 2;
+export const NOT_STATIC_MASK = 65535 ^ 2;
+export const NOT_STATIC_OR_KINEMATIC_MASK = 65535 ^ (2 | 4);
+// export const DYNAMIC_MASK = ;
+// export const CLOTH_MASK = ;
+// export const SOFT_MASK = ;
+
 // Collision constants:
 export const STATIC_COLLISION = 1;
 export const KINEMATIC_COLLISION = 2;

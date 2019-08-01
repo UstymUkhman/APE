@@ -6,10 +6,10 @@ import { DoubleSide } from 'three/src/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
-import PhysicsWorld from 'worker/PhysicsWorld';
+// import PhysicsWorld from 'worker/PhysicsWorld';
 import Playground from 'demos/Playground';
-// import PhysicsWorld from 'PhysicsWorld';
-// import RAF from 'demos/RAF';
+import PhysicsWorld from 'PhysicsWorld';
+import RAF from 'demos/RAF';
 
 export default class ClothBody extends Playground {
   constructor () {
@@ -19,8 +19,8 @@ export default class ClothBody extends Playground {
     this.createHinge();
     this.createCloth();
 
-    // this._update = this.update.bind(this);
-    // RAF.add(this._update);
+    this._update = this.update.bind(this);
+    RAF.add(this._update);
   }
 
   initPhysics () {

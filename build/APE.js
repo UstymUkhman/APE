@@ -69302,7 +69302,7 @@ var PhysicsRay = function () {
             rayCallBack.set_m_closestHitFraction(1);
             rayCallBack.set_m_collisionObject(null);
 
-            // Add filter function:
+            // Add filter functions:
             // rayCallBack.set_m_collisionFilterGroup
             // rayCallBack.set_m_collisionFilterMask
 
@@ -71139,6 +71139,21 @@ var WANTS_DEACTIVATION = exports.WANTS_DEACTIVATION = 3;
 var DISABLE_DEACTIVATION = exports.DISABLE_DEACTIVATION = 4;
 var DISABLE_SIMULATION = exports.DISABLE_SIMULATION = 5;
 
+// Group constants:
+var DYNAMIC_GROUP = exports.DYNAMIC_GROUP = 1;
+var STATIC_GROUP = exports.STATIC_GROUP = 2;
+var KINEMATIC_GROUP = exports.KINEMATIC_GROUP = 4;
+// export const CLOTH_GROUP = ;
+// export const SOFT_GROUP = ;
+
+// Mask constants:
+var STATIC_MASK = exports.STATIC_MASK = 2;
+var NOT_STATIC_MASK = exports.NOT_STATIC_MASK = 65535 ^ 2;
+var NOT_STATIC_OR_KINEMATIC_MASK = exports.NOT_STATIC_OR_KINEMATIC_MASK = 65535 ^ (2 | 4);
+// export const DYNAMIC_MASK = ;
+// export const CLOTH_MASK = ;
+// export const SOFT_MASK = ;
+
 // Collision constants:
 var STATIC_COLLISION = exports.STATIC_COLLISION = 1;
 var KINEMATIC_COLLISION = exports.KINEMATIC_COLLISION = 2;
@@ -71205,7 +71220,7 @@ var HingeConstraints = function (_Constraint) {
         axis: axis
       });
 
-      return this.constraints.length - 1;
+      return this._uuid;
     }
   }, {
     key: 'addBodies',
@@ -71219,7 +71234,7 @@ var HingeConstraints = function (_Constraint) {
         axis: axis
       });
 
-      return this.constraints.length - 1;
+      return this._uuid;
     }
   }, {
     key: 'hingeBody',
@@ -71243,8 +71258,8 @@ var HingeConstraints = function (_Constraint) {
     }
   }, {
     key: 'update',
-    value: function update(index, direction) {
-      var constraint = this.constraints[index];
+    value: function update(uuid, direction) {
+      var constraint = this.getConstraintByUUID(uuid);
 
       if (constraint) {
         constraint.enableAngularMotor(true, direction, this.force);
@@ -71311,7 +71326,7 @@ var PointConstraints = function (_Constraint) {
 
       this.events.emit('getPointBody', bodyMesh.uuid, position);
 
-      return this.constraints.length - 1;
+      return this._uuid;
     }
   }, {
     key: 'addBodies',
@@ -71321,7 +71336,7 @@ var PointConstraints = function (_Constraint) {
 
       this.events.emit('getPointBodies', body0.uuid, body1.uuid, [position0, position1]);
 
-      return this.constraints.length - 1;
+      return this._uuid;
     }
   }, {
     key: 'attachBody',
@@ -71718,29 +71733,29 @@ module.exports = exports.default;
 
 /***/ }),
 
-/***/ "./src/demos/bodies/RigidBodies.js":
-/*!*****************************************!*\
-  !*** ./src/demos/bodies/RigidBodies.js ***!
-  \*****************************************/
+/***/ "./src/demos/constraints/ClothBody.js":
+/*!********************************************!*\
+  !*** ./src/demos/constraints/ClothBody.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(THREE) {
+
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _MeshPhongMaterial = __webpack_require__(/*! three/src/materials/MeshPhongMaterial */ "./node_modules/three/src/materials/MeshPhongMaterial.js");
 
-var _CylinderGeometry = __webpack_require__(/*! three/src/geometries/CylinderGeometry */ "./node_modules/three/src/geometries/CylinderGeometry.js");
-
-var _SphereGeometry = __webpack_require__(/*! three/src/geometries/SphereGeometry */ "./node_modules/three/src/geometries/SphereGeometry.js");
+var _PlaneGeometry = __webpack_require__(/*! three/src/geometries/PlaneGeometry */ "./node_modules/three/src/geometries/PlaneGeometry.js");
 
 var _BoxGeometry = __webpack_require__(/*! three/src/geometries/BoxGeometry */ "./node_modules/three/src/geometries/BoxGeometry.js");
+
+var _constants = __webpack_require__(/*! three/src/constants */ "./node_modules/three/src/constants.js");
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
@@ -71765,169 +71780,155 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 // import PhysicsWorld from 'worker/PhysicsWorld';
 
 
-var RigidBodies = function (_Playground) {
-  _inherits(RigidBodies, _Playground);
+var ClothBody = function (_Playground) {
+    _inherits(ClothBody, _Playground);
 
-  function RigidBodies() {
-    _classCallCheck(this, RigidBodies);
+    function ClothBody() {
+        _classCallCheck(this, ClothBody);
 
-    var _this = _possibleConstructorReturn(this, (RigidBodies.__proto__ || Object.getPrototypeOf(RigidBodies)).call(this));
+        var _this = _possibleConstructorReturn(this, (ClothBody.__proto__ || Object.getPrototypeOf(ClothBody)).call(this));
 
-    _this.initPhysics();
-    _this.createDynamicBodies();
-    _this.createKinematicBodies();
-    _this.createPhysicsRayCaster();
+        _this.initPhysics();
+        _this.createHinge();
+        _this.createCloth();
 
-    _this._update = _this.update.bind(_this);
-    _RAF2.default.add(_this._update);
-    return _this;
-  }
-
-  _createClass(RigidBodies, [{
-    key: 'initPhysics',
-    value: function initPhysics() {
-      this.physics = new _PhysicsWorld2.default();
-      this.physics.static.friction = 5.0;
-      this.physics.static.addBox(this.ground);
+        _this._update = _this.update.bind(_this);
+        _RAF2.default.add(_this._update);
+        return _this;
     }
-  }, {
-    key: 'createDynamicBodies',
-    value: function createDynamicBodies() {
-      var dynamicBox = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(5, 5, 5), new _MeshPhongMaterial.MeshPhongMaterial({
-        color: 0x222222
-      }));
 
-      dynamicBox.castShadow = true;
-      dynamicBox.position.y = 15;
+    _createClass(ClothBody, [{
+        key: 'initPhysics',
+        value: function initPhysics() {
+            this.physics = new _PhysicsWorld2.default(true);
+            this.physics.static.friction = 5.0;
+            this.physics.static.addBox(this.ground);
+        }
+    }, {
+        key: 'createHinge',
+        value: function createHinge() {
+            var _this2 = this;
 
-      this.physics.dynamic.addBox(dynamicBox, 10);
-      this.scene.add(dynamicBox);
+            var material = new _MeshPhongMaterial.MeshPhongMaterial({ color: 0x606060 });
+            var position = new _Vector.Vector3(-3, 0.1, -5.5);
+            var ropePosition = new _Vector.Vector3(-3, 2, 0);
 
-      // setTimeout(() => {
-      //   console.log('Dynamic disable');
-      //   this.physics.dynamic.disable(dynamicBox);
-      // }, 3000);
+            var pylonHeight = 10;
+            var armLength = 5.5;
 
-      // setTimeout(() => {
-      //   console.log('Dynamic enable');
-      //   this.physics.dynamic.enable(dynamicBox);
-      // }, 10000);
-    }
-  }, {
-    key: 'createKinematicBodies',
-    value: function createKinematicBodies() {
-      this.kinematicBox = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(5, 5, 5), new _MeshPhongMaterial.MeshPhongMaterial({
-        color: 0x222222
-      }));
+            var base = this.createMesh(1, 0.2, 1, 0, position, material);
+            position.set(ropePosition.x, 0.5 * pylonHeight, ropePosition.z - armLength);
 
-      this.kinematicBox.castShadow = true;
-      this.kinematicBox.position.x = 2.5;
-      this.kinematicBox.position.y = 5;
+            base.receiveShadow = true;
+            base.castShadow = true;
 
-      this.physics.kinematic.addBox(this.kinematicBox);
-      this.scene.add(this.kinematicBox);
+            var pylon = this.createMesh(0.5, pylonHeight, 0.5, 0, position, material);
+            position.set(ropePosition.x, pylonHeight, ropePosition.z - 0.5 * armLength);
 
-      // this._onKeyDown = this.onKeyDown.bind(this);
-      // document.addEventListener('keydown', this._onKeyDown);
+            pylon.receiveShadow = true;
+            pylon.castShadow = true;
 
-      // setTimeout(() => {
-      //   console.log('Kinematic disable');
-      //   this.physics.kinematic.disable(this.kinematicBox);
-      // }, 3000);
+            this.arm = this.createMesh(0.5, 0.5, armLength + 0.5, 2.0, position, material);
 
-      // setTimeout(() => {
-      //   console.log('Kinematic enable');
-      //   this.physics.kinematic.enable(this.kinematicBox);
-      // }, 10000);
+            this.arm.receiveShadow = true;
+            this.arm.castShadow = true;
 
-      // setTimeout(() => {
-      //   console.log('Static disable');
-      //   this.physics.static.disable(this.ground);
-      // }, 5000);
-    }
-  }, {
-    key: 'createPhysicsRayCaster',
-    value: function createPhysicsRayCaster() {
-      this.fly = new _Mesh.Mesh(new _SphereGeometry.SphereGeometry(1, 20, 20), new _MeshPhongMaterial.MeshPhongMaterial({ color: 0x222222 }));
+            var armPivot = { x: 0.0, y: -0.2, z: -armLength * 0.5 };
+            var pinPivot = { x: 0.0, y: pylonHeight * 0.5, z: 0.0 };
+            var axis = { x: 0, y: 1, z: 0 };
 
-      this.fly.receiveShadow = true;
-      this.fly.castShadow = true;
+            var hingeIndex = this.physics.hinge.addBodies(pylon, this.arm, axis, pinPivot, armPivot);
 
-      this.fly.rotation.x = Math.PI;
-      // this.fly.rotation.y = 0.35;
-      this.fly.position.z = -10;
-      this.fly.position.y = 5;
+            window.addEventListener('keydown', function (event) {
+                switch (event.keyCode) {
+                    case 81:
+                        _this2.physics.hinge.update(hingeIndex, 1);
+                        break;
 
-      this.scene.add(this.fly);
+                    case 65:
+                        _this2.physics.hinge.update(hingeIndex, -1);
+                        break;
+                }
+            }, false);
 
-      this.ray = new THREE.Vector3(0, 0, -6);
-      var length = this.ray.length();
+            window.addEventListener('keyup', function () {
+                _this2.physics.hinge.update(hingeIndex, 0);
+            }, false);
+        }
+    }, {
+        key: 'createMesh',
+        value: function createMesh(sx, sy, sz, mass, pos, material) {
+            var mesh = new _Mesh.Mesh(new _BoxGeometry.BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+            mesh.position.set(pos.x, pos.y, pos.z);
 
-      var geometry = new _CylinderGeometry.CylinderGeometry(0.2, 0.2, length, 8);
+            if (mass) {
+                this.physics.dynamic.addBox(mesh, mass);
+            } else {
+                this.physics.static.addBox(mesh);
+            }
 
-      geometry.translate(0, -0.5 * length, 0);
-      geometry.rotateX(-Math.PI * 0.5);
-      geometry.lookAt(this.ray);
+            this.scene.add(mesh);
+            return mesh;
+        }
+    }, {
+        key: 'createCloth',
+        value: function createCloth() {
+            var geometry = new _PlaneGeometry.PlaneBufferGeometry(5, 5, 25, 25);
+            var position = new _Vector.Vector3(-3, 5, 0);
 
-      var cylinder = new _Mesh.Mesh(geometry, new _MeshPhongMaterial.MeshPhongMaterial({
-        color: 0x00CC00
-      }));
+            // Appended to hinge:
+            geometry.rotateY(Math.PI / 2.0);
+            geometry.translate(position.x, position.y + 2.5, position.z - 2.5);
 
-      this.rayTarget = new _Vector.Vector3();
-      cylinder.receiveShadow = true;
-      cylinder.castShadow = true;
-      this.fly.add(cylinder);
+            var cloth = new _Mesh.Mesh(geometry, new _MeshPhongMaterial.MeshPhongMaterial({
+                side: _constants.DoubleSide,
+                color: 0x222222
+            }));
 
-      this._onKeyDown = this.onKeyDown.bind(this);
-      document.addEventListener('keydown', this._onKeyDown);
-    }
-  }, {
-    key: 'onKeyDown',
-    value: function onKeyDown(event) {
-      var code = event.keyCode;
+            // Appended to hinge:
+            this.physics.cloth.addBody(cloth, 1, position);
+            this.physics.cloth.append(cloth, 25, this.arm);
+            this.physics.cloth.append(cloth, 0, this.arm);
 
-      switch (code) {
-        case 87:
-          // this.kinematicBox.position.y += 1;
-          this.fly.position.z += 0.5;
-          break;
+            cloth.receiveShadow = true;
+            cloth.castShadow = true;
+            this.scene.add(cloth);
 
-        case 83:
-          // this.kinematicBox.position.y -= 1;
-          this.fly.position.z -= 0.5;
-          break;
+            // Rotated:
+            // this.physics.cloth.addBody(cloth, 1);
 
-        case 65:
-          // this.kinematicBox.position.x += 1;
-          this.fly.position.x += 0.5;
-          break;
+            // const obj = new Object3D();
+            // obj.rotation.y = Math.PI / 2;
 
-        case 68:
-          // this.kinematicBox.position.x -= 1;
-          this.fly.position.x -= 0.5;
-          break;
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      this.rayTarget.copy(this.ray).applyMatrix4(this.fly.matrixWorld);
-      var hit = this.physics.ray.cast(this.fly.position, this.rayTarget);
+            // obj.add(cloth);
+            // this.scene.add(obj);
 
-      this.physics.update();
-      console.log(hit);
-    }
-  }]);
+            // setTimeout(() => {
+            //   console.log('Cloth disable');
+            //   this.physics.cloth.disable(cloth);
+            // }, 10000);
 
-  return RigidBodies;
+            // setTimeout(() => {
+            //   console.log('Cloth enable');
+            //   this.physics.cloth.enable(cloth);
+            // }, 18000);
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+            this.physics.update();
+        }
+    }]);
+
+    return ClothBody;
 }(_Playground3.default);
 
-exports.default = RigidBodies;
+exports.default = ClothBody;
 module.exports = exports.default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! THREE */ "./node_modules/three/src/Three.js")))
 
 /***/ }),
 
@@ -71941,22 +71942,23 @@ module.exports = exports.default;
 "use strict";
 
 
-var _RigidBodies = __webpack_require__(/*! demos/bodies/RigidBodies */ "./src/demos/bodies/RigidBodies.js");
+var _ClothBody = __webpack_require__(/*! demos/constraints/ClothBody */ "./src/demos/constraints/ClothBody.js");
 
-var _RigidBodies2 = _interopRequireDefault(_RigidBodies);
+var _ClothBody2 = _interopRequireDefault(_ClothBody);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import RigidBodies from 'demos/bodies/RigidBodies';
 // import SoftBodies from 'demos/bodies/SoftBodies';
 
 window.addEventListener('DOMContentLoaded', function () {
   // const demo = (window.location.hash || '#rigid_bodies').slice(1);
 
   /* eslint-disable no-new */
-  new _RigidBodies2.default();
+  // new RigidBodies();
   // new ConvexBreak();
   // new SoftBodies();
-  // new ClothBody();
+  new _ClothBody2.default();
   // new Break();
 
   // switch (demo) {
@@ -71989,8 +71991,6 @@ window.addEventListener('DOMContentLoaded', function () {
 // import ConvexBreak from 'demos/collisions/ConvexBreak';
 // import Break from 'demos/collisions/Break';
 
-// import ClothBody from 'demos/constraints/ClothBody';
-
 /***/ }),
 
 /***/ "./src/super/Constraint.js":
@@ -72009,26 +72009,29 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Math2 = __webpack_require__(/*! three/src/math/Math.js */ "./node_modules/three/src/math/Math.js");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Constraint = function () {
   function Constraint(world, type) {
     _classCallCheck(this, Constraint);
 
+    this.uuids = [];
     this.type = type;
     this.world = world;
     this.constraints = [];
   }
 
   _createClass(Constraint, [{
-    key: "add",
+    key: 'add',
     value: function add(constraint) {
       this.world.addConstraint(constraint, true);
       this.constraints.push(constraint);
       constraint.enableFeedback();
     }
   }, {
-    key: "activateAll",
+    key: 'activateAll',
     value: function activateAll() {
       for (var c = 0, length = this.constraints.length; c < length; c++) {
         var constraint = this.constraints[c];
@@ -72039,19 +72042,32 @@ var Constraint = function () {
       }
     }
   }, {
-    key: "remove",
-    value: function remove(index) {
-      var constraint = this.constraints[index];
-      if (!constraint) return false;
+    key: 'remove',
+    value: function remove(uuid) {
+      var index = this.uuids.indexOf(uuid);
 
-      this.world.removeConstraint(constraint);
-      this.constraints[index] = null;
-      return true;
+      if (index > -1) {
+        var constraint = this.constraints[index];
+        this.world.removeConstraint(constraint);
+        this.constraints.splice(index, 1);
+        this.uuids.splice(index, 1);
+        return true;
+      }
+
+      return false;
     }
   }, {
-    key: "getConstraint",
-    value: function getConstraint(index) {
-      return this.constraints[index] || null;
+    key: 'getConstraintByUUID',
+    value: function getConstraintByUUID(uuid) {
+      var index = this.uuids.indexOf(uuid);
+      return index > -1 ? this.constraints[index] : null;
+    }
+  }, {
+    key: '_uuid',
+    get: function get() {
+      var uuid = _Math2._Math.generateUUID();
+      this.uuids.push(uuid);
+      return uuid;
     }
   }]);
 

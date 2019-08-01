@@ -13,7 +13,7 @@ export default class PointConstraints extends Constraint {
       bodyMesh.uuid, position
     );
 
-    return this.constraints.length - 1;
+    return this._uuid;
   }
 
   addBodies (body0, body1, position0 = new Vector3(), position1 = new Vector3()) {
@@ -23,7 +23,7 @@ export default class PointConstraints extends Constraint {
       ]
     );
 
-    return this.constraints.length - 1;
+    return this._uuid;
   }
 
   attachBody (body, position) {
