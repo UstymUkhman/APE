@@ -28,15 +28,23 @@ export default class HingeConstraints extends Constraint {
     });
   }
 
-  update (index, direction) {
-    this.worker.postMessage({
-      action: 'updateConstraints',
+  update (uuid, direction) {
+    const index = this.uuids.indexOf(uuid);
 
-      params: {
-        direction: direction,
-        type: this.type,
-        index: index
-      }
-    });
+    if (index > -1) {
+      this.worker.postMessage({
+        action: 'updateConstraints',
+
+        params: {
+          direction: direction,
+          type: this.type,
+          index: index
+        }
+      });
+    } else {
+      console.warn(
+        `There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`
+      );
+    }
   }
 }

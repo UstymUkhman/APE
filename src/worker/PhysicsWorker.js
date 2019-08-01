@@ -497,13 +497,7 @@ class PhysicsWorker {
   }
 
   removeConstraint (props) {
-    const found = this[props.type].remove(props.index);
-
-    if (!found) {
-      console.warn(
-        `There\'s no \'${props.type}\' constraint with index \'${props.index}\'.`
-      );
-    }
+    this[props.type].remove(props.index);
   }
 
   castRay (props) {

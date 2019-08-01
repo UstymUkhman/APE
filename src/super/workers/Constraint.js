@@ -24,14 +24,22 @@ export default class Constraint {
   }
 
   remove (uuid) {
-    this.worker.postMessage({
-      action: 'removeConstraint',
+    const index = this.uuids.indexOf(uuid);
 
-      params: {
-        type: this.type,
-        uuid: uuid
-      }
-    });
+    if (index > -1) {
+      this.worker.postMessage({
+        action: 'removeConstraint',
+
+        params: {
+          type: this.type,
+          index: index
+        }
+      });
+    } else {
+      console.warn(
+        `There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`
+      );
+    }
   }
 
   get _uuid () {

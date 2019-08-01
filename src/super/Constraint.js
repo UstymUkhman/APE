@@ -1,4 +1,5 @@
 import { _Math } from 'three/src/math/Math.js';
+import { webWorker } from '@/utils';
 
 export default class Constraint {
   constructor (world, type) {
@@ -6,6 +7,7 @@ export default class Constraint {
     this.type = type;
     this.world = world;
     this.constraints = [];
+    this.worker = webWorker();
   }
 
   add (constraint) {
@@ -25,13 +27,14 @@ export default class Constraint {
   }
 
   remove (uuid) {
-    const index = this.uuids.indexOf(uuid);
+    const id = this.worker ? uuid : this.uuids.indexOf(uuid);
 
-    if (index > -1) {
-      const constraint = this.constraints[index];
+    if (id > -1) {
+      if (!this.worker) this.uuids.splice(id, 1);
+      const constraint = this.constraints[id];
+
       this.world.removeConstraint(constraint);
-      this.constraints.splice(index, 1);
-      this.uuids.splice(index, 1);
+      this.constraints.splice(id, 1);
       return true;
     }
 
