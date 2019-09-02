@@ -1,5 +1,6 @@
-import PointConstraints from './constraints/PointConstraints';
+import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
+import PointConstraints from './constraints/PointConstraints';
 
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
@@ -35,8 +36,9 @@ export default class PhysicsWorld {
       this.initRigidWorld();
     }
 
-    this.point = new PointConstraints(this.world, this._events);
+    this.slider = new SliderConstraints(this.world, this._events);
     this.hinge = new HingeConstraints(this.world, this._events);
+    this.point = new PointConstraints(this.world, this._events);
 
     this.kinematic = new KinematicBodies(this.world);
     this.dynamic = new DynamicBodies(this.world);
@@ -90,6 +92,9 @@ export default class PhysicsWorld {
 
     this._events.on('getHingeBody', this.getHingeBody.bind(this));
     this._events.on('getHingeBodies', this.getHingeBodies.bind(this));
+
+    this._events.on('getSliderBody', this.getSliderBody.bind(this));
+    this._events.on('getSliderBodies', this.getSliderBodies.bind(this));
   }
 
   getRopeAnchor (targetUUID, rope) {
@@ -212,6 +217,48 @@ export default class PhysicsWorld {
       );
     } else {
       this.hinge.hingeBodies(pin.body, arm.body, position);
+    }
+  }
+
+  getSliderBody (bodyUUID, pivot) {
+    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
+                 this.dynamic.getBodyByUUID(bodyUUID) ||
+                 this.static.getBodyByUUID(bodyUUID);
+
+    if (!body) {
+      console.error(
+        'SliderConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else {
+      this.slider.attachBody(body.body, pivot);
+    }
+  }
+
+  getSliderBodies (body0UUID, body1UUID, pivot) {
+    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
+                  this.dynamic.getBodyByUUID(body0UUID) ||
+                  this.static.getBodyByUUID(body0UUID);
+
+    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
+                  this.dynamic.getBodyByUUID(body1UUID) ||
+                  this.static.getBodyByUUID(body1UUID);
+
+    if (!body0) {
+      console.error(
+        'SliderConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else if (!body1) {
+      console.error(
+        'SliderConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        'or use \'PhysicsWorld.slider.addBody\' method if you want to constraint only one body.'
+      );
+    } else {
+      this.slider.attachBodies(body0.body, body1.body, pivot);
     }
   }
 

@@ -34,6 +34,8 @@ export default class HingeConstraints extends Constraint {
     this.add(hinge);
   }
 
+  // Will be replaced with
+  // more generic methods:
   update (params) {
     const constraint = this.constraints[params.index];
 

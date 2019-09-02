@@ -61,6 +61,8 @@ export default class HingeConstraints extends Constraint {
     this.add(hinge);
   }
 
+  // Will be replaced with
+  // more generic methods:
   update (uuid, direction) {
     const constraint = this.getConstraintByUUID(uuid);
 
