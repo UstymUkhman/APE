@@ -1,7 +1,8 @@
 import PhysicsWorker from 'worker-loader!worker/PhysicsWorker.js';
 
-import PointConstraints from './web/constraints/PointConstraints';
+import SliderConstraints from './web/constraints/SliderConstraints';
 import HingeConstraints from './web/constraints/HingeConstraints';
+import PointConstraints from './web/constraints/PointConstraints';
 
 import KinematicBodies from './web/bodies/KinematicBodies';
 import DynamicBodies from './web/bodies/DynamicBodies';
@@ -39,8 +40,9 @@ export default class PhysicsWorld {
     this.dynamic = new DynamicBodies(this.worker);
     this.static = new StaticBodies(this.worker);
 
-    this.point = new PointConstraints(this.worker);
+    this.slider = new SliderConstraints(this.worker);
     this.hinge = new HingeConstraints(this.worker);
+    this.point = new PointConstraints(this.worker);
 
     this.ray = new PhysicsRay(this.worker);
 
@@ -130,7 +132,10 @@ export default class PhysicsWorld {
     delete this.kinematic;
     delete this.dynamic;
     delete this.static;
+
+    delete this.slider;
     delete this.hinge;
+    delete this.point;
 
     delete this.worker;
     delete this._clock;

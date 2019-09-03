@@ -1,5 +1,6 @@
-import PointConstraints from './constraints/PointConstraints';
+import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
+import PointConstraints from './constraints/PointConstraints';
 
 import KinematicBodies from './bodies/KinematicBodies';
 import DynamicBodies from './bodies/DynamicBodies';
@@ -73,14 +74,6 @@ class PhysicsWorker {
     this.rope = new RopeBodies(this.world);
   }
 
-  initPointConstraints () {
-    this.point = new PointConstraints(this.world);
-  }
-
-  initHingeConstraints () {
-    this.hinge = new HingeConstraints(this.world);
-  }
-
   initClothBodies () {
     this.cloth = new ClothBodies(this.world);
   }
@@ -95,6 +88,18 @@ class PhysicsWorker {
 
   initKinematicBodies () {
     this.kinematic = new KinematicBodies(this.world);
+  }
+
+  initPointConstraints () {
+    this.point = new PointConstraints(this.world);
+  }
+
+  initHingeConstraints () {
+    this.hinge = new HingeConstraints(this.world);
+  }
+
+  initSliderConstraints () {
+    this.slider = new SliderConstraints(this.world);
   }
 
   addBody (props) {
@@ -141,11 +146,11 @@ class PhysicsWorker {
 
   addConstraint (props) {
     if (props.method === 'attachBodies') {
-      this.setPointBodies(props);
+      this.setConstraintBodies(props);
     }
 
     if (props.method === 'attachBody') {
-      this.setPointBody(props);
+      this.setConstraintBody(props);
     }
 
     if (props.method === 'hingeBodies') {
@@ -159,7 +164,9 @@ class PhysicsWorker {
     this[props.type][props.method](props);
   }
 
-  setPointBodies (props) {
+  setConstraintBodies (props) {
+    const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
+
     const body0 = this.kinematic.getBodyByUUID(props.body0) ||
                   this.dynamic.getBodyByUUID(props.body0) ||
                   this.static.getBodyByUUID(props.body0);
@@ -170,15 +177,15 @@ class PhysicsWorker {
 
     if (!body0) {
       console.error(
-        'PointConstraint body\'s collider was not found.\n',
+        `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body0}]:\n`,
         'dynamic, kinematic or static.'
       );
     } else if (!body1) {
       console.error(
-        'PointConstraint body\'s collider was not found.\n',
+        `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body1}]: dynamic, kinematic or static;\n`,
-        'or use \'PhysicsWorld.point.addBody\' method if you want to constraint only one body.'
+        `or use \'PhysicsWorld.${props.type}.addBody\' method if you want to constraint only one body.`
       );
     } else {
       props.body0 = body0.body;
@@ -186,14 +193,16 @@ class PhysicsWorker {
     }
   }
 
-  setPointBody (props) {
+  setConstraintBody (props) {
+    const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
+
     const body = this.kinematic.getBodyByUUID(props.body) ||
                  this.dynamic.getBodyByUUID(props.body) ||
                  this.static.getBodyByUUID(props.body);
 
     if (!body) {
       console.error(
-        'PointConstraint body\'s collider was not found.\n',
+        `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body}]:\n`,
         'dynamic, kinematic or static.'
       );

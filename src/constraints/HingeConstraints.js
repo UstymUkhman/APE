@@ -68,6 +68,10 @@ export default class HingeConstraints extends Constraint {
 
     if (constraint) {
       constraint.enableAngularMotor(true, direction, this.force);
+    } else {
+      console.warn(
+        `There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`
+      );
     }
   }
 }

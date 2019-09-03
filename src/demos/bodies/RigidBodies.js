@@ -160,6 +160,6 @@ export default class RigidBodies extends Playground {
     const hit = this.physics.ray.cast(this.fly.position, this.rayTarget);
 
     this.physics.update();
-    // console.log(hit);
+    console.log(hit);
   }
 }
