@@ -1,9 +1,9 @@
 import { ZERO_MASS, CCD_MOTION_THRESHOLD } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
-import RigidBody from '@/super/RigidBody';
+import RigidBodies from '@/super/RigidBodies';
 import { Ammo } from '@/utils';
 
-export default class DynamicBodies extends RigidBody {
+export default class DynamicBodies extends RigidBodies {
   constructor (world) {
     super(world, 'dynamic');
     this.linearVelocity = new Vector3();

@@ -3,7 +3,7 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry';
 
 import { Ammo, equalBufferVertices } from '@/utils';
 import { Geometry } from 'three/src/core/Geometry';
-import SoftBody from '@/super/SoftBody';
+import _SoftBodies from '@/super/SoftBodies';
 
 import {
   POWER16,
@@ -18,7 +18,7 @@ import {
   DISABLE_DEACTIVATION
 } from '@/constants';
 
-export default class SoftBodies extends SoftBody {
+export default class SoftBodies extends _SoftBodies {
   constructor (world) {
     super(world);
 

@@ -1,4 +1,4 @@
-import RigidBody from '@/super/RigidBody';
+import RigidBodies from '@/super/RigidBodies';
 import { Ammo } from '@/utils';
 
 import {
@@ -7,7 +7,7 @@ import {
   DISABLE_DEACTIVATION
 } from '@/constants';
 
-export default class KinematicBodies extends RigidBody {
+export default class KinematicBodies extends RigidBodies {
   constructor (world) {
     super(world, 'kinematic');
 

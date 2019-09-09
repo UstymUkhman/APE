@@ -10,7 +10,7 @@ import {
   DISABLE_SIMULATION
 } from '@/constants';
 
-export default class SoftBody {
+export default class SoftBodies {
   constructor (world) {
     this.bodies = [];
     this.world = world;

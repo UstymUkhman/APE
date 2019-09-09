@@ -1,4 +1,4 @@
-import SoftBody from '@/super/SoftBody';
+import SoftBodies from '@/super/SoftBodies';
 import { Ammo } from '@/utils';
 
 import {
@@ -8,7 +8,7 @@ import {
   DISABLE_DEACTIVATION
 } from '@/constants';
 
-export default class RopeBodies extends SoftBody {
+export default class RopeBodies extends SoftBodies {
   constructor (world) {
     super(world);
 

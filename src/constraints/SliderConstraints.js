@@ -1,8 +1,8 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import Constraint from '@/super/Constraint';
+import Constraints from '@/super/Constraints';
 import { Ammo } from '@/utils';
 
-export default class SliderConstraints extends Constraint {
+export default class SliderConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'slider');
     this.events = events;

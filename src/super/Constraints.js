@@ -1,7 +1,7 @@
 import { _Math } from 'three/src/math/Math.js';
 import { webWorker } from '@/utils';
 
-export default class Constraint {
+export default class Constraints {
   constructor (world, type) {
     this.uuids = [];
     this.type = type;

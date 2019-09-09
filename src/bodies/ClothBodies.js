@@ -1,5 +1,5 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import SoftBody from '@/super/SoftBody';
+import SoftBodies from '@/super/SoftBodies';
 import { Ammo } from '@/utils';
 
 import {
@@ -13,7 +13,7 @@ import {
   DISABLE_DEACTIVATION
 } from '@/constants';
 
-export default class ClothBodies extends SoftBody {
+export default class ClothBodies extends SoftBodies {
   constructor (world, events) {
     super(world);
     this.events = events;

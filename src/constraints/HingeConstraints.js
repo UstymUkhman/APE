@@ -1,10 +1,10 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import Constraint from '@/super/Constraint';
+import Constraints from '@/super/Constraints';
 
 import { HINGE_FORCE } from '@/constants';
 import { Ammo } from '@/utils';
 
-export default class HingeConstraints extends Constraint {
+export default class HingeConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'hinge');
 

@@ -1,6 +1,6 @@
-import RigidBody from '@/super/workers/RigidBody';
+import RigidBodies from '@/super/workers/RigidBodies';
 
-export default class KinematicBodies extends RigidBody {
+export default class KinematicBodies extends RigidBodies {
   constructor (worker) {
     super('kinematic', worker);
     this.worker.postMessage({action: 'initKinematicBodies'});

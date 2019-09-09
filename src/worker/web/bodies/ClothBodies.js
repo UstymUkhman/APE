@@ -1,5 +1,5 @@
+import SoftBodies from '@/super/workers/SoftBodies';
 import { Vector3 } from 'three/src/math/Vector3';
-import SoftBody from '@/super/workers/SoftBody';
 
 import {
   CLOTH_MARGIN,
@@ -7,7 +7,7 @@ import {
   CLOTH_VITERATIONS
 } from '@/constants';
 
-export default class ClothBodies extends SoftBody {
+export default class ClothBodies extends SoftBodies {
   constructor (worker) {
     super('Cloth', worker, {
       margin: CLOTH_MARGIN,

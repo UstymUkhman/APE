@@ -1,7 +1,7 @@
-import Constraint from '@/super/Constraint';
+import Constraints from '@/super/Constraints';
 import { Ammo } from '@/utils';
 
-export default class PointConstraints extends Constraint {
+export default class PointConstraints extends Constraints {
   constructor (world) {
     super(world, 'point');
   }

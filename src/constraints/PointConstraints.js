@@ -1,8 +1,8 @@
 import { Vector3 } from 'three/src/math/Vector3';
-import Constraint from '@/super/Constraint';
+import Constraints from '@/super/Constraints';
 import { Ammo } from '@/utils';
 
-export default class PointConstraints extends Constraint {
+export default class PointConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'point');
     this.events = events;

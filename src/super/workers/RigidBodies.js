@@ -11,7 +11,7 @@ import {
 
 const VECTOR1 = new Vector3(1.0, 1.0, 1.0);
 
-export default class RigidBody {
+export default class RigidBodies {
   constructor (type, worker) {
     this.bodies = [];
     this.type = type;

@@ -1,6 +1,6 @@
 import { _Math } from 'three/src/math/Math.js';
 
-export default class Constraint {
+export default class Constraints {
   constructor (type, worker) {
     this.uuids = [];
     this.worker = worker;

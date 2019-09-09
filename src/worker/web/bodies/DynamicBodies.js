@@ -1,8 +1,8 @@
+import RigidBodies from '@/super/workers/RigidBodies';
 import { CCD_MOTION_THRESHOLD } from '@/constants';
-import RigidBody from '@/super/workers/RigidBody';
 import { Vector3 } from 'three/src/math/Vector3';
 
-export default class DynamicBodies extends RigidBody {
+export default class DynamicBodies extends RigidBodies {
   constructor (worker) {
     super('dynamic', worker);
     this.worker.postMessage({action: 'initDynamicBodies'});

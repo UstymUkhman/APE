@@ -1,4 +1,4 @@
-import SoftBody from '@/super/workers/SoftBody';
+import _SoftBodies from '@/super/workers/SoftBodies';
 
 import {
   FRICTION,
@@ -12,7 +12,7 @@ import {
   CCD_MOTION_THRESHOLD
 } from '@/constants';
 
-export default class SoftBodies extends SoftBody {
+export default class SoftBodies extends _SoftBodies {
   constructor (worker) {
     super('Soft', worker, {
       friction: FRICTION,

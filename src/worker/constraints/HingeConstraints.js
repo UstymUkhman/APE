@@ -1,8 +1,8 @@
-import Constraint from '@/super/Constraint';
+import Constraints from '@/super/Constraints';
 import { HINGE_FORCE } from '@/constants';
 import { Ammo } from '@/utils';
 
-export default class HingeConstraints extends Constraint {
+export default class HingeConstraints extends Constraints {
   constructor (world) {
     super(world, 'hinge');
     this.force = HINGE_FORCE;

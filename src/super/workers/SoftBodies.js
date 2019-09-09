@@ -5,7 +5,7 @@ import {
   SOFT_COLLISION
 } from '@/constants';
 
-export default class SoftBody {
+export default class SoftBodies {
   constructor (type, worker, constants = null) {
     this.bodies = [];
     this.worker = worker;

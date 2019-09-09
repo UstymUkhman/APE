@@ -1,7 +1,7 @@
-import Constraint from '@/super/workers/Constraint.js';
+import Constraints from '@/super/workers/Constraints';
 import { Vector3 } from 'three/src/math/Vector3';
 
-export default class SliderConstraints extends Constraint {
+export default class SliderConstraints extends Constraints {
   constructor (worker) {
     super('Slider', worker);
   }

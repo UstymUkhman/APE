@@ -1,8 +1,8 @@
-import RigidBody from '@/super/RigidBody';
+import RigidBodies from '@/super/RigidBodies';
 import { ZERO_MASS } from '@/constants';
 import { Ammo } from '@/utils';
 
-export default class DynamicBodies extends RigidBody {
+export default class DynamicBodies extends RigidBodies {
   constructor (world) {
     super(world, 'dynamic');
   }

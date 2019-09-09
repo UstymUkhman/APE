@@ -1,8 +1,8 @@
-import Constraint from '@/super/workers/Constraint.js';
+import Constraints from '@/super/workers/Constraints';
 import { Vector3 } from 'three/src/math/Vector3';
 import { HINGE_FORCE } from '@/constants';
 
-export default class HingeConstraints extends Constraint {
+export default class HingeConstraints extends Constraints {
   constructor (worker) {
     super('Hinge', worker);
     this.constants = { force: HINGE_FORCE };

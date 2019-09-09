@@ -69957,9 +69957,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _SoftBody2 = __webpack_require__(/*! @/super/SoftBody */ "./src/super/SoftBody.js");
+var _SoftBodies2 = __webpack_require__(/*! @/super/SoftBodies */ "./src/super/SoftBodies.js");
 
-var _SoftBody3 = _interopRequireDefault(_SoftBody2);
+var _SoftBodies3 = _interopRequireDefault(_SoftBodies2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -69973,8 +69973,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ClothBodies = function (_SoftBody) {
-  _inherits(ClothBodies, _SoftBody);
+var ClothBodies = function (_SoftBodies) {
+  _inherits(ClothBodies, _SoftBodies);
 
   function ClothBodies(world, events) {
     _classCallCheck(this, ClothBodies);
@@ -70084,7 +70084,7 @@ var ClothBodies = function (_SoftBody) {
   }]);
 
   return ClothBodies;
-}(_SoftBody3.default);
+}(_SoftBodies3.default);
 
 exports.default = ClothBodies;
 module.exports = exports.default;
@@ -70111,9 +70111,9 @@ var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _RigidBody2 = __webpack_require__(/*! @/super/RigidBody */ "./src/super/RigidBody.js");
+var _RigidBodies2 = __webpack_require__(/*! @/super/RigidBodies */ "./src/super/RigidBodies.js");
 
-var _RigidBody3 = _interopRequireDefault(_RigidBody2);
+var _RigidBodies3 = _interopRequireDefault(_RigidBodies2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -70125,8 +70125,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DynamicBodies = function (_RigidBody) {
-  _inherits(DynamicBodies, _RigidBody);
+var DynamicBodies = function (_RigidBodies) {
+  _inherits(DynamicBodies, _RigidBodies);
 
   function DynamicBodies(world) {
     _classCallCheck(this, DynamicBodies);
@@ -70427,7 +70427,7 @@ var DynamicBodies = function (_RigidBody) {
   }]);
 
   return DynamicBodies;
-}(_RigidBody3.default);
+}(_RigidBodies3.default);
 
 exports.default = DynamicBodies;
 module.exports = exports.default;
@@ -70450,9 +70450,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RigidBody2 = __webpack_require__(/*! @/super/RigidBody */ "./src/super/RigidBody.js");
+var _RigidBodies2 = __webpack_require__(/*! @/super/RigidBodies */ "./src/super/RigidBodies.js");
 
-var _RigidBody3 = _interopRequireDefault(_RigidBody2);
+var _RigidBodies3 = _interopRequireDefault(_RigidBodies2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -70466,8 +70466,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var KinematicBodies = function (_RigidBody) {
-  _inherits(KinematicBodies, _RigidBody);
+var KinematicBodies = function (_RigidBodies) {
+  _inherits(KinematicBodies, _RigidBodies);
 
   function KinematicBodies(world) {
     _classCallCheck(this, KinematicBodies);
@@ -70555,7 +70555,7 @@ var KinematicBodies = function (_RigidBody) {
   }]);
 
   return KinematicBodies;
-}(_RigidBody3.default);
+}(_RigidBodies3.default);
 
 exports.default = KinematicBodies;
 module.exports = exports.default;
@@ -70580,9 +70580,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _SoftBody2 = __webpack_require__(/*! @/super/SoftBody */ "./src/super/SoftBody.js");
+var _SoftBodies2 = __webpack_require__(/*! @/super/SoftBodies */ "./src/super/SoftBodies.js");
 
-var _SoftBody3 = _interopRequireDefault(_SoftBody2);
+var _SoftBodies3 = _interopRequireDefault(_SoftBodies2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -70596,8 +70596,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var RopeBodies = function (_SoftBody) {
-  _inherits(RopeBodies, _SoftBody);
+var RopeBodies = function (_SoftBodies) {
+  _inherits(RopeBodies, _SoftBodies);
 
   function RopeBodies(world, events) {
     _classCallCheck(this, RopeBodies);
@@ -70689,7 +70689,7 @@ var RopeBodies = function (_SoftBody) {
   }]);
 
   return RopeBodies;
-}(_SoftBody3.default);
+}(_SoftBodies3.default);
 
 exports.default = RopeBodies;
 module.exports = exports.default;
@@ -70720,9 +70720,9 @@ var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 var _Geometry = __webpack_require__(/*! three/src/core/Geometry */ "./node_modules/three/src/core/Geometry.js");
 
-var _SoftBody2 = __webpack_require__(/*! @/super/SoftBody */ "./src/super/SoftBody.js");
+var _SoftBodies3 = __webpack_require__(/*! @/super/SoftBodies */ "./src/super/SoftBodies.js");
 
-var _SoftBody3 = _interopRequireDefault(_SoftBody2);
+var _SoftBodies4 = _interopRequireDefault(_SoftBodies3);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -70734,8 +70734,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var SoftBodies = function (_SoftBody) {
-  _inherits(SoftBodies, _SoftBody);
+var SoftBodies = function (_SoftBodies2) {
+  _inherits(SoftBodies, _SoftBodies2);
 
   function SoftBodies(world) {
     _classCallCheck(this, SoftBodies);
@@ -70970,7 +70970,7 @@ var SoftBodies = function (_SoftBody) {
   }]);
 
   return SoftBodies;
-}(_SoftBody3.default);
+}(_SoftBodies4.default);
 
 exports.default = SoftBodies;
 module.exports = exports.default;
@@ -70993,9 +70993,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RigidBody2 = __webpack_require__(/*! @/super/RigidBody */ "./src/super/RigidBody.js");
+var _RigidBodies2 = __webpack_require__(/*! @/super/RigidBodies */ "./src/super/RigidBodies.js");
 
-var _RigidBody3 = _interopRequireDefault(_RigidBody2);
+var _RigidBodies3 = _interopRequireDefault(_RigidBodies2);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -71009,8 +71009,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var StaticBodies = function (_RigidBody) {
-  _inherits(StaticBodies, _RigidBody);
+var StaticBodies = function (_RigidBodies) {
+  _inherits(StaticBodies, _RigidBodies);
 
   function StaticBodies(world) {
     _classCallCheck(this, StaticBodies);
@@ -71125,7 +71125,7 @@ var StaticBodies = function (_RigidBody) {
   }]);
 
   return StaticBodies;
-}(_RigidBody3.default);
+}(_RigidBodies3.default);
 
 exports.default = StaticBodies;
 module.exports = exports.default;
@@ -71237,9 +71237,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _Constraint2 = __webpack_require__(/*! @/super/Constraint */ "./src/super/Constraint.js");
+var _Constraints2 = __webpack_require__(/*! @/super/Constraints */ "./src/super/Constraints.js");
 
-var _Constraint3 = _interopRequireDefault(_Constraint2);
+var _Constraints3 = _interopRequireDefault(_Constraints2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -71251,8 +71251,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ConeTwistConstraints = function (_Constraint) {
-  _inherits(ConeTwistConstraints, _Constraint);
+var ConeTwistConstraints = function (_Constraints) {
+  _inherits(ConeTwistConstraints, _Constraints);
 
   function ConeTwistConstraints(world, events) {
     _classCallCheck(this, ConeTwistConstraints);
@@ -71312,7 +71312,7 @@ var ConeTwistConstraints = function (_Constraint) {
   }]);
 
   return ConeTwistConstraints;
-}(_Constraint3.default);
+}(_Constraints3.default);
 
 exports.default = ConeTwistConstraints;
 module.exports = exports.default;
@@ -71337,9 +71337,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _Constraint2 = __webpack_require__(/*! @/super/Constraint */ "./src/super/Constraint.js");
+var _Constraints2 = __webpack_require__(/*! @/super/Constraints */ "./src/super/Constraints.js");
 
-var _Constraint3 = _interopRequireDefault(_Constraint2);
+var _Constraints3 = _interopRequireDefault(_Constraints2);
 
 var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
@@ -71353,8 +71353,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var HingeConstraints = function (_Constraint) {
-  _inherits(HingeConstraints, _Constraint);
+var HingeConstraints = function (_Constraints) {
+  _inherits(HingeConstraints, _Constraints);
 
   function HingeConstraints(world, events) {
     _classCallCheck(this, HingeConstraints);
@@ -71430,7 +71430,7 @@ var HingeConstraints = function (_Constraint) {
   }]);
 
   return HingeConstraints;
-}(_Constraint3.default);
+}(_Constraints3.default);
 
 exports.default = HingeConstraints;
 module.exports = exports.default;
@@ -71455,9 +71455,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _Constraint2 = __webpack_require__(/*! @/super/Constraint */ "./src/super/Constraint.js");
+var _Constraints2 = __webpack_require__(/*! @/super/Constraints */ "./src/super/Constraints.js");
 
-var _Constraint3 = _interopRequireDefault(_Constraint2);
+var _Constraints3 = _interopRequireDefault(_Constraints2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -71469,8 +71469,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var PointConstraints = function (_Constraint) {
-  _inherits(PointConstraints, _Constraint);
+var PointConstraints = function (_Constraints) {
+  _inherits(PointConstraints, _Constraints);
 
   function PointConstraints(world, events) {
     _classCallCheck(this, PointConstraints);
@@ -71521,7 +71521,7 @@ var PointConstraints = function (_Constraint) {
   }]);
 
   return PointConstraints;
-}(_Constraint3.default);
+}(_Constraints3.default);
 
 exports.default = PointConstraints;
 module.exports = exports.default;
@@ -71546,9 +71546,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
-var _Constraint2 = __webpack_require__(/*! @/super/Constraint */ "./src/super/Constraint.js");
+var _Constraints2 = __webpack_require__(/*! @/super/Constraints */ "./src/super/Constraints.js");
 
-var _Constraint3 = _interopRequireDefault(_Constraint2);
+var _Constraints3 = _interopRequireDefault(_Constraints2);
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
@@ -71560,8 +71560,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var SliderConstraints = function (_Constraint) {
-  _inherits(SliderConstraints, _Constraint);
+var SliderConstraints = function (_Constraints) {
+  _inherits(SliderConstraints, _Constraints);
 
   function SliderConstraints(world, events) {
     _classCallCheck(this, SliderConstraints);
@@ -71647,7 +71647,7 @@ var SliderConstraints = function (_Constraint) {
   }]);
 
   return SliderConstraints;
-}(_Constraint3.default);
+}(_Constraints3.default);
 
 exports.default = SliderConstraints;
 module.exports = exports.default;
@@ -72347,10 +72347,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
 /***/ }),
 
-/***/ "./src/super/Constraint.js":
-/*!*********************************!*\
-  !*** ./src/super/Constraint.js ***!
-  \*********************************/
+/***/ "./src/super/Constraints.js":
+/*!**********************************!*\
+  !*** ./src/super/Constraints.js ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -72369,9 +72369,9 @@ var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Constraint = function () {
-  function Constraint(world, type) {
-    _classCallCheck(this, Constraint);
+var Constraints = function () {
+  function Constraints(world, type) {
+    _classCallCheck(this, Constraints);
 
     this.uuids = [];
     this.type = type;
@@ -72380,7 +72380,7 @@ var Constraint = function () {
     this.worker = (0, _utils.webWorker)();
   }
 
-  _createClass(Constraint, [{
+  _createClass(Constraints, [{
     key: 'add',
     value: function add(constraint) {
       this.world.addConstraint(constraint, true);
@@ -72429,18 +72429,18 @@ var Constraint = function () {
     }
   }]);
 
-  return Constraint;
+  return Constraints;
 }();
 
-exports.default = Constraint;
+exports.default = Constraints;
 module.exports = exports.default;
 
 /***/ }),
 
-/***/ "./src/super/RigidBody.js":
-/*!********************************!*\
-  !*** ./src/super/RigidBody.js ***!
-  \********************************/
+/***/ "./src/super/RigidBodies.js":
+/*!**********************************!*\
+  !*** ./src/super/RigidBodies.js ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -72471,9 +72471,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var VECTOR1 = new _Vector.Vector3(1.0, 1.0, 1.0);
 
-var RigidBody = function () {
-  function RigidBody(world, type) {
-    _classCallCheck(this, RigidBody);
+var RigidBodies = function () {
+  function RigidBodies(world, type) {
+    _classCallCheck(this, RigidBodies);
 
     this.type = type;
     this.bodies = [];
@@ -72498,7 +72498,7 @@ var RigidBody = function () {
   /* eslint-disable new-cap */
 
 
-  _createClass(RigidBody, [{
+  _createClass(RigidBodies, [{
     key: 'createBox',
     value: function createBox(size) {
       return new _utils.Ammo.btBoxShape(new _utils.Ammo.btVector3(size.width / 2.0, size.height / 2.0, size.depth / 2.0));
@@ -72720,18 +72720,18 @@ var RigidBody = function () {
     }
   }]);
 
-  return RigidBody;
+  return RigidBodies;
 }();
 
-exports.default = RigidBody;
+exports.default = RigidBodies;
 module.exports = exports.default;
 
 /***/ }),
 
-/***/ "./src/super/SoftBody.js":
-/*!*******************************!*\
-  !*** ./src/super/SoftBody.js ***!
-  \*******************************/
+/***/ "./src/super/SoftBodies.js":
+/*!*********************************!*\
+  !*** ./src/super/SoftBodies.js ***!
+  \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -72756,9 +72756,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SoftBody = function () {
-  function SoftBody(world) {
-    _classCallCheck(this, SoftBody);
+var SoftBodies = function () {
+  function SoftBodies(world) {
+    _classCallCheck(this, SoftBodies);
 
     this.bodies = [];
     this.world = world;
@@ -72769,7 +72769,7 @@ var SoftBody = function () {
     /* eslint-enable new-cap */
   }
 
-  _createClass(SoftBody, [{
+  _createClass(SoftBodies, [{
     key: 'setPiterations',
     value: function setPiterations(mesh) {
       var piterations = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.piterations;
@@ -72936,10 +72936,10 @@ var SoftBody = function () {
     }
   }]);
 
-  return SoftBody;
+  return SoftBodies;
 }();
 
-exports.default = SoftBody;
+exports.default = SoftBodies;
 module.exports = exports.default;
 
 /***/ }),

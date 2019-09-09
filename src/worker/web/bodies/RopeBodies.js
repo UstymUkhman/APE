@@ -1,5 +1,5 @@
+import SoftBodies from '@/super/workers/SoftBodies';
 import { Vector3 } from 'three/src/math/Vector3';
-import SoftBody from '@/super/workers/SoftBody';
 
 import {
   ROPE_MARGIN,
@@ -7,7 +7,7 @@ import {
   ROPE_PITERATIONS
 } from '@/constants';
 
-export default class RopeBodies extends SoftBody {
+export default class RopeBodies extends SoftBodies {
   constructor (worker) {
     super('Rope', worker, {
       margin: ROPE_MARGIN,
