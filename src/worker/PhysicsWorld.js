@@ -1,6 +1,7 @@
 import PhysicsWorker from 'worker-loader!worker/PhysicsWorker.js';
 
 import ConeTwistConstraints from './web/constraints/ConeTwistConstraints';
+import GenericConstraints from './web/constraints/GenericConstraints';
 import SliderConstraints from './web/constraints/SliderConstraints';
 import HingeConstraints from './web/constraints/HingeConstraints';
 import PointConstraints from './web/constraints/PointConstraints';
@@ -38,6 +39,7 @@ export default class PhysicsWorld {
     });
 
     this.coneTwist = new ConeTwistConstraints(this.worker);
+    this.generic = new GenericConstraints(this.worker);
     this.slider = new SliderConstraints(this.worker);
     this.hinge = new HingeConstraints(this.worker);
     this.point = new PointConstraints(this.worker);
@@ -132,6 +134,7 @@ export default class PhysicsWorld {
     this.worker.removeEventListener('message', this._onMessage);
 
     delete this.coneTwist;
+    delete this.generic;
     delete this.slider;
     delete this.hinge;
     delete this.point;

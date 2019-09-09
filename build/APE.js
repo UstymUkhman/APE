@@ -69369,6 +69369,10 @@ var _ConeTwistConstraints = __webpack_require__(/*! ./constraints/ConeTwistConst
 
 var _ConeTwistConstraints2 = _interopRequireDefault(_ConeTwistConstraints);
 
+var _GenericConstraints = __webpack_require__(/*! ./constraints/GenericConstraints */ "./src/constraints/GenericConstraints.js");
+
+var _GenericConstraints2 = _interopRequireDefault(_GenericConstraints);
+
 var _SliderConstraints = __webpack_require__(/*! ./constraints/SliderConstraints */ "./src/constraints/SliderConstraints.js");
 
 var _SliderConstraints2 = _interopRequireDefault(_SliderConstraints);
@@ -69451,6 +69455,7 @@ var PhysicsWorld = function () {
     }
 
     this.coneTwist = new _ConeTwistConstraints2.default(this.world, this._events);
+    this.generic = new _GenericConstraints2.default(this.world, this._events);
     this.slider = new _SliderConstraints2.default(this.world, this._events);
     this.hinge = new _HingeConstraints2.default(this.world, this._events);
     this.point = new _PointConstraints2.default(this.world, this._events);
@@ -69514,6 +69519,9 @@ var PhysicsWorld = function () {
 
       this._events.on('getSliderBody', this.getSliderBody.bind(this));
       this._events.on('getSliderBodies', this.getSliderBodies.bind(this));
+
+      this._events.on('getGenericBody', this.getGenericBody.bind(this));
+      this._events.on('getGenericBodies', this.getGenericBodies.bind(this));
 
       this._events.on('getConeTwistBodies', this.getConeTwistBodies.bind(this));
     }
@@ -69618,6 +69626,32 @@ var PhysicsWorld = function () {
         console.error('SliderConstraint body\'s collider was not found.\n', 'Make sure to add one of the following bodies to your mesh [' + body1UUID + ']: dynamic, kinematic or static;\n', 'or use \'PhysicsWorld.slider.addBody\' method if you want to constraint only one body.');
       } else {
         this.slider.attachBodies(body0.body, body1.body, pivot);
+      }
+    }
+  }, {
+    key: 'getGenericBody',
+    value: function getGenericBody(bodyUUID, pivot) {
+      var body = this.kinematic.getBodyByUUID(bodyUUID) || this.dynamic.getBodyByUUID(bodyUUID) || this.static.getBodyByUUID(bodyUUID);
+
+      if (!body) {
+        console.error('GenericConstraint body\'s collider was not found.\n', 'Make sure to add one of the following bodies to your mesh [' + bodyUUID + ']:\n', 'dynamic, kinematic or static.');
+      } else {
+        this.generic.attachBody(body.body, pivot);
+      }
+    }
+  }, {
+    key: 'getGenericBodies',
+    value: function getGenericBodies(body0UUID, body1UUID, pivot) {
+      var body0 = this.kinematic.getBodyByUUID(body0UUID) || this.dynamic.getBodyByUUID(body0UUID) || this.static.getBodyByUUID(body0UUID);
+
+      var body1 = this.kinematic.getBodyByUUID(body1UUID) || this.dynamic.getBodyByUUID(body1UUID) || this.static.getBodyByUUID(body1UUID);
+
+      if (!body0) {
+        console.error('GenericConstraint body\'s collider was not found.\n', 'Make sure to add one of the following bodies to your mesh [' + body0UUID + ']:\n', 'dynamic, kinematic or static.');
+      } else if (!body1) {
+        console.error('GenericConstraint body\'s collider was not found.\n', 'Make sure to add one of the following bodies to your mesh [' + body1UUID + ']: dynamic, kinematic or static;\n', 'or use \'PhysicsWorld.generic.addBody\' method if you want to constraint only one body.');
+      } else {
+        this.generic.attachBodies(body0.body, body1.body, pivot);
       }
     }
   }, {
@@ -69839,7 +69873,10 @@ var PhysicsWorld = function () {
   }, {
     key: 'activateBodies',
     value: function activateBodies() {
+      this.coneTwist.activateAll();
+      this.generic.activateAll();
       this.dynamic.activateAll();
+      this.slider.activateAll();
       this.point.activateAll();
       this.hinge.activateAll();
 
@@ -69871,10 +69908,15 @@ var PhysicsWorld = function () {
   }, {
     key: 'destroy',
     value: function destroy() {
+      delete this.coneTwist;
+      delete this.generic;
+      delete this.slider;
+      delete this.hinge;
+      delete this.point;
+
       delete this.kinematic;
       delete this.dynamic;
       delete this.static;
-      delete this.hinge;
 
       delete this._clock;
       delete this.ray;
@@ -71319,6 +71361,135 @@ module.exports = exports.default;
 
 /***/ }),
 
+/***/ "./src/constraints/GenericConstraints.js":
+/*!***********************************************!*\
+  !*** ./src/constraints/GenericConstraints.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
+
+var _Constraints2 = __webpack_require__(/*! @/super/Constraints */ "./src/super/Constraints.js");
+
+var _Constraints3 = _interopRequireDefault(_Constraints2);
+
+var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var GenericConstraints = function (_Constraints) {
+  _inherits(GenericConstraints, _Constraints);
+
+  function GenericConstraints(world, events) {
+    _classCallCheck(this, GenericConstraints);
+
+    var _this = _possibleConstructorReturn(this, (GenericConstraints.__proto__ || Object.getPrototypeOf(GenericConstraints)).call(this, world, 'generic'));
+
+    _this.events = events;
+    return _this;
+  }
+
+  _createClass(GenericConstraints, [{
+    key: 'addBody',
+    value: function addBody(bodyMesh, axis) {
+      var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
+
+      this.events.emit('getGenericBody', bodyMesh.uuid, {
+        position: position,
+        axis: axis
+      });
+
+      return this._uuid;
+    }
+  }, {
+    key: 'addBodies',
+    value: function addBodies(body0, body1, axis0, axis1) {
+      var position0 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : new _Vector.Vector3();
+      var position1 = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : new _Vector.Vector3();
+
+      this.events.emit('getGenericBodies', body0.uuid, body1.uuid, {
+        positions: [position0, position1],
+        axis: [axis0, axis1]
+      });
+
+      return this._uuid;
+    }
+  }, {
+    key: 'attachBody',
+    value: function attachBody(body, pivot) {
+      /* eslint-disable new-cap */
+      var transform = new _utils.Ammo.btTransform();
+      transform.setIdentity();
+      transform.setOrigin(new _utils.Ammo.btVector3(pivot.position.x, pivot.position.y, pivot.position.z));
+
+      var rotation = transform.getRotation();
+      // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
+      rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
+      transform.setRotation(rotation);
+
+      var generic = new _utils.Ammo.btGeneric6DofConstraint(body, transform, true);
+
+      /* eslint-enable new-cap */
+      _utils.Ammo.destroy(transform);
+      this.add(generic);
+    }
+  }, {
+    key: 'attachBodies',
+    value: function attachBodies(body0, body1, pivot) {
+      /* eslint-disable new-cap */
+      var transform0 = new _utils.Ammo.btTransform();
+      var transform1 = new _utils.Ammo.btTransform();
+
+      transform0.setIdentity();
+      transform1.setIdentity();
+
+      transform0.setOrigin(new _utils.Ammo.btVector3(pivot.positions[0].x, pivot.positions[0].y, pivot.positions[0].z));
+      var rotation = transform0.getRotation();
+
+      // rotation.setEulerZYX(-pivot.axis[0].z, -pivot.axis[0].y, -pivot.axis[0].x);
+      rotation.setEulerZYX(pivot.axis[0].z, pivot.axis[0].y, pivot.axis[0].x);
+      transform0.setRotation(rotation);
+
+      transform1.setOrigin(new _utils.Ammo.btVector3(pivot.positions[1].x, pivot.positions[1].y, pivot.positions[1].z));
+      rotation = transform1.getRotation();
+
+      // rotation.setEulerZYX(-pivot.axis[1].z, -pivot.axis[1].y, -pivot.axis[1].x);
+      rotation.setEulerZYX(pivot.axis[1].z, pivot.axis[1].y, pivot.axis[1].x);
+      transform1.setRotation(rotation);
+
+      var generic = new _utils.Ammo.btGeneric6DofConstraint(body0, body1, transform0, transform1, true);
+
+      /* eslint-enable new-cap */
+      _utils.Ammo.destroy(transform0);
+      _utils.Ammo.destroy(transform1);
+      this.add(generic);
+    }
+  }]);
+
+  return GenericConstraints;
+}(_Constraints3.default);
+
+exports.default = GenericConstraints;
+module.exports = exports.default;
+
+/***/ }),
+
 /***/ "./src/constraints/HingeConstraints.js":
 /*!*********************************************!*\
   !*** ./src/constraints/HingeConstraints.js ***!
@@ -71606,6 +71777,7 @@ var SliderConstraints = function (_Constraints) {
       transform.setOrigin(new _utils.Ammo.btVector3(pivot.position.x, pivot.position.y, pivot.position.z));
 
       var rotation = transform.getRotation();
+      // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
       rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
       transform.setRotation(rotation);
 
@@ -71628,12 +71800,14 @@ var SliderConstraints = function (_Constraints) {
       transform0.setOrigin(new _utils.Ammo.btVector3(pivot.positions[0].x, pivot.positions[0].y, pivot.positions[0].z));
       var rotation = transform0.getRotation();
 
+      // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
       rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
       transform0.setRotation(rotation);
 
       transform1.setOrigin(new _utils.Ammo.btVector3(pivot.positions[1].x, pivot.positions[1].y, pivot.positions[1].z));
       rotation = transform1.getRotation();
 
+      // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
       rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
       transform1.setRotation(rotation);
 

@@ -1,4 +1,5 @@
 import ConeTwistConstraints from './constraints/ConeTwistConstraints';
+import GenericConstraints from './constraints/GenericConstraints';
 import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 import PointConstraints from './constraints/PointConstraints';
@@ -101,6 +102,10 @@ class PhysicsWorker {
 
   initSliderConstraints () {
     this.slider = new SliderConstraints(this.world);
+  }
+
+  initGenericConstraints () {
+    this.generic = new GenericConstraints(this.world);
   }
 
   initConeTwistConstraints () {
@@ -491,9 +496,10 @@ class PhysicsWorker {
   activateBodies () {
     this.coneTwist.activateAll();
     this.dynamic.activateAll();
+    this.generic.activateAll();
     this.slider.activateAll();
-    this.point.activateAll();
     this.hinge.activateAll();
+    this.point.activateAll();
 
     if (this._soft) {
       this.cloth.activateAll();

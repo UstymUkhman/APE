@@ -1,4 +1,5 @@
 import ConeTwistConstraints from './constraints/ConeTwistConstraints';
+import GenericConstraints from './constraints/GenericConstraints';
 import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 import PointConstraints from './constraints/PointConstraints';
@@ -38,6 +39,7 @@ export default class PhysicsWorld {
     }
 
     this.coneTwist = new ConeTwistConstraints(this.world, this._events);
+    this.generic = new GenericConstraints(this.world, this._events);
     this.slider = new SliderConstraints(this.world, this._events);
     this.hinge = new HingeConstraints(this.world, this._events);
     this.point = new PointConstraints(this.world, this._events);
@@ -97,6 +99,9 @@ export default class PhysicsWorld {
 
     this._events.on('getSliderBody', this.getSliderBody.bind(this));
     this._events.on('getSliderBodies', this.getSliderBodies.bind(this));
+
+    this._events.on('getGenericBody', this.getGenericBody.bind(this));
+    this._events.on('getGenericBodies', this.getGenericBodies.bind(this));
 
     this._events.on('getConeTwistBodies', this.getConeTwistBodies.bind(this));
   }
@@ -263,6 +268,48 @@ export default class PhysicsWorld {
       );
     } else {
       this.slider.attachBodies(body0.body, body1.body, pivot);
+    }
+  }
+
+  getGenericBody (bodyUUID, pivot) {
+    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
+                 this.dynamic.getBodyByUUID(bodyUUID) ||
+                 this.static.getBodyByUUID(bodyUUID);
+
+    if (!body) {
+      console.error(
+        'GenericConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else {
+      this.generic.attachBody(body.body, pivot);
+    }
+  }
+
+  getGenericBodies (body0UUID, body1UUID, pivot) {
+    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
+                  this.dynamic.getBodyByUUID(body0UUID) ||
+                  this.static.getBodyByUUID(body0UUID);
+
+    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
+                  this.dynamic.getBodyByUUID(body1UUID) ||
+                  this.static.getBodyByUUID(body1UUID);
+
+    if (!body0) {
+      console.error(
+        'GenericConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else if (!body1) {
+      console.error(
+        'GenericConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        'or use \'PhysicsWorld.generic.addBody\' method if you want to constraint only one body.'
+      );
+    } else {
+      this.generic.attachBodies(body0.body, body1.body, pivot);
     }
   }
 
@@ -482,7 +529,10 @@ export default class PhysicsWorld {
   }
 
   activateBodies () {
+    this.coneTwist.activateAll();
+    this.generic.activateAll();
     this.dynamic.activateAll();
+    this.slider.activateAll();
     this.point.activateAll();
     this.hinge.activateAll();
 
@@ -512,10 +562,15 @@ export default class PhysicsWorld {
   }
 
   destroy () {
+    delete this.coneTwist;
+    delete this.generic;
+    delete this.slider;
+    delete this.hinge;
+    delete this.point;
+
     delete this.kinematic;
     delete this.dynamic;
     delete this.static;
-    delete this.hinge;
 
     delete this._clock;
     delete this.ray;

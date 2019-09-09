@@ -2,14 +2,14 @@ import { Vector3 } from 'three/src/math/Vector3';
 import Constraints from '@/super/Constraints';
 import { Ammo } from '@/utils';
 
-export default class SliderConstraints extends Constraints {
+export default class GenericConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'slider');
+    super(world, 'generic');
     this.events = events;
   }
 
   addBody (bodyMesh, axis, position = new Vector3()) {
-    this.events.emit('getSliderBody',
+    this.events.emit('getGenericBody',
       bodyMesh.uuid, {
         position: position,
         axis: axis
@@ -19,11 +19,11 @@ export default class SliderConstraints extends Constraints {
     return this._uuid;
   }
 
-  addBodies (body0, body1, axis, position0 = new Vector3(), position1 = new Vector3()) {
-    this.events.emit('getSliderBodies',
+  addBodies (body0, body1, axis0, axis1, position0 = new Vector3(), position1 = new Vector3()) {
+    this.events.emit('getGenericBodies',
       body0.uuid, body1.uuid, {
         positions: [position0, position1],
-        axis: axis
+        axis: [axis0, axis1]
       }
     );
 
@@ -41,13 +41,13 @@ export default class SliderConstraints extends Constraints {
     rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
     transform.setRotation(rotation);
 
-    const slider = new Ammo.btSliderConstraint(
+    const generic = new Ammo.btGeneric6DofConstraint(
       body, transform, true
     );
 
     /* eslint-enable new-cap */
     Ammo.destroy(transform);
-    this.add(slider);
+    this.add(generic);
   }
 
   attachBodies (body0, body1, pivot) {
@@ -61,24 +61,24 @@ export default class SliderConstraints extends Constraints {
     transform0.setOrigin(new Ammo.btVector3(pivot.positions[0].x, pivot.positions[0].y, pivot.positions[0].z));
     let rotation = transform0.getRotation();
 
-    // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
-    rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
+    // rotation.setEulerZYX(-pivot.axis[0].z, -pivot.axis[0].y, -pivot.axis[0].x);
+    rotation.setEulerZYX(pivot.axis[0].z, pivot.axis[0].y, pivot.axis[0].x);
     transform0.setRotation(rotation);
 
     transform1.setOrigin(new Ammo.btVector3(pivot.positions[1].x, pivot.positions[1].y, pivot.positions[1].z));
     rotation = transform1.getRotation();
 
-    // rotation.setEulerZYX(-pivot.axis.z, -pivot.axis.y, -pivot.axis.x);
-    rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
+    // rotation.setEulerZYX(-pivot.axis[1].z, -pivot.axis[1].y, -pivot.axis[1].x);
+    rotation.setEulerZYX(pivot.axis[1].z, pivot.axis[1].y, pivot.axis[1].x);
     transform1.setRotation(rotation);
 
-    const slider = new Ammo.btSliderConstraint(
+    const generic = new Ammo.btGeneric6DofConstraint(
       body0, body1, transform0, transform1, true
     );
 
     /* eslint-enable new-cap */
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
-    this.add(slider);
+    this.add(generic);
   }
 }
