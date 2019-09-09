@@ -1,3 +1,4 @@
+import ConeTwistConstraints from './constraints/ConeTwistConstraints';
 import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 import PointConstraints from './constraints/PointConstraints';
@@ -36,6 +37,7 @@ export default class PhysicsWorld {
       this.initRigidWorld();
     }
 
+    this.coneTwist = new ConeTwistConstraints(this.world, this._events);
     this.slider = new SliderConstraints(this.world, this._events);
     this.hinge = new HingeConstraints(this.world, this._events);
     this.point = new PointConstraints(this.world, this._events);
@@ -95,6 +97,8 @@ export default class PhysicsWorld {
 
     this._events.on('getSliderBody', this.getSliderBody.bind(this));
     this._events.on('getSliderBodies', this.getSliderBodies.bind(this));
+
+    this._events.on('getConeTwistBodies', this.getConeTwistBodies.bind(this));
   }
 
   getRopeAnchor (targetUUID, rope) {
@@ -259,6 +263,32 @@ export default class PhysicsWorld {
       );
     } else {
       this.slider.attachBodies(body0.body, body1.body, pivot);
+    }
+  }
+
+  getConeTwistBodies (body0UUID, body1UUID, pivot) {
+    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
+                  this.dynamic.getBodyByUUID(body0UUID) ||
+                  this.static.getBodyByUUID(body0UUID);
+
+    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
+                  this.dynamic.getBodyByUUID(body1UUID) ||
+                  this.static.getBodyByUUID(body1UUID);
+
+    if (!body0) {
+      console.error(
+        'ConeTwistConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else if (!body1) {
+      console.error(
+        'ConeTwistConstraint body\'s collider was not found.\n',
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]:\n`,
+        'dynamic, kinematic or static.'
+      );
+    } else {
+      this.coneTwist.attachBodies(body0.body, body1.body, pivot);
     }
   }
 

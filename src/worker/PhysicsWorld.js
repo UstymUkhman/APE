@@ -1,5 +1,6 @@
 import PhysicsWorker from 'worker-loader!worker/PhysicsWorker.js';
 
+import ConeTwistConstraints from './web/constraints/ConeTwistConstraints';
 import SliderConstraints from './web/constraints/SliderConstraints';
 import HingeConstraints from './web/constraints/HingeConstraints';
 import PointConstraints from './web/constraints/PointConstraints';
@@ -36,13 +37,14 @@ export default class PhysicsWorld {
       action: 'init'
     });
 
-    this.kinematic = new KinematicBodies(this.worker);
-    this.dynamic = new DynamicBodies(this.worker);
-    this.static = new StaticBodies(this.worker);
-
+    this.coneTwist = new ConeTwistConstraints(this.worker);
     this.slider = new SliderConstraints(this.worker);
     this.hinge = new HingeConstraints(this.worker);
     this.point = new PointConstraints(this.worker);
+
+    this.kinematic = new KinematicBodies(this.worker);
+    this.dynamic = new DynamicBodies(this.worker);
+    this.static = new StaticBodies(this.worker);
 
     this.ray = new PhysicsRay(this.worker);
 
@@ -129,13 +131,14 @@ export default class PhysicsWorld {
   destroy () {
     this.worker.removeEventListener('message', this._onMessage);
 
-    delete this.kinematic;
-    delete this.dynamic;
-    delete this.static;
-
+    delete this.coneTwist;
     delete this.slider;
     delete this.hinge;
     delete this.point;
+
+    delete this.kinematic;
+    delete this.dynamic;
+    delete this.static;
 
     delete this.worker;
     delete this._clock;

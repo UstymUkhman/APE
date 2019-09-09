@@ -33,10 +33,10 @@ export default class SliderConstraints extends Constraint {
   attachBody (body, pivot) {
     /* eslint-disable new-cap */
     const transform = new Ammo.btTransform();
+    transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(pivot.position.x, pivot.position.y, pivot.position.z));
 
     const rotation = transform.getRotation();
-    // rotation.setEuler(pivot.axis.x, pivot.axis.y, pivot.axis.z);
     rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
     transform.setRotation(rotation);
 
@@ -45,6 +45,7 @@ export default class SliderConstraints extends Constraint {
     );
 
     /* eslint-enable new-cap */
+    Ammo.destroy(transform);
     this.add(slider);
   }
 
@@ -53,17 +54,18 @@ export default class SliderConstraints extends Constraint {
     const transform0 = new Ammo.btTransform();
     const transform1 = new Ammo.btTransform();
 
+    transform0.setIdentity();
+    transform1.setIdentity();
+
     transform0.setOrigin(new Ammo.btVector3(pivot.positions[0].x, pivot.positions[0].y, pivot.positions[0].z));
     let rotation = transform0.getRotation();
 
-    // rotation.setEuler(pivot.axis.x, pivot.axis.y, pivot.axis.z);
     rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
     transform0.setRotation(rotation);
 
     transform1.setOrigin(new Ammo.btVector3(pivot.positions[1].x, pivot.positions[1].y, pivot.positions[1].z));
     rotation = transform1.getRotation();
 
-    // rotation.setEuler(pivot.axis.x, pivot.axis.y, pivot.axis.z);
     rotation.setEulerZYX(pivot.axis.z, pivot.axis.y, pivot.axis.x);
     transform1.setRotation(rotation);
 
@@ -72,6 +74,8 @@ export default class SliderConstraints extends Constraint {
     );
 
     /* eslint-enable new-cap */
+    Ammo.destroy(transform0);
+    Ammo.destroy(transform1);
     this.add(slider);
   }
 }

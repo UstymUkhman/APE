@@ -6,7 +6,7 @@ export default class Constraint {
     this.worker = worker;
     this._constraints = 0;
 
-    this.type = type.toLowerCase();
+    this.type = type.charAt(0).toLowerCase() + type.slice(1);
     this.worker.postMessage({action: `init${type}Constraints`});
   }
 

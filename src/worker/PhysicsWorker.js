@@ -1,3 +1,4 @@
+import ConeTwistConstraints from './constraints/ConeTwistConstraints';
 import SliderConstraints from './constraints/SliderConstraints';
 import HingeConstraints from './constraints/HingeConstraints';
 import PointConstraints from './constraints/PointConstraints';
@@ -100,6 +101,10 @@ class PhysicsWorker {
 
   initSliderConstraints () {
     this.slider = new SliderConstraints(this.world);
+  }
+
+  initConeTwistConstraints () {
+    this.coneTwist = new ConeTwistConstraints(this.world);
   }
 
   addBody (props) {
@@ -484,7 +489,9 @@ class PhysicsWorker {
   }
 
   activateBodies () {
+    this.coneTwist.activateAll();
     this.dynamic.activateAll();
+    this.slider.activateAll();
     this.point.activateAll();
     this.hinge.activateAll();
 
