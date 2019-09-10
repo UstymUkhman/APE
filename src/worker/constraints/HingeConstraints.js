@@ -16,6 +16,7 @@ export default class HingeConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     this.add(hinge);
   }
 
@@ -31,6 +32,7 @@ export default class HingeConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     this.add(hinge);
   }
 

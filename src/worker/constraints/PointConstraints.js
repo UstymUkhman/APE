@@ -13,6 +13,7 @@ export default class PointConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     this.add(point);
   }
 
@@ -24,6 +25,7 @@ export default class PointConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     this.add(point);
   }
 }

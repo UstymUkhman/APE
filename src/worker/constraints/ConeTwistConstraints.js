@@ -37,6 +37,8 @@ export default class ConeTwistConstraints extends Constraints {
 
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
+
+    this.uuids.push(props.uuid);
     this.add(coneTwist);
   }
 }

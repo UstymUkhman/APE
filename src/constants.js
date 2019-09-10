@@ -41,6 +41,9 @@ export const ROPE_VITERATIONS = 10;
 // export const SUSPENSION_STIFFNESS = 20.0;
 // export const SUSPENSION_COMPRESSION = 4.4;
 
+// Constraint constants:
+export const CONSTRAINT_THRESHOLD = 0;
+
 // Activation state constants:
 export const ACTIVE_TAG = 1;
 export const ISLAND_SLEEPING = 2;

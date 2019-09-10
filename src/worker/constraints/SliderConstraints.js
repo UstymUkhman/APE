@@ -22,6 +22,7 @@ export default class SliderConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     Ammo.destroy(transform);
     this.add(slider);
   }
@@ -55,6 +56,8 @@ export default class SliderConstraints extends Constraints {
     /* eslint-enable new-cap */
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
+
+    this.uuids.push(props.uuid);
     this.add(slider);
   }
 }

@@ -23,6 +23,7 @@ export default class GenericConstraints extends Constraints {
     );
 
     /* eslint-enable new-cap */
+    this.uuids.push(props.uuid);
     Ammo.destroy(transform);
     this.add(generic);
   }
@@ -56,6 +57,8 @@ export default class GenericConstraints extends Constraints {
     /* eslint-enable new-cap */
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
+
+    this.uuids.push(props.uuid);
     this.add(generic);
   }
 }

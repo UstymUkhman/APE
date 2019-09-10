@@ -71230,6 +71230,9 @@ var ROPE_VITERATIONS = exports.ROPE_VITERATIONS = 10;
 // export const SUSPENSION_STIFFNESS = 20.0;
 // export const SUSPENSION_COMPRESSION = 4.4;
 
+// Constraint constants:
+var CONSTRAINT_THRESHOLD = exports.CONSTRAINT_THRESHOLD = 0;
+
 // Activation state constants:
 var ACTIVE_TAG = exports.ACTIVE_TAG = 1;
 var ISLAND_SLEEPING = exports.ISLAND_SLEEPING = 2;
@@ -72537,6 +72540,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
+
 var _Math2 = __webpack_require__(/*! three/src/math/Math.js */ "./node_modules/three/src/math/Math.js");
 
 var _utils = __webpack_require__(/*! @/utils */ "./src/utils.js");
@@ -72550,6 +72555,7 @@ var Constraints = function () {
     this.uuids = [];
     this.type = type;
     this.world = world;
+
     this.constraints = [];
     this.worker = (0, _utils.webWorker)();
   }
@@ -72575,18 +72581,32 @@ var Constraints = function () {
   }, {
     key: 'remove',
     value: function remove(uuid) {
-      var id = this.worker ? uuid : this.uuids.indexOf(uuid);
+      var id = this.uuids.indexOf(uuid);
 
       if (id > -1) {
-        if (!this.worker) this.uuids.splice(id, 1);
         var constraint = this.constraints[id];
-
         this.world.removeConstraint(constraint);
+
         this.constraints.splice(id, 1);
+        this.uuids.splice(id, 1);
         return true;
       }
 
+      console.warn('There\'s no \'' + this.type + '\' constraint with \'' + uuid + '\' UUID.');
       return false;
+    }
+  }, {
+    key: 'setBreakingImpulseThreshold',
+    value: function setBreakingImpulseThreshold(uuid) {
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CONSTRAINT_THRESHOLD;
+
+      var constraint = this.getConstraintByUUID(uuid);
+
+      if (constraint) {
+        constraint.setBreakingImpulseThreshold(threshold);
+      } else {
+        console.warn('There\'s no \'' + this.type + '\' constraint with \'' + uuid + '\' UUID.');
+      }
     }
   }, {
     key: 'getConstraintByUUID',

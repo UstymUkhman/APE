@@ -519,7 +519,7 @@ class PhysicsWorker {
   }
 
   removeConstraint (props) {
-    this[props.type].remove(props.index);
+    this[props.type].remove(props.uuid);
   }
 
   castRay (props) {
@@ -573,6 +573,10 @@ class PhysicsWorker {
 
   applyCentralImpulse (props) {
     this[props.type].applyCentralImpulse(props.uuid, props.impulse);
+  }
+
+  setBreakingImpulseThreshold (props) {
+    this[props.type].setBreakingImpulseThreshold(props.uuid, props.threshold);
   }
 
   setCcdSweptSphereRadius (props) {
