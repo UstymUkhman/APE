@@ -1,21 +1,21 @@
-import ConeTwistConstraints from './constraints/ConeTwistConstraints';
-import GenericConstraints from './constraints/GenericConstraints';
-import SliderConstraints from './constraints/SliderConstraints';
-import HingeConstraints from './constraints/HingeConstraints';
-import PointConstraints from './constraints/PointConstraints';
+import ConeTwistConstraints from '@/constraints/ConeTwistConstraints';
+import GenericConstraints from '@/constraints/GenericConstraints';
+import SliderConstraints from '@/constraints/SliderConstraints';
+import HingeConstraints from '@/constraints/HingeConstraints';
+import PointConstraints from '@/constraints/PointConstraints';
 
-import KinematicBodies from './bodies/KinematicBodies';
-import DynamicBodies from './bodies/DynamicBodies';
-import StaticBodies from './bodies/StaticBodies';
+import KinematicBodies from '@/bodies/KinematicBodies';
+import DynamicBodies from '@/bodies/DynamicBodies';
+import StaticBodies from '@/bodies/StaticBodies';
 
-import ClothBodies from './bodies/ClothBodies';
-import SoftBodies from './bodies/SoftBodies';
-import RopeBodies from './bodies/RopeBodies';
+import ClothBodies from '@/bodies/ClothBodies';
+import SoftBodies from '@/bodies/SoftBodies';
+import RopeBodies from '@/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from '@/constants';
 
-import PhysicsRay from './PhysicsRay';
+import PhysicsRay from '@/PhysicsRay';
 import EventEmitter from 'events';
 import { Ammo } from '@/utils';
 import find from 'lodash.find';

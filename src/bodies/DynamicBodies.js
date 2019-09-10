@@ -1,6 +1,6 @@
 import { ZERO_MASS, CCD_MOTION_THRESHOLD } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
-import RigidBodies from '@/super/RigidBodies';
+import RigidBodies from '@/bodies/RigidBodies';
 import { Ammo } from '@/utils';
 
 export default class DynamicBodies extends RigidBodies {

@@ -1,4 +1,3 @@
-import { Vector3 } from 'three/src/math/Vector3';
 import FlexBodies from '@/bodies/FlexBodies';
 import { Ammo } from '@/utils';
 
@@ -14,9 +13,8 @@ import {
 } from '@/constants';
 
 export default class ClothBodies extends FlexBodies {
-  constructor (world, events) {
+  constructor (world) {
     super(world);
-    this.events = events;
 
     this.friction = FRICTION;
     this.margin = CLOTH_MARGIN;
@@ -27,18 +25,18 @@ export default class ClothBodies extends FlexBodies {
     this.viterations = CLOTH_VITERATIONS;
   }
 
-  addBody (mesh, mass, position = new Vector3(0, 0, 0)) {
-    const heightSegments = mesh.geometry.parameters.heightSegments;
-    const widthSegments = mesh.geometry.parameters.widthSegments;
+  addBody (props) {
+    const heightSegments = props.geometry.parameters.heightSegments;
+    const widthSegments = props.geometry.parameters.widthSegments;
 
-    const height = mesh.geometry.parameters.height;
-    const width = mesh.geometry.parameters.width;
+    const height = props.geometry.parameters.height;
+    const width = props.geometry.parameters.width;
 
     /* eslint-disable new-cap */
-    const clothCorner00 = new Ammo.btVector3(position.x, position.y + height, position.z);
-    const clothCorner01 = new Ammo.btVector3(position.x, position.y + height, position.z - width);
-    const clothCorner10 = new Ammo.btVector3(position.x, position.y, position.z);
-    const clothCorner11 = new Ammo.btVector3(position.x, position.y, position.z - width);
+    const clothCorner00 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z);
+    const clothCorner01 = new Ammo.btVector3(props.position.x, props.position.y + height, props.position.z - width);
+    const clothCorner10 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
+    const clothCorner11 = new Ammo.btVector3(props.position.x, props.position.y, props.position.z - width);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreatePatch(
@@ -63,39 +61,42 @@ export default class ClothBodies extends FlexBodies {
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
     body.setActivationState(DISABLE_DEACTIVATION);
-    body.setTotalMass(mass, false);
+    body.setTotalMass(props.mass, false);
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
-      geometry: mesh.geometry,
-      uuid: mesh.uuid,
+      geometry: props.geometry,
+      uuid: props.uuid,
       body: body
     });
   }
 
-  append (mesh, point, target, influence = 0.5) {
-    this.events.emit('getClothAnchor', target.uuid, {
-      influence: influence,
-      uuid: mesh.uuid,
-      point: point
-    });
-  }
-
-  appendAnchor (target, cloth) {
-    const body = this.getBodyByUUID(cloth.uuid).body;
-    body.appendAnchor(cloth.point, target, false, cloth.influence);
+  append (props) {
+    const body = this.getBodyByUUID(props.uuid).body;
+    body.appendAnchor(props.point, props.target, false, props.influence);
   }
 
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
-      this.updateBody(i);
+      const positions = this.updateBody(i);
+
+      update.push({
+        uuid: this.bodies[i].uuid,
+        positions: positions
+      });
     }
+
+    self.postMessage({
+      action: 'updateBodies',
+      bodies: update,
+      type: 'cloth'
+    });
   }
 
   updateBody (index) {
-    const geometry = this.bodies[index].geometry;
-    const positions = geometry.attributes.position.array;
-
+    const positions = this.bodies[index].geometry.attributes.position.array;
     const nodes = this.bodies[index].body.get_m_nodes();
     const vertices = positions.length / 3;
 
@@ -107,8 +108,6 @@ export default class ClothBodies extends FlexBodies {
       positions[p + 2] = nodePosition.z();
     }
 
-    geometry.attributes.position.needsUpdate = true;
-    geometry.attributes.normal.needsUpdate = true;
-    geometry.computeVertexNormals();
+    return positions;
   }
 }

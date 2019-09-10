@@ -1,4 +1,3 @@
-import { Vector3 } from 'three/src/math/Vector3';
 import FlexBodies from '@/bodies/FlexBodies';
 import { Ammo } from '@/utils';
 
@@ -10,27 +9,26 @@ import {
 } from '@/constants';
 
 export default class RopeBodies extends FlexBodies {
-  constructor (world, events) {
+  constructor (world) {
     super(world);
-    this.events = events;
 
     this.margin = ROPE_MARGIN;
     this.piterations = ROPE_PITERATIONS;
     this.viterations = ROPE_VITERATIONS;
   }
 
-  addBody (mesh, mass, length, position = new Vector3()) {
-    const segments = mesh.geometry.attributes.position.array.length / 3 - 2;
+  addBody (props) {
+    const segments = props.geometry.attributes.position.array.length / 3 - 2;
 
     /* eslint-disable new-cap */
-    const start = new Ammo.btVector3(position.x, position.y, position.z);
-    const end = new Ammo.btVector3(position.x, position.y + length, position.z);
+    const start = new Ammo.btVector3(props.position.x, props.position.y, props.position.z);
+    const end = new Ammo.btVector3(props.position.x, props.position.y + props.length, props.position.z);
     /* eslint-enable new-cap */
 
     const body = this.helpers.CreateRope(this.world.getWorldInfo(), start, end, segments, 0);
     const bodyConfig = body.get_m_cfg();
 
-    body.setTotalMass(mass, false);
+    body.setTotalMass(props.mass, false);
 
     bodyConfig.set_piterations(this.piterations);
     bodyConfig.set_viterations(this.viterations);
@@ -40,31 +38,34 @@ export default class RopeBodies extends FlexBodies {
     this.world.addSoftBody(body, 1, -1);
 
     this.bodies.push({
-      geometry: mesh.geometry,
-      uuid: mesh.uuid,
+      geometry: props.geometry,
+      uuid: props.uuid,
       body: body
     });
   }
 
-  append (mesh, target, top = true, influence = 1) {
-    const ropeTop = mesh.geometry.attributes.position.array.length / 3 - 1;
-
-    this.events.emit('getRopeAnchor', target.uuid, {
-      position: top ? ropeTop : 0.0,
-      influence: influence,
-      uuid: mesh.uuid
-    });
-  }
-
-  appendAnchor (target, rope) {
-    const body = this.getBodyByUUID(rope.uuid).body;
-    body.appendAnchor(rope.position, target, true, rope.influence);
+  append (props) {
+    const body = this.getBodyByUUID(props.uuid).body;
+    body.appendAnchor(props.position, props.target, true, props.influence);
   }
 
   update () {
+    const update = [];
+
     for (let i = 0; i < this.bodies.length; i++) {
-      this.updateBody(i);
+      const positions = this.updateBody(i);
+
+      update.push({
+        uuid: this.bodies[i].uuid,
+        positions: positions
+      });
     }
+
+    self.postMessage({
+      action: 'updateBodies',
+      bodies: update,
+      type: 'rope'
+    });
   }
 
   updateBody (index) {
@@ -80,6 +81,6 @@ export default class RopeBodies extends FlexBodies {
       positions[p + 2] = nodePosition.z();
     }
 
-    this.bodies[index].geometry.attributes.position.needsUpdate = true;
+    return positions;
   }
 }

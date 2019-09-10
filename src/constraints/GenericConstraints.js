@@ -1,5 +1,5 @@
+import Constraints from '@/constraints/Constraints';
 import { Vector3 } from 'three/src/math/Vector3';
-import Constraints from '@/super/Constraints';
 import { Ammo } from '@/utils';
 
 export default class GenericConstraints extends Constraints {
