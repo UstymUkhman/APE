@@ -1,11 +1,9 @@
 import Constraints from '@/constraints/Constraints';
-import { HINGE_FORCE } from '@/constants';
 import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraints {
   constructor (world) {
     super(world, 'hinge');
-    this.force = HINGE_FORCE;
   }
 
   hingeBody (props) {
@@ -41,10 +39,13 @@ export default class HingeConstraints extends Constraints {
     constraint.setLimit(props.low, props.high, 0, props.bias, props.relaxation);
   }
 
-  // Will be replaced with
-  // more generic methods:
-  // update (uuid, direction) {
-  //   const constraint = this.getConstraintByUUID(uuid);
-  //   constraint.enableAngularMotor(true, direction, this.force);
-  // }
+  enableMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.enableAngularMotor(true, props.velocity, props.acceleration);
+  }
+
+  disableMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.enableMotor(false);
+  }
 }

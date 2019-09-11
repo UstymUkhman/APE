@@ -2,7 +2,6 @@
 export const GRAVITY = -9.81;
 export const ZERO_MASS = 0.0;
 export const POWER16 = 0xFFFF;
-export const HINGE_FORCE = 100;
 
 // Rigid Body constants:
 export const MARGIN = 0.01;
@@ -43,6 +42,7 @@ export const ROPE_VITERATIONS = 10;
 
 // Constraint constants:
 export const CONSTRAINT_THRESHOLD = 0;
+export const HINGE_ACCELERATION = 100;
 
 // Activation state constants:
 export const ACTIVE_TAG = 1;

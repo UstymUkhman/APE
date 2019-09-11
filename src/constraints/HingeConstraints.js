@@ -1,14 +1,12 @@
 import Constraints from '@/constraints/Constraints';
+import { HINGE_ACCELERATION } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
-import { HINGE_FORCE } from '@/constants';
 import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'hinge');
-
     this.events = events;
-    this.force = HINGE_FORCE;
   }
 
   addBody (bodyMesh, axis, pivot = new Vector3()) {
@@ -65,10 +63,13 @@ export default class HingeConstraints extends Constraints {
     constraint.setLimit(low, high, 0, bias, relaxation);
   }
 
-  // Will be replaced with
-  // more generic methods:
-  // update (uuid, direction) {
-  //   const constraint = this.getConstraintByUUID(uuid);
-  //   constraint.enableAngularMotor(true, direction, this.force);
-  // }
+  enableMotor (uuid, velocity = 1, acceleration = HINGE_ACCELERATION) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.enableAngularMotor(true, velocity, acceleration);
+  }
+
+  disableMotor (uuid) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.enableMotor(false);
+  }
 }

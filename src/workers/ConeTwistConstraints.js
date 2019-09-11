@@ -29,4 +29,26 @@ export default class ConeTwistConstraints extends Constraints {
       }
     });
   }
+
+  enableMotor (uuid) {
+    this.worker.postMessage({
+      action: 'enableMotor',
+
+      params: {
+        type: this.type,
+        uuid: uuid
+      }
+    });
+  }
+
+  disableMotor (uuid) {
+    this.worker.postMessage({
+      action: 'disableMotor',
+
+      params: {
+        type: this.type,
+        uuid: uuid
+      }
+    });
+  }
 }

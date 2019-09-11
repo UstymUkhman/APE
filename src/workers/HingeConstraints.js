@@ -1,11 +1,10 @@
+import { HINGE_ACCELERATION } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import Constraints from '@/workers/Constraints';
-import { HINGE_FORCE } from '@/constants';
 
 export default class HingeConstraints extends Constraints {
   constructor (worker) {
     super('Hinge', worker);
-    this.constants = { force: HINGE_FORCE };
   }
 
   addBody (bodyMesh, axis, pivot = new Vector3()) {
@@ -43,15 +42,27 @@ export default class HingeConstraints extends Constraints {
     });
   }
 
-  // update (uuid, direction) {
-  //   this.worker.postMessage({
-  //     action: 'updateConstraints',
+  enableMotor (uuid, velocity = 1, acceleration = HINGE_ACCELERATION) {
+    this.worker.postMessage({
+      action: 'enableMotor',
 
-  //     params: {
-  //       direction: direction,
-  //       type: this.type,
-  //       uuid: uuid
-  //     }
-  //   });
-  // }
+      params: {
+        acceleration: acceleration,
+        velocity: velocity,
+        type: this.type,
+        uuid: uuid
+      }
+    });
+  }
+
+  disableMotor (uuid) {
+    this.worker.postMessage({
+      action: 'disableMotor',
+
+      params: {
+        type: this.type,
+        uuid: uuid
+      }
+    });
+  }
 }

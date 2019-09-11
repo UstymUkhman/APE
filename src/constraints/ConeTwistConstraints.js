@@ -55,4 +55,14 @@ export default class ConeTwistConstraints extends Constraints {
     const constraint = this.getConstraintByUUID(uuid);
     constraint.setLimit(limit.z, limit.y, limit.x);
   }
+
+  enableMotor (uuid) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.enableMotor(true);
+  }
+
+  disableMotor (uuid) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.enableMotor(false);
+  }
 }

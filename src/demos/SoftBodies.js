@@ -11,10 +11,10 @@ import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
-// import PhysicsWorld from 'workers/PhysicsWorld';
+import PhysicsWorld from 'workers/PhysicsWorld';
 import Playground from 'demos/Playground';
-import PhysicsWorld from 'PhysicsWorld';
-import RAF from 'demos/RAF';
+// import PhysicsWorld from 'PhysicsWorld';
+// import RAF from 'demos/RAF';
 
 export default class SoftBodies extends Playground {
   constructor () {
@@ -24,8 +24,8 @@ export default class SoftBodies extends Playground {
     this.createObjects();
     this.createSoftObjects();
 
-    this._update = this.update.bind(this);
-    RAF.add(this._update);
+    // this._update = this.update.bind(this);
+    // RAF.add(this._update);
   }
 
   initPhysics () {
@@ -124,19 +124,20 @@ export default class SoftBodies extends Playground {
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {
         case 81:
-          this.physics.hinge.update(hingeIndex, 1);
+          this.physics.hinge.enableMotor(hingeIndex, 1, 100);
           // ball.position.z += 1;
           break;
 
         case 65:
-          this.physics.hinge.update(hingeIndex, -1);
+          this.physics.hinge.enableMotor(hingeIndex, -1, 100);
           // ball.position.z -= 1;
           break;
       }
     }, false);
 
     window.addEventListener('keyup', () => {
-      this.physics.hinge.update(hingeIndex, 0);
+      // this.physics.hinge.enableMotor(hingeIndex, 0, 100);
+      this.physics.hinge.disableMotor(hingeIndex);
     }, false);
 
     // setTimeout(() => {

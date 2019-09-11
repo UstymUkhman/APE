@@ -313,10 +313,6 @@ class PhysicsWorker {
     }
   }
 
-  // updateConstraints (props) {
-  //   this[props.type].update(props.uuid, props.direction);
-  // }
-
   checkCollisions () {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
@@ -632,6 +628,14 @@ class PhysicsWorker {
 
   setLimit (props) {
     this[props.type].setLimit(props);
+  }
+
+  disableMotor (props) {
+    this[props.type].disableMotor(props);
+  }
+
+  enableMotor (props) {
+    this[props.type].enableMotor(props);
   }
 
   enableBody (props) {
