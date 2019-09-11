@@ -33,12 +33,15 @@ export default class ConeTwistConstraints extends Constraints {
     );
     /* eslint-enable new-cap */
 
-    // coneTwist.setLimit(Math.PI, 0, Math.PI);
-
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
 
     this.uuids.push(props.uuid);
     this.add(coneTwist);
+  }
+
+  setLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setLimit(props.limit.z, props.limit.y, props.limit.x);
   }
 }

@@ -17,4 +17,16 @@ export default class ConeTwistConstraints extends Constraints {
       axis1: axis1
     });
   }
+
+  setLimit (uuid, limit = new Vector3(Math.PI, 0, Math.PI)) {
+    this.worker.postMessage({
+      action: 'setLimit',
+
+      params: {
+        type: this.type,
+        limit: limit,
+        uuid: uuid
+      }
+    });
+  }
 }

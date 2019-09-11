@@ -44,21 +44,17 @@ export default class Constraints {
     return false;
   }
 
-  setBreakingImpulseThreshold (uuid, threshold = CONSTRAINT_THRESHOLD) {
-    const constraint = this.getConstraintByUUID(uuid);
-
-    if (constraint) {
-      constraint.setBreakingImpulseThreshold(threshold);
-    } else {
-      console.warn(
-        `There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`
-      );
-    }
-  }
-
   getConstraintByUUID (uuid) {
     const index = this.uuids.indexOf(uuid);
-    return index > -1 ? this.constraints[index] : null;
+    if (index > -1) return this.constraints[index];
+
+    console.warn(`There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`);
+    return null;
+  }
+
+  setBreakingImpulseThreshold (uuid, threshold = CONSTRAINT_THRESHOLD) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setBreakingImpulseThreshold(threshold);
   }
 
   get _uuid () {

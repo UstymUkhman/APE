@@ -11,8 +11,10 @@ import {
 } from '@/constants';
 
 export default class FlexBodies {
-  constructor (world) {
+  constructor (world, type) {
+    this.type = type;
     this.bodies = [];
+
     this.world = world;
     this.worker = webWorker();
 
@@ -102,7 +104,15 @@ export default class FlexBodies {
   }
 
   getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+    const body = find(this.bodies, { uuid: uuid });
+
+    if (!body) {
+      console.warn(
+        `There\'s no \'${this.type}\' body with \'${uuid}\' UUID.`
+      );
+    }
+
+    return body;
   }
 
   activateAll () {

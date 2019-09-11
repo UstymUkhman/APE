@@ -15,7 +15,7 @@ import {
 
 export default class ClothBodies extends FlexBodies {
   constructor (world, events) {
-    super(world);
+    super(world, 'cloth');
     this.events = events;
 
     this.friction = FRICTION;

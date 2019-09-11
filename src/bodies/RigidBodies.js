@@ -127,12 +127,20 @@ export default class RigidBodies {
   }
   /* eslint-enable new-cap */
 
-  getBodyByCollider (collider) {
-    return find(this.bodies, { body: collider });
+  getBodyByUUID (uuid) {
+    const body = find(this.bodies, { uuid: uuid });
+
+    if (!body) {
+      console.warn(
+        `There\'s no \'${this.type}\' body with \'${uuid}\' UUID.`
+      );
+    }
+
+    return body;
   }
 
-  getBodyByUUID (uuid) {
-    return find(this.bodies, { uuid: uuid });
+  getBodyByCollider (collider) {
+    return find(this.bodies, { body: collider });
   }
 
   getBodyInfo (collider, uuid) {

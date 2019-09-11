@@ -10,7 +10,7 @@ import {
 
 export default class RopeBodies extends FlexBodies {
   constructor (world) {
-    super(world);
+    super(world, 'rope');
 
     this.margin = ROPE_MARGIN;
     this.piterations = ROPE_PITERATIONS;

@@ -60,17 +60,15 @@ export default class HingeConstraints extends Constraints {
     this.add(hinge);
   }
 
+  setLimit (uuid, low = Math.PI, high = Math.PI, bias = 0, relaxation = 0) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setLimit(low, high, 0, bias, relaxation);
+  }
+
   // Will be replaced with
   // more generic methods:
-  update (uuid, direction) {
-    const constraint = this.getConstraintByUUID(uuid);
-
-    if (constraint) {
-      constraint.enableAngularMotor(true, direction, this.force);
-    } else {
-      console.warn(
-        `There\'s no \'${this.type}\' constraint with \'${uuid}\' UUID.`
-      );
-    }
-  }
+  // update (uuid, direction) {
+  //   const constraint = this.getConstraintByUUID(uuid);
+  //   constraint.enableAngularMotor(true, direction, this.force);
+  // }
 }

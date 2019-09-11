@@ -28,15 +28,30 @@ export default class HingeConstraints extends Constraints {
     });
   }
 
-  update (uuid, direction) {
+  setLimit (uuid, low = Math.PI, high = Math.PI, bias = 0, relaxation = 0) {
     this.worker.postMessage({
-      action: 'updateConstraints',
+      action: 'setLimit',
 
       params: {
-        direction: direction,
+        relaxation: relaxation,
         type: this.type,
-        uuid: uuid
+        uuid: uuid,
+        bias: bias,
+        high: high,
+        low: low
       }
     });
   }
+
+  // update (uuid, direction) {
+  //   this.worker.postMessage({
+  //     action: 'updateConstraints',
+
+  //     params: {
+  //       direction: direction,
+  //       type: this.type,
+  //       uuid: uuid
+  //     }
+  //   });
+  // }
 }

@@ -20,7 +20,7 @@ import {
 
 export default class SoftBodies extends FlexBodies {
   constructor (world) {
-    super(world);
+    super(world, 'soft');
 
     this.friction = FRICTION;
     this.margin = SOFT_MARGIN;

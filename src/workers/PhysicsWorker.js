@@ -313,9 +313,9 @@ class PhysicsWorker {
     }
   }
 
-  updateConstraints (props) {
-    this[props.type].update(props.uuid, props.direction);
-  }
+  // updateConstraints (props) {
+  //   this[props.type].update(props.uuid, props.direction);
+  // }
 
   checkCollisions () {
     const dispatcher = this.world.getDispatcher();
@@ -628,6 +628,10 @@ class PhysicsWorker {
 
   setMargin (props) {
     this[props.type].setMargin(props);
+  }
+
+  setLimit (props) {
+    this[props.type].setLimit(props);
   }
 
   enableBody (props) {
