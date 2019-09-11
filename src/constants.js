@@ -43,6 +43,7 @@ export const ROPE_VITERATIONS = 10;
 // Constraint constants:
 export const CONSTRAINT_THRESHOLD = 0;
 export const HINGE_ACCELERATION = 100;
+export const CONETWIST_IMPULSE = 100;
 
 // Activation state constants:
 export const ACTIVE_TAG = 1;

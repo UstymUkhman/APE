@@ -1,4 +1,7 @@
+import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
+
+import { CONETWIST_IMPULSE } from '@/constants';
 import Constraints from '@/workers/Constraints';
 
 export default class ConeTwistConstraints extends Constraints {
@@ -25,6 +28,30 @@ export default class ConeTwistConstraints extends Constraints {
       params: {
         type: this.type,
         limit: limit,
+        uuid: uuid
+      }
+    });
+  }
+
+  setMaxMotorImpulse (uuid, impulse = CONETWIST_IMPULSE) {
+    this.worker.postMessage({
+      action: 'setMaxMotorImpulse',
+
+      params: {
+        impulse: impulse,
+        type: this.type,
+        uuid: uuid
+      }
+    });
+  }
+
+  setMotorTarget (uuid, target = new Quaternion()) {
+    this.worker.postMessage({
+      action: 'setMotorTarget',
+
+      params: {
+        target: target.clone(),
+        type: this.type,
         uuid: uuid
       }
     });

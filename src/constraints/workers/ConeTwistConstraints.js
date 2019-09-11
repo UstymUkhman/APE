@@ -4,6 +4,10 @@ import { Ammo } from '@/utils';
 export default class ConeTwistConstraints extends Constraints {
   constructor (world) {
     super(world, 'coneTwist');
+
+    /* eslint-disable new-cap */
+    this.motorTarget = new Ammo.btQuaternion();
+    /* eslint-enable new-cap */
   }
 
   attachBodies (props) {
@@ -43,6 +47,18 @@ export default class ConeTwistConstraints extends Constraints {
   setLimit (props) {
     const constraint = this.getConstraintByUUID(props.uuid);
     constraint.setLimit(props.limit.z, props.limit.y, props.limit.x);
+  }
+
+  setMaxMotorImpulse (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setMaxMotorImpulse(props.impulse);
+  }
+
+  setMotorTarget (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+
+    this.motorTarget.setValue(props.target._x, props.target._y, props.target._z, props.target._w);
+    constraint.setMotorTarget(this.motorTarget);
   }
 
   enableMotor (props) {

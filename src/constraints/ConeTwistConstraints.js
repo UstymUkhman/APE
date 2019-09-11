@@ -1,11 +1,18 @@
-import Constraints from '@/constraints/Constraints';
+import { Quaternion } from 'three/src/math/Quaternion';
 import { Vector3 } from 'three/src/math/Vector3';
+
+import Constraints from '@/constraints/Constraints';
+import { CONETWIST_IMPULSE } from '@/constants';
 import { Ammo } from '@/utils';
 
 export default class ConeTwistConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'coneTwist');
     this.events = events;
+
+    /* eslint-disable new-cap */
+    this.motorTarget = new Ammo.btQuaternion();
+    /* eslint-enable new-cap */
   }
 
   addBodies (body0, body1, axis0, axis1, position0 = new Vector3(), position1 = new Vector3()) {
@@ -54,6 +61,18 @@ export default class ConeTwistConstraints extends Constraints {
   setLimit (uuid, limit = new Vector3(Math.PI, 0, Math.PI)) {
     const constraint = this.getConstraintByUUID(uuid);
     constraint.setLimit(limit.z, limit.y, limit.x);
+  }
+
+  setMaxMotorImpulse (uuid, impulse = CONETWIST_IMPULSE) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setMaxMotorImpulse(impulse);
+  }
+
+  setMotorTarget (uuid, target = new Quaternion()) {
+    const constraint = this.getConstraintByUUID(uuid);
+
+    this.motorTarget.setValue(target._x, target._y, target._z, target._w);
+    constraint.setMotorTarget(this.motorTarget);
   }
 
   enableMotor (uuid) {

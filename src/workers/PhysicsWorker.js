@@ -582,6 +582,14 @@ class PhysicsWorker {
     this[props.type].setCcdMotionThreshold(props.uuid, props.threshold);
   }
 
+  setMaxMotorImpulse (props) {
+    this[props.type].setMaxMotorImpulse(props);
+  }
+
+  setMotorTarget (props) {
+    this[props.type].setMotorTarget(props);
+  }
+
   setRestitution (props) {
     this[props.type].setRestitution(props.uuid, props.restitution);
   }
