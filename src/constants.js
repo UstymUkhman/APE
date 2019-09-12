@@ -44,7 +44,9 @@ export const ROPE_VITERATIONS = 10;
 export const CONSTRAINT_THRESHOLD = 0;
 export const SLIDER_ACCELERATION = 50;
 export const HINGE_ACCELERATION = 100;
+export const GENERIC_MAX_FORCE = 1000;
 export const CONETWIST_IMPULSE = 100;
+export const GENERIC_VELOCITY = 100;
 
 // Activation state constants:
 export const ACTIVE_TAG = 1;

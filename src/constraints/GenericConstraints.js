@@ -1,3 +1,4 @@
+import { GENERIC_VELOCITY, GENERIC_MAX_FORCE } from '@/constants';
 import Constraints from '@/constraints/Constraints';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from '@/utils';
@@ -6,6 +7,10 @@ export default class GenericConstraints extends Constraints {
   constructor (world, events) {
     super(world, 'generic');
     this.events = events;
+
+    /* eslint-disable new-cap */
+    this.limit = new Ammo.btVector3();
+    /* eslint-enable new-cap */
   }
 
   addBody (bodyMesh, axis, position = new Vector3()) {
@@ -80,5 +85,46 @@ export default class GenericConstraints extends Constraints {
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
     this.add(generic);
+  }
+
+  setAngularMotor (uuid, index, lowLimit = 0, highLimit = 0, velocity = GENERIC_VELOCITY, maxForce = GENERIC_MAX_FORCE) {
+    const constraint = this.getConstraintByUUID(uuid);
+    const motor = constraint.getRotationalLimitMotor(index);
+
+    motor.set_m_targetVelocity(velocity);
+    motor.set_m_maxMotorForce(maxForce);
+
+    motor.set_m_hiLimit(highLimit);
+    motor.set_m_loLimit(lowLimit);
+  }
+
+  enableAngularMotor (uuid, index) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.getRotationalLimitMotor(index).set_m_enableMotor(true);
+  }
+
+  disableAngularMotor (uuid, index) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.getRotationalLimitMotor(index).set_m_enableMotor(false);
+  }
+
+  setAngularLimit (uuid, lower = new Vector3(), upper = new Vector3()) {
+    const constraint = this.getConstraintByUUID(uuid);
+
+    this.limit.setValue(lower.x, lower.y, lower.z);
+    constraint.setAngularLowerLimit(this.limit);
+
+    this.limit.setValue(upper.x, upper.y, upper.z);
+    constraint.setAngularUpperLimit(this.limit);
+  }
+
+  setLinearLimit (uuid, lower = new Vector3(), upper = new Vector3()) {
+    const constraint = this.getConstraintByUUID(uuid);
+
+    this.limit.setValue(lower.x, lower.y, lower.z);
+    constraint.setLinearLowerLimit(this.limit);
+
+    this.limit.setValue(upper.x, upper.y, upper.z);
+    constraint.setLinearUpperLimit(this.limit);
   }
 }

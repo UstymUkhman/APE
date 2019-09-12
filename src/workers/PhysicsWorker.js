@@ -590,6 +590,10 @@ class PhysicsWorker {
     this[props.type].setSoftnessLimit(props);
   }
 
+  setAngularMotor (props) {
+    this[props.type].setAngularMotor(props);
+  }
+
   setAngularLimit (props) {
     this[props.type].setAngularLimit(props);
   }

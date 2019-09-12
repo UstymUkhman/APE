@@ -1,3 +1,4 @@
+import { GENERIC_VELOCITY, GENERIC_MAX_FORCE } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import Constraints from '@/workers/Constraints';
 
@@ -24,6 +25,72 @@ export default class GenericConstraints extends Constraints {
       body1: body1.uuid,
       axis0: axis0,
       axis1: axis1
+    });
+  }
+
+  setAngularMotor (uuid, index, lowLimit = 0, highLimit = 0, velocity = GENERIC_VELOCITY, maxForce = GENERIC_MAX_FORCE) {
+    this.worker.postMessage({
+      action: 'setAngularMotor',
+
+      params: {
+        highLimit: highLimit,
+        lowLimit: lowLimit,
+        velocity: velocity,
+        maxForce: maxForce,
+        type: this.type,
+        index: index,
+        uuid: uuid
+      }
+    });
+  }
+
+  enableAngularMotor (uuid, index) {
+    this.worker.postMessage({
+      action: 'enableAngularMotor',
+
+      params: {
+        type: this.type,
+        index: index,
+        uuid: uuid
+      }
+    });
+  }
+
+  disableAngularMotor (uuid, index) {
+    this.worker.postMessage({
+      action: 'disableAngularMotor',
+
+      params: {
+        type: this.type,
+        index: index,
+        uuid: uuid
+      }
+    });
+  }
+
+  setAngularLimit (uuid, lower = new Vector3(), upper = new Vector3()) {
+    this.worker.postMessage({
+      action: 'setAngularLimit',
+
+      params: {
+        type: this.type,
+        lower: lower,
+        upper: upper,
+        uuid: uuid
+      }
+    });
+  }
+
+  setLinearLimit (uuid, lower = new Vector3(), upper = new Vector3()) {
+    this.worker.postMessage({
+      action: 'setLinearLimit',
+
+      params: {
+        type: this.type,
+        lower: lower,
+        upper: upper,
+        uuid: uuid
+      }
     });
   }
 }

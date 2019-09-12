@@ -61,4 +61,45 @@ export default class GenericConstraints extends Constraints {
     this.uuids.push(props.uuid);
     this.add(generic);
   }
+
+  setAngularMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    const motor = constraint.getRotationalLimitMotor(props.index);
+
+    motor.set_m_targetVelocity(props.velocity);
+    motor.set_m_maxMotorForce(props.maxForce);
+
+    motor.set_m_hiLimit(props.highLimit);
+    motor.set_m_loLimit(props.lowLimit);
+  }
+
+  enableAngularMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.getRotationalLimitMotor(props.index).set_m_enableMotor(true);
+  }
+
+  disableAngularMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.getRotationalLimitMotor(props.index).set_m_enableMotor(false);
+  }
+
+  setAngularLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+
+    this.limit.setValue(props.lower.x, props.lower.y, props.lower.z);
+    constraint.setAngularLowerLimit(this.limit);
+
+    this.limit.setValue(props.upper.x, props.upper.y, props.upper.z);
+    constraint.setAngularUpperLimit(this.limit);
+  }
+
+  setLinearLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+
+    this.limit.setValue(props.lower.x, props.lower.y, props.lower.z);
+    constraint.setLinearLowerLimit(this.limit);
+
+    this.limit.setValue(props.upper.x, props.upper.y, props.upper.z);
+    constraint.setLinearUpperLimit(this.limit);
+  }
 }

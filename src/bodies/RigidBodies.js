@@ -85,7 +85,7 @@ export default class RigidBodies {
 
   createConvex (coords) {
     const convex = new Ammo.btConvexHullShape();
-    const vec = new Ammo.btVector3(0.0, 0.0, 0.0);
+    const vec = new Ammo.btVector3();
 
     for (let i = 0, last = coords.length - 3; i < coords.length; i += 3) {
       vec.setValue(coords[i], coords[i + 1], coords[i + 2]);
