@@ -2,11 +2,11 @@ import { Vector3 } from 'three/src/math/Vector3';
 import find from 'lodash.find';
 
 import {
-  MARGIN,
-  FRICTION,
-  RESTITUTION,
-  LINEAR_DAMPING,
-  ANGULAR_DAMPING
+  RIGID_MARGIN,
+  RIGID_FRICTION,
+  RIGID_RESTITUTION,
+  RIGID_LINEAR_DAMPING,
+  RIGID_ANGULAR_DAMPING
 } from '@/constants';
 
 const VECTOR1 = new Vector3(1.0, 1.0, 1.0);
@@ -18,13 +18,13 @@ export default class RigidBodies {
     this.worker = worker;
 
     this.constants = {
-      margin: MARGIN,
-      friction: FRICTION,
+      margin: RIGID_MARGIN,
       linearFactor: VECTOR1,
       angularFactor: VECTOR1,
-      restitution: RESTITUTION,
-      linearDamping: LINEAR_DAMPING,
-      angularDamping: ANGULAR_DAMPING
+      friction: RIGID_FRICTION,
+      restitution: RIGID_RESTITUTION,
+      linearDamping: RIGID_LINEAR_DAMPING,
+      angularDamping: RIGID_ANGULAR_DAMPING
     };
   }
 

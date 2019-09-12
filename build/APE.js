@@ -65534,7 +65534,7 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "3ff078a07b6a8f92397a.worker.js");
+  return new Worker(__webpack_require__.p + "1184ec845285afc5b9d9.worker.js");
 };
 
 /***/ }),
@@ -65552,24 +65552,35 @@ module.exports = function() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/* eslint-disable no-multi-spaces */
+
+// Activation state constants:
+var ACTIVE_TAG = exports.ACTIVE_TAG = 1;
+var ISLAND_SLEEPING = exports.ISLAND_SLEEPING = 2;
+var WANTS_DEACTIVATION = exports.WANTS_DEACTIVATION = 3;
+var DISABLE_DEACTIVATION = exports.DISABLE_DEACTIVATION = 4;
+var DISABLE_SIMULATION = exports.DISABLE_SIMULATION = 5;
+
 // Generic constants:
-var GRAVITY = exports.GRAVITY = -9.81;
 var ZERO_MASS = exports.ZERO_MASS = 0.0;
+var GRAVITY = exports.GRAVITY = -9.81;
 var POWER16 = exports.POWER16 = 0xFFFF;
 
 // Rigid Body constants:
-var MARGIN = exports.MARGIN = 0.01;
-var FRICTION = exports.FRICTION = 0.5;
-var RESTITUTION = exports.RESTITUTION = 0.0;
-var LINEAR_DAMPING = exports.LINEAR_DAMPING = 0.0;
-var ANGULAR_DAMPING = exports.ANGULAR_DAMPING = 0.0;
+var RIGID_MARGIN = exports.RIGID_MARGIN = 0.01;
+var RIGID_FRICTION = exports.RIGID_FRICTION = 0.5;
+var RIGID_RESTITUTION = exports.RIGID_RESTITUTION = 0.0;
+var RIGID_LINEAR_DAMPING = exports.RIGID_LINEAR_DAMPING = 0.0;
+var RIGID_ANGULAR_DAMPING = exports.RIGID_ANGULAR_DAMPING = 0.0;
 
 // Soft Body constants:
+var SOFT_FRICTION = exports.SOFT_FRICTION = 0.5;
 var SOFT_MARGIN = exports.SOFT_MARGIN = 0.02;
 var SOFT_DAMPING = exports.SOFT_DAMPING = 0.01;
 var SOFT_STIFFNESS = exports.SOFT_STIFFNESS = 1.0;
 var SOFT_PITERATIONS = exports.SOFT_PITERATIONS = 40;
 var SOFT_VITERATIONS = exports.SOFT_VITERATIONS = 40;
+var SOFT_RESTITUTION = exports.SOFT_RESTITUTION = 0.0;
 
 // Cloth Body constants:
 var CLOTH_MARGIN = exports.CLOTH_MARGIN = 0.03;
@@ -65581,44 +65592,13 @@ var ROPE_MARGIN = exports.ROPE_MARGIN = 0.05;
 var ROPE_PITERATIONS = exports.ROPE_PITERATIONS = 10;
 var ROPE_VITERATIONS = exports.ROPE_VITERATIONS = 10;
 
-// Vehicle Body constants:
-// export const BREAK_FORCE = 100.0;
-// export const STEERING_STEP = 0.04;
-// export const STEERING_CLAMP = 0.5;
-// export const ENGINE_FORCE = 2000.0;
-
-// export const ROLL_INFLUENCE = 0.2;
-// export const SUSPENSION_REST = 0.6;
-// export const FRICTION_SLIP = 1000.0;
-// export const SUSPENSION_DAMPING = 2.3;
-// export const SUSPENSION_STIFFNESS = 20.0;
-// export const SUSPENSION_COMPRESSION = 4.4;
-
 // Constraint constants:
-var CONSTRAINT_THRESHOLD = exports.CONSTRAINT_THRESHOLD = 0;
+var GENERIC_VELOCITY = exports.GENERIC_VELOCITY = 100;
+var GENERIC_MAX_FORCE = exports.GENERIC_MAX_FORCE = 1000;
+var CONETWIST_IMPULSE = exports.CONETWIST_IMPULSE = 100;
 var HINGE_ACCELERATION = exports.HINGE_ACCELERATION = 100;
-
-// Activation state constants:
-var ACTIVE_TAG = exports.ACTIVE_TAG = 1;
-var ISLAND_SLEEPING = exports.ISLAND_SLEEPING = 2;
-var WANTS_DEACTIVATION = exports.WANTS_DEACTIVATION = 3;
-var DISABLE_DEACTIVATION = exports.DISABLE_DEACTIVATION = 4;
-var DISABLE_SIMULATION = exports.DISABLE_SIMULATION = 5;
-
-// Group constants:
-var DYNAMIC_GROUP = exports.DYNAMIC_GROUP = 1;
-var STATIC_GROUP = exports.STATIC_GROUP = 2;
-var KINEMATIC_GROUP = exports.KINEMATIC_GROUP = 4;
-// export const CLOTH_GROUP = ;
-// export const SOFT_GROUP = ;
-
-// Mask constants:
-var STATIC_MASK = exports.STATIC_MASK = 2;
-var NOT_STATIC_MASK = exports.NOT_STATIC_MASK = 65535 ^ 2;
-var NOT_STATIC_OR_KINEMATIC_MASK = exports.NOT_STATIC_OR_KINEMATIC_MASK = 65535 ^ (2 | 4);
-// export const DYNAMIC_MASK = ;
-// export const CLOTH_MASK = ;
-// export const SOFT_MASK = ;
+var SLIDER_ACCELERATION = exports.SLIDER_ACCELERATION = 50;
+var CONSTRAINT_THRESHOLD = exports.CONSTRAINT_THRESHOLD = 0;
 
 // Collision constants:
 var STATIC_COLLISION = exports.STATIC_COLLISION = 1;
@@ -65626,6 +65606,49 @@ var KINEMATIC_COLLISION = exports.KINEMATIC_COLLISION = 2;
 var IGNORED_COLLISION = exports.IGNORED_COLLISION = 4;
 var SOFT_COLLISION = exports.SOFT_COLLISION = 0x11;
 var CCD_MOTION_THRESHOLD = exports.CCD_MOTION_THRESHOLD = 1e-5;
+
+// Group constants:
+var GROUP_NONE = exports.GROUP_NONE = 0;
+var GROUP_STATIC = exports.GROUP_STATIC = 1;
+var GROUP_KINEMATIC = exports.GROUP_KINEMATIC = 2;
+var GROUP_DYNAMIC = exports.GROUP_DYNAMIC = 4;
+var GROUP_SOFT = exports.GROUP_SOFT = 8;
+var GROUP_ROPE = exports.GROUP_ROPE = 16;
+var GROUP_CLOTH = exports.GROUP_CLOTH = 32;
+/*
+export const GROUP_                       =    64;
+export const GROUP_                       =   128;
+export const GROUP_                       =   256;
+export const GROUP_                       =   512;
+export const GROUP_                       =  1024;
+export const GROUP_                       =  2048;
+export const GROUP_                       =  4096;
+export const GROUP_                       =  8192;
+export const GROUP_                       = 16384;
+export const GROUP_                       = 32768;
+*/
+
+// Mask constants
+// Gets specified body types:
+var MASK_SOFT = exports.MASK_SOFT = GROUP_SOFT;
+var MASK_CLOTH = exports.MASK_CLOTH = GROUP_CLOTH;
+var MASK_STATIC = exports.MASK_STATIC = GROUP_STATIC;
+var MASK_DYNAMIC = exports.MASK_DYNAMIC = GROUP_DYNAMIC;
+var MASK_KINEMATIC = exports.MASK_KINEMATIC = GROUP_KINEMATIC;
+var MASK_FLEX = exports.MASK_FLEX = GROUP_SOFT | GROUP_CLOTH;
+var MASK_STATIC_AND_KINEMATIC = exports.MASK_STATIC_AND_KINEMATIC = GROUP_STATIC | GROUP_KINEMATIC;
+var MASK_RIGID = exports.MASK_RIGID = GROUP_STATIC | GROUP_KINEMATIC | GROUP_DYNAMIC;
+
+// Gets all body types except:
+var MASK_NOT_SOFT = exports.MASK_NOT_SOFT = POWER16 ^ GROUP_SOFT;
+var MASK_NOT_CLOTH = exports.MASK_NOT_CLOTH = POWER16 ^ GROUP_CLOTH;
+var MASK_NOT_STATIC = exports.MASK_NOT_STATIC = POWER16 ^ GROUP_STATIC;
+var MASK_NOT_DYNAMIC = exports.MASK_NOT_DYNAMIC = POWER16 ^ GROUP_DYNAMIC;
+var MASK_NOT_KINEMATIC = exports.MASK_NOT_KINEMATIC = POWER16 ^ GROUP_KINEMATIC;
+var MASK_NOT_FLEX = exports.MASK_NOT_FLEX = POWER16 ^ (GROUP_SOFT | GROUP_CLOTH);
+var MASK_NOT_STATIC_OR_KINEMATIC = exports.MASK_NOT_STATIC_OR_KINEMATIC = POWER16 ^ (GROUP_STATIC | GROUP_KINEMATIC);
+var MASK_NOT_RIGID = exports.MASK_NOT_RIGID = POWER16 ^ (GROUP_STATIC | GROUP_KINEMATIC | GROUP_DYNAMIC);
+/* eslint-enable no-multi-spaces */
 
 /***/ }),
 
@@ -66438,7 +66461,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _Quaternion = __webpack_require__(/*! three/src/math/Quaternion */ "./node_modules/three/src/math/Quaternion.js");
+
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
+
+var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
 
 var _Constraints2 = __webpack_require__(/*! @/workers/Constraints */ "./src/workers/Constraints.js");
 
@@ -66488,6 +66515,36 @@ var ConeTwistConstraints = function (_Constraints) {
         params: {
           type: this.type,
           limit: limit,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setMaxMotorImpulse',
+    value: function setMaxMotorImpulse(uuid) {
+      var impulse = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.CONETWIST_IMPULSE;
+
+      this.worker.postMessage({
+        action: 'setMaxMotorImpulse',
+
+        params: {
+          impulse: impulse,
+          type: this.type,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setMotorTarget',
+    value: function setMotorTarget(uuid) {
+      var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Quaternion.Quaternion();
+
+      this.worker.postMessage({
+        action: 'setMotorTarget',
+
+        params: {
+          target: target.clone(),
+          type: this.type,
           uuid: uuid
         }
       });
@@ -67082,7 +67139,7 @@ var FlexBodies = function () {
   }, {
     key: 'setFriction',
     value: function setFriction(mesh) {
-      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.FRICTION;
+      var friction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.SOFT_FRICTION;
 
       this.worker.postMessage({
         action: 'setFriction',
@@ -67232,6 +67289,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
+
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
 var _Constraints2 = __webpack_require__(/*! @/workers/Constraints */ "./src/workers/Constraints.js");
@@ -67281,6 +67340,88 @@ var GenericConstraints = function (_Constraints) {
         body1: body1.uuid,
         axis0: axis0,
         axis1: axis1
+      });
+    }
+  }, {
+    key: 'setAngularMotor',
+    value: function setAngularMotor(uuid, index) {
+      var lowLimit = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var highLimit = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+      var velocity = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : _constants.GENERIC_VELOCITY;
+      var maxForce = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : _constants.GENERIC_MAX_FORCE;
+
+      this.worker.postMessage({
+        action: 'setAngularMotor',
+
+        params: {
+          highLimit: highLimit,
+          lowLimit: lowLimit,
+          velocity: velocity,
+          maxForce: maxForce,
+          type: this.type,
+          index: index,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'enableAngularMotor',
+    value: function enableAngularMotor(uuid, index) {
+      this.worker.postMessage({
+        action: 'enableAngularMotor',
+
+        params: {
+          type: this.type,
+          index: index,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'disableAngularMotor',
+    value: function disableAngularMotor(uuid, index) {
+      this.worker.postMessage({
+        action: 'disableAngularMotor',
+
+        params: {
+          type: this.type,
+          index: index,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setAngularLimit',
+    value: function setAngularLimit(uuid) {
+      var lower = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
+      var upper = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
+
+      this.worker.postMessage({
+        action: 'setAngularLimit',
+
+        params: {
+          type: this.type,
+          lower: lower,
+          upper: upper,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setLinearLimit',
+    value: function setLinearLimit(uuid) {
+      var lower = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new _Vector.Vector3();
+      var upper = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _Vector.Vector3();
+
+      this.worker.postMessage({
+        action: 'setLinearLimit',
+
+        params: {
+          type: this.type,
+          lower: lower,
+          upper: upper,
+          uuid: uuid
+        }
       });
     }
   }]);
@@ -67989,13 +68130,13 @@ var RigidBodies = function () {
     this.worker = worker;
 
     this.constants = {
-      margin: _constants.MARGIN,
-      friction: _constants.FRICTION,
+      margin: _constants.RIGID_MARGIN,
       linearFactor: VECTOR1,
       angularFactor: VECTOR1,
-      restitution: _constants.RESTITUTION,
-      linearDamping: _constants.LINEAR_DAMPING,
-      angularDamping: _constants.ANGULAR_DAMPING
+      friction: _constants.RIGID_FRICTION,
+      restitution: _constants.RIGID_RESTITUTION,
+      linearDamping: _constants.RIGID_LINEAR_DAMPING,
+      angularDamping: _constants.RIGID_ANGULAR_DAMPING
     };
   }
 
@@ -68268,6 +68409,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _constants = __webpack_require__(/*! @/constants */ "./src/constants.js");
+
 var _Vector = __webpack_require__(/*! three/src/math/Vector3 */ "./node_modules/three/src/math/Vector3.js");
 
 var _Constraints2 = __webpack_require__(/*! @/workers/Constraints */ "./src/workers/Constraints.js");
@@ -68316,6 +68459,115 @@ var SliderConstraints = function (_Constraints) {
         body0: body0.uuid,
         body1: body1.uuid,
         axis: axis
+      });
+    }
+  }, {
+    key: 'enableAngularMotor',
+    value: function enableAngularMotor(uuid) {
+      var velocity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      var acceleration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constants.SLIDER_ACCELERATION;
+
+      this.worker.postMessage({
+        action: 'enableAngularMotor',
+
+        params: {
+          acceleration: acceleration,
+          velocity: velocity,
+          type: this.type,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'enableLinearMotor',
+    value: function enableLinearMotor(uuid) {
+      var velocity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      var acceleration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constants.SLIDER_ACCELERATION;
+
+      this.worker.postMessage({
+        action: 'enableLinearMotor',
+
+        params: {
+          acceleration: acceleration,
+          velocity: velocity,
+          type: this.type,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'disableAngularMotor',
+    value: function disableAngularMotor(uuid) {
+      this.worker.postMessage({
+        action: 'disableAngularMotor',
+
+        params: {
+          type: this.type,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'disableLinearMotor',
+    value: function disableLinearMotor(uuid) {
+      this.worker.postMessage({
+        action: 'disableLinearMotor',
+
+        params: {
+          type: this.type,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setSoftnessLimit',
+    value: function setSoftnessLimit(uuid) {
+      var linear = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var angular = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      this.worker.postMessage({
+        action: 'setSoftnessLimit',
+
+        params: {
+          angular: angular,
+          type: this.type,
+          linear: linear,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setAngularLimit',
+    value: function setAngularLimit(uuid) {
+      var lower = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var upper = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      this.worker.postMessage({
+        action: 'setAngularLimit',
+
+        params: {
+          type: this.type,
+          lower: lower,
+          upper: upper,
+          uuid: uuid
+        }
+      });
+    }
+  }, {
+    key: 'setLinearLimit',
+    value: function setLinearLimit(uuid) {
+      var lower = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var upper = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      this.worker.postMessage({
+        action: 'setLinearLimit',
+
+        params: {
+          type: this.type,
+          lower: lower,
+          upper: upper,
+          uuid: uuid
+        }
       });
     }
   }]);
@@ -68367,10 +68619,10 @@ var SoftBodies = function (_FlexBodies) {
     _classCallCheck(this, SoftBodies);
 
     return _possibleConstructorReturn(this, (SoftBodies.__proto__ || Object.getPrototypeOf(SoftBodies)).call(this, 'Soft', worker, {
-      friction: _constants.FRICTION,
       margin: _constants.SOFT_MARGIN,
       stiffness: _constants.STIFFNESS,
       damping: _constants.SOFT_DAMPING,
+      friction: _constants.SOFT_FRICTION,
       viterations: _constants.VITERATIONS,
       piterations: _constants.PITERATIONS,
       collisions: _constants.SOFT_COLLISION
@@ -68417,7 +68669,7 @@ var SoftBodies = function (_FlexBodies) {
   }, {
     key: 'setRestitution',
     value: function setRestitution(mesh) {
-      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.RESTITUTION;
+      var restitution = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.SOFT_RESTITUTION;
 
       this.worker.postMessage({
         action: 'setRestitution',

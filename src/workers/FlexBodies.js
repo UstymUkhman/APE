@@ -1,6 +1,6 @@
 import {
-  FRICTION,
   SOFT_DAMPING,
+  SOFT_FRICTION,
   SOFT_STIFFNESS,
   SOFT_COLLISION
 } from '@/constants';
@@ -91,7 +91,7 @@ export default class FlexBodies {
     });
   }
 
-  setFriction (mesh, friction = FRICTION) {
+  setFriction (mesh, friction = SOFT_FRICTION) {
     this.worker.postMessage({
       action: 'setFriction',
 

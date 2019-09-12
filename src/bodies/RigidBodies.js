@@ -3,15 +3,15 @@ import { Ammo, webWorker } from '@/utils';
 import find from 'lodash.find';
 
 import {
-  MARGIN,
-  FRICTION,
   ZERO_MASS,
   ACTIVE_TAG,
-  RESTITUTION,
-  LINEAR_DAMPING,
-  ANGULAR_DAMPING,
+  RIGID_MARGIN,
+  RIGID_FRICTION,
+  RIGID_RESTITUTION,
   DISABLE_SIMULATION,
-  DISABLE_DEACTIVATION
+  DISABLE_DEACTIVATION,
+  RIGID_LINEAR_DAMPING,
+  RIGID_ANGULAR_DAMPING
 } from '@/constants';
 
 const VECTOR1 = new Vector3(1.0, 1.0, 1.0);
@@ -24,13 +24,13 @@ export default class RigidBodies {
     this.world = world;
     this.worker = webWorker();
 
-    this.margin = MARGIN;
-    this.friction = FRICTION;
+    this.margin = RIGID_MARGIN;
     this.linearFactor = VECTOR1;
     this.angularFactor = VECTOR1;
-    this.restitution = RESTITUTION;
-    this.linearDamping = LINEAR_DAMPING;
-    this.angularDamping = ANGULAR_DAMPING;
+    this.friction = RIGID_FRICTION;
+    this.restitution = RIGID_RESTITUTION;
+    this.linearDamping = RIGID_LINEAR_DAMPING;
+    this.angularDamping = RIGID_ANGULAR_DAMPING;
 
     /* eslint-disable new-cap */
     this.rotation = new Ammo.btQuaternion();
@@ -112,7 +112,7 @@ export default class RigidBodies {
       shape.calculateLocalInertia(mass, inertia);
     }
 
-    if (this.margin !== MARGIN) {
+    if (this.margin !== RIGID_MARGIN) {
       shape.setMargin(this.margin);
     }
 

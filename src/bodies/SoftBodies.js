@@ -7,9 +7,9 @@ import FlexBodies from '@/bodies/FlexBodies';
 
 import {
   POWER16,
-  FRICTION,
   SOFT_MARGIN,
   SOFT_DAMPING,
+  SOFT_FRICTION,
   SOFT_COLLISION,
   SOFT_STIFFNESS,
   SOFT_PITERATIONS,
@@ -22,9 +22,9 @@ export default class SoftBodies extends FlexBodies {
   constructor (world) {
     super(world, 'soft');
 
-    this.friction = FRICTION;
     this.margin = SOFT_MARGIN;
     this.damping = SOFT_DAMPING;
+    this.friction = SOFT_FRICTION;
     this.stiffness = SOFT_STIFFNESS;
     this.collisions = SOFT_COLLISION;
     this.viterations = SOFT_VITERATIONS;

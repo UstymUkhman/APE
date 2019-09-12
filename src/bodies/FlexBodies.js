@@ -2,9 +2,9 @@ import { Ammo, webWorker } from '@/utils';
 import find from 'lodash.find';
 
 import {
-  FRICTION,
   ACTIVE_TAG,
   SOFT_DAMPING,
+  SOFT_FRICTION,
   SOFT_STIFFNESS,
   SOFT_COLLISION,
   DISABLE_SIMULATION
@@ -74,7 +74,7 @@ export default class FlexBodies {
     }
   }
 
-  setFriction (mesh, friction = FRICTION) {
+  setFriction (mesh, friction = SOFT_FRICTION) {
     const body = this.getBodyByUUID(mesh.uuid);
 
     if (body) {

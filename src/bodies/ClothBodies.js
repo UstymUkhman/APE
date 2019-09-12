@@ -3,9 +3,9 @@ import FlexBodies from '@/bodies/FlexBodies';
 import { Ammo } from '@/utils';
 
 import {
-  FRICTION,
   SOFT_DAMPING,
   CLOTH_MARGIN,
+  SOFT_FRICTION,
   SOFT_STIFFNESS,
   SOFT_COLLISION,
   CLOTH_PITERATIONS,
@@ -18,9 +18,9 @@ export default class ClothBodies extends FlexBodies {
     super(world, 'cloth');
     this.events = events;
 
-    this.friction = FRICTION;
     this.margin = CLOTH_MARGIN;
     this.damping = SOFT_DAMPING;
+    this.friction = SOFT_FRICTION;
     this.stiffness = SOFT_STIFFNESS;
     this.collisions = SOFT_COLLISION;
     this.piterations = CLOTH_PITERATIONS;

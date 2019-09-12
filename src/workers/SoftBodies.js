@@ -1,24 +1,24 @@
 import FlexBodies from '@/workers/FlexBodies';
 
 import {
-  FRICTION,
   STIFFNESS,
-  RESTITUTION,
   VITERATIONS,
   PITERATIONS,
   SOFT_MARGIN,
   SOFT_DAMPING,
+  SOFT_FRICTION,
   SOFT_COLLISION,
+  SOFT_RESTITUTION,
   CCD_MOTION_THRESHOLD
 } from '@/constants';
 
 export default class SoftBodies extends FlexBodies {
   constructor (worker) {
     super('Soft', worker, {
-      friction: FRICTION,
       margin: SOFT_MARGIN,
       stiffness: STIFFNESS,
       damping: SOFT_DAMPING,
+      friction: SOFT_FRICTION,
       viterations: VITERATIONS,
       piterations: PITERATIONS,
       collisions: SOFT_COLLISION
@@ -55,7 +55,7 @@ export default class SoftBodies extends FlexBodies {
     });
   }
 
-  setRestitution (mesh, restitution = RESTITUTION) {
+  setRestitution (mesh, restitution = SOFT_RESTITUTION) {
     this.worker.postMessage({
       action: 'setRestitution',
 
