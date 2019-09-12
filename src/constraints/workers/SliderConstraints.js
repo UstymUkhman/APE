@@ -60,4 +60,46 @@ export default class SliderConstraints extends Constraints {
     this.uuids.push(props.uuid);
     this.add(slider);
   }
+
+  enableAngularMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setTargetAngMotorVelocity(props.velocity);
+    constraint.setMaxAngMotorForce(props.acceleration);
+    constraint.setPoweredAngMotor(true);
+  }
+
+  enableLinearMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setTargetLinMotorVelocity(props.velocity);
+    constraint.setMaxLinMotorForce(props.acceleration);
+    constraint.setPoweredLinMotor(true);
+  }
+
+  disableAngularMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setPoweredAngMotor(false);
+  }
+
+  disableLinearMotor (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setPoweredLinMotor(false);
+  }
+
+  setSoftnessLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setSoftnessLimAng(props.angular);
+    constraint.setSoftnessLimLin(props.linear);
+  }
+
+  setAngularLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setLowerAngLimit(props.lower);
+    constraint.setUpperAngLimit(props.upper);
+  }
+
+  setLinearLimit (props) {
+    const constraint = this.getConstraintByUUID(props.uuid);
+    constraint.setLowerLinLimit(props.lower);
+    constraint.setUpperLinLimit(props.upper);
+  }
 }

@@ -586,6 +586,18 @@ class PhysicsWorker {
     this[props.type].setMaxMotorImpulse(props);
   }
 
+  setSoftnessLimit (props) {
+    this[props.type].setSoftnessLimit(props);
+  }
+
+  setAngularLimit (props) {
+    this[props.type].setAngularLimit(props);
+  }
+
+  setLinearLimit (props) {
+    this[props.type].setLinearLimit(props);
+  }
+
   setMotorTarget (props) {
     this[props.type].setMotorTarget(props);
   }
@@ -636,6 +648,22 @@ class PhysicsWorker {
 
   setLimit (props) {
     this[props.type].setLimit(props);
+  }
+
+  enableAngularMotor (props) {
+    this[props.type].enableAngularMotor(props);
+  }
+
+  enableLinearMotor (props) {
+    this[props.type].enableLinearMotor(props);
+  }
+
+  disableAngularMotor (props) {
+    this[props.type].disableAngularMotor(props);
+  }
+
+  disableLinearMotor (props) {
+    this[props.type].disableLinearMotor(props);
   }
 
   disableMotor (props) {

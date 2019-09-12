@@ -1,4 +1,5 @@
 import Constraints from '@/constraints/Constraints';
+import { SLIDER_ACCELERATION } from '@/constants';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Ammo } from '@/utils';
 
@@ -80,5 +81,47 @@ export default class SliderConstraints extends Constraints {
     Ammo.destroy(transform0);
     Ammo.destroy(transform1);
     this.add(slider);
+  }
+
+  enableAngularMotor (uuid, velocity = 1, acceleration = SLIDER_ACCELERATION) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setTargetAngMotorVelocity(velocity);
+    constraint.setMaxAngMotorForce(acceleration);
+    constraint.setPoweredAngMotor(true);
+  }
+
+  enableLinearMotor (uuid, velocity = 1, acceleration = SLIDER_ACCELERATION) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setTargetLinMotorVelocity(velocity);
+    constraint.setMaxLinMotorForce(acceleration);
+    constraint.setPoweredLinMotor(true);
+  }
+
+  disableAngularMotor (uuid) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setPoweredAngMotor(false);
+  }
+
+  disableLinearMotor (uuid) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setPoweredLinMotor(false);
+  }
+
+  setSoftnessLimit (uuid, linear = 0, angular = 0) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setSoftnessLimAng(angular);
+    constraint.setSoftnessLimLin(linear);
+  }
+
+  setAngularLimit (uuid, lower = 0, upper = 0) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setLowerAngLimit(lower);
+    constraint.setUpperAngLimit(upper);
+  }
+
+  setLinearLimit (uuid, lower = 0, upper = 0) {
+    const constraint = this.getConstraintByUUID(uuid);
+    constraint.setLowerLinLimit(lower);
+    constraint.setUpperLinLimit(upper);
   }
 }
