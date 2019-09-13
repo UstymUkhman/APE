@@ -1,74 +1,73 @@
 // import CollidedBodies from 'demos/CollidedBodies';
 // import ConvexBreak from 'demos/ConvexBreak';
 // import RigidBodies from 'demos/RigidBodies';
-import SoftBodies from 'demos/SoftBodies';
+// import SoftBodies from 'demos/SoftBodies';
 // import ClothBody from 'demos/ClothBody';
 // import Break from 'demos/Break';
 
-// const CONSTANTS = require('./constants');
+// window.addEventListener('DOMContentLoaded', () => {
+//   // const demo = (window.location.hash || '#rigid_bodies').slice(1);
 
-// class APE {
-//   constructor (useWorker = true) {
-//     console.log(':D');
-//     // const world = useWorker ? './workers' : './';
+//   /* eslint-disable no-new */
+//   // new CollidedBodies();
+//   // new RigidBodies();
+//   // new ConvexBreak();
+//   new SoftBodies();
+//   // new ClothBody();
+//   // new Break();
 
-//     // this.world = import(`./${world}/PhysicsWorld`).then((_module) => {
-//     //   console.log(_module);
-//     // });
-//   }
-// }
+//   // switch (demo) {
+//   //   case 'collided_bodies':
+//   //     new CollidedBodies();
+//   //     break;
 
-// module.exports = {
-//   ...CONSTANTS,
+//   //   case 'convex_break':
+//   //     new ConvexBreak();
+//   //     break;
 
-//   World: (useWorker = true) => {
-//     const world = useWorker ? './workers' : './';
-//     console.log(':D', world);
-//   }
-// };
+//   //   case 'rigid_bodies':
+//   //     new RigidBodies();
+//   //     break;
 
-// export default { APE };
+//   //   case 'cloth_body':
+//   //     new ClothBody();
+//   //     break;
 
-// module.exports = {
-//   ...someFunctions1,
-//   ...someFunctions2
-// }
+//   //   case 'soft_bodies':
+//   //     new SoftBodies();
+//   //     break;
 
-window.addEventListener('DOMContentLoaded', () => {
-  // const demo = (window.location.hash || '#rigid_bodies').slice(1);
+//   //   case 'break':
+//   //     new Break();
+//   //     break;
+//   // }
+//   /* eslint-enable no-new */
+// });
 
-  /* eslint-disable no-new */
-  // new CollidedBodies();
-  // new RigidBodies();
-  // new ConvexBreak();
-  new SoftBodies();
-  // new ClothBody();
-  // new Break();
+const CONSTANTS = require('./constants');
 
-  // switch (demo) {
-  //   case 'collided_bodies':
-  //     new CollidedBodies();
-  //     break;
+const GROUPS = { };
+const MASKS = { };
 
-  //   case 'convex_break':
-  //     new ConvexBreak();
-  //     break;
+Object.keys(CONSTANTS).map((constant, value) => {
+  const group = !constant.indexOf('GROUP_');
+  const mask = !constant.indexOf('MASK_');
 
-  //   case 'rigid_bodies':
-  //     new RigidBodies();
-  //     break;
-
-  //   case 'cloth_body':
-  //     new ClothBody();
-  //     break;
-
-  //   case 'soft_bodies':
-  //     new SoftBodies();
-  //     break;
-
-  //   case 'break':
-  //     new Break();
-  //     break;
-  // }
-  /* eslint-enable no-new */
+  if (group) GROUPS[constant] = value;
+  else if (mask) MASKS[constant] = value;
 });
+
+const APE = {
+  Physics: function (soft = false, gravity = APE.GRAVITY) {
+    const path = APE.USE_WORKER ? '/workers' : '';
+    const World = require(`.${path}/PhysicsWorld`).default;
+
+    return new World(soft, gravity);
+  },
+
+  USE_WORKER: true,
+  ...GROUPS,
+  ...MASKS
+};
+
+module.exports = APE;
