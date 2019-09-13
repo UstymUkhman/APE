@@ -3,7 +3,11 @@ import { Ammo, webWorker } from '@/utils';
 export default class PhysicsRay {
   constructor (world) {
     this.world = world;
+    this.hitFraction = 1;
     this.worker = webWorker();
+
+    this.filterMask = undefined;
+    this.filterGroup = undefined;
 
     /* eslint-disable new-cap */
     this.origin = new Ammo.btVector3();
@@ -15,12 +19,16 @@ export default class PhysicsRay {
   cast (origin, target, hitPoint = null, hitNormal = null) {
     const rayCallBack = Ammo.castObject(this.closestResult, Ammo.RayResultCallback);
 
-    rayCallBack.set_m_closestHitFraction(1);
+    rayCallBack.set_m_closestHitFraction(this.hitFraction);
     rayCallBack.set_m_collisionObject(null);
 
-    // Add filter functions:
-    // rayCallBack.set_m_collisionFilterGroup
-    // rayCallBack.set_m_collisionFilterMask
+    if (this.filterGroup !== undefined) {
+      rayCallBack.set_m_collisionFilterGroup(this.filterGroup);
+    }
+
+    if (this.filterMask !== undefined) {
+      rayCallBack.set_m_collisionFilterMask(this.filterMask);
+    }
 
     this.origin.setValue(origin.x, origin.y, origin.z);
     this.target.setValue(target.x, target.y, target.z);
@@ -54,5 +62,17 @@ export default class PhysicsRay {
       point: hitPoint,
       hasHit: hasHit
     });
+  }
+
+  setClosestHitFraction (hitFraction = 1) {
+    this.hitFraction = hitFraction;
+  }
+
+  setCollisionFilterGroup (filterGroup) {
+    this.filterGroup = filterGroup;
+  }
+
+  setCollisionFilterMask (filterMask) {
+    this.filterMask = filterMask;
   }
 }

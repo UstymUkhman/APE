@@ -517,6 +517,18 @@ class PhysicsWorker {
     this[props.type].remove(props.uuid);
   }
 
+  setCollisionFilterGroup (props) {
+    this.ray.setCollisionFilterGroup(props.filterGroup);
+  }
+
+  setCollisionFilterMask (props) {
+    this.ray.setCollisionFilterMask(props.filterMask);
+  }
+
+  setClosestHitFraction (props) {
+    this.ray.setClosestHitFraction(props.hitFraction);
+  }
+
   castRay (props) {
     this.ray.cast(props.origin, props.target, props.hitPoint, props.hitNormal);
   }

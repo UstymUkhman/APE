@@ -32,6 +32,33 @@ export default class PhysicsRay {
     return this.hasHit;
   }
 
+  setClosestHitFraction (hitFraction = 1) {
+    this.worker.postMessage({
+      action: 'setClosestHitFraction',
+      params: {
+        hitFraction: hitFraction
+      }
+    });
+  }
+
+  setCollisionFilterGroup (filterGroup) {
+    this.worker.postMessage({
+      action: 'setCollisionFilterGroup',
+      params: {
+        filterGroup: filterGroup
+      }
+    });
+  }
+
+  setCollisionFilterMask (filterMask) {
+    this.worker.postMessage({
+      action: 'setCollisionFilterMask',
+      params: {
+        filterMask: filterMask
+      }
+    });
+  }
+
   setResult (result) {
     if (result.normal) {
       this.normal.set(result.normal.x, result.normal.y, result.normal.z);
