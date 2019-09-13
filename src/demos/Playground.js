@@ -7,7 +7,7 @@ import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { AmbientLight } from 'three/src/lights/AmbientLight';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
-import 'three/examples/js/controls/OrbitControls';
+// import 'three/examples/js/controls/OrbitControls';
 import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
@@ -31,7 +31,7 @@ export default class Playground {
     this.createGround();
 
     this.createRenderer();
-    this.createControls();
+    // this.createControls();
     this.createEvents();
 
     this._render = this.render.bind(this);
@@ -154,11 +154,11 @@ export default class Playground {
     this.container.appendChild(this.renderer.domElement);
   }
 
-  createControls () {
-    this.orbitControls = new THREE.OrbitControls(this.camera);
-    this.orbitControls.target.set(0, 0, 25);
-    this.orbitControls.update();
-  }
+  // createControls () {
+  //   this.orbitControls = new THREE.OrbitControls(this.camera);
+  //   this.orbitControls.target.set(0, 0, 25);
+  //   this.orbitControls.update();
+  // }
 
   createEvents () {
     this._onResize = this.onResize.bind(this);
@@ -167,7 +167,7 @@ export default class Playground {
 
   render () {
     this.stats.begin();
-    this.orbitControls.update();
+    // this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
     this.stats.end();
   }

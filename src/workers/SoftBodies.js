@@ -1,13 +1,13 @@
 import FlexBodies from '@/workers/FlexBodies';
 
 import {
-  STIFFNESS,
-  VITERATIONS,
-  PITERATIONS,
   SOFT_MARGIN,
   SOFT_DAMPING,
   SOFT_FRICTION,
+  SOFT_STIFFNESS,
   SOFT_COLLISION,
+  SOFT_PITERATIONS,
+  SOFT_VITERATIONS,
   SOFT_RESTITUTION,
   CCD_MOTION_THRESHOLD
 } from '@/constants';
@@ -16,12 +16,12 @@ export default class SoftBodies extends FlexBodies {
   constructor (worker) {
     super('Soft', worker, {
       margin: SOFT_MARGIN,
-      stiffness: STIFFNESS,
       damping: SOFT_DAMPING,
       friction: SOFT_FRICTION,
-      viterations: VITERATIONS,
-      piterations: PITERATIONS,
-      collisions: SOFT_COLLISION
+      stiffness: SOFT_STIFFNESS,
+      collisions: SOFT_COLLISION,
+      piterations: SOFT_PITERATIONS,
+      viterations: SOFT_VITERATIONS
     });
   }
 

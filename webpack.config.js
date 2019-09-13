@@ -1,44 +1,33 @@
-const libraryName = 'APE';
 const path = require('path');
-const webpack = require('webpack');
+const config = require('./package.json');
 const build = require('yargs').argv.env === 'build';
 
-const plugins = [new webpack.ProvidePlugin({ 'THREE': 'THREE' })];
-const outputFile = libraryName + (build ? '.min' : '') + '.js';
-
 module.exports = {
+  mode: build ? 'production' : 'development',
   entry: __dirname + '/src/index.js',
-  devtool: 'source-map',
-  mode: 'development',
+  devtool: 'inline-source-map',
 
   module: {
     rules: [{
       test: /(\.jsx|\.js)$/,
-      loader: 'babel-loader',
-      exclude: /(node_modules|bower_components)/
-    }, {
-      test: /(\.jsx|\.js)$/,
-      loader: 'eslint-loader',
-      exclude: /node_modules/
-    }, {
-      test: /(\.glsl|\.frag|\.vert)$/,
-      loader: 'raw-loader'
+      exclude: /node_modules/,
+      use: ['babel-loader']
     }, {
       test: /\.worker\.js$/,
-      loader: 'worker-loader',
-      exclude: /node_modules/
+      exclude: /node_modules/,
+      use: ['worker-loader']
     }
     ]
   },
 
   resolve: {
-    modules: [path.resolve('./src'), path.resolve('./node_modules')],
+    alias: { '@': path.resolve('./src') },
     extensions: ['.json', '.js'],
 
-    alias: {
-      'THREE': path.resolve('./node_modules/three/src/Three.js'),
-      '@': path.resolve('./src')
-    }
+    modules: [
+      path.resolve('./node_modules'),
+      path.resolve('./src')
+    ]
   },
 
   optimization: {
@@ -46,12 +35,12 @@ module.exports = {
   },
 
   output: {
+    globalObject: "typeof self !== 'undefined' ? self : this",
+    filename: `${config.name}${build ? '.min' : ''}.js`,
     path: __dirname + '/build',
-    filename: outputFile,
-    library: libraryName,
-    umdNamedDefine: true,
-    libraryTarget: 'umd'
-  },
 
-  plugins: plugins
+    umdNamedDefine: true,
+    library: config.name,
+    libraryTarget: 'umd'
+  }
 };

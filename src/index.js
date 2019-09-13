@@ -5,6 +5,35 @@ import SoftBodies from 'demos/SoftBodies';
 // import ClothBody from 'demos/ClothBody';
 // import Break from 'demos/Break';
 
+// const CONSTANTS = require('./constants');
+
+// class APE {
+//   constructor (useWorker = true) {
+//     console.log(':D');
+//     // const world = useWorker ? './workers' : './';
+
+//     // this.world = import(`./${world}/PhysicsWorld`).then((_module) => {
+//     //   console.log(_module);
+//     // });
+//   }
+// }
+
+// module.exports = {
+//   ...CONSTANTS,
+
+//   World: (useWorker = true) => {
+//     const world = useWorker ? './workers' : './';
+//     console.log(':D', world);
+//   }
+// };
+
+// export default { APE };
+
+// module.exports = {
+//   ...someFunctions1,
+//   ...someFunctions2
+// }
+
 window.addEventListener('DOMContentLoaded', () => {
   // const demo = (window.location.hash || '#rigid_bodies').slice(1);
 

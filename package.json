@@ -1,15 +1,14 @@
 {
   "name": "APE",
-  "version": "0.1.0",
-  "description": "Simple Web Adapted Game Engine",
-  "author": "Ustym Ukhman",
+  "version": "0.9.0",
+  "description": "Ammo.js Physics Engine",
+  "author": "Ustym Ukhman <ustym.ukhman@gmail.com>",
   "homepage": "https://github.com/UstymUkhman/APE",
-  "license": "MIT",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "build": "webpack --env build",
     "start": "concurrently -k -r \"webpack --progress --colors --watch --env dev\" \"browser-sync start --config bs-config.js\"",
-    "serve": "browser-sync start --config bs-config.js"
+    "build": "webpack --env build"
   },
   "dependencies": {
     "ammo.js": "kripken/ammo.js",
@@ -21,24 +20,23 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "10.0.2",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-add-module-exports": "1.0.2",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "browser-sync": "^2.26.3",
-    "chai": "4.2.0",
-    "concurrently": "^4.1.0",
-    "eslint": "6.0.1",
-    "eslint-loader": "2.2.1",
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/node": "^7.6.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.6.0",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "browser-sync": "^2.26.7",
+    "concurrently": "^4.1.2",
+    "eslint": "^6.3.0",
+    "eslint-loader": "^3.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "fs": "0.0.2",
-    "path": "^0.12.7",
-    "raw-loader": "^3.0.0",
-    "webpack": "4.35.3",
-    "webpack-cli": "^3.3.5",
-    "yargs": "13.2.4"
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0"
   },
   "engines": {
     "node": ">= 9.10.0",
