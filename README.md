@@ -18,8 +18,4 @@
 
 ## Demos: ##
 
-[RigidBodies](https://ustymukhman.github.io/APE/build/#rigid_bodies) [`source code`](https://github.com/UstymUkhman/APE/blob/master/src/demos/bodies/RigidBodies.js)
-
-[CollidedBodies](https://ustymukhman.github.io/APE/build/#collided_bodies) [`source code`](https://github.com/UstymUkhman/APE/blob/master/src/demos/collisions/CollidedBodies.js)
-
-[ConvexBreak](https://ustymukhman.github.io/APE/build/#convex_break) [`source code`](https://github.com/UstymUkhman/APE/blob/master/src/demos/collisions/ConvexBreak.js)
+[Raycaster](https://ustymukhman.github.io/APE/examples/raycaster.html) [`source code`](https://github.com/UstymUkhman/APE/blob/master/examples/raycaster.html)

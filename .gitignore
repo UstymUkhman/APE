@@ -13,9 +13,10 @@ node_modules
 build/*
 
 # Leave compiled APE library:
-!build/lib/*
+# !build/lib/*
 !build/APE.js
-!build/base.js
-!build/base.css
-!build/index.html
-# !build/APE.min.js
+# !build/base.js
+# !build/base.css
+# !build/index.html
+!build/APE.js.map
+!build/APE.min.js

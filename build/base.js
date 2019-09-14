@@ -1,6 +1,8 @@
+var scene, ground;
+
 (function () {
-  var scene, camera, renderer;
   var width, height, ratio;
+  var camera, renderer;
   var stats, controls;
 
   var BLACK = 0x000000;
@@ -42,7 +44,7 @@
   }
 
   function createGround () {
-    var ground = new THREE.Mesh(
+    ground = new THREE.Mesh(
       new THREE.BoxGeometry(500, 500, 1),
       new THREE.MeshPhongMaterial({
         depthWrite: false,
