@@ -4,52 +4,23 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+    
     <title>APE | Ustym Ukhman</title>
+    <link rel="stylesheet" type="text/css" href="./base.css">
+
+    <script type="text/javascript" src="./lib/THREE.min.js"></script>
+    <script type="text/javascript" src="./lib/Stats.min.js"></script>
+    <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
+
     <script type="text/javascript" src="./APE.js"></script>
-
-    <style type="text/css">
-      html, body {
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-
-        background-color: #000000;
-        font-family: sans-serif;
-        position: absolute;
-        overflow: hidden;
-        color: #FFFFFF;
-
-        height: 100%;
-        width: 100%;
-
-        padding: 0;
-        margin: 0;
-        left: 0;
-        top: 0;
-      }
-
-      div#container {
-        position: absolute;
-
-        height: 100%;
-        width: 100%;
-
-        padding: 0;
-        margin: 0;
-
-        left: 0;
-        top: 0;
-      }
-    </style>
+    <script type="text/javascript" src="./base.js"></script>
   </head>
 
   <body></body>
 
   <script type="text/javascript">
-    console.log(APE);
-    APE.USE_WORKER = false;
+    // APE.USE_WORKER = false;
     var physics = new APE.Physics();
-    // console.log(physics);
+    console.log(physics);
   </script>
 </html>

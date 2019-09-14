@@ -14,9 +14,7 @@
     "ammo.js": "kripken/ammo.js",
     "events": "^3.0.0",
     "lodash.find": "^4.6.0",
-    "lodash.throttle": "^4.1.1",
-    "stats.js": "^0.17.0",
-    "three": "^0.106.2",
+    "three": "^0.108.0",
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
