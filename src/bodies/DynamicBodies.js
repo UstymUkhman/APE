@@ -85,7 +85,7 @@ export default class DynamicBodies extends RigidBodies {
     const quaternion = mesh.quaternion.clone();
 
     const body = this.createRigidBody(shape, mass, position, quaternion);
-    this.world.addRigidBody(body);
+    this.world.addRigidBody(body, this.group, this.mask);
 
     this.bodies.push({
       type: 'dynamic',

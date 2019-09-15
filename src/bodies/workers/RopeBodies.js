@@ -35,7 +35,7 @@ export default class RopeBodies extends FlexBodies {
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(this.margin);
     body.setActivationState(DISABLE_DEACTIVATION);
-    this.world.addSoftBody(body, 1, -1);
+    this.world.addSoftBody(body, this.group, this.mask);
 
     this.bodies.push({
       geometry: props.geometry,

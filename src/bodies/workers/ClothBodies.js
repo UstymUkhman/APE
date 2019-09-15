@@ -60,9 +60,9 @@ export default class ClothBodies extends FlexBodies {
     body.get_m_materials().at(0).set_m_kLST(this.stiffness);
     body.get_m_materials().at(0).set_m_kAST(this.stiffness);
 
-    body.setActivationState(DISABLE_DEACTIVATION);
     body.setTotalMass(props.mass, false);
-    this.world.addSoftBody(body, 1, -1);
+    body.setActivationState(DISABLE_DEACTIVATION);
+    this.world.addSoftBody(body, this.group, this.mask);
 
     this.bodies.push({
       geometry: props.geometry,

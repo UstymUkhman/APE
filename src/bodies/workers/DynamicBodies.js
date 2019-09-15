@@ -67,7 +67,7 @@ export default class DynamicBodies extends RigidBodies {
   _addDynamicBody (uuid, shape, position, quaternion, mass = ZERO_MASS) {
     const body = this.createRigidBody(shape, mass, position, quaternion);
     this.bodies.push({uuid: uuid, body: body, collisions: []});
-    this.world.addRigidBody(body);
+    this.world.addRigidBody(body, this.group, this.mask);
   }
 
   /* eslint-disable new-cap */

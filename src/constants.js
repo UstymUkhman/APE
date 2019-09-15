@@ -55,18 +55,14 @@ export const CCD_MOTION_THRESHOLD = 1e-5;
 
 // Group constants:
 export const GROUP_NONE      =     0;
-export const GROUP_STATIC    =     1;
-export const GROUP_KINEMATIC =     2;
-export const GROUP_DYNAMIC   =     4;
-export const GROUP_SOFT      =     8;
-export const GROUP_CLOTH     =    16;
-export const GROUP_VECHICLE  =    32;
+export const GROUP_DEFAULT   =     1;
+export const GROUP_STATIC    =     2;
+export const GROUP_KINEMATIC =     4;
+export const GROUP_DYNAMIC   =   128;
+export const GROUP_SOFT      =   256;
+export const GROUP_CLOTH     =   512;
+export const GROUP_ROPE      =  1024;
 /*
-export const GROUP_          =    64;
-export const GROUP_          =   128;
-export const GROUP_          =   256;
-export const GROUP_          =   512;
-export const GROUP_          =  1024;
 export const GROUP_          =  2048;
 export const GROUP_          =  4096;
 export const GROUP_          =  8192;
@@ -76,14 +72,16 @@ export const GROUP_          = 32768;
 
 // Mask constants
 // Gets specified body types:
+export const MASK_ALL                  = POWER16;
 export const MASK_SOFT                 = GROUP_SOFT;
+export const MASK_ROPE                 = GROUP_ROPE;
 export const MASK_CLOTH                = GROUP_CLOTH;
 export const MASK_STATIC               = GROUP_STATIC;
 export const MASK_DYNAMIC              = GROUP_DYNAMIC;
 export const MASK_KINEMATIC            = GROUP_KINEMATIC;
-export const MASK_FLEX                 = GROUP_SOFT   | GROUP_CLOTH;
-export const MASK_STATIC_AND_KINEMATIC = GROUP_STATIC | GROUP_KINEMATIC;
-export const MASK_RIGID                = GROUP_STATIC | GROUP_KINEMATIC | GROUP_DYNAMIC;
+export const MASK_STATIC_AND_KINEMATIC = GROUP_STATIC  | GROUP_KINEMATIC;
+export const MASK_FLEX                 = GROUP_SOFT    | GROUP_CLOTH  | GROUP_ROPE;
+export const MASK_RIGID                = GROUP_DYNAMIC | GROUP_STATIC | GROUP_KINEMATIC;
 
 // Gets all body types except:
 export const MASK_NOT_FLEX                = POWER16 ^ MASK_FLEX;

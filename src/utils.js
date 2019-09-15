@@ -1,7 +1,27 @@
 import AmmoJS from 'ammo.js';
 
+import {
+  MASK_ALL,
+  GROUP_DEFAULT,
+  MASK_SOFT,
+  GROUP_SOFT,
+  MASK_ROPE,
+  GROUP_ROPE,
+  MASK_CLOTH,
+  GROUP_CLOTH,
+  MASK_STATIC,
+  GROUP_STATIC,
+  MASK_DYNAMIC,
+  GROUP_DYNAMIC,
+  MASK_KINEMATIC,
+  GROUP_KINEMATIC
+} from '@/constants';
+
 const DELTA = 0.000001;
 let Ammo = null;
+
+// Ammo.js export wrapper:
+AmmoJS().then(AmmoJS => { Ammo = AmmoJS; });
 
 /**
  * @description - checks if 2 vertices from different buffers are equal
@@ -25,7 +45,46 @@ const webWorker = () => {
   return typeof WorkerGlobalScope !== 'undefined';
 };
 
-// Ammo.js export wrapper:
-AmmoJS().then(AmmoJS => { Ammo = AmmoJS; });
+/**
+ * @description - checks body type and returns its group constant
+ * @param {String} type - body type
+ * @returns {number}
+ */
+const getBodyGroup = (type) => {
+  switch (type) {
+    case 'soft': return GROUP_SOFT;
+    case 'rope': return GROUP_ROPE;
+    case 'cloth': return GROUP_CLOTH;
+    case 'static': return GROUP_STATIC;
+    case 'dynamic': return GROUP_DYNAMIC;
+    case 'kinematic': return GROUP_KINEMATIC;
+    default: return GROUP_DEFAULT;
+  }
+};
 
-export { Ammo, equalBufferVertices, webWorker };
+/**
+ * @description - checks body type and returns its mask constant
+ * @param {String} type - body type
+ * @returns {number}
+ */
+const getBodyMask = (type) => {
+  return MASK_ALL;
+
+  /* switch (type) {
+    case 'soft': return MASK_SOFT;
+    case 'rope': return MASK_ROPE;
+    case 'cloth': return MASK_CLOTH;
+    case 'static': return MASK_STATIC;
+    case 'dynamic': return MASK_DYNAMIC;
+    case 'kinematic': return MASK_KINEMATIC;
+    default: return MASK_ALL;
+  } */
+};
+
+export {
+  Ammo,
+  webWorker,
+  getBodyMask,
+  getBodyGroup,
+  equalBufferVertices
+};

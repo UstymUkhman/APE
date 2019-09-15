@@ -1,5 +1,5 @@
+import { Ammo, webWorker, getBodyGroup, getBodyMask } from '@/utils';
 import { Vector3 } from 'three/src/math/Vector3';
-import { Ammo, webWorker } from '@/utils';
 import find from 'lodash.find';
 
 import {
@@ -23,6 +23,8 @@ export default class RigidBodies {
 
     this.world = world;
     this.worker = webWorker();
+    this.mask = getBodyMask(type);
+    this.group = getBodyGroup(type);
 
     this.margin = RIGID_MARGIN;
     this.linearFactor = VECTOR1;
@@ -240,7 +242,9 @@ export default class RigidBodies {
       linearFactor: this.linearFactor,
       restitution: this.restitution,
       friction: this.friction,
-      margin: this.margin
+      margin: this.margin,
+      group: this.group,
+      mask: this.mask
     };
   }
 }

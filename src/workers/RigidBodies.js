@@ -1,3 +1,4 @@
+import { getBodyGroup, getBodyMask } from '@/utils';
 import { Vector3 } from 'three/src/math/Vector3';
 import find from 'lodash.find';
 
@@ -21,7 +22,9 @@ export default class RigidBodies {
       margin: RIGID_MARGIN,
       linearFactor: VECTOR1,
       angularFactor: VECTOR1,
+      mask: getBodyMask(type),
       friction: RIGID_FRICTION,
+      group: getBodyGroup(type),
       restitution: RIGID_RESTITUTION,
       linearDamping: RIGID_LINEAR_DAMPING,
       angularDamping: RIGID_ANGULAR_DAMPING
@@ -100,8 +103,26 @@ export default class RigidBodies {
     });
   }
 
-  set margin (value) {
-    this.constants.margin = value;
+  set mask (mask) {
+    this.constants.mask = mask;
+    this._updateConstants();
+  }
+
+  get mask () {
+    return this.constants.mask;
+  }
+
+  set group (group) {
+    this.constants.group = group;
+    this._updateConstants();
+  }
+
+  get group () {
+    return this.constants.group;
+  }
+
+  set margin (margin) {
+    this.constants.margin = margin;
     this._updateConstants();
   }
 
@@ -109,8 +130,8 @@ export default class RigidBodies {
     return this.constants.margin;
   }
 
-  set friction (value) {
-    this.constants.friction = value;
+  set friction (friction) {
+    this.constants.friction = friction;
     this._updateConstants();
   }
 
@@ -118,8 +139,8 @@ export default class RigidBodies {
     return this.constants.friction;
   }
 
-  set restitution (value) {
-    this.constants.restitution = value;
+  set restitution (restitution) {
+    this.constants.restitution = restitution;
     this._updateConstants();
   }
 
@@ -127,8 +148,8 @@ export default class RigidBodies {
     return this.constants.restitution;
   }
 
-  set linearFactor (value) {
-    this.constants.linearFactor = value;
+  set linearFactor (linearFactor) {
+    this.constants.linearFactor = linearFactor;
     this._updateConstants();
   }
 
@@ -136,8 +157,8 @@ export default class RigidBodies {
     return this.constants.linearFactor;
   }
 
-  set angularFactor (value) {
-    this.constants.angularFactor = value;
+  set angularFactor (angularFactor) {
+    this.constants.angularFactor = angularFactor;
     this._updateConstants();
   }
 
@@ -145,8 +166,8 @@ export default class RigidBodies {
     return this.constants.angularFactor;
   }
 
-  set linearDamping (value) {
-    this.constants.linearDamping = value;
+  set linearDamping (linearDamping) {
+    this.constants.linearDamping = linearDamping;
     this._updateConstants();
   }
 
@@ -154,8 +175,8 @@ export default class RigidBodies {
     return this.constants.linearDamping;
   }
 
-  set angularDamping (value) {
-    this.constants.angularDamping = value;
+  set angularDamping (angularDamping) {
+    this.constants.angularDamping = angularDamping;
     this._updateConstants();
   }
 

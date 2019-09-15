@@ -53,7 +53,7 @@ export default class KinematicBodies extends RigidBodies {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
     body.setActivationState(DISABLE_DEACTIVATION);
-    this.world.addRigidBody(body);
+    this.world.addRigidBody(body, this.group, this.mask);
 
     this.bodies.push({
       type: 'kinematic',

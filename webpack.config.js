@@ -9,15 +9,18 @@ module.exports = {
 
   module: {
     rules: [{
+      loader: 'babel-loader',
       test: /(\.jsx|\.js)$/,
-      exclude: /node_modules/,
-      use: ['babel-loader']
+      exclude: /node_modules/
     }, {
+      loader: 'worker-loader',
       test: /\.worker\.js$/,
       exclude: /node_modules/,
-      use: ['worker-loader']
-    }
-    ]
+
+      options: {
+        name: `${build ? '' : '[hash].'}worker.js`
+      }
+    }]
   },
 
   resolve: {

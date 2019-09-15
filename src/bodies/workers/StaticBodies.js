@@ -82,6 +82,6 @@ export default class StaticBodies extends RigidBodies {
   _addStaticBody (uuid, shape, position, quaternion) {
     const body = this.createRigidBody(shape, ZERO_MASS, position, quaternion);
     this.bodies.push({uuid: uuid, body: body, collisions: []});
-    this.world.addRigidBody(body);
+    this.world.addRigidBody(body, this.group, this.mask);
   }
 }

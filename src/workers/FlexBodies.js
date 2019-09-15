@@ -1,9 +1,5 @@
-import {
-  SOFT_DAMPING,
-  SOFT_FRICTION,
-  SOFT_STIFFNESS,
-  SOFT_COLLISION
-} from '@/constants';
+import { SOFT_DAMPING, SOFT_FRICTION, SOFT_STIFFNESS, SOFT_COLLISION } from '@/constants';
+import { getBodyGroup, getBodyMask } from '@/utils';
 
 export default class FlexBodies {
   constructor (type, worker, constants = null) {
@@ -12,6 +8,9 @@ export default class FlexBodies {
 
     this.constants = constants;
     this.type = type.toLowerCase();
+
+    this.constants.mask = getBodyMask(this.type);
+    this.constants.group = getBodyGroup(this.type);
     this.worker.postMessage({action: `init${type}Bodies`});
   }
 
@@ -166,8 +165,26 @@ export default class FlexBodies {
     }
   }
 
-  set margin (value) {
-    this.constants.margin = value;
+  set mask (mask) {
+    this.constants.mask = mask;
+    this._updateConstants();
+  }
+
+  get mask () {
+    return this.constants.mask;
+  }
+
+  set group (group) {
+    this.constants.group = group;
+    this._updateConstants();
+  }
+
+  get group () {
+    return this.constants.group;
+  }
+
+  set margin (margin) {
+    this.constants.margin = margin;
     this._updateConstants();
   }
 
@@ -175,8 +192,8 @@ export default class FlexBodies {
     return this.constants.margin;
   }
 
-  set piterations (value) {
-    this.constants.piterations = value;
+  set piterations (piterations) {
+    this.constants.piterations = piterations;
     this._updateConstants();
   }
 
@@ -184,8 +201,8 @@ export default class FlexBodies {
     return this.constants.piterations;
   }
 
-  set viterations (value) {
-    this.constants.viterations = value;
+  set viterations (viterations) {
+    this.constants.viterations = viterations;
     this._updateConstants();
   }
 

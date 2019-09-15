@@ -46,7 +46,7 @@ export default class KinematicBodies extends RigidBodies {
     body.setCollisionFlags(body.getCollisionFlags() | KINEMATIC_COLLISION);
     this.bodies.push({uuid: uuid, body: body, collisions: []});
     body.setActivationState(DISABLE_DEACTIVATION);
-    this.world.addRigidBody(body);
+    this.world.addRigidBody(body, this.group, this.mask);
   }
 
   update (transform, bodies) {
