@@ -12,14 +12,15 @@ module.exports = {
       loader: 'babel-loader',
       test: /(\.jsx|\.js)$/,
       exclude: /node_modules/
-    }, {
-      loader: 'worker-loader',
-      test: /\.worker\.js$/,
-      exclude: /node_modules/,
+      // }, {
+      // loader: 'worker-loader',
+      // test: /\.worker\.js$/,
+      // exclude: /node_modules/,
 
-      options: {
-        name: `${build ? '' : '[hash].'}worker.js`
-      }
+      // options: {
+      //   inline: true,
+      //   name: 'worker.js'
+      // }
     }]
   },
 

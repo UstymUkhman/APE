@@ -20,15 +20,15 @@
 
 const CONSTANTS = require('./constants');
 
+// const MASKS = { };
 const GROUPS = { };
-const MASKS = { };
 
 Object.keys(CONSTANTS).map((constant, value) => {
   const group = !constant.indexOf('GROUP_');
-  const mask = !constant.indexOf('MASK_');
-
   if (group) GROUPS[constant] = value;
-  else if (mask) MASKS[constant] = value;
+
+  // const mask = !constant.indexOf('MASK_');
+  // if (mask) MASKS[constant] = value;
 });
 
 const APE = {
@@ -40,8 +40,8 @@ const APE = {
   },
 
   USE_WORKER: true,
-  ...GROUPS,
-  ...MASKS
+  // ...MASKS
+  ...GROUPS
 };
 
 module.exports = APE;

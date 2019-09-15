@@ -8,12 +8,11 @@
     <title>Physics Raycaster | APE</title>
     <link rel="stylesheet" type="text/css" href="./base.css">
 
-    <script type="text/javascript" src="../lib/THREE.min.js"></script>
-    <script type="text/javascript" src="../lib/Stats.min.js"></script>
-    <script type="text/javascript" src="../lib/OrbitControls.min.js"></script>
+    <script type="text/javascript" src="./lib/THREE.min.js"></script>
+    <script type="text/javascript" src="./lib/Stats.min.js"></script>
+    <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
     <script type="text/javascript" src="../build/APE.min.js"></script>
-    <script type="text/javascript" src="../build/a9317abfc1f7900acbcf.worker.js"></script>
     <script type="text/javascript" src="./base.js"></script>
   </head>
 
@@ -174,7 +173,7 @@
       var hit = physics.ray.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
-      physics.update();
+      // physics.update();
       requestAnimationFrame(update)
     }
 

@@ -1,4 +1,4 @@
-import PhysicsWorker from 'worker-loader!workers/PhysicsWorker.js';
+import PhysicsWorker from 'worker-loader?name=../build/worker.js&inline=true!workers/PhysicsWorker.js';
 
 import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
 import GenericConstraints from '@/workers/GenericConstraints';
