@@ -41,14 +41,14 @@ export default class PhysicsRay {
     });
   }
 
-  setCollisionFilterGroup (filterGroup) {
+  /* setCollisionFilterGroup (filterGroup) {
     this.worker.postMessage({
       action: 'setCollisionFilterGroup',
       params: {
         filterGroup: filterGroup
       }
     });
-  }
+  } */
 
   setCollisionFilterMask (filterMask) {
     this.worker.postMessage({

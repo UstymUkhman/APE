@@ -10,6 +10,7 @@
 
     <script type="text/javascript" src="./lib/THREE.min.js"></script>
     <script type="text/javascript" src="./lib/Stats.min.js"></script>
+    <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
     <script type="text/javascript" src="../build/APE.min.js"></script>
@@ -19,9 +20,29 @@
   <body></body>
 
   <script type="text/javascript">
-    // APE.USE_WORKER = false;
     var physics = new APE.Physics(true);
-    var raycaster, ray, direction, target;
+    var velocity = new THREE.Vector3();
+    var rotation = new THREE.Vector2();
+    var target = new THREE.Vector3();
+
+    var prevTime = performance.now();
+    var raycaster, ray, direction;
+
+    var move = {
+      backward: false,
+      forward: false,
+      right: false,
+      left: false,
+      down: false,
+      up: false
+    };
+
+    var rotate = {
+      right: false,
+      left: false,
+      down: false,
+      up: false
+    };
 
     function createGround () {
       // Static bodies default friction:
@@ -30,7 +51,7 @@
     }
 
     function createBodies () {
-      // Static Box:
+      // Static Body:
       var staticBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
@@ -39,13 +60,13 @@
       );
 
       staticBox.castShadow = true;
-      staticBox.position.x = 30;
+      staticBox.position.z = 20;
       staticBox.position.y = 3;
 
       physics.static.addBox(staticBox);
       scene.add(staticBox);
 
-      // Kinematic Box:
+      // Kinematic Body:
       var kinematicBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
@@ -54,13 +75,13 @@
       );
 
       kinematicBox.castShadow = true;
-      kinematicBox.position.x = 20;
+      kinematicBox.position.z = 10;
       kinematicBox.position.y = 3;
 
       physics.kinematic.addBox(kinematicBox);
       scene.add(kinematicBox);
 
-      // Dynamic Box:
+      // Dynamic Body:
       var dynamicBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
@@ -69,19 +90,19 @@
       );
 
       dynamicBox.castShadow = true;
-      dynamicBox.position.x = 10;
       dynamicBox.position.y = 3;
+      dynamicBox.position.z = 0;
 
       // Body mesh & mass
       physics.dynamic.addBox(dynamicBox, 10);
       scene.add(dynamicBox);
 
-      // Soft Box:
+      // Soft Body:
       var boxGeometry = new THREE.BufferGeometry().fromGeometry(
         new THREE.BoxGeometry(5, 5, 5, 25, 25, 25)
       );
 
-      boxGeometry.translate(0, 3, 0);
+      boxGeometry.translate(0, 3, -10);
 
       var softBox = new THREE.Mesh(boxGeometry,
         new THREE.MeshPhongMaterial({
@@ -93,25 +114,106 @@
       physics.soft.addBody(softBox, 10, 500);
       softBox.castShadow = true;
       scene.add(softBox);
+
+      var leftBase = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 0.2, 1),
+        new THREE.MeshPhongMaterial({
+          color: 0xCCCCCC
+        })
+      );
+
+      leftBase.receiveShadow = true;
+      leftBase.castShadow = true;
+
+      leftBase.position.z = -17.5;
+      leftBase.position.y = 0.1;
+
+      var rightBase = leftBase.clone();
+      rightBase.position.z = -25;
+      rightBase.position.y = 0.1;
+
+      scene.add(rightBase);
+      scene.add(leftBase);
+
+      var leftPole = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 10, 0.5),
+        new THREE.MeshPhongMaterial({
+          color: 0xCCCCCC
+        })
+      );
+
+      leftPole.castShadow = true;
+      leftPole.position.z = -17.5;
+      leftPole.position.y = 5;
+
+      var rightPole = leftPole.clone();
+      rightPole.position.z = -25;
+      rightPole.position.y = 5;
+
+      scene.add(rightPole);
+      scene.add(leftPole);
+
+      var rod = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.5, 8),
+        new THREE.MeshPhongMaterial({
+          color: 0xCCCCCC
+        })
+      );
+
+      rod.position.z = -21.25;
+      rod.position.y = 10.25;
+      rod.castShadow = true;
+
+      physics.static.addBox(rod);
+      scene.add(rod);
+
+      // Cloth Body:
+      var geometry = new THREE.PlaneBufferGeometry(5, 7.5, 25, 25);
+      var position = new THREE.Vector3(0, 2.75, -18.75);
+
+      geometry.rotateY(Math.PI / 2.0);
+      geometry.translate(position.x, position.y + 3.75, position.z - 2.5);
+
+      var cloth = new THREE.Mesh(
+        geometry,
+        new THREE.MeshPhongMaterial({
+          side: THREE.DoubleSide,
+          color: 0x222222
+        })
+      );
+
+      cloth.receiveShadow = true;
+      cloth.castShadow = true;
+
+      // var clothPivot = new THREE.Object3D();
+      // clothPivot.rotation.y = Math.PI / 2;
+
+      // clothPivot.add(cloth);
+      // scene.add(clothPivot);
+      scene.add(cloth);
+
+      // Body mesh, mass & position
+      physics.cloth.addBody(cloth, 1, position);
+
+      // Body mesh, point (0 - 25) & target body:
+      physics.cloth.append(cloth, 25, rod);
+      physics.cloth.append(cloth, 0, rod);
     }
 
     function createRaycaster () {
-      direction = new THREE.Vector3(0, 0, -6);
-      target    = new THREE.Vector3();
-
+      direction = new THREE.Vector3(-6, 0, 0);
       raycaster = new THREE.Mesh(
         new THREE.SphereGeometry(1, 20, 20),
         new THREE.MeshPhongMaterial({ color: 0x222222 })
       );
 
-      raycaster.rotation.x = Math.PI;
-      raycaster.position.z = -10;
-      raycaster.position.y = 2;
-
       raycaster.receiveShadow = true;
       raycaster.castShadow = true;
-      scene.add(raycaster);
-      
+
+      raycaster.position.x = 15;
+      raycaster.position.y = 2;
+      raycaster.position.z = 0;
+
       var length = direction.length();
       var geometry = new THREE.CylinderGeometry(0.2, 0.2, length, 8);
 
@@ -127,54 +229,164 @@
 
       ray.receiveShadow = true;
       ray.castShadow = true;
-      raycaster.add(ray);
+
+      scene.add(raycaster);
     }
 
     function createControls () {
+      var rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+      var direction = new THREE.Vector3(0, 0, -1);
+
+      var gui = new dat.GUI();
+      var masks = [];
+
       document.addEventListener('keydown', function (event) {
-        switch (event.keyCode) {
-          case 37:
-            raycaster.rotation.y -= 0.1;
-            break;
+        keyHandler(event.keyCode, true);
+      }, false);
 
-          case 38:
-            raycaster.position.y += 0.5;
-            break;
+      document.addEventListener('keyup', function (event) {
+        keyHandler(event.keyCode, false);
+      }, false);
 
-          case 39:
-            raycaster.rotation.y += 0.1;
-            break;
-
-          case 40:
-            raycaster.position.y -= 0.5;
-            break;
-
-          case 65:
-            raycaster.position.x += 0.5;
-            break;
-
-          case 68:
-            raycaster.position.x -= 0.5;
-            break;
-
-          case 87:
-            raycaster.position.z += 0.5;
-            break;
-
-          case 83:
-            raycaster.position.z -= 0.5;
-            break;
+      Object.keys(APE).forEach(function (key) {
+        if (!key.indexOf('MASK_')) {
+          masks.push(key.slice(5));
         }
       });
+
+      var RaycastMask = function () { this.MASK = 'ALL'; };
+      var mask = gui.add(new RaycastMask(), 'MASK', masks);
+
+      mask.onFinishChange(function (current) {
+        var selectedMask = APE['MASK_' + current];
+        physics.ray.setCollisionFilterMask(selectedMask);
+      });
+
+      raycaster.add(camera);
+      raycaster.add(ray);
+    }
+
+    function keyHandler (code, pressed) {
+      switch (code) {
+        case 83:
+          move.backward = pressed;
+          break;
+        
+        case 87:
+          move.forward = pressed;
+          break;
+
+        case 68:
+          move.right = pressed;
+          break;
+
+        case 65:
+          move.left = pressed;
+          break;
+        
+        case 16:
+          move.down = pressed;
+          break;
+        
+        case 32:
+          move.up = pressed;
+          break;
+        
+        case 39:
+          rotate.right = pressed;
+          break;
+        
+        case 37:
+          rotate.left = pressed;
+          break;
+        
+        case 40:
+          rotate.down = pressed;
+          break;
+
+        case 38:
+          rotate.up = pressed;
+          break;
+      }
     }
 
     function update () {
+      var time = performance.now();
+      var delta = (time - prevTime) / 1000;
+
+      var acceleration = 500 * delta;
+      var deceleration = 10 * delta;
+      var torque = 50 * delta;
+
+      velocity.x -= velocity.x * deceleration;
+      velocity.y -= velocity.y * deceleration;
+      velocity.z -= velocity.z * deceleration;
+
+      rotation.x -= rotation.x * deceleration;
+      rotation.y -= rotation.y * deceleration;
+
+      if (move.backward) {
+        velocity.x += acceleration;
+      }
+
+      if (move.forward) {
+        velocity.x -= acceleration;
+      }
+
+      if (move.right) {
+        velocity.z -= acceleration;
+      }
+
+      if (move.left) {
+        velocity.z += acceleration;
+      }
+
+      if (move.down) {
+        velocity.y -= acceleration;
+      }
+
+      if (move.up) {
+        velocity.y += acceleration;
+      }
+
+      if (rotate.right) {
+        rotation.y -= torque;
+      }
+
+      if (rotate.left) {
+        rotation.y += torque;
+      }
+
+      if (rotate.down) {
+        rotation.x += torque;
+      }
+
+      if (rotate.up) {
+        rotation.x -= torque;
+      }
+
+      var x = velocity.x * delta;
+      var y = velocity.y * delta;
+      var z = velocity.z * delta;
+
+      raycaster.translateX(x);
+      raycaster.translateY(y);
+      raycaster.translateZ(z);
+
+      x = rotation.x * delta;
+      y = rotation.y * delta;
+
+      raycaster.rotateZ(x);
+      raycaster.rotateY(y);
+
+      raycaster.position.y = Math.max(1, Math.min(25, raycaster.position.y));
       target.copy(direction).applyMatrix4(raycaster.matrixWorld);
+
       var hit = physics.ray.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
-      // physics.update();
-      requestAnimationFrame(update)
+      prevTime = time;
+      requestAnimationFrame(update);
     }
 
     window.addEventListener('DOMContentLoaded', () => {

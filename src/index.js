@@ -20,28 +20,32 @@
 
 const CONSTANTS = require('./constants');
 
-// const MASKS = { };
-const GROUPS = { };
+// const GROUPS = { };
+const MASKS = { };
 
-Object.keys(CONSTANTS).map((constant, value) => {
-  const group = !constant.indexOf('GROUP_');
-  if (group) GROUPS[constant] = value;
+for (const constant in CONSTANTS) {
+  const value = CONSTANTS[constant];
 
-  // const mask = !constant.indexOf('MASK_');
-  // if (mask) MASKS[constant] = value;
-});
+  // if (!constant.indexOf('GROUP_')) {
+  //   GROUPS[constant] = value;
+  // }
+
+  if (!constant.indexOf('MASK_')) {
+    MASKS[constant] = value;
+  }
+}
 
 const APE = {
   Physics: function (soft = false, gravity = APE.GRAVITY) {
-    const path = APE.USE_WORKER ? '/workers' : '';
-    const World = require(`.${path}/PhysicsWorld`).default;
+    // const path = APE.USE_WORKER ? '/workers' : '';
+    // const World = require(`.${path}/PhysicsWorld`).default;
 
+    const World = require('./workers/PhysicsWorld').default;
     return new World(soft, gravity);
   },
 
-  USE_WORKER: true,
-  // ...MASKS
-  ...GROUPS
+  // ...GROUPS,
+  ...MASKS
 };
 
 module.exports = APE;

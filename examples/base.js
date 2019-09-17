@@ -1,9 +1,8 @@
-var scene, ground;
+var scene, camera, ground;
 
 (function () {
+  var renderer, stats, controls;
   var width, height, ratio;
-  var camera, renderer;
-  var stats, controls;
 
   var BLACK = 0x000000;
   var WHITE = 0xFFFFFF;
@@ -15,10 +14,16 @@ var scene, ground;
     scene.fog = new THREE.Fog(GRAY, 50, 500);
   }
 
-  function createCamera () {
-    camera = new THREE.PerspectiveCamera(45, ratio, 1, 500);
-    camera.position.set(0, 15, -50);
-    camera.lookAt(0, 0, 0);
+  function createCamera (rotate) {
+    camera = new THREE.PerspectiveCamera(45, ratio, 1, 500);    
+
+    if (rotate) {
+      camera.position.set(15, 10, 0);
+      camera.lookAt(-20, 0, 0);
+    } else {
+      camera.position.set(0, 15, -50);
+      camera.lookAt(0, 0, 0);
+    }
   }
 
   function createLights () {
@@ -73,7 +78,7 @@ var scene, ground;
 
   function createControls () {
     controls = new THREE.OrbitControls(camera);
-    controls.target.set(0, 0, 25);
+    controls.target.set(0, 0, 0);
     controls.update();
   }
 
@@ -102,6 +107,7 @@ var scene, ground;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    var rotate = window.location.href.includes('raycaster');
     window.addEventListener('resize', onResize, false);
 
     height = window.innerHeight;
@@ -109,14 +115,14 @@ var scene, ground;
     ratio = width / height;
 
     createScene();
-    createCamera();
+    createCamera(rotate);
     createLights();
     createGround();
 
     createRenderer();
-    createControls();
     createStats();
 
+    if (!rotate) createControls();
     requestAnimationFrame(render);
   });
 })();

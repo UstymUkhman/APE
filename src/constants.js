@@ -72,20 +72,18 @@ export const GROUP_          = 32768;
 
 // Mask constants
 // Gets specified body types:
-export const MASK_ALL                  = POWER16;
-export const MASK_SOFT                 = GROUP_SOFT;
-export const MASK_ROPE                 = GROUP_ROPE;
-export const MASK_CLOTH                = GROUP_CLOTH;
-export const MASK_STATIC               = GROUP_STATIC;
-export const MASK_DYNAMIC              = GROUP_DYNAMIC;
-export const MASK_KINEMATIC            = GROUP_KINEMATIC;
-export const MASK_STATIC_AND_KINEMATIC = GROUP_STATIC  | GROUP_KINEMATIC;
-export const MASK_FLEX                 = GROUP_SOFT    | GROUP_CLOTH  | GROUP_ROPE;
-export const MASK_RIGID                = GROUP_DYNAMIC | GROUP_STATIC | GROUP_KINEMATIC;
+export const MASK_ALL                     = POWER16;
+export const MASK_SOFT                    = GROUP_SOFT;
+export const MASK_ROPE                    = GROUP_ROPE;
+export const MASK_CLOTH                   = GROUP_CLOTH;
+export const MASK_STATIC                  = GROUP_STATIC;
+export const MASK_DYNAMIC                 = GROUP_DYNAMIC;
+export const MASK_KINEMATIC               = GROUP_KINEMATIC;
+export const MASK_STATIC_AND_KINEMATIC    = GROUP_STATIC  | GROUP_KINEMATIC;
+export const MASK_FLEX                    = GROUP_SOFT    | GROUP_CLOTH     | GROUP_ROPE;
+export const MASK_RIGID                   = GROUP_STATIC  | GROUP_KINEMATIC | GROUP_DYNAMIC;
 
 // Gets all body types except:
-export const MASK_NOT_FLEX                = POWER16 ^ MASK_FLEX;
-export const MASK_NOT_RIGID               = POWER16 ^ MASK_RIGID;
 export const MASK_NOT_SOFT                = POWER16 ^ GROUP_SOFT;
 export const MASK_NOT_CLOTH               = POWER16 ^ GROUP_CLOTH;
 export const MASK_NOT_STATIC              = POWER16 ^ GROUP_STATIC;

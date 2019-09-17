@@ -7,7 +7,7 @@ export default class PhysicsRay {
     this.worker = webWorker();
 
     this.filterMask = undefined;
-    this.filterGroup = undefined;
+    // this.filterGroup = undefined;
 
     /* eslint-disable new-cap */
     this.origin = new Ammo.btVector3();
@@ -22,9 +22,9 @@ export default class PhysicsRay {
     rayCallBack.set_m_closestHitFraction(this.hitFraction);
     rayCallBack.set_m_collisionObject(null);
 
-    if (this.filterGroup !== undefined) {
+    /* if (this.filterGroup !== undefined) {
       rayCallBack.set_m_collisionFilterGroup(this.filterGroup);
-    }
+    } */
 
     if (this.filterMask !== undefined) {
       rayCallBack.set_m_collisionFilterMask(this.filterMask);
@@ -68,9 +68,9 @@ export default class PhysicsRay {
     this.hitFraction = hitFraction;
   }
 
-  setCollisionFilterGroup (filterGroup) {
+  /* setCollisionFilterGroup (filterGroup) {
     this.filterGroup = filterGroup;
-  }
+  } */
 
   setCollisionFilterMask (filterMask) {
     this.filterMask = filterMask;
