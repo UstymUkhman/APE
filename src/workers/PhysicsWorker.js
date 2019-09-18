@@ -264,10 +264,11 @@ class PhysicsWorker {
   }
 
   appendRope (props) {
-    const target = this.kinematic.getBodyByUUID(props.target) ||
-                   this.dynamic.getBodyByUUID(props.target) ||
-                   this.static.getBodyByUUID(props.target) ||
-                   this.soft.getBodyByUUID(props.target);
+    let target = this.getRigidBody(props.target);
+
+    if (this.soft && !target) {
+      target = this.soft.getBodyByUUID(props.target);
+    }
 
     if (!target) {
       console.error(
@@ -317,17 +318,23 @@ class PhysicsWorker {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
 
-    const lastCollisions = {
-      kinematic: this.kinematic.getCollisions(),
-      dynamic: this.dynamic.getCollisions(),
-      static: this.static.getCollisions()
-    };
-
     const collisions = new Array(manifolds);
+    const lastCollisions = { };
 
-    this.kinematic.resetCollisions();
-    this.dynamic.resetCollisions();
-    this.static.resetCollisions();
+    if (this.kinematic) {
+      lastCollisions.kinematic = this.kinematic.getCollisions();
+      this.kinematic.resetCollisions();
+    }
+
+    if (this.dynamic) {
+      lastCollisions.dynamic = this.dynamic.getCollisions();
+      this.dynamic.resetCollisions();
+    }
+
+    if (this.static) {
+      lastCollisions.static = this.static.getCollisions();
+      this.static.resetCollisions();
+    }
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
@@ -449,24 +456,56 @@ class PhysicsWorker {
   }
 
   getBodyByCollider (collider) {
-    let body = this.dynamic.getBodyInfo(collider, '');
-    if (body) return body;
+    let body = null;
 
-    body = this.kinematic.getBodyInfo(collider, '');
-    if (body) return body;
+    if (this.kinematic) {
+      body = this.kinematic.getBodyInfo(collider, '');
+    }
 
-    body = this.static.getBodyInfo(collider, '');
+    if (this.dynamic && !body) {
+      body = this.dynamic.getBodyInfo(collider, '');
+    }
+
+    if (this.static && !body) {
+      body = this.static.getBodyInfo(collider, '');
+    }
+
     return body;
   }
 
   getBodyByUUID (uuid) {
-    let body = this.dynamic.getBodyInfo(null, uuid);
-    if (body) return body;
+    let body = null;
 
-    body = this.kinematic.getBodyInfo(null, uuid);
-    if (body) return body;
+    if (this.kinematic) {
+      body = this.kinematic.getBodyInfo(null, uuid);
+    }
 
-    body = this.static.getBodyInfo(null, uuid);
+    if (this.dynamic && !body) {
+      body = this.dynamic.getBodyInfo(null, uuid);
+    }
+
+    if (this.static && !body) {
+      body = this.static.getBodyInfo(null, uuid);
+    }
+
+    return body;
+  }
+
+  getRigidBody (uuid) {
+    let body = null;
+
+    if (this.kinematic) {
+      body = this.kinematic.getBodyByUUID(uuid);
+    }
+
+    if (this.dynamic && !body) {
+      body = this.dynamic.getBodyByUUID(uuid);
+    }
+
+    if (this.static && !body) {
+      body = this.static.getBodyByUUID(uuid);
+    }
+
     return body;
   }
 
@@ -489,17 +528,42 @@ class PhysicsWorker {
   }
 
   activateBodies () {
-    this.coneTwist.activateAll();
-    this.dynamic.activateAll();
-    this.generic.activateAll();
-    this.slider.activateAll();
-    this.hinge.activateAll();
-    this.point.activateAll();
+    if (this.coneTwist) {
+      this.coneTwist.activateAll();
+    }
+
+    if (this.dynamic) {
+      this.dynamic.activateAll();
+    }
+
+    if (this.generic) {
+      this.generic.activateAll();
+    }
+
+    if (this.slider) {
+      this.slider.activateAll();
+    }
+
+    if (this.hinge) {
+      this.hinge.activateAll();
+    }
+
+    if (this.point) {
+      this.point.activateAll();
+    }
 
     if (this._soft) {
-      this.cloth.activateAll();
-      this.soft.activateAll();
-      this.rope.activateAll();
+      if (this.cloth) {
+        this.cloth.activateAll();
+      }
+
+      if (this.soft) {
+        this.soft.activateAll();
+      }
+
+      if (this.rope) {
+        this.rope.activateAll();
+      }
     }
   }
 
