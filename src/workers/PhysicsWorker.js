@@ -120,7 +120,9 @@ class PhysicsWorker {
     const constants = boxFallback ? this.kinematic.constants : null;
 
     if (boxFallback) {
+      if (!this.kinematic) this.initKinematicBodies();
       this.kinematic.constants = this.static.constants;
+
       props.size = { ...props.size, depth: 0.25 };
       props.type = 'kinematic';
       staticType = false;
@@ -175,14 +177,8 @@ class PhysicsWorker {
 
   setConstraintBodies (props) {
     const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
-
-    const body0 = this.kinematic.getBodyByUUID(props.body0) ||
-                  this.dynamic.getBodyByUUID(props.body0) ||
-                  this.static.getBodyByUUID(props.body0);
-
-    const body1 = this.kinematic.getBodyByUUID(props.body1) ||
-                  this.dynamic.getBodyByUUID(props.body1) ||
-                  this.static.getBodyByUUID(props.body1);
+    const body0 = this.getRigidBody(props.body0);
+    const body1 = this.getRigidBody(props.body1);
 
     if (!body0) {
       console.error(
@@ -204,10 +200,7 @@ class PhysicsWorker {
 
   setConstraintBody (props) {
     const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
-
-    const body = this.kinematic.getBodyByUUID(props.body) ||
-                 this.dynamic.getBodyByUUID(props.body) ||
-                 this.static.getBodyByUUID(props.body);
+    const body = this.getRigidBody(props.body);
 
     if (!body) {
       console.error(
@@ -221,13 +214,8 @@ class PhysicsWorker {
   }
 
   setHingeBodies (props) {
-    const pin = this.kinematic.getBodyByUUID(props.pin) ||
-                this.dynamic.getBodyByUUID(props.pin) ||
-                this.static.getBodyByUUID(props.pin);
-
-    const arm = this.kinematic.getBodyByUUID(props.arm) ||
-                this.dynamic.getBodyByUUID(props.arm) ||
-                this.static.getBodyByUUID(props.arm);
+    const pin = this.getRigidBody(props.pin);
+    const arm = this.getRigidBody(props.arm);
 
     if (!pin) {
       console.error(
@@ -248,9 +236,7 @@ class PhysicsWorker {
   }
 
   setHingeBody (props) {
-    const body = this.kinematic.getBodyByUUID(props.body) ||
-                 this.dynamic.getBodyByUUID(props.body) ||
-                 this.static.getBodyByUUID(props.body);
+    const body = this.getRigidBody(props.body);
 
     if (!body) {
       console.error(
@@ -284,9 +270,7 @@ class PhysicsWorker {
 
   appendCloth (props) {
     const cloth = this.cloth.getBodyByUUID(props.uuid);
-    const target = this.static.getBodyByUUID(props.target) ||
-                   this.dynamic.getBodyByUUID(props.target) ||
-                   this.kinematic.getBodyByUUID(props.target);
+    const target = this.getRigidBody(props.target);
 
     if (!cloth) {
       console.error(
