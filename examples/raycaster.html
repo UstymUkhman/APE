@@ -28,6 +28,13 @@
     var prevTime = performance.now();
     var raycaster, ray, direction;
 
+    var physicsRay = new APE.Raycaster();
+    var kinematic = new APE.Kinematic();
+    var dynamic = new APE.Dynamic();
+    var static = new APE.Static();
+    var cloth = new APE.Cloth();
+    var soft = new APE.Soft();
+
     var move = {
       backward: false,
       forward: false,
@@ -46,8 +53,8 @@
 
     function createGround () {
       // Static bodies default friction:
-      physics.static.friction = 5.0;
-      physics.static.addBox(ground);
+      static.friction = 5.0;
+      static.addBox(ground);
     }
 
     function createBodies () {
@@ -63,7 +70,7 @@
       staticBox.position.z = 20;
       staticBox.position.y = 3;
 
-      physics.static.addBox(staticBox);
+      static.addBox(staticBox);
       scene.add(staticBox);
 
       // Kinematic Body:
@@ -78,7 +85,7 @@
       kinematicBox.position.z = 10;
       kinematicBox.position.y = 3;
 
-      physics.kinematic.addBox(kinematicBox);
+      kinematic.addBox(kinematicBox);
       scene.add(kinematicBox);
 
       // Dynamic Body:
@@ -94,7 +101,7 @@
       dynamicBox.position.z = 0;
 
       // Body mesh & mass
-      physics.dynamic.addBox(dynamicBox, 10);
+      dynamic.addBox(dynamicBox, 10);
       scene.add(dynamicBox);
 
       // Soft Body:
@@ -111,7 +118,7 @@
       );
 
       // Body mesh, mass & pressure
-      physics.soft.addBody(softBox, 10, 500);
+      soft.addBody(softBox, 10, 500);
       softBox.castShadow = true;
       scene.add(softBox);
 
@@ -164,7 +171,7 @@
       rod.position.y = 10.25;
       rod.castShadow = true;
 
-      physics.static.addBox(rod);
+      static.addBox(rod);
       scene.add(rod);
 
       // Cloth Body:
@@ -174,7 +181,7 @@
       geometry.rotateY(Math.PI / 2.0);
       geometry.translate(position.x, position.y + 3.75, position.z - 2.5);
 
-      var cloth = new THREE.Mesh(
+      var canvas = new THREE.Mesh(
         geometry,
         new THREE.MeshPhongMaterial({
           side: THREE.DoubleSide,
@@ -182,22 +189,16 @@
         })
       );
 
-      cloth.receiveShadow = true;
-      cloth.castShadow = true;
-
-      // var clothPivot = new THREE.Object3D();
-      // clothPivot.rotation.y = Math.PI / 2;
-
-      // clothPivot.add(cloth);
-      // scene.add(clothPivot);
-      scene.add(cloth);
+      canvas.receiveShadow = true;
+      canvas.castShadow = true;
+      scene.add(canvas);
 
       // Body mesh, mass & position
-      physics.cloth.addBody(cloth, 1, position);
+      cloth.addBody(canvas, 1, position);
 
       // Body mesh, point (0 - 25) & target body:
-      physics.cloth.append(cloth, 25, rod);
-      physics.cloth.append(cloth, 0, rod);
+      cloth.append(canvas, 25, rod);
+      cloth.append(canvas, 0, rod);
     }
 
     function createRaycaster () {
@@ -259,7 +260,7 @@
 
       mask.onFinishChange(function (current) {
         var selectedMask = APE['MASK_' + current];
-        physics.ray.setCollisionFilterMask(selectedMask);
+        physicsRay.setCollisionFilterMask(selectedMask);
       });
 
       raycaster.add(camera);
@@ -382,7 +383,7 @@
       raycaster.position.y = Math.max(1, Math.min(25, raycaster.position.y));
       target.copy(direction).applyMatrix4(raycaster.matrixWorld);
 
-      var hit = physics.ray.cast(raycaster.position, target);
+      var hit = physicsRay.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
       prevTime = time;
