@@ -3,7 +3,7 @@ import { Ammo } from '@/utils';
 
 export default class PointConstraints extends Constraints {
   constructor (world) {
-    super(world, 'point');
+    super(world, 'Point');
   }
 
   attachBody (props) {

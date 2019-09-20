@@ -3,7 +3,7 @@ import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraints {
   constructor (world) {
-    super(world, 'hinge');
+    super(world, 'Hinge');
   }
 
   hingeBody (props) {

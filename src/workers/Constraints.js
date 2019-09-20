@@ -3,8 +3,8 @@ import { _Math } from 'three/src/math/Math.js';
 
 export default class Constraints {
   constructor (type, worker) {
+    this.type = type;
     this.worker = worker;
-    this.type = type.charAt(0).toLowerCase() + type.slice(1);
     this.worker.postMessage({action: `init${type}Constraints`});
   }
 

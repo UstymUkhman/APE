@@ -1,4 +1,4 @@
-import PhysicsWorker from 'worker-loader?name=../build/worker.js&inline=true!workers/PhysicsWorker.js';
+import PhysicsWorker from 'worker-loader?name=worker.js!workers/PhysicsWorker.js';
 
 import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
 import GenericConstraints from '@/workers/GenericConstraints';
@@ -16,16 +16,12 @@ import RopeBodies from '@/workers/RopeBodies';
 
 import PhysicsRay from '@/workers/PhysicsRay';
 import { Clock } from 'three/src/core/Clock';
-import { GRAVITY } from '@/constants';
+import * as CONSTANTS from '@/constants';
 
-export default class PhysicsWorld {
-  constructor (soft = false, gravity = GRAVITY) {
+class APE {
+  constructor () {
     this.worker = new PhysicsWorker();
     this._clock = new Clock();
-
-    this._soft = soft;
-    this._collisions = 0;
-    this._gravity = gravity;
 
     this._collisionReport = false;
     this._fullCollisionReport = false;
@@ -33,28 +29,43 @@ export default class PhysicsWorld {
     this._onMessage = this.onWorkerMessage.bind(this);
     this.worker.addEventListener('message', this._onMessage);
 
+    for (const constant in CONSTANTS) {
+      const value = CONSTANTS[constant];
+
+      if (!constant.indexOf('MASK_')) {
+        this[constant] = value;
+      }
+    }
+  }
+
+  init (soft = false, gravity = CONSTANTS.GRAVITY) {
+    this._soft = soft;
+    this._collisions = 0;
+    this._gravity = gravity;
+
     this.worker.postMessage({
       params: [soft, gravity],
       action: 'init'
     });
 
-    this.coneTwist = new ConeTwistConstraints(this.worker);
-    this.generic = new GenericConstraints(this.worker);
-    this.slider = new SliderConstraints(this.worker);
-    this.hinge = new HingeConstraints(this.worker);
-    this.point = new PointConstraints(this.worker);
+    this.ConeTwist = new ConeTwistConstraints(this.worker);
+    this.Generic = new GenericConstraints(this.worker);
+    this.Slider = new SliderConstraints(this.worker);
+    this.Hinge = new HingeConstraints(this.worker);
+    this.Point = new PointConstraints(this.worker);
 
-    this.kinematic = new KinematicBodies(this.worker);
-    this.dynamic = new DynamicBodies(this.worker);
-    this.static = new StaticBodies(this.worker);
-
-    this.ray = new PhysicsRay(this.worker);
+    this.Kinematic = new KinematicBodies(this.worker);
+    this.Dynamic = new DynamicBodies(this.worker);
+    this.Raycaster = new PhysicsRay(this.worker);
+    this.Static = new StaticBodies(this.worker);
 
     if (this._soft) {
-      this.cloth = new ClothBodies(this.worker);
-      this.rope = new RopeBodies(this.worker);
-      this.soft = new SoftBodies(this.worker);
+      this.Cloth = new ClothBodies(this.worker);
+      this.Rope = new RopeBodies(this.worker);
+      this.Soft = new SoftBodies(this.worker);
     }
+
+    return this;
   }
 
   onWorkerMessage (event) {
@@ -77,7 +88,7 @@ export default class PhysicsWorld {
   }
 
   setRayResult (data) {
-    this.ray.setResult(data);
+    this.Raycaster.setResult(data);
   }
 
   setCollisionReport (report, fullReport = false) {
@@ -134,24 +145,24 @@ export default class PhysicsWorld {
     this.worker.removeEventListener('message', this._onMessage);
     this.worker.postMessage({ action: 'destroy' });
 
-    delete this.coneTwist;
-    delete this.generic;
-    delete this.slider;
-    delete this.hinge;
-    delete this.point;
+    delete this.ConeTwist;
+    delete this.Generic;
+    delete this.Slider;
+    delete this.Hinge;
+    delete this.Point;
 
-    delete this.kinematic;
-    delete this.dynamic;
-    delete this.static;
+    delete this.Kinematic;
+    delete this.Dynamic;
+    delete this.Static;
 
+    delete this.Raycaster;
     delete this.worker;
     delete this._clock;
-    delete this.ray;
 
     if (this._soft) {
-      delete this.cloth;
-      delete this.soft;
-      delete this.rope;
+      delete this.Cloth;
+      delete this.Soft;
+      delete this.Rope;
     }
   }
 
@@ -195,3 +206,5 @@ export default class PhysicsWorld {
     return this._gravity;
   }
 }
+
+export default new APE();

@@ -14,7 +14,7 @@ import {
 
 export default class ClothBodies extends FlexBodies {
   constructor (world) {
-    super(world, 'cloth');
+    super(world, 'Cloth');
 
     this.margin = CLOTH_MARGIN;
     this.damping = SOFT_DAMPING;
@@ -91,7 +91,7 @@ export default class ClothBodies extends FlexBodies {
     self.postMessage({
       action: 'updateBodies',
       bodies: update,
-      type: 'cloth'
+      type: 'Cloth'
     });
   }
 

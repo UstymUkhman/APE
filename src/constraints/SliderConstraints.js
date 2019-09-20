@@ -5,7 +5,7 @@ import { Ammo } from '@/utils';
 
 export default class SliderConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'slider');
+    super(world, 'Slider');
     this.events = events;
   }
 

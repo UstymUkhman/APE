@@ -58,7 +58,7 @@ export default class ClothBody extends Playground {
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    const hingeIndex = this.physics.hinge.addBodies(
+    const hingeIndex = this.physics.Hinge.addBodies(
       pylon, this.arm, axis,
       pinPivot, armPivot
     );
@@ -66,17 +66,17 @@ export default class ClothBody extends Playground {
     window.addEventListener('keydown', event => {
       switch (event.keyCode) {
         case 81:
-          this.physics.hinge.update(hingeIndex, 1);
+          this.physics.Hinge.update(hingeIndex, 1);
           break;
 
         case 65:
-          this.physics.hinge.update(hingeIndex, -1);
+          this.physics.Hinge.update(hingeIndex, -1);
           break;
       }
     }, false);
 
     window.addEventListener('keyup', () => {
-      this.physics.hinge.update(hingeIndex, 0);
+      this.physics.Hinge.update(hingeIndex, 0);
     }, false);
   }
 

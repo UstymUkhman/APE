@@ -179,7 +179,7 @@ export default class RigidBodies {
   }
 
   enable (mesh) {
-    const kinematic = this.type === 'kinematic';
+    const kinematic = this.type === 'Kinematic';
     const body = this.getBodyByUUID(mesh.uuid);
 
     if (body) {

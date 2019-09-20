@@ -4,7 +4,7 @@ import { Ammo } from '@/utils';
 
 export default class StaticBodies extends RigidBodies {
   constructor (world) {
-    super(world, 'static');
+    super(world, 'Static');
   }
 
   addPlane (mesh) {
@@ -102,7 +102,7 @@ export default class StaticBodies extends RigidBodies {
     this.bodies.push({
       uuid: mesh.uuid,
       collisions: [],
-      type: 'static',
+      type: 'Static',
       mesh: mesh,
       body: body
     });

@@ -10,7 +10,7 @@ import {
 
 export default class RopeBodies extends FlexBodies {
   constructor (world) {
-    super(world, 'rope');
+    super(world, 'Rope');
 
     this.margin = ROPE_MARGIN;
     this.piterations = ROPE_PITERATIONS;
@@ -64,7 +64,7 @@ export default class RopeBodies extends FlexBodies {
     self.postMessage({
       action: 'updateBodies',
       bodies: update,
-      type: 'rope'
+      type: 'Rope'
     });
   }
 

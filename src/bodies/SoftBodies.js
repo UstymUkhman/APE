@@ -20,7 +20,7 @@ import {
 
 export default class SoftBodies extends FlexBodies {
   constructor (world) {
-    super(world, 'soft');
+    super(world, 'Soft');
 
     this.margin = SOFT_MARGIN;
     this.damping = SOFT_DAMPING;
@@ -145,7 +145,7 @@ export default class SoftBodies extends FlexBodies {
       self.postMessage({
         action: 'updateBodies',
         bodies: update,
-        type: 'soft'
+        type: 'Soft'
       });
     }
   }

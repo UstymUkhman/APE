@@ -63,7 +63,7 @@ export default class SoftBodies extends Playground {
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    const hingeIndex = this.physics.hinge.addBodies(
+    const hingeIndex = this.physics.Hinge.addBodies(
       pylon, this.arm, axis,
       pinPivot, armPivot
     );

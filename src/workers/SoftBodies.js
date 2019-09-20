@@ -38,7 +38,7 @@ export default class SoftBodies extends FlexBodies {
       params: {
         uuid: mesh.uuid,
         radius: radius,
-        type: 'soft'
+        type: 'Soft'
       }
     });
   }
@@ -50,7 +50,7 @@ export default class SoftBodies extends FlexBodies {
       params: {
         threshold: threshold,
         uuid: mesh.uuid,
-        type: 'soft'
+        type: 'Soft'
       }
     });
   }
@@ -62,7 +62,7 @@ export default class SoftBodies extends FlexBodies {
       params: {
         restitution: restitution,
         uuid: mesh.uuid,
-        type: 'soft'
+        type: 'Soft'
       }
     });
   }
@@ -74,7 +74,7 @@ export default class SoftBodies extends FlexBodies {
       params: {
         friction: friction,
         uuid: mesh.uuid,
-        type: 'soft'
+        type: 'Soft'
       }
     });
   }

@@ -4,7 +4,7 @@ import { Ammo } from '@/utils';
 
 export default class StaticBodies extends RigidBodies {
   constructor (world) {
-    super(world, 'static');
+    super(world, 'Static');
   }
 
   addPlane (props) {

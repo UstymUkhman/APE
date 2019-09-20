@@ -64,65 +64,65 @@ class PhysicsWorker {
   }
 
   initPhysicsRay () {
-    this.ray = new PhysicsRay(this.world);
+    this.Raycaster = new PhysicsRay(this.world);
   }
 
   initSoftBodies () {
-    this.soft = new SoftBodies(this.world);
+    this.Soft = new SoftBodies(this.world);
   }
 
   initRopeBodies () {
-    this.rope = new RopeBodies(this.world);
+    this.Rope = new RopeBodies(this.world);
   }
 
   initClothBodies () {
-    this.cloth = new ClothBodies(this.world);
+    this.Cloth = new ClothBodies(this.world);
   }
 
   initStaticBodies () {
-    this.static = new StaticBodies(this.world);
+    this.Static = new StaticBodies(this.world);
   }
 
   initDynamicBodies () {
-    this.dynamic = new DynamicBodies(this.world);
+    this.Dynamic = new DynamicBodies(this.world);
   }
 
   initKinematicBodies () {
-    this.kinematic = new KinematicBodies(this.world);
+    this.Kinematic = new KinematicBodies(this.world);
   }
 
   initPointConstraints () {
-    this.point = new PointConstraints(this.world);
+    this.Point = new PointConstraints(this.world);
   }
 
   initHingeConstraints () {
-    this.hinge = new HingeConstraints(this.world);
+    this.Hinge = new HingeConstraints(this.world);
   }
 
   initSliderConstraints () {
-    this.slider = new SliderConstraints(this.world);
+    this.Slider = new SliderConstraints(this.world);
   }
 
   initGenericConstraints () {
-    this.generic = new GenericConstraints(this.world);
+    this.Generic = new GenericConstraints(this.world);
   }
 
   initConeTwistConstraints () {
-    this.coneTwist = new ConeTwistConstraints(this.world);
+    this.ConeTwist = new ConeTwistConstraints(this.world);
   }
 
   addBody (props) {
-    let staticType = props.type === 'static';
+    let staticType = props.type === 'Static';
     const plane = props.collider === 'Plane';
 
     const boxFallback = this._soft && staticType && plane;
     const method = boxFallback ? 'addBox' : `add${props.collider}`;
-    const constants = boxFallback ? this.kinematic.constants : null;
+    const constants = boxFallback ? this.Kinematic.constants : null;
 
     if (boxFallback) {
-      this.kinematic.constants = this.static.constants;
+      this.Kinematic.constants = this.Static.constants;
       props.size = { ...props.size, depth: 0.25 };
-      props.type = 'kinematic';
+      props.type = 'Kinematic';
       staticType = false;
 
       console.warn(
@@ -149,7 +149,7 @@ class PhysicsWorker {
     }
 
     if (boxFallback) {
-      this.kinematic.constants = constants;
+      this.Kinematic.constants = constants;
     }
   }
 
@@ -188,7 +188,7 @@ class PhysicsWorker {
       console.error(
         `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body1}]: dynamic, kinematic or static;\n`,
-        `or use \'PhysicsWorld.${props.type}.addBody\' method if you want to constraint only one body.`
+        `or use \'APE.${props.type}.addBody\' method if you want to constraint only one body.`
       );
     } else {
       props.body0 = body0.body;
@@ -225,7 +225,7 @@ class PhysicsWorker {
       console.error(
         'HingeConstraint arm\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your arm mesh [${props.arm}]: dynamic (recommended), kinematic or static;\n`,
-        'or use \'PhysicsWorld.hinge.addBody\' method if you want to constraint only one body.'
+        'or use \'APE.Hinge.addBody\' method if you want to constraint only one body.'
       );
     } else {
       props.pin = pin.body;
@@ -251,7 +251,7 @@ class PhysicsWorker {
     let target = this.getRigidBody(props.target);
 
     if (!target) {
-      target = this.soft.getBodyByUUID(props.target);
+      target = this.Soft.getBodyByUUID(props.target);
     }
 
     if (!target) {
@@ -262,12 +262,12 @@ class PhysicsWorker {
       );
     } else {
       props.target = target.body;
-      this.rope.append(props);
+      this.Rope.append(props);
     }
   }
 
   appendCloth (props) {
-    const cloth = this.cloth.getBodyByUUID(props.uuid);
+    const cloth = this.Cloth.getBodyByUUID(props.uuid);
     const target = this.getRigidBody(props.target);
 
     if (!cloth) {
@@ -283,7 +283,7 @@ class PhysicsWorker {
       );
     } else {
       props.target = target.body;
-      this.cloth.append(props);
+      this.Cloth.append(props);
     }
   }
 
@@ -302,14 +302,14 @@ class PhysicsWorker {
     const collisions = new Array(manifolds);
 
     const lastCollisions = {
-      kinematic: this.kinematic.getCollisions(),
-      dynamic: this.dynamic.getCollisions(),
-      static: this.static.getCollisions()
+      kinematic: this.Kinematic.getCollisions(),
+      dynamic: this.Dynamic.getCollisions(),
+      static: this.Static.getCollisions()
     };
 
-    this.kinematic.resetCollisions();
-    this.dynamic.resetCollisions();
-    this.static.resetCollisions();
+    this.Kinematic.resetCollisions();
+    this.Dynamic.resetCollisions();
+    this.Static.resetCollisions();
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
@@ -431,35 +431,35 @@ class PhysicsWorker {
   }
 
   getBodyByCollider (collider) {
-    let body = this.dynamic.getBodyInfo(collider, '');
+    let body = this.Dynamic.getBodyInfo(collider, '');
     if (body) return body;
 
-    body = this.kinematic.getBodyInfo(collider, '');
+    body = this.Kinematic.getBodyInfo(collider, '');
     if (body) return body;
 
-    body = this.static.getBodyInfo(collider, '');
+    body = this.Static.getBodyInfo(collider, '');
     return body;
   }
 
   getBodyByUUID (uuid) {
-    let body = this.dynamic.getBodyInfo(null, uuid);
+    let body = this.Dynamic.getBodyInfo(null, uuid);
     if (body) return body;
 
-    body = this.kinematic.getBodyInfo(null, uuid);
+    body = this.Kinematic.getBodyInfo(null, uuid);
     if (body) return body;
 
-    body = this.static.getBodyInfo(null, uuid);
+    body = this.Static.getBodyInfo(null, uuid);
     return body;
   }
 
   getRigidBody (uuid) {
-    let body = this.dynamic.getBodyByUUID(uuid);
+    let body = this.Dynamic.getBodyByUUID(uuid);
     if (body) return body;
 
-    body = this.kinematic.getBodyByUUID(uuid);
+    body = this.Kinematic.getBodyByUUID(uuid);
     if (body) return body;
 
-    body = this.static.getBodyByUUID(uuid);
+    body = this.Static.getBodyByUUID(uuid);
     return body;
   }
 
@@ -482,17 +482,17 @@ class PhysicsWorker {
   }
 
   activateBodies () {
-    this.coneTwist.activateAll();
-    this.dynamic.activateAll();
-    this.generic.activateAll();
-    this.slider.activateAll();
-    this.hinge.activateAll();
-    this.point.activateAll();
+    this.ConeTwist.activateAll();
+    this.Dynamic.activateAll();
+    this.Generic.activateAll();
+    this.Slider.activateAll();
+    this.Hinge.activateAll();
+    this.Point.activateAll();
 
     if (this._soft) {
-      this.cloth.activateAll();
-      this.soft.activateAll();
-      this.rope.activateAll();
+      this.Cloth.activateAll();
+      this.Soft.activateAll();
+      this.Rope.activateAll();
     }
   }
 
@@ -511,19 +511,19 @@ class PhysicsWorker {
   }
 
   setCollisionFilterGroup (props) {
-    this.ray.setCollisionFilterGroup(props.filterGroup);
+    this.Raycaster.setCollisionFilterGroup(props.filterGroup);
   }
 
   setCollisionFilterMask (props) {
-    this.ray.setCollisionFilterMask(props.filterMask);
+    this.Raycaster.setCollisionFilterMask(props.filterMask);
   }
 
   setClosestHitFraction (props) {
-    this.ray.setClosestHitFraction(props.hitFraction);
+    this.Raycaster.setClosestHitFraction(props.hitFraction);
   }
 
   castRay (props) {
-    this.ray.cast(props.origin, props.target, props.hitPoint, props.hitNormal);
+    this.Raycaster.cast(props.origin, props.target, props.hitPoint, props.hitNormal);
   }
 
   setGravity (props) {
@@ -711,7 +711,7 @@ function onMessage (event) {
     const args = params.length && array ? params.join(', ') : !array ? params : '';
 
     console.error(
-      `Cannot call \'PhysicsWorld.${action}(${args})\'\n`,
+      `Cannot call \'APE.${action}(${args})\'\n`,
       'Physics is not initialized.'
     );
   }

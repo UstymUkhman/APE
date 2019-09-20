@@ -52,12 +52,12 @@ const webWorker = () => {
  */
 const getBodyGroup = (type) => {
   switch (type) {
-    case 'soft': return GROUP_SOFT;
-    case 'rope': return GROUP_ROPE;
-    case 'cloth': return GROUP_CLOTH;
-    case 'static': return GROUP_STATIC;
-    case 'dynamic': return GROUP_DYNAMIC;
-    case 'kinematic': return GROUP_KINEMATIC;
+    case 'Soft': return GROUP_SOFT;
+    case 'Rope': return GROUP_ROPE;
+    case 'Cloth': return GROUP_CLOTH;
+    case 'Static': return GROUP_STATIC;
+    case 'Dynamic': return GROUP_DYNAMIC;
+    case 'Kinematic': return GROUP_KINEMATIC;
     default: return GROUP_DEFAULT;
   }
 };
@@ -71,12 +71,12 @@ const getBodyMask = (type) => {
   return MASK_ALL;
 
   /* switch (type) {
-    case 'soft': return MASK_SOFT;
-    case 'rope': return MASK_ROPE;
-    case 'cloth': return MASK_CLOTH;
-    case 'static': return MASK_STATIC;
-    case 'dynamic': return MASK_DYNAMIC;
-    case 'kinematic': return MASK_KINEMATIC;
+    case 'Soft': return MASK_SOFT;
+    case 'Rope': return MASK_ROPE;
+    case 'Cloth': return MASK_CLOTH;
+    case 'Static': return MASK_STATIC;
+    case 'Dynamic': return MASK_DYNAMIC;
+    case 'Kinematic': return MASK_KINEMATIC;
     default: return MASK_ALL;
   } */
 };

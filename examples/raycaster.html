@@ -20,7 +20,6 @@
   <body></body>
 
   <script type="text/javascript">
-    var physics = new APE.Physics(true);
     var velocity = new THREE.Vector3();
     var rotation = new THREE.Vector2();
     var target = new THREE.Vector3();
@@ -46,8 +45,8 @@
 
     function createGround () {
       // Static bodies default friction:
-      physics.static.friction = 5.0;
-      physics.static.addBox(ground);
+      APE.Static.friction = 5.0;
+      APE.Static.addBox(ground);
     }
 
     function createBodies () {
@@ -63,7 +62,7 @@
       staticBox.position.z = 20;
       staticBox.position.y = 3;
 
-      physics.static.addBox(staticBox);
+      APE.Static.addBox(staticBox);
       scene.add(staticBox);
 
       // Kinematic Body:
@@ -78,7 +77,7 @@
       kinematicBox.position.z = 10;
       kinematicBox.position.y = 3;
 
-      physics.kinematic.addBox(kinematicBox);
+      APE.Kinematic.addBox(kinematicBox);
       scene.add(kinematicBox);
 
       // Dynamic Body:
@@ -94,7 +93,7 @@
       dynamicBox.position.z = 0;
 
       // Body mesh & mass
-      physics.dynamic.addBox(dynamicBox, 10);
+      APE.Dynamic.addBox(dynamicBox, 10);
       scene.add(dynamicBox);
 
       // Soft Body:
@@ -111,7 +110,7 @@
       );
 
       // Body mesh, mass & pressure
-      physics.soft.addBody(softBox, 10, 500);
+      APE.Soft.addBody(softBox, 10, 500);
       softBox.castShadow = true;
       scene.add(softBox);
 
@@ -164,7 +163,7 @@
       rod.position.y = 10.25;
       rod.castShadow = true;
 
-      physics.static.addBox(rod);
+      APE.Static.addBox(rod);
       scene.add(rod);
 
       // Cloth Body:
@@ -182,9 +181,9 @@
         })
       );
 
-      physics.cloth.addBody(cloth, 1, position);
-      physics.cloth.append(cloth, 25, rod);
-      physics.cloth.append(cloth, 0, rod);
+      APE.Cloth.addBody(cloth, 1, position);
+      APE.Cloth.append(cloth, 25, rod);
+      APE.Cloth.append(cloth, 0, rod);
 
       cloth.receiveShadow = true;
       cloth.castShadow = true;
@@ -249,7 +248,7 @@
 
       mask.onFinishChange(function (current) {
         var selectedMask = APE['MASK_' + current];
-        physics.ray.setCollisionFilterMask(selectedMask);
+        APE.Raycaster.setCollisionFilterMask(selectedMask);
       });
 
       raycaster.add(camera);
@@ -372,7 +371,7 @@
       raycaster.position.y = Math.max(1, Math.min(25, raycaster.position.y));
       target.copy(direction).applyMatrix4(raycaster.matrixWorld);
 
-      var hit = physics.ray.cast(raycaster.position, target);
+      var hit = APE.Raycaster.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
       prevTime = time;
@@ -380,6 +379,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      APE.init(true);
       createGround();
       createBodies();
 

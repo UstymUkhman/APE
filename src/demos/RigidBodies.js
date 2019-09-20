@@ -9,9 +9,9 @@ import { Vector3 } from 'three/src/math/Vector3';
 import { Mesh } from 'three/src/objects/Mesh';
 
 import Playground from 'demos/Playground';
-// import PhysicsWorld from 'workers/PhysicsWorld';
-import PhysicsWorld from 'PhysicsWorld';
-import RAF from 'demos/RAF';
+import APE from 'workers/APE';
+// import RAF from 'demos/RAF';
+// import APE from 'APE';
 
 export default class RigidBodies extends Playground {
   constructor () {
@@ -25,14 +25,14 @@ export default class RigidBodies extends Playground {
     this.createHinge();
     this.createCloth();
 
-    this._update = this.update.bind(this);
-    RAF.add(this._update);
+    // this._update = this.update.bind(this);
+    // RAF.add(this._update);
   }
 
   initPhysics () {
-    this.physics = new PhysicsWorld(true);
-    this.physics.static.friction = 5.0;
-    this.physics.static.addBox(this.ground);
+    APE.init(true);
+    APE.Static.friction = 5.0;
+    APE.Static.addBox(this.ground);
   }
 
   createDynamicBodies () {
@@ -46,17 +46,17 @@ export default class RigidBodies extends Playground {
     dynamicBox.castShadow = true;
     dynamicBox.position.y = 15;
 
-    this.physics.dynamic.addBox(dynamicBox, 10);
+    APE.Dynamic.addBox(dynamicBox, 10);
     this.scene.add(dynamicBox);
 
     // setTimeout(() => {
     //   console.log('Dynamic disable');
-    //   this.physics.dynamic.disable(dynamicBox);
+    //   APE.dynamic.disable(dynamicBox);
     // }, 3000);
 
     // setTimeout(() => {
     //   console.log('Dynamic enable');
-    //   this.physics.dynamic.enable(dynamicBox);
+    //   APE.dynamic.enable(dynamicBox);
     // }, 10000);
   }
 
@@ -72,7 +72,7 @@ export default class RigidBodies extends Playground {
     this.kinematicBox.position.x = 2.5;
     this.kinematicBox.position.y = 5;
 
-    this.physics.kinematic.addBox(this.kinematicBox);
+    APE.Kinematic.addBox(this.kinematicBox);
     this.scene.add(this.kinematicBox);
 
     // this._onKeyDown = this.onKeyDown.bind(this);
@@ -80,17 +80,17 @@ export default class RigidBodies extends Playground {
 
     // setTimeout(() => {
     //   console.log('Kinematic disable');
-    //   this.physics.kinematic.disable(this.kinematicBox);
+    //   APE.Kinematic.disable(this.kinematicBox);
     // }, 3000);
 
     // setTimeout(() => {
     //   console.log('Kinematic enable');
-    //   this.physics.kinematic.enable(this.kinematicBox);
+    //   APE.Kinematic.enable(this.kinematicBox);
     // }, 10000);
 
     // setTimeout(() => {
     //   console.log('Static disable');
-    //   this.physics.static.disable(this.ground);
+    //   APE.Static.disable(this.ground);
     // }, 5000);
   }
 
@@ -162,7 +162,7 @@ export default class RigidBodies extends Playground {
     const pinPivot = {x: 0.0, y: pylonHeight * 0.5, z: 0.0};
     const axis = {x: 0, y: 1, z: 0};
 
-    this.physics.hinge.addBodies(
+    APE.Hinge.addBodies(
       pylon, this.arm, axis,
       pinPivot, armPivot
     );
@@ -170,17 +170,17 @@ export default class RigidBodies extends Playground {
     // window.addEventListener('keydown', event => {
     //   switch (event.keyCode) {
     //     case 81:
-    //       this.physics.hinge.update(hingeIndex, 1);
+    //       APE.Hinge.update(hingeIndex, 1);
     //       break;
 
     //     case 65:
-    //       this.physics.hinge.update(hingeIndex, -1);
+    //       APE.Hinge.update(hingeIndex, -1);
     //       break;
     //   }
     // }, false);
 
     // window.addEventListener('keyup', () => {
-    //   this.physics.hinge.update(hingeIndex, 0);
+    //   APE.Hinge.update(hingeIndex, 0);
     // }, false);
   }
 
@@ -189,9 +189,9 @@ export default class RigidBodies extends Playground {
     mesh.position.set(pos.x, pos.y, pos.z);
 
     if (mass) {
-      this.physics.dynamic.addBox(mesh, mass);
+      APE.Dynamic.addBox(mesh, mass);
     } else {
-      this.physics.static.addBox(mesh);
+      APE.Static.addBox(mesh);
     }
 
     this.scene.add(mesh);
@@ -215,16 +215,16 @@ export default class RigidBodies extends Playground {
     );
 
     // Appended to hinge:
-    this.physics.cloth.addBody(cloth, 1, position);
-    this.physics.cloth.append(cloth, 25, this.arm);
-    this.physics.cloth.append(cloth, 0, this.arm);
+    APE.Cloth.addBody(cloth, 1, position);
+    APE.Cloth.append(cloth, 25, this.arm);
+    APE.Cloth.append(cloth, 0, this.arm);
 
     cloth.receiveShadow = true;
     cloth.castShadow = true;
     this.scene.add(cloth);
 
     // Rotated:
-    // this.physics.cloth.addBody(cloth, 1);
+    // APE.Cloth.addBody(cloth, 1);
 
     // const obj = new Object3D();
     // obj.rotation.y = Math.PI / 2;
@@ -234,12 +234,12 @@ export default class RigidBodies extends Playground {
 
     // setTimeout(() => {
     //   console.log('Cloth disable');
-    //   this.physics.cloth.disable(cloth);
+    //   APE.Cloth.disable(cloth);
     // }, 10000);
 
     // setTimeout(() => {
     //   console.log('Cloth enable');
-    //   this.physics.cloth.enable(cloth);
+    //   APE.Cloth.enable(cloth);
     // }, 18000);
   }
 
@@ -271,9 +271,9 @@ export default class RigidBodies extends Playground {
 
   update () {
     this.rayTarget.copy(this.ray).applyMatrix4(this.fly.matrixWorld);
-    const hit = this.physics.ray.cast(this.fly.position, this.rayTarget);
+    const hit = APE.Raycaster.cast(this.fly.position, this.rayTarget);
 
-    this.physics.update();
+    APE.update();
     console.log(hit);
   }
 }

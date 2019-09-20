@@ -20,7 +20,7 @@ import EventEmitter from 'events';
 import { Ammo } from '@/utils';
 import find from 'lodash.find';
 
-export default class PhysicsWorld {
+export default class APE {
   constructor (soft = false, gravity = GRAVITY) {
     this._soft = soft;
     this._collisions = 0;
@@ -38,22 +38,21 @@ export default class PhysicsWorld {
       this.initRigidWorld();
     }
 
-    this.coneTwist = new ConeTwistConstraints(this.world, this._events);
-    this.generic = new GenericConstraints(this.world, this._events);
-    this.slider = new SliderConstraints(this.world, this._events);
-    this.hinge = new HingeConstraints(this.world, this._events);
-    this.point = new PointConstraints(this.world, this._events);
+    this.ConeTwist = new ConeTwistConstraints(this.world, this._events);
+    this.Generic = new GenericConstraints(this.world, this._events);
+    this.Slider = new SliderConstraints(this.world, this._events);
+    this.Hinge = new HingeConstraints(this.world, this._events);
+    this.Point = new PointConstraints(this.world, this._events);
 
-    this.kinematic = new KinematicBodies(this.world);
-    this.dynamic = new DynamicBodies(this.world);
-    this.static = new StaticBodies(this.world);
-
-    this.ray = new PhysicsRay(this.world);
+    this.Kinematic = new KinematicBodies(this.world);
+    this.Dynamic = new DynamicBodies(this.world);
+    this.Raycaster = new PhysicsRay(this.world);
+    this.Static = new StaticBodies(this.world);
 
     if (this._soft) {
-      this.cloth = new ClothBodies(this.world, this._events);
-      this.rope = new RopeBodies(this.world, this._events);
-      this.soft = new SoftBodies(this.world);
+      this.Cloth = new ClothBodies(this.world, this._events);
+      this.Rope = new RopeBodies(this.world, this._events);
+      this.Soft = new SoftBodies(this.world);
     }
 
     this.initPhysicsEvents();
@@ -110,7 +109,7 @@ export default class PhysicsWorld {
     let target = this.getBodyByUUID(targetUUID);
 
     if (!target) {
-      target = this.soft.getBodyByUUID(targetUUID);
+      target = this.Soft.getBodyByUUID(targetUUID);
     }
 
     if (!target) {
@@ -120,12 +119,12 @@ export default class PhysicsWorld {
         'dynamic (recommended), kinematic, static or soft.'
       );
     } else {
-      this.rope.appendAnchor(target.body, rope);
+      this.Rope.appendAnchor(target.body, rope);
     }
   }
 
   getClothAnchor (targetUUID, cloth) {
-    const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
+    const clothBody = this.Cloth.getBodyByUUID(cloth.uuid);
     const target = this.getBodyByUUID(targetUUID);
 
     if (!clothBody) {
@@ -140,7 +139,7 @@ export default class PhysicsWorld {
         'dynamic; kinematic or static.'
       );
     } else {
-      this.cloth.appendAnchor(target.body, cloth);
+      this.Cloth.appendAnchor(target.body, cloth);
     }
   }
 
@@ -154,7 +153,7 @@ export default class PhysicsWorld {
         'dynamic, kinematic or static.'
       );
     } else {
-      this.point.attachBody(body.body, position);
+      this.Point.attachBody(body.body, position);
     }
   }
 
@@ -172,10 +171,10 @@ export default class PhysicsWorld {
       console.error(
         'PointConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
-        'or use \'PhysicsWorld.point.addBody\' method if you want to constraint only one body.'
+        'or use \'APE.Point.addBody\' method if you want to constraint only one body.'
       );
     } else {
-      this.point.attachBodies(body0.body, body1.body, positions);
+      this.Point.attachBodies(body0.body, body1.body, positions);
     }
   }
 
@@ -189,7 +188,7 @@ export default class PhysicsWorld {
         'dynamic (recommended), kinematic or static.'
       );
     } else {
-      this.hinge.hingeBody(body.body, position);
+      this.Hinge.hingeBody(body.body, position);
     }
   }
 
@@ -207,10 +206,10 @@ export default class PhysicsWorld {
       console.error(
         'HingeConstraint arm\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your arm mesh [${armUUID}]: dynamic (recommended), kinematic or static;\n`,
-        'or use \'PhysicsWorld.hinge.addBody\' method if you want to constraint only one body.'
+        'or use \'APE.Hinge.addBody\' method if you want to constraint only one body.'
       );
     } else {
-      this.hinge.hingeBodies(pin.body, arm.body, position);
+      this.Hinge.hingeBodies(pin.body, arm.body, position);
     }
   }
 
@@ -224,7 +223,7 @@ export default class PhysicsWorld {
         'dynamic, kinematic or static.'
       );
     } else {
-      this.slider.attachBody(body.body, pivot);
+      this.Slider.attachBody(body.body, pivot);
     }
   }
 
@@ -242,10 +241,10 @@ export default class PhysicsWorld {
       console.error(
         'SliderConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
-        'or use \'PhysicsWorld.slider.addBody\' method if you want to constraint only one body.'
+        'or use \'APE.Slider.addBody\' method if you want to constraint only one body.'
       );
     } else {
-      this.slider.attachBodies(body0.body, body1.body, pivot);
+      this.Slider.attachBodies(body0.body, body1.body, pivot);
     }
   }
 
@@ -259,7 +258,7 @@ export default class PhysicsWorld {
         'dynamic, kinematic or static.'
       );
     } else {
-      this.generic.attachBody(body.body, pivot);
+      this.Generic.attachBody(body.body, pivot);
     }
   }
 
@@ -277,10 +276,10 @@ export default class PhysicsWorld {
       console.error(
         'GenericConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
-        'or use \'PhysicsWorld.generic.addBody\' method if you want to constraint only one body.'
+        'or use \'APE.Generic.addBody\' method if you want to constraint only one body.'
       );
     } else {
-      this.generic.attachBodies(body0.body, body1.body, pivot);
+      this.Generic.attachBodies(body0.body, body1.body, pivot);
     }
   }
 
@@ -301,7 +300,7 @@ export default class PhysicsWorld {
         'dynamic, kinematic or static.'
       );
     } else {
-      this.coneTwist.attachBodies(body0.body, body1.body, pivot);
+      this.ConeTwist.attachBodies(body0.body, body1.body, pivot);
     }
   }
 
@@ -310,16 +309,16 @@ export default class PhysicsWorld {
     const manifolds = dispatcher.getNumManifolds();
 
     const lastCollisions = {
-      kinematic: this.kinematic.getCollisions(),
-      dynamic: this.dynamic.getCollisions(),
-      static: this.static.getCollisions()
+      kinematic: this.Kinematic.getCollisions(),
+      dynamic: this.Dynamic.getCollisions(),
+      static: this.Static.getCollisions()
     };
 
     const collisions = new Array(manifolds);
 
-    this.kinematic.resetCollisions();
-    this.dynamic.resetCollisions();
-    this.static.resetCollisions();
+    this.Kinematic.resetCollisions();
+    this.Dynamic.resetCollisions();
+    this.Static.resetCollisions();
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
@@ -473,39 +472,39 @@ export default class PhysicsWorld {
   }
 
   getBodyByCollider (collider) {
-    let body = this.dynamic.getBodyByCollider(collider);
+    let body = this.Dynamic.getBodyByCollider(collider);
     if (body) return body;
 
-    body = this.kinematic.getBodyByCollider(collider);
+    body = this.Kinematic.getBodyByCollider(collider);
     if (body) return body;
 
-    body = this.static.getBodyByCollider(collider);
+    body = this.Static.getBodyByCollider(collider);
     return body;
   }
 
   getBodyByUUID (uuid) {
-    let body = this.dynamic.getBodyByUUID(uuid);
+    let body = this.Dynamic.getBodyByUUID(uuid);
     if (body) return body;
 
-    body = this.kinematic.getBodyByUUID(uuid);
+    body = this.Kinematic.getBodyByUUID(uuid);
     if (body) return body;
 
-    body = this.static.getBodyByUUID(uuid);
+    body = this.Static.getBodyByUUID(uuid);
     return body;
   }
 
   activateBodies () {
-    this.coneTwist.activateAll();
-    this.generic.activateAll();
-    this.dynamic.activateAll();
-    this.slider.activateAll();
-    this.point.activateAll();
-    this.hinge.activateAll();
+    this.ConeTwist.activateAll();
+    this.Generic.activateAll();
+    this.Dynamic.activateAll();
+    this.Slider.activateAll();
+    this.Point.activateAll();
+    this.Hinge.activateAll();
 
     if (this._soft) {
-      this.cloth.activateAll();
-      this.soft.activateAll();
-      this.rope.activateAll();
+      this.Cloth.activateAll();
+      this.Soft.activateAll();
+      this.Rope.activateAll();
     }
   }
 
@@ -513,13 +512,13 @@ export default class PhysicsWorld {
     const delta = this._clock.getDelta();
     this.world.stepSimulation(delta, 10);
 
-    this.kinematic.update(this.transform);
-    this.dynamic.update(this.transform);
+    this.Kinematic.update(this.transform);
+    this.Dynamic.update(this.transform);
 
     if (this._soft) {
-      this.cloth.update();
-      this.soft.update();
-      this.rope.update();
+      this.Cloth.update();
+      this.Soft.update();
+      this.Rope.update();
     }
 
     if (this._collisionReport) {
@@ -530,24 +529,24 @@ export default class PhysicsWorld {
   destroy () {
     this.world.__destroy__();
 
-    delete this.coneTwist;
-    delete this.generic;
-    delete this.slider;
-    delete this.hinge;
-    delete this.point;
+    delete this.ConeTwist;
+    delete this.Generic;
+    delete this.Slider;
+    delete this.Hinge;
+    delete this.Point;
 
-    delete this.kinematic;
-    delete this.dynamic;
-    delete this.static;
+    delete this.Kinematic;
+    delete this.Dynamic;
+    delete this.Static;
 
+    delete this.Raycaster;
     delete this._events;
     delete this._clock;
-    delete this.ray;
 
     if (this._soft) {
-      delete this.cloth;
-      delete this.soft;
-      delete this.rope;
+      delete this.Cloth;
+      delete this.Soft;
+      delete this.Rope;
     }
   }
 

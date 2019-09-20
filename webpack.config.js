@@ -1,10 +1,11 @@
 const path = require('path');
 const config = require('./package.json');
 const build = require('yargs').argv.env === 'build';
+const entryPoint = build ? '/src/workers/APE.js' : '/src/index.js';
 
 module.exports = {
   mode: build ? 'production' : 'development',
-  entry: __dirname + '/src/index.js',
+  entry: __dirname + entryPoint,
   devtool: 'inline-source-map',
 
   module: {
@@ -42,8 +43,9 @@ module.exports = {
     globalObject: "typeof self !== 'undefined' ? self : this",
     filename: `${config.name}${build ? '.min' : ''}.js`,
     path: __dirname + '/build',
-
     umdNamedDefine: true,
+
+    libraryExport: 'default',
     library: config.name,
     libraryTarget: 'umd'
   }

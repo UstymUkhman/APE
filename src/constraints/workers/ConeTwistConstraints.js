@@ -3,7 +3,7 @@ import { Ammo } from '@/utils';
 
 export default class ConeTwistConstraints extends Constraints {
   constructor (world) {
-    super(world, 'coneTwist');
+    super(world, 'ConeTwist');
 
     /* eslint-disable new-cap */
     this.motorTarget = new Ammo.btQuaternion();

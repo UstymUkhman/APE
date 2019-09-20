@@ -5,7 +5,7 @@ import { Ammo } from '@/utils';
 
 export default class DynamicBodies extends RigidBodies {
   constructor (world) {
-    super(world, 'dynamic');
+    super(world, 'Dynamic');
     this.linearVelocity = new Vector3();
     this.angularVelocity = new Vector3();
   }
@@ -88,7 +88,7 @@ export default class DynamicBodies extends RigidBodies {
     this.world.addRigidBody(body, this.group, this.mask);
 
     this.bodies.push({
-      type: 'dynamic',
+      type: 'Dynamic',
       uuid: mesh.uuid,
       collisions: [],
       mesh: mesh,

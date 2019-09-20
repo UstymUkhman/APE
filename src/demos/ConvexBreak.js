@@ -126,7 +126,7 @@ export default class ConvexBreak extends Playground {
 
   onCollision (thisBody, otherBody, contacts) {
     const impulse = contacts[0] ? contacts[0].impulse : 0;
-    const isBall = otherBody.type === 'dynamic';
+    const isBall = otherBody.type === 'Dynamic';
     const userData = thisBody.mesh.userData;
 
     if (isBall && userData.breakable && impulse > 500) {

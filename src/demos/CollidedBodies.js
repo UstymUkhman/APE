@@ -70,7 +70,7 @@ export default class CollidedBodies extends Playground {
 
   onCollisionStart (thisObject, otherObject, contacts) {
     console.log('onCollisionStart', thisObject.type, otherObject.type);
-    const staticCollision = thisObject.type === 'static' || otherObject.type === 'static';
+    const staticCollision = thisObject.type === 'Static' || otherObject.type === 'Static';
 
     if (!staticCollision) {
       otherObject.mesh.material.color.setHex(START_COLLISION);
@@ -84,7 +84,7 @@ export default class CollidedBodies extends Playground {
 
   onCollisionEnd (thisObject, otherObject, contacts) {
     console.log('onCollisionEnd', thisObject.type, otherObject.type);
-    const staticCollision = thisObject.type === 'static' || otherObject.type === 'static';
+    const staticCollision = thisObject.type === 'Static' || otherObject.type === 'Static';
 
     if (!staticCollision) {
       otherObject.mesh.material.color.setHex(END_COLLISION);

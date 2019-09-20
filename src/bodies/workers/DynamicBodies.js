@@ -4,7 +4,7 @@ import { Ammo } from '@/utils';
 
 export default class DynamicBodies extends RigidBodies {
   constructor (world) {
-    super(world, 'dynamic');
+    super(world, 'Dynamic');
   }
 
   addBox (props) {
@@ -204,7 +204,7 @@ export default class DynamicBodies extends RigidBodies {
 
     self.postMessage({
       action: 'updateBodies',
-      type: 'dynamic',
+      type: 'Dynamic',
       bodies: update
     });
   }

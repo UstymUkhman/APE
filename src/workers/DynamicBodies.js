@@ -4,7 +4,7 @@ import RigidBodies from '@/workers/RigidBodies';
 
 export default class DynamicBodies extends RigidBodies {
   constructor (worker) {
-    super('dynamic', worker);
+    super('Dynamic', worker);
     this.worker.postMessage({action: 'initDynamicBodies'});
   }
 

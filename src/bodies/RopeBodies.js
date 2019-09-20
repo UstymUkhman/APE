@@ -11,7 +11,7 @@ import {
 
 export default class RopeBodies extends FlexBodies {
   constructor (world, events) {
-    super(world, 'rope');
+    super(world, 'Rope');
     this.events = events;
 
     this.margin = ROPE_MARGIN;

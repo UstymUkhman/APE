@@ -5,7 +5,7 @@ import { Ammo } from '@/utils';
 
 export default class HingeConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'hinge');
+    super(world, 'Hinge');
     this.events = events;
   }
 

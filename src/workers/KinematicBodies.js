@@ -2,7 +2,7 @@ import RigidBodies from '@/workers/RigidBodies';
 
 export default class KinematicBodies extends RigidBodies {
   constructor (worker) {
-    super('kinematic', worker);
+    super('Kinematic', worker);
     this.worker.postMessage({action: 'initKinematicBodies'});
   }
 

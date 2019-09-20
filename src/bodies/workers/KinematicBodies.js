@@ -9,7 +9,7 @@ import {
 
 export default class KinematicBodies extends RigidBodies {
   constructor (world) {
-    super(world, 'kinematic');
+    super(world, 'Kinematic');
 
     /* eslint-disable new-cap */
     this.rotation = new Ammo.btQuaternion();
@@ -67,7 +67,7 @@ export default class KinematicBodies extends RigidBodies {
 
     self.postMessage({
       action: 'updateBodies',
-      type: 'kinematic'
+      type: 'Kinematic'
     });
   }
 }

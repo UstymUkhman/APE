@@ -7,7 +7,7 @@ import { Ammo } from '@/utils';
 
 export default class ConeTwistConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'coneTwist');
+    super(world, 'ConeTwist');
     this.events = events;
 
     /* eslint-disable new-cap */

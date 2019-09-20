@@ -2,7 +2,7 @@ import RigidBodies from '@/workers/RigidBodies';
 
 export default class StaticBodies extends RigidBodies {
   constructor (worker) {
-    super('static', worker);
+    super('Static', worker);
     this.worker.postMessage({action: 'initStaticBodies'});
   }
 

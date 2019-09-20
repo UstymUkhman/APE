@@ -3,11 +3,11 @@ import { getBodyGroup, getBodyMask } from '@/utils';
 
 export default class FlexBodies {
   constructor (type, worker, constants = null) {
+    this.type = type;
     this.bodies = [];
-    this.worker = worker;
 
+    this.worker = worker;
     this.constants = constants;
-    this.type = type.toLowerCase();
 
     this.constants.mask = getBodyMask(this.type);
     this.constants.group = getBodyGroup(this.type);

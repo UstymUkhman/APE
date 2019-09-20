@@ -3,7 +3,7 @@ import { Ammo } from '@/utils';
 
 export default class GenericConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'generic');
+    super(world, 'Generic');
     this.events = events;
   }
 

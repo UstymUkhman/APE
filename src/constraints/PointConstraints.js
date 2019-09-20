@@ -4,7 +4,7 @@ import { Ammo } from '@/utils';
 
 export default class PointConstraints extends Constraints {
   constructor (world, events) {
-    super(world, 'point');
+    super(world, 'Point');
     this.events = events;
   }
 
