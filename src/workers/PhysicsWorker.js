@@ -120,9 +120,7 @@ class PhysicsWorker {
     const constants = boxFallback ? this.kinematic.constants : null;
 
     if (boxFallback) {
-      if (!this.kinematic) this.initKinematicBodies();
       this.kinematic.constants = this.static.constants;
-
       props.size = { ...props.size, depth: 0.25 };
       props.type = 'kinematic';
       staticType = false;
@@ -252,7 +250,7 @@ class PhysicsWorker {
   appendRope (props) {
     let target = this.getRigidBody(props.target);
 
-    if (this.soft && !target) {
+    if (!target) {
       target = this.soft.getBodyByUUID(props.target);
     }
 
@@ -301,24 +299,17 @@ class PhysicsWorker {
   checkCollisions () {
     const dispatcher = this.world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
-
     const collisions = new Array(manifolds);
-    const lastCollisions = { };
 
-    if (this.kinematic) {
-      lastCollisions.kinematic = this.kinematic.getCollisions();
-      this.kinematic.resetCollisions();
-    }
+    const lastCollisions = {
+      kinematic: this.kinematic.getCollisions(),
+      dynamic: this.dynamic.getCollisions(),
+      static: this.static.getCollisions()
+    };
 
-    if (this.dynamic) {
-      lastCollisions.dynamic = this.dynamic.getCollisions();
-      this.dynamic.resetCollisions();
-    }
-
-    if (this.static) {
-      lastCollisions.static = this.static.getCollisions();
-      this.static.resetCollisions();
-    }
+    this.kinematic.resetCollisions();
+    this.dynamic.resetCollisions();
+    this.static.resetCollisions();
 
     for (let i = 0; i < manifolds; i++) {
       const manifold = dispatcher.getManifoldByIndexInternal(i);
@@ -440,56 +431,35 @@ class PhysicsWorker {
   }
 
   getBodyByCollider (collider) {
-    let body = null;
+    let body = this.dynamic.getBodyInfo(collider, '');
+    if (body) return body;
 
-    if (this.kinematic) {
-      body = this.kinematic.getBodyInfo(collider, '');
-    }
+    body = this.kinematic.getBodyInfo(collider, '');
+    if (body) return body;
 
-    if (this.dynamic && !body) {
-      body = this.dynamic.getBodyInfo(collider, '');
-    }
-
-    if (this.static && !body) {
-      body = this.static.getBodyInfo(collider, '');
-    }
-
+    body = this.static.getBodyInfo(collider, '');
     return body;
   }
 
   getBodyByUUID (uuid) {
-    let body = null;
+    let body = this.dynamic.getBodyInfo(null, uuid);
+    if (body) return body;
 
-    if (this.kinematic) {
-      body = this.kinematic.getBodyInfo(null, uuid);
-    }
+    body = this.kinematic.getBodyInfo(null, uuid);
+    if (body) return body;
 
-    if (this.dynamic && !body) {
-      body = this.dynamic.getBodyInfo(null, uuid);
-    }
-
-    if (this.static && !body) {
-      body = this.static.getBodyInfo(null, uuid);
-    }
-
+    body = this.static.getBodyInfo(null, uuid);
     return body;
   }
 
   getRigidBody (uuid) {
-    let body = null;
+    let body = this.dynamic.getBodyByUUID(uuid);
+    if (body) return body;
 
-    if (this.kinematic) {
-      body = this.kinematic.getBodyByUUID(uuid);
-    }
+    body = this.kinematic.getBodyByUUID(uuid);
+    if (body) return body;
 
-    if (this.dynamic && !body) {
-      body = this.dynamic.getBodyByUUID(uuid);
-    }
-
-    if (this.static && !body) {
-      body = this.static.getBodyByUUID(uuid);
-    }
-
+    body = this.static.getBodyByUUID(uuid);
     return body;
   }
 
@@ -512,42 +482,17 @@ class PhysicsWorker {
   }
 
   activateBodies () {
-    if (this.coneTwist) {
-      this.coneTwist.activateAll();
-    }
-
-    if (this.dynamic) {
-      this.dynamic.activateAll();
-    }
-
-    if (this.generic) {
-      this.generic.activateAll();
-    }
-
-    if (this.slider) {
-      this.slider.activateAll();
-    }
-
-    if (this.hinge) {
-      this.hinge.activateAll();
-    }
-
-    if (this.point) {
-      this.point.activateAll();
-    }
+    this.coneTwist.activateAll();
+    this.dynamic.activateAll();
+    this.generic.activateAll();
+    this.slider.activateAll();
+    this.hinge.activateAll();
+    this.point.activateAll();
 
     if (this._soft) {
-      if (this.cloth) {
-        this.cloth.activateAll();
-      }
-
-      if (this.soft) {
-        this.soft.activateAll();
-      }
-
-      if (this.rope) {
-        this.rope.activateAll();
-      }
+      this.cloth.activateAll();
+      this.soft.activateAll();
+      this.rope.activateAll();
     }
   }
 
