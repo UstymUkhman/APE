@@ -132,6 +132,7 @@ export default class PhysicsWorld {
 
   destroy () {
     this.worker.removeEventListener('message', this._onMessage);
+    this.worker.postMessage({ action: 'destroy' });
 
     delete this.coneTwist;
     delete this.generic;

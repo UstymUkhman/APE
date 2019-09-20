@@ -182,22 +182,13 @@
         })
       );
 
-      cloth.receiveShadow = true;
-      cloth.castShadow = true;
-
-      // var clothPivot = new THREE.Object3D();
-      // clothPivot.rotation.y = Math.PI / 2;
-
-      // clothPivot.add(cloth);
-      // scene.add(clothPivot);
-      scene.add(cloth);
-
-      // Body mesh, mass & position
       physics.cloth.addBody(cloth, 1, position);
-
-      // Body mesh, point (0 - 25) & target body:
       physics.cloth.append(cloth, 25, rod);
       physics.cloth.append(cloth, 0, rod);
+
+      cloth.receiveShadow = true;
+      cloth.castShadow = true;
+      scene.add(cloth);
     }
 
     function createRaycaster () {
@@ -229,7 +220,6 @@
 
       ray.receiveShadow = true;
       ray.castShadow = true;
-
       scene.add(raycaster);
     }
 
@@ -314,9 +304,9 @@
       var time = performance.now();
       var delta = (time - prevTime) / 1000;
 
-      var acceleration = 500 * delta;
+      var acceleration = 150 * delta;
+      var torque = acceleration / 10;
       var deceleration = 10 * delta;
-      var torque = 50 * delta;
 
       velocity.x -= velocity.x * deceleration;
       velocity.y -= velocity.y * deceleration;

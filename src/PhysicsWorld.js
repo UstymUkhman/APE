@@ -107,10 +107,11 @@ export default class PhysicsWorld {
   }
 
   getRopeAnchor (targetUUID, rope) {
-    const target = this.kinematic.getBodyByUUID(targetUUID) ||
-                   this.dynamic.getBodyByUUID(targetUUID) ||
-                   this.static.getBodyByUUID(targetUUID) ||
-                   this.soft.getBodyByUUID(targetUUID);
+    let target = this.getBodyByUUID(targetUUID);
+
+    if (!target) {
+      target = this.soft.getBodyByUUID(targetUUID);
+    }
 
     if (!target) {
       console.error(
@@ -125,9 +126,7 @@ export default class PhysicsWorld {
 
   getClothAnchor (targetUUID, cloth) {
     const clothBody = this.cloth.getBodyByUUID(cloth.uuid);
-    const target = this.kinematic.getBodyByUUID(targetUUID) ||
-                   this.dynamic.getBodyByUUID(targetUUID) ||
-                   this.static.getBodyByUUID(targetUUID);
+    const target = this.getBodyByUUID(targetUUID);
 
     if (!clothBody) {
       console.error(
@@ -146,9 +145,7 @@ export default class PhysicsWorld {
   }
 
   getPointBody (bodyUUID, position) {
-    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
-                 this.dynamic.getBodyByUUID(bodyUUID) ||
-                 this.static.getBodyByUUID(bodyUUID);
+    const body = this.getBodyByUUID(bodyUUID);
 
     if (!body) {
       console.error(
@@ -162,13 +159,8 @@ export default class PhysicsWorld {
   }
 
   getPointBodies (body0UUID, body1UUID, positions) {
-    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
-                  this.dynamic.getBodyByUUID(body0UUID) ||
-                  this.static.getBodyByUUID(body0UUID);
-
-    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
-                  this.dynamic.getBodyByUUID(body1UUID) ||
-                  this.static.getBodyByUUID(body1UUID);
+    const body0 = this.getBodyByUUID(body0UUID);
+    const body1 = this.getBodyByUUID(body1UUID);
 
     if (!body0) {
       console.error(
@@ -188,9 +180,7 @@ export default class PhysicsWorld {
   }
 
   getHingeBody (bodyUUID, position) {
-    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
-                 this.dynamic.getBodyByUUID(bodyUUID) ||
-                 this.static.getBodyByUUID(bodyUUID);
+    const body = this.getBodyByUUID(bodyUUID);
 
     if (!body) {
       console.error(
@@ -204,13 +194,8 @@ export default class PhysicsWorld {
   }
 
   getHingeBodies (pinUUID, armUUID, position) {
-    const pin = this.kinematic.getBodyByUUID(pinUUID) ||
-                this.dynamic.getBodyByUUID(pinUUID) ||
-                this.static.getBodyByUUID(pinUUID);
-
-    const arm = this.kinematic.getBodyByUUID(armUUID) ||
-                this.dynamic.getBodyByUUID(armUUID) ||
-                this.static.getBodyByUUID(armUUID);
+    const pin = this.getBodyByUUID(pinUUID);
+    const arm = this.getBodyByUUID(armUUID);
 
     if (!pin) {
       console.error(
@@ -230,9 +215,7 @@ export default class PhysicsWorld {
   }
 
   getSliderBody (bodyUUID, pivot) {
-    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
-                 this.dynamic.getBodyByUUID(bodyUUID) ||
-                 this.static.getBodyByUUID(bodyUUID);
+    const body = this.getBodyByUUID(bodyUUID);
 
     if (!body) {
       console.error(
@@ -246,13 +229,8 @@ export default class PhysicsWorld {
   }
 
   getSliderBodies (body0UUID, body1UUID, pivot) {
-    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
-                  this.dynamic.getBodyByUUID(body0UUID) ||
-                  this.static.getBodyByUUID(body0UUID);
-
-    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
-                  this.dynamic.getBodyByUUID(body1UUID) ||
-                  this.static.getBodyByUUID(body1UUID);
+    const body0 = this.getBodyByUUID(body0UUID);
+    const body1 = this.getBodyByUUID(body1UUID);
 
     if (!body0) {
       console.error(
@@ -272,9 +250,7 @@ export default class PhysicsWorld {
   }
 
   getGenericBody (bodyUUID, pivot) {
-    const body = this.kinematic.getBodyByUUID(bodyUUID) ||
-                 this.dynamic.getBodyByUUID(bodyUUID) ||
-                 this.static.getBodyByUUID(bodyUUID);
+    const body = this.getBodyByUUID(bodyUUID);
 
     if (!body) {
       console.error(
@@ -288,13 +264,8 @@ export default class PhysicsWorld {
   }
 
   getGenericBodies (body0UUID, body1UUID, pivot) {
-    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
-                  this.dynamic.getBodyByUUID(body0UUID) ||
-                  this.static.getBodyByUUID(body0UUID);
-
-    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
-                  this.dynamic.getBodyByUUID(body1UUID) ||
-                  this.static.getBodyByUUID(body1UUID);
+    const body0 = this.getBodyByUUID(body0UUID);
+    const body1 = this.getBodyByUUID(body1UUID);
 
     if (!body0) {
       console.error(
@@ -314,13 +285,8 @@ export default class PhysicsWorld {
   }
 
   getConeTwistBodies (body0UUID, body1UUID, pivot) {
-    const body0 = this.kinematic.getBodyByUUID(body0UUID) ||
-                  this.dynamic.getBodyByUUID(body0UUID) ||
-                  this.static.getBodyByUUID(body0UUID);
-
-    const body1 = this.kinematic.getBodyByUUID(body1UUID) ||
-                  this.dynamic.getBodyByUUID(body1UUID) ||
-                  this.static.getBodyByUUID(body1UUID);
+    const body0 = this.getBodyByUUID(body0UUID);
+    const body1 = this.getBodyByUUID(body1UUID);
 
     if (!body0) {
       console.error(
@@ -562,6 +528,8 @@ export default class PhysicsWorld {
   }
 
   destroy () {
+    this.world.__destroy__();
+
     delete this.coneTwist;
     delete this.generic;
     delete this.slider;
@@ -572,6 +540,7 @@ export default class PhysicsWorld {
     delete this.dynamic;
     delete this.static;
 
+    delete this._events;
     delete this._clock;
     delete this.ray;
 

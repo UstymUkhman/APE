@@ -690,9 +690,15 @@ class PhysicsWorker {
   disableBody (props) {
     this[props.type].disable(props);
   }
+
+  destroy () {
+    // eslint-disable-next-line no-use-before-define
+    self.removeEventListener('message', onMessage);
+    this.world.__destroy__();
+  }
 }
 
-self.addEventListener('message', (event) => {
+function onMessage (event) {
   const action = event.data.action;
   const params = event.data.params;
 
@@ -709,4 +715,6 @@ self.addEventListener('message', (event) => {
       'Physics is not initialized.'
     );
   }
-});
+}
+
+self.addEventListener('message', onMessage);
