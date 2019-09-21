@@ -9,10 +9,14 @@ logs
 # Dependency directory:
 node_modules
 
+# Test source files:
+src/demos
+src/index.js
+
 # Compiled source files:
 build/*
 
 # Leave compiled APE library:
 !build/APE.min.js
-!build/APE.worker.js
+!build/worker/APE.js
 !build/APE.worker.min.js

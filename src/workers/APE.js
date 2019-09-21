@@ -1,4 +1,4 @@
-import APEWorker from 'worker-loader?name=/APE.worker.js!workers/APEWorker.js';
+import APEWorker from 'worker-loader?name=/worker/APE.js!workers/APEWorker.js';
 
 import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
 import GenericConstraints from '@/workers/GenericConstraints';
@@ -83,10 +83,6 @@ class APE {
     });
   }
 
-  setRayResult (data) {
-    this.Raycaster.setResult(data);
-  }
-
   setCollisionReport (report, fullReport = false) {
     this._worker.postMessage({
       params: [report, fullReport],
@@ -135,6 +131,26 @@ class APE {
         }, contacts);
       }
     }
+  }
+
+  setRayResult (data) {
+    this.Raycaster.setResult(data);
+  }
+
+  createGroup (name, index = 1) {
+    if (isNaN(index) || index < 1 || index > 5) {
+      console.warn(
+        'To create a custom group you have to use a string name\n',
+        'and an integer value between 1 and 5 included.'
+      );
+
+      return null;
+    }
+
+    const group = Math.pow(2, 10 + index);
+    this[`GROUP_${name.toUpperCase()}`] = group;
+
+    return group;
   }
 
   destroy () {

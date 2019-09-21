@@ -26,6 +26,7 @@ export default class APE {
     this._collisions = 0;
     this._gravity = gravity;
 
+    this.Ammo = Ammo;
     this._clock = new Clock();
     this._events = new EventEmitter();
 
@@ -507,6 +508,22 @@ export default class APE {
       this.Soft.activateAll();
       this.Rope.activateAll();
     }
+  }
+
+  createGroup (name, index = 1) {
+    if (isNaN(index) || index < 1 || index > 5) {
+      console.warn(
+        'To create a custom group you have to use a string name\n',
+        'and an integer value between 1 and 5 included.'
+      );
+
+      return null;
+    }
+
+    const group = Math.pow(2, 10 + index);
+    this[`GROUP_${name.toUpperCase()}`] = group;
+
+    return group;
   }
 
   update () {

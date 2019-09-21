@@ -13,19 +13,21 @@
     <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
-    <script type="text/javascript" src="../build/APE.worker.min.js"></script>
+    <script type="text/javascript" src="/build/APE.worker.min.js"></script>
     <script type="text/javascript" src="./base.js"></script>
   </head>
 
   <body></body>
 
   <script type="text/javascript">
+    var staticBox, kinematicBox, dynamicBox;
+    var prevTime = performance.now();
+    var raycaster, ray, direction;
+    var customGroup = false;
+
     var velocity = new THREE.Vector3();
     var rotation = new THREE.Vector2();
     var target = new THREE.Vector3();
-
-    var prevTime = performance.now();
-    var raycaster, ray, direction;
 
     var move = {
       backward: false,
@@ -49,9 +51,20 @@
       APE.Static.addBox(ground);
     }
 
-    function createBodies () {
+    function createRigidBodies (customGroup) {
+      if (customGroup) {
+        var group = APE.createGroup('custom', 1);
+        // group === APE.GROUP_CUSTOM
+        APE.Kinematic.group = group;
+        APE.Dynamic.group = group;
+      } else {
+        // Default settings:
+        APE.Kinematic.group = APE.GROUP_KINEMATIC;
+        APE.Dynamic.group = APE.GROUP_DYNAMIC;
+      }
+
       // Static Body:
-      var staticBox = new THREE.Mesh(
+      staticBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
           color: 0xCCCCCC
@@ -66,7 +79,7 @@
       scene.add(staticBox);
 
       // Kinematic Body:
-      var kinematicBox = new THREE.Mesh(
+      kinematicBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
           color: 0x444444
@@ -81,7 +94,7 @@
       scene.add(kinematicBox);
 
       // Dynamic Body:
-      var dynamicBox = new THREE.Mesh(
+      dynamicBox = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 5),
         new THREE.MeshPhongMaterial({
           color: 0x00AAAA
@@ -95,7 +108,9 @@
       // Body mesh & mass
       APE.Dynamic.addBox(dynamicBox, 10);
       scene.add(dynamicBox);
+    }
 
+    function createSoftBodies () {
       // Soft Body:
       var boxGeometry = new THREE.BufferGeometry().fromGeometry(
         new THREE.BoxGeometry(5, 5, 5, 25, 25, 25)
@@ -243,11 +258,28 @@
         }
       });
 
+      masks.push('CUSTOM_MASK');
+      masks.push('CUSTOM_GROUP');
+
       var RaycastMask = function () { this.MASK = 'ALL'; };
       var mask = gui.add(new RaycastMask(), 'MASK', masks);
 
       mask.onFinishChange(function (current) {
-        var selectedMask = APE['MASK_' + current];
+        var selectedMask = '';
+
+        if (customGroup) {
+          resetRigidBodies(false);
+        }
+
+        if (current === 'CUSTOM_MASK') {
+          selectedMask = APE.MASK_DYNAMIC | APE.MASK_SOFT;
+        } else if (current === 'CUSTOM_GROUP') {
+          resetRigidBodies(true);
+          selectedMask = APE.GROUP_CUSTOM;
+        } else {
+          selectedMask = APE['MASK_' + current];
+        }
+
         APE.Raycaster.setCollisionFilterMask(selectedMask);
       });
 
@@ -378,10 +410,21 @@
       requestAnimationFrame(update);
     }
 
+    function resetRigidBodies (custom) {
+      APE.Kinematic.remove(kinematicBox);
+      APE.Dynamic.remove(dynamicBox);
+      APE.Static.remove(staticBox);
+
+      createRigidBodies(custom);
+      customGroup = custom;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       APE.init(true);
       createGround();
-      createBodies();
+
+      createRigidBodies(false);
+      createSoftBodies();
 
       createRaycaster();
       createControls();
