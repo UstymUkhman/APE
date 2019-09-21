@@ -1,5 +1,6 @@
-import { getBodyGroup, getBodyMask } from '@/utils';
 import { Vector3 } from 'three/src/math/Vector3';
+import { getBodyGroup } from '@/utils';
+import { MASK_ALL } from '@/constants';
 import find from 'lodash.find';
 
 import {
@@ -19,10 +20,10 @@ export default class RigidBodies {
     this.worker = worker;
 
     this.constants = {
+      mask: MASK_ALL,
       margin: RIGID_MARGIN,
       linearFactor: VECTOR1,
       angularFactor: VECTOR1,
-      mask: getBodyMask(type),
       friction: RIGID_FRICTION,
       group: getBodyGroup(type),
       restitution: RIGID_RESTITUTION,

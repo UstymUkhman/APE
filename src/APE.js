@@ -15,7 +15,7 @@ import RopeBodies from '@/bodies/RopeBodies';
 import { Clock } from 'three/src/core/Clock';
 import { GRAVITY } from '@/constants';
 
-import PhysicsRay from '@/PhysicsRay';
+import Raycaster from '@/Raycaster';
 import EventEmitter from 'events';
 import { Ammo } from '@/utils';
 import find from 'lodash.find';
@@ -46,8 +46,9 @@ export default class APE {
 
     this.Kinematic = new KinematicBodies(this.world);
     this.Dynamic = new DynamicBodies(this.world);
-    this.Raycaster = new PhysicsRay(this.world);
     this.Static = new StaticBodies(this.world);
+
+    this.Raycaster = new Raycaster(this.world);
 
     if (this._soft) {
       this.Cloth = new ClothBodies(this.world, this._events);

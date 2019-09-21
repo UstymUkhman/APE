@@ -1,19 +1,12 @@
 import AmmoJS from 'ammo.js';
 
 import {
-  MASK_ALL,
-  GROUP_DEFAULT,
-  MASK_SOFT,
   GROUP_SOFT,
-  MASK_ROPE,
   GROUP_ROPE,
-  MASK_CLOTH,
   GROUP_CLOTH,
-  MASK_STATIC,
   GROUP_STATIC,
-  MASK_DYNAMIC,
+  GROUP_DEFAULT,
   GROUP_DYNAMIC,
-  MASK_KINEMATIC,
   GROUP_KINEMATIC
 } from '@/constants';
 
@@ -67,10 +60,8 @@ const getBodyGroup = (type) => {
  * @param {String} type - body type
  * @returns {number}
  */
-const getBodyMask = (type) => {
-  return MASK_ALL;
-
-  /* switch (type) {
+/* const getBodyMask = (type) => {
+  switch (type) {
     case 'Soft': return MASK_SOFT;
     case 'Rope': return MASK_ROPE;
     case 'Cloth': return MASK_CLOTH;
@@ -78,13 +69,13 @@ const getBodyMask = (type) => {
     case 'Dynamic': return MASK_DYNAMIC;
     case 'Kinematic': return MASK_KINEMATIC;
     default: return MASK_ALL;
-  } */
-};
+  }
+}; */
 
 export {
   Ammo,
   webWorker,
-  getBodyMask,
   getBodyGroup,
+  // getBodyMask,
   equalBufferVertices
 };

@@ -1,11 +1,12 @@
 const path = require('path');
 const config = require('./package.json');
+const worker = require('yargs').argv.worker;
 const build = require('yargs').argv.env === 'build';
-const entryPoint = build ? '/src/workers/APE.js' : '/src/index.js';
+const entryPoint = build ? `${worker ? 'workers/' : ''}${config.name}.js` : 'index.js';
 
 module.exports = {
   mode: build ? 'production' : 'development',
-  entry: __dirname + entryPoint,
+  entry: `${__dirname}/src/${entryPoint}`,
   devtool: 'inline-source-map',
 
   module: {
@@ -13,15 +14,6 @@ module.exports = {
       loader: 'babel-loader',
       test: /(\.jsx|\.js)$/,
       exclude: /node_modules/
-      // }, {
-      // loader: 'worker-loader',
-      // test: /\.worker\.js$/,
-      // exclude: /node_modules/,
-
-      // options: {
-      //   inline: true,
-      //   name: 'worker.js'
-      // }
     }]
   },
 
@@ -40,8 +32,8 @@ module.exports = {
   },
 
   output: {
-    globalObject: "typeof self !== 'undefined' ? self : this",
-    filename: `${config.name}${build ? '.min' : ''}.js`,
+    filename: `${config.name}${worker ? '.worker' : ''}${build ? '.min' : ''}.js`,
+    globalObject: 'typeof self !== \'undefined\' ? self : this',
     path: __dirname + '/build',
     umdNamedDefine: true,
 

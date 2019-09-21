@@ -1,5 +1,12 @@
-import { SOFT_DAMPING, SOFT_FRICTION, SOFT_STIFFNESS, SOFT_COLLISION } from '@/constants';
-import { getBodyGroup, getBodyMask } from '@/utils';
+import { getBodyGroup } from '@/utils';
+
+import {
+  MASK_ALL,
+  SOFT_DAMPING,
+  SOFT_FRICTION,
+  SOFT_COLLISION,
+  SOFT_STIFFNESS
+} from '@/constants';
 
 export default class FlexBodies {
   constructor (type, worker, constants = null) {
@@ -9,7 +16,7 @@ export default class FlexBodies {
     this.worker = worker;
     this.constants = constants;
 
-    this.constants.mask = getBodyMask(this.type);
+    this.constants.mask = MASK_ALL;
     this.constants.group = getBodyGroup(this.type);
     this.worker.postMessage({action: `init${type}Bodies`});
   }

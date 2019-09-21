@@ -7,13 +7,13 @@ import { BoxGeometry } from 'three/src/geometries/BoxGeometry';
 import { AmbientLight } from 'three/src/lights/AmbientLight';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 
-import 'three/examples/js/controls/OrbitControls';
+// import 'three/examples/js/controls/OrbitControls';
 import { Scene } from 'three/src/scenes/Scene';
 import { Mesh } from 'three/src/objects/Mesh';
 import { Color } from 'three/src/math/Color';
 import { Fog } from 'three/src/scenes/Fog';
 
-import Stats from 'stats.js';
+// import Stats from 'stats.js';
 import RAF from 'demos/RAF';
 
 const WHITE = 0xFFFFFF;
@@ -31,15 +31,15 @@ export default class Playground {
     this.createGround();
 
     this.createRenderer();
-    this.createControls();
+    // this.createControls();
     this.createEvents();
 
     this._render = this.render.bind(this);
-    this.stats = new Stats();
-    this.stats.showPanel(0);
+    // this.stats = new Stats();
+    // this.stats.showPanel(0);
 
     RAF.add(this._render);
-    document.body.appendChild(this.stats.dom);
+    // document.body.appendChild(this.stats.dom);
   }
 
   createScene () {
@@ -166,10 +166,10 @@ export default class Playground {
   }
 
   render () {
-    this.stats.begin();
-    this.orbitControls.update();
+    // this.stats.begin();
+    // this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
-    this.stats.end();
+    // this.stats.end();
   }
 
   onResize () {

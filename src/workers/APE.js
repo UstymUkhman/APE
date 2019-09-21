@@ -1,4 +1,4 @@
-import PhysicsWorker from 'worker-loader?name=worker.js!workers/PhysicsWorker.js';
+import APEWorker from 'worker-loader?name=/APE.worker.js!workers/APEWorker.js';
 
 import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
 import GenericConstraints from '@/workers/GenericConstraints';
@@ -14,28 +14,23 @@ import ClothBodies from '@/workers/ClothBodies';
 import SoftBodies from '@/workers/SoftBodies';
 import RopeBodies from '@/workers/RopeBodies';
 
-import PhysicsRay from '@/workers/PhysicsRay';
 import { Clock } from 'three/src/core/Clock';
+import Raycaster from '@/workers/Raycaster';
 import * as CONSTANTS from '@/constants';
+import { Ammo } from '@/utils';
 
 class APE {
   constructor () {
-    this.worker = new PhysicsWorker();
+    this._worker = new APEWorker();
     this._clock = new Clock();
+    this.Ammo = Ammo;
 
     this._collisionReport = false;
     this._fullCollisionReport = false;
 
+    Object.assign(this, CONSTANTS);
     this._onMessage = this.onWorkerMessage.bind(this);
-    this.worker.addEventListener('message', this._onMessage);
-
-    for (const constant in CONSTANTS) {
-      const value = CONSTANTS[constant];
-
-      if (!constant.indexOf('MASK_')) {
-        this[constant] = value;
-      }
-    }
+    this._worker.addEventListener('message', this._onMessage);
   }
 
   init (soft = false, gravity = CONSTANTS.GRAVITY) {
@@ -43,26 +38,27 @@ class APE {
     this._collisions = 0;
     this._gravity = gravity;
 
-    this.worker.postMessage({
+    this._worker.postMessage({
       params: [soft, gravity],
       action: 'init'
     });
 
-    this.ConeTwist = new ConeTwistConstraints(this.worker);
-    this.Generic = new GenericConstraints(this.worker);
-    this.Slider = new SliderConstraints(this.worker);
-    this.Hinge = new HingeConstraints(this.worker);
-    this.Point = new PointConstraints(this.worker);
+    this.ConeTwist = new ConeTwistConstraints(this._worker);
+    this.Generic = new GenericConstraints(this._worker);
+    this.Slider = new SliderConstraints(this._worker);
+    this.Hinge = new HingeConstraints(this._worker);
+    this.Point = new PointConstraints(this._worker);
 
-    this.Kinematic = new KinematicBodies(this.worker);
-    this.Dynamic = new DynamicBodies(this.worker);
-    this.Raycaster = new PhysicsRay(this.worker);
-    this.Static = new StaticBodies(this.worker);
+    this.Kinematic = new KinematicBodies(this._worker);
+    this.Dynamic = new DynamicBodies(this._worker);
+    this.Static = new StaticBodies(this._worker);
+
+    this.Raycaster = new Raycaster(this._worker);
 
     if (this._soft) {
-      this.Cloth = new ClothBodies(this.worker);
-      this.Rope = new RopeBodies(this.worker);
-      this.Soft = new SoftBodies(this.worker);
+      this.Cloth = new ClothBodies(this._worker);
+      this.Rope = new RopeBodies(this._worker);
+      this.Soft = new SoftBodies(this._worker);
     }
 
     return this;
@@ -77,7 +73,7 @@ class APE {
     const bodies = this[data.type].update(data.bodies);
     const delta = this._clock.getDelta();
 
-    this.worker.postMessage({
+    this._worker.postMessage({
       action: 'updateBodies',
       params: {
         type: `${data.type}`,
@@ -92,7 +88,7 @@ class APE {
   }
 
   setCollisionReport (report, fullReport = false) {
-    this.worker.postMessage({
+    this._worker.postMessage({
       params: [report, fullReport],
       action: 'reportCollisions'
     });
@@ -142,8 +138,8 @@ class APE {
   }
 
   destroy () {
-    this.worker.removeEventListener('message', this._onMessage);
-    this.worker.postMessage({ action: 'destroy' });
+    this._worker.removeEventListener('message', this._onMessage);
+    this._worker.postMessage({ action: 'destroy' });
 
     delete this.ConeTwist;
     delete this.Generic;
@@ -156,7 +152,7 @@ class APE {
     delete this.Static;
 
     delete this.Raycaster;
-    delete this.worker;
+    delete this._worker;
     delete this._clock;
 
     if (this._soft) {
@@ -192,7 +188,7 @@ class APE {
   set gravity (value) {
     this._gravity = value;
 
-    this.worker.postMessage({
+    this._worker.postMessage({
       params: { gravity: value },
       action: 'setGravity'
     });

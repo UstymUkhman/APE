@@ -20,7 +20,7 @@ export default class RigidBodies extends Playground {
     this.initPhysics();
     this.createDynamicBodies();
     this.createKinematicBodies();
-    this.createPhysicsRayCaster();
+    this.createRaycaster();
 
     this.createHinge();
     this.createCloth();
@@ -94,7 +94,7 @@ export default class RigidBodies extends Playground {
     // }, 5000);
   }
 
-  createPhysicsRayCaster () {
+  createRaycaster () {
     this.fly = new Mesh(
       new SphereGeometry(1, 20, 20),
       new MeshPhongMaterial({ color: 0x222222 })

@@ -13,5 +13,6 @@ node_modules
 build/*
 
 # Leave compiled APE library:
-!worker.js
 !build/APE.min.js
+!build/APE.worker.js
+!build/APE.worker.min.js

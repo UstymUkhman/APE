@@ -16,6 +16,13 @@
 ``npm start`` (or ``yarn start``)
 
 
+## Build: ##
+
+`yarn build`
+
+`yarn build --worker` (for using APE with a Web Worker)
+
+
 ## Demos: ##
 
 [Raycaster](https://ustymukhman.github.io/APE/examples/raycaster.html) [`source code`](https://github.com/UstymUkhman/APE/blob/master/examples/raycaster.html)

@@ -1,4 +1,5 @@
-import { Ammo, webWorker, getBodyGroup, getBodyMask } from '@/utils';
+import { Ammo, webWorker, getBodyGroup } from '@/utils';
+import { MASK_ALL } from '@/constants';
 import find from 'lodash.find';
 
 import {
@@ -16,8 +17,8 @@ export default class FlexBodies {
     this.bodies = [];
 
     this.world = world;
+    this.mask = MASK_ALL;
     this.worker = webWorker();
-    this.mask = getBodyMask(type);
     this.group = getBodyGroup(type);
 
     /* eslint-disable new-cap */
