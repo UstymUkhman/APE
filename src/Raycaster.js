@@ -26,8 +26,6 @@ export default class Raycaster {
       rayCallBack.set_m_collisionFilterGroup(this.filterGroup);
     } */
 
-    rayCallBack.set_m_collisionFilterGroup(2048);
-
     if (this.filterMask !== undefined) {
       rayCallBack.set_m_collisionFilterMask(this.filterMask);
     }

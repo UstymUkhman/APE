@@ -8,6 +8,10 @@ export default class DynamicBodies extends RigidBodies {
     super(world, 'Dynamic');
     this.linearVelocity = new Vector3();
     this.angularVelocity = new Vector3();
+
+    /* eslint-disable new-cap */
+    this._transform = new Ammo.btTransform();
+    /* eslint-enable new-cap */
   }
 
   addBox (mesh, mass) {
@@ -192,17 +196,17 @@ export default class DynamicBodies extends RigidBodies {
     body.activate();
   }
 
-  update (transform) {
+  update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const body = this.bodies[i].body;
       const mesh = this.bodies[i].mesh;
       const motionState = body.getMotionState();
 
       if (motionState) {
-        motionState.getWorldTransform(transform);
+        motionState.getWorldTransform(this._transform);
 
-        const origin = transform.getOrigin();
-        const rotation = transform.getRotation();
+        const origin = this._transform.getOrigin();
+        const rotation = this._transform.getRotation();
 
         mesh.position.set(origin.x(), origin.y(), origin.z());
         mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());

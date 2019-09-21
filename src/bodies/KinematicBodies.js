@@ -12,7 +12,8 @@ export default class KinematicBodies extends RigidBodies {
     super(world, 'Kinematic');
 
     /* eslint-disable new-cap */
-    this.rotation = new Ammo.btQuaternion();
+    this._rotation = new Ammo.btQuaternion();
+    this._transform = new Ammo.btTransform();
     /* eslint-enable new-cap */
   }
 
@@ -64,19 +65,19 @@ export default class KinematicBodies extends RigidBodies {
     });
   }
 
-  update (transform) {
+  update () {
     for (let i = 0; i < this.bodies.length; i++) {
       const mesh = this.bodies[i].mesh;
       const body = this.bodies[i].body;
 
       const motionState = body.getMotionState();
 
-      this.rotation.setValue(mesh.quaternion._x, mesh.quaternion._y, mesh.quaternion._z, mesh.quaternion._w);
-      transform.getOrigin().setValue(mesh.position.x, mesh.position.y, mesh.position.z);
-      transform.setRotation(this.rotation);
+      this._rotation.setValue(mesh.quaternion._x, mesh.quaternion._y, mesh.quaternion._z, mesh.quaternion._w);
+      this._transform.getOrigin().setValue(mesh.position.x, mesh.position.y, mesh.position.z);
+      this._transform.setRotation(this._rotation);
 
       if (motionState) {
-        motionState.setWorldTransform(transform);
+        motionState.setWorldTransform(this._transform);
       }
     }
   }

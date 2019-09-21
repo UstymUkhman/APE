@@ -13,25 +13,30 @@ import SoftBodies from '@/bodies/SoftBodies';
 import RopeBodies from '@/bodies/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
-import { GRAVITY } from '@/constants';
+import * as CONSTANTS from '@/constants';
 
 import Raycaster from '@/Raycaster';
 import EventEmitter from 'events';
 import { Ammo } from '@/utils';
 import find from 'lodash.find';
 
-export default class APE {
-  constructor (soft = false, gravity = GRAVITY) {
-    this._soft = soft;
-    this._collisions = 0;
-    this._gravity = gravity;
-
-    this.Ammo = Ammo;
-    this._clock = new Clock();
+class APE {
+  constructor () {
     this._events = new EventEmitter();
+    this._clock = new Clock();
+    this.Ammo = Ammo;
 
     this._collisionReport = false;
     this._fullCollisionReport = false;
+
+    this.initPhysicsEvents();
+    Object.assign(this, CONSTANTS);
+  }
+
+  init (soft = false, gravity = CONSTANTS.GRAVITY) {
+    this._soft = soft;
+    this._collisions = 0;
+    this._gravity = gravity;
 
     if (this._soft) {
       this.initSoftWorld();
@@ -39,25 +44,25 @@ export default class APE {
       this.initRigidWorld();
     }
 
-    this.ConeTwist = new ConeTwistConstraints(this.world, this._events);
-    this.Generic = new GenericConstraints(this.world, this._events);
-    this.Slider = new SliderConstraints(this.world, this._events);
-    this.Hinge = new HingeConstraints(this.world, this._events);
-    this.Point = new PointConstraints(this.world, this._events);
+    this.ConeTwist = new ConeTwistConstraints(this._world, this._events);
+    this.Generic = new GenericConstraints(this._world, this._events);
+    this.Slider = new SliderConstraints(this._world, this._events);
+    this.Hinge = new HingeConstraints(this._world, this._events);
+    this.Point = new PointConstraints(this._world, this._events);
 
-    this.Kinematic = new KinematicBodies(this.world);
-    this.Dynamic = new DynamicBodies(this.world);
-    this.Static = new StaticBodies(this.world);
+    this.Kinematic = new KinematicBodies(this._world);
+    this.Dynamic = new DynamicBodies(this._world);
+    this.Static = new StaticBodies(this._world);
 
-    this.Raycaster = new Raycaster(this.world);
+    this.Raycaster = new Raycaster(this._world);
 
     if (this._soft) {
-      this.Cloth = new ClothBodies(this.world, this._events);
-      this.Rope = new RopeBodies(this.world, this._events);
-      this.Soft = new SoftBodies(this.world);
+      this.Cloth = new ClothBodies(this._world, this._events);
+      this.Rope = new RopeBodies(this._world, this._events);
+      this.Soft = new SoftBodies(this._world);
     }
 
-    this.initPhysicsEvents();
+    return this;
   }
 
   initSoftWorld () {
@@ -69,10 +74,9 @@ export default class APE {
     const collisionConfiguration = new Ammo.btSoftBodyRigidBodyCollisionConfiguration();
     const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
 
-    this.world = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
-    this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    this.transform = new Ammo.btTransform();
+    this._world = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
+    this._world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
+    this._world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
   }
 
   initRigidWorld () {
@@ -82,9 +86,8 @@ export default class APE {
     const collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
     const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
 
-    this.world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    this.transform = new Ammo.btTransform();
+    this._world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+    this._world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     /* eslint-enable new-cap */
   }
 
@@ -307,7 +310,7 @@ export default class APE {
   }
 
   checkCollisions () {
-    const dispatcher = this.world.getDispatcher();
+    const dispatcher = this._world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
 
     const lastCollisions = {
@@ -528,10 +531,10 @@ export default class APE {
 
   update () {
     const delta = this._clock.getDelta();
-    this.world.stepSimulation(delta, 10);
+    this._world.stepSimulation(delta, 10);
 
-    this.Kinematic.update(this.transform);
-    this.Dynamic.update(this.transform);
+    this.Kinematic.update();
+    this.Dynamic.update();
 
     if (this._soft) {
       this.Cloth.update();
@@ -545,7 +548,7 @@ export default class APE {
   }
 
   destroy () {
-    this.world.__destroy__();
+    this._world.__destroy__();
 
     delete this.ConeTwist;
     delete this.Generic;
@@ -602,10 +605,10 @@ export default class APE {
     /* eslint-disable new-cap */
 
     if (this._soft) {
-      this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, value, 0.0));
+      this._world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, value, 0.0));
     }
 
-    this.world.setGravity(new Ammo.btVector3(0.0, value, 0.0));
+    this._world.setGravity(new Ammo.btVector3(0.0, value, 0.0));
     /* eslint-enable new-cap */
     this.activateBodies();
   }
@@ -614,3 +617,5 @@ export default class APE {
     return this._gravity;
   }
 }
+
+export default new APE();

@@ -14,9 +14,9 @@ src/demos
 src/index.js
 
 # Compiled source files:
-build/*
+build/*.*
+build/lib/*
 
 # Leave compiled APE library:
 !build/APE.min.js
-!build/worker/APE.js
 !build/APE.worker.min.js

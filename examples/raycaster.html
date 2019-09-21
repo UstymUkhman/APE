@@ -13,7 +13,8 @@
     <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
-    <script type="text/javascript" src="/build/APE.worker.min.js"></script>
+    <!-- <script type="text/javascript" src="/build/APE.worker.min.js"></script> -->
+    <script type="text/javascript" src="/build/APE.min.js"></script>
     <script type="text/javascript" src="./base.js"></script>
   </head>
 
@@ -331,6 +332,15 @@
       }
     }
 
+    function resetRigidBodies (custom) {
+      APE.Kinematic.remove(kinematicBox);
+      APE.Dynamic.remove(dynamicBox);
+      APE.Static.remove(staticBox);
+
+      createRigidBodies(custom);
+      customGroup = custom;
+    }
+
     function update () {
       var time = performance.now();
       var delta = (time - prevTime) / 1000;
@@ -406,17 +416,9 @@
       var hit = APE.Raycaster.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
+      APE.update();
       prevTime = time;
       requestAnimationFrame(update);
-    }
-
-    function resetRigidBodies (custom) {
-      APE.Kinematic.remove(kinematicBox);
-      APE.Dynamic.remove(dynamicBox);
-      APE.Static.remove(staticBox);
-
-      createRigidBodies(custom);
-      customGroup = custom;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
