@@ -34,6 +34,7 @@ module.exports = {
   output: {
     filename: `${config.name}${worker ? '.worker' : ''}${build ? '.min' : ''}.js`,
     globalObject: 'typeof self !== \'undefined\' ? self : this',
+    publicPath: `${build ? '../build/' : '/'}`,
     path: __dirname + '/build',
     umdNamedDefine: true,
 

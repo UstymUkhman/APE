@@ -13,10 +13,6 @@ node_modules
 src/demos
 src/index.js
 
-# Compiled source files:
-build/*.*
-build/lib/*
-
-# Leave compiled APE library:
-!build/APE.min.js
-!build/APE.worker.min.js
+# Development source files:
+build/APE.js
+build/index.html

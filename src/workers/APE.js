@@ -1,4 +1,4 @@
-import APEWorker from 'worker-loader?name=/worker/APE.js!workers/APEWorker.js';
+import APEWorker from 'worker-loader?name=./worker/APE.js!workers/APEWorker.js';
 
 import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
 import GenericConstraints from '@/workers/GenericConstraints';
