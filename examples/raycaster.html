@@ -13,8 +13,8 @@
     <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
-    <script type="text/javascript" src="/APE/build/APE.worker.min.js"></script>
-    <!-- <script type="text/javascript" src="/APE/build/APE.min.js"></script> -->
+    <!-- <script type="text/javascript" src="/APE/build/APE.worker.min.js"></script> -->
+    <script type="text/javascript" src="/APE/build/APE.min.js"></script>
     <script type="text/javascript" src="./base.js"></script>
   </head>
 
@@ -349,6 +349,8 @@
       var torque = acceleration / 10;
       var deceleration = 10 * delta;
 
+      stats.begin();
+
       velocity.x -= velocity.x * deceleration;
       velocity.y -= velocity.y * deceleration;
       velocity.z -= velocity.z * deceleration;
@@ -416,8 +418,14 @@
       var hit = APE.Raycaster.cast(raycaster.position, target);
       ray.material.color.setHex(hit ? 0x00CC00 : 0xCC0000);
 
-      // APE.update();
+      APE.Cloth.update();
+      APE.Soft.update();
+      APE.update();
+
+      stats.end();
       prevTime = time;
+
+      renderer.render(scene, camera);
       requestAnimationFrame(update);
     }
 

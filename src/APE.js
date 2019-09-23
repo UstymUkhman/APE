@@ -533,15 +533,6 @@ class APE {
     const delta = this._clock.getDelta();
     this._world.stepSimulation(delta, 10);
 
-    this.Kinematic.update();
-    this.Dynamic.update();
-
-    if (this._soft) {
-      this.Cloth.update();
-      this.Soft.update();
-      this.Rope.update();
-    }
-
     if (this._collisionReport) {
       this.checkCollisions();
     }

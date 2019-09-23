@@ -1,8 +1,8 @@
 var scene, camera, ground;
+var renderer, stats;
 
 (function () {
-  var renderer, stats, controls;
-  var width, height, ratio;
+  var width, height, ratio, controls;
 
   var BLACK = 0x000000;
   var WHITE = 0xFFFFFF;
@@ -30,13 +30,13 @@ var scene, camera, ground;
     const directional = new THREE.DirectionalLight(WHITE, 1);
     const ambient = new THREE.AmbientLight(WHITE);
 
-    directional.position.set(-10, 10, 5);
+    directional.position.set(-20, 12, 5);
     directional.castShadow = true;
 
     directional.shadow.camera.bottom = -10;
-    directional.shadow.camera.right = 10;
-    directional.shadow.camera.left = -10;
-    directional.shadow.camera.top = 10;
+    directional.shadow.camera.right = 25;
+    directional.shadow.camera.left = -25;
+    directional.shadow.camera.top = 12;
 
     directional.shadow.mapSize.x = 1024;
     directional.shadow.mapSize.y = 1024;
@@ -88,14 +88,6 @@ var scene, camera, ground;
     document.body.appendChild(stats.domElement);
   }
 
-  function render () {
-    stats.begin();
-    renderer.render(scene, camera);
-    
-    stats.end();
-    requestAnimationFrame(render);
-  }
-
   function onResize () {
     height = window.innerHeight;
     width = window.innerWidth;
@@ -123,6 +115,5 @@ var scene, camera, ground;
     createStats();
 
     if (!rotate) createControls();
-    requestAnimationFrame(render);
   });
 })();
