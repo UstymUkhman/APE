@@ -2,6 +2,11 @@
 logs
 *.log
 
+# Process data:
+pids
+*.pid
+*.seed
+
 # IDE directories:
 .idea
 .vscode
@@ -9,10 +14,13 @@ logs
 # Dependency directory:
 node_modules
 
-# Test source files:
+# Development source files:
 src/demos
 src/index.js
-
-# Development source files:
-build/APE.js
+build/base.js
+build/base.css
 build/index.html
+
+# IDE files:
+.lock-wscript
+.sublime-workspace

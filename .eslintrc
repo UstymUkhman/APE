@@ -1,35 +1,37 @@
 {
-  "ecmaFeatures": {
-    "globalReturn": true,
-    "jsx": true,
-    "modules": true
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2019,
+
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "impliedStrict": true
+    }
   },
 
   "env": {
     "browser": true,
-    "es6": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
 
   "globals": {
-    "document": false,
-    "escape": false,
     "navigator": false,
+    "document": false,
     "unescape": false,
-    "window": false,
     "describe": true,
+    "escape": false,
+    "window": false,
     "before": true,
-    "it": true,
     "expect": true,
+    "THREE": false,
     "sinon": true,
-    "THREE": false
+    "it": true
   },
 
   "parser": "babel-eslint",
 
-  "plugins": [
-
-  ],
+  "plugins": [],
 
   "rules": {
     "block-scoped-var": 2,
@@ -54,6 +56,7 @@
     "handle-callback-err": [2, "^(err|error|anySpecificError)$" ],
     "indent": [2, 2, { "SwitchCase": 1 }],
     "key-spacing": [2, { "beforeColon": false, "afterColon": true }],
+    "keyword-spacing": [2, { "before": true, "after": true }],
     "linebreak-style": 0,
     "max-depth": 0,
     "max-len": [2, 150, 4],
@@ -165,7 +168,6 @@
     "semi": [2, "always"],
     "semi-spacing": 0,
     "sort-vars": 0,
-    "keyword-spacing": 2,
     "space-before-blocks": [2, "always"],
     "space-before-function-paren": [2, "always"],
     "space-in-brackets": 0,

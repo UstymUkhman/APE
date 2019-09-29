@@ -1,2 +1,3 @@
-/examples/*.js
 /build/**/*.*
+/examples/*.js
+webpack.config.js
