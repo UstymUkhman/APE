@@ -1,16 +1,6 @@
-import ConeTwistConstraints from '@/constraints/workers/ConeTwistConstraints';
-import GenericConstraints from '@/constraints/workers/GenericConstraints';
-import SliderConstraints from '@/constraints/workers/SliderConstraints';
-import HingeConstraints from '@/constraints/workers/HingeConstraints';
-import PointConstraints from '@/constraints/workers/PointConstraints';
-
 import KinematicBodies from '@/bodies/workers/KinematicBodies';
 import DynamicBodies from '@/bodies/workers/DynamicBodies';
 import StaticBodies from '@/bodies/workers/StaticBodies';
-
-import ClothBodies from '@/bodies/workers/ClothBodies';
-import RopeBodies from '@/bodies/workers/RopeBodies';
-import SoftBodies from '@/bodies/SoftBodies';
 
 import Raycaster from '@/Raycaster';
 import { Ammo } from '@/utils';
@@ -19,37 +9,11 @@ import find from 'lodash.find';
 let physics = null;
 
 class APEWorker {
-  constructor (soft, gravity) {
-    this._soft = soft;
+  constructor (gravity) {
     this._gravity = gravity;
-
     this._fullReport = false;
     this._reportCollisions = false;
 
-    if (soft) {
-      this.initSoftWorld();
-    } else {
-      this.initRigidWorld();
-    }
-  }
-
-  initSoftWorld () {
-    /* eslint-disable new-cap */
-    const broadphase = new Ammo.btDbvtBroadphase();
-    const softSolver = new Ammo.btDefaultSoftBodySolver();
-    const solver = new Ammo.btSequentialImpulseConstraintSolver();
-
-    const collisionConfiguration = new Ammo.btSoftBodyRigidBodyCollisionConfiguration();
-    const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
-
-    this.world = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, softSolver);
-    this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    this.transform = new Ammo.btTransform();
-    /* eslint-enable new-cap */
-  }
-
-  initRigidWorld () {
     /* eslint-disable new-cap */
     const broadphase = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();
@@ -67,18 +31,6 @@ class APEWorker {
     this.Raycaster = new Raycaster(this.world);
   }
 
-  initSoftBodies () {
-    this.Soft = new SoftBodies(this.world);
-  }
-
-  initRopeBodies () {
-    this.Rope = new RopeBodies(this.world);
-  }
-
-  initClothBodies () {
-    this.Cloth = new ClothBodies(this.world);
-  }
-
   initStaticBodies () {
     this.Static = new StaticBodies(this.world);
   }
@@ -91,45 +43,11 @@ class APEWorker {
     this.Kinematic = new KinematicBodies(this.world);
   }
 
-  initPointConstraints () {
-    this.Point = new PointConstraints(this.world);
-  }
-
-  initHingeConstraints () {
-    this.Hinge = new HingeConstraints(this.world);
-  }
-
-  initSliderConstraints () {
-    this.Slider = new SliderConstraints(this.world);
-  }
-
-  initGenericConstraints () {
-    this.Generic = new GenericConstraints(this.world);
-  }
-
-  initConeTwistConstraints () {
-    this.ConeTwist = new ConeTwistConstraints(this.world);
-  }
-
   addBody (props) {
     let staticType = props.type === 'Static';
     const plane = props.collider === 'Plane';
 
-    const boxFallback = this._soft && staticType && plane;
-    const method = boxFallback ? 'addBox' : `add${props.collider}`;
-    const constants = boxFallback ? this.Kinematic.constants : null;
-
-    if (boxFallback) {
-      this.Kinematic.constants = this.Static.constants;
-      props.size = { ...props.size, depth: 0.25 };
-      props.type = 'Kinematic';
-      staticType = false;
-
-      console.warn(
-        'You\'re using a static plane in a soft world. It may not work as expected.\n',
-        'Kinematic box collider was used automatically as fallback for a PlaneGeometry.'
-      );
-    } else if (staticType && plane) {
+    if (staticType && plane) {
       console.warn(
         'You\'re using a static plane which may have some issues with\n',
         '\'Concave\' and \'Convex\' rigid bodies and collisions detection.\n',
@@ -137,7 +55,7 @@ class APEWorker {
       );
     }
 
-    this[props.type][method](props);
+    this[props.type][`add${props.collider}`](props);
     const hasBody = this[props.type].bodies && this[props.type].bodies.length === 1;
 
     if (!staticType && hasBody) {
@@ -146,144 +64,6 @@ class APEWorker {
         rotation: props.rotation,
         uuid: props.uuid
       }]);
-    }
-
-    if (boxFallback) {
-      this.Kinematic.constants = constants;
-    }
-  }
-
-  addConstraint (props) {
-    if (props.method === 'attachBodies') {
-      this.setConstraintBodies(props);
-    }
-
-    if (props.method === 'attachBody') {
-      this.setConstraintBody(props);
-    }
-
-    if (props.method === 'hingeBodies') {
-      this.setHingeBodies(props);
-    }
-
-    if (props.method === 'hingeBody') {
-      this.setHingeBody(props);
-    }
-
-    this[props.type][props.method](props);
-  }
-
-  setConstraintBodies (props) {
-    const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
-    const body0 = this.getRigidBody(props.body0);
-    const body1 = this.getRigidBody(props.body1);
-
-    if (!body0) {
-      console.error(
-        `${type}Constraint body\'s collider was not found.\n`,
-        `Make sure to add one of the following bodies to your mesh [${props.body0}]:\n`,
-        'dynamic, kinematic or static.'
-      );
-    } else if (!body1) {
-      console.error(
-        `${type}Constraint body\'s collider was not found.\n`,
-        `Make sure to add one of the following bodies to your mesh [${props.body1}]: dynamic, kinematic or static;\n`,
-        `or use \'APE.${props.type}.addBody\' method if you want to constraint only one body.`
-      );
-    } else {
-      props.body0 = body0.body;
-      props.body1 = body1.body;
-    }
-  }
-
-  setConstraintBody (props) {
-    const type = props.type.charAt(0).toUpperCase() + props.type.slice(1);
-    const body = this.getRigidBody(props.body);
-
-    if (!body) {
-      console.error(
-        `${type}Constraint body\'s collider was not found.\n`,
-        `Make sure to add one of the following bodies to your mesh [${props.body}]:\n`,
-        'dynamic, kinematic or static.'
-      );
-    } else {
-      props.body = body.body;
-    }
-  }
-
-  setHingeBodies (props) {
-    const pin = this.getRigidBody(props.pin);
-    const arm = this.getRigidBody(props.arm);
-
-    if (!pin) {
-      console.error(
-        'HingeConstraint pin\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:\n`,
-        'static (recommended), kinematic or dynamic.'
-      );
-    } else if (!arm) {
-      console.error(
-        'HingeConstraint arm\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your arm mesh [${props.arm}]: dynamic (recommended), kinematic or static;\n`,
-        'or use \'APE.Hinge.addBody\' method if you want to constraint only one body.'
-      );
-    } else {
-      props.pin = pin.body;
-      props.arm = arm.body;
-    }
-  }
-
-  setHingeBody (props) {
-    const body = this.getRigidBody(props.body);
-
-    if (!body) {
-      console.error(
-        'HingeConstraint body\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your mesh [${props.body}]:\n`,
-        'dynamic (recommended), kinematic or static.'
-      );
-    } else {
-      props.body = body.body;
-    }
-  }
-
-  appendRope (props) {
-    let target = this.getRigidBody(props.target);
-
-    if (!target) {
-      target = this.Soft.getBodyByUUID(props.target);
-    }
-
-    if (!target) {
-      console.error(
-        'Target body was not found.\n',
-        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:\n`,
-        'dynamic (recommended), kinematic, static or soft.'
-      );
-    } else {
-      props.target = target.body;
-      this.Rope.append(props);
-    }
-  }
-
-  appendCloth (props) {
-    const cloth = this.Cloth.getBodyByUUID(props.uuid);
-    const target = this.getRigidBody(props.target);
-
-    if (!cloth) {
-      console.error(
-        'Cloth body was not found.\n',
-        `Make sure your mesh [${props.uuid}] has a cloth collider.`
-      );
-    } else if (!target) {
-      console.error(
-        'Target body was not found.\n',
-        `Make sure to add one of the following bodies to your pin mesh [${props.target}]:\n`,
-        'dynamic, kinematic or static.'
-      );
-    } else {
-      props.target = target.body;
-      this.Cloth.append(props);
     }
   }
 
@@ -482,18 +262,7 @@ class APEWorker {
   }
 
   activateBodies () {
-    this.ConeTwist.activateAll();
     this.Dynamic.activateAll();
-    this.Generic.activateAll();
-    this.Slider.activateAll();
-    this.Hinge.activateAll();
-    this.Point.activateAll();
-
-    if (this._soft) {
-      this.Cloth.activateAll();
-      this.Soft.activateAll();
-      this.Rope.activateAll();
-    }
   }
 
   removeBody (props) {
@@ -504,10 +273,6 @@ class APEWorker {
         `There\'s no \'${props.type}\' collider attached to your mesh [${props.uuid}].`
       );
     }
-  }
-
-  removeConstraint (props) {
-    this[props.type].remove(props.uuid);
   }
 
   setCollisionFilterGroup (props) {
@@ -529,10 +294,6 @@ class APEWorker {
   setGravity (props) {
     /* eslint-disable new-cap */
     this._gravity = props.gravity;
-
-    if (this._soft) {
-      this.world.getWorldInfo().set_m_gravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
-    }
 
     this.world.setGravity(new Ammo.btVector3(0.0, this._gravity, 0.0));
     /* eslint-enable new-cap */
@@ -575,40 +336,12 @@ class APEWorker {
     this[props.type].applyCentralImpulse(props.uuid, props.impulse);
   }
 
-  setBreakingImpulseThreshold (props) {
-    this[props.type].setBreakingImpulseThreshold(props.uuid, props.threshold);
-  }
-
   setCcdSweptSphereRadius (props) {
     this[props.type].setCcdSweptSphereRadius(props.uuid, props.radius);
   }
 
   setCcdMotionThreshold (props) {
     this[props.type].setCcdMotionThreshold(props.uuid, props.threshold);
-  }
-
-  setMaxMotorImpulse (props) {
-    this[props.type].setMaxMotorImpulse(props);
-  }
-
-  setSoftnessLimit (props) {
-    this[props.type].setSoftnessLimit(props);
-  }
-
-  setAngularMotor (props) {
-    this[props.type].setAngularMotor(props);
-  }
-
-  setAngularLimit (props) {
-    this[props.type].setAngularLimit(props);
-  }
-
-  setLinearLimit (props) {
-    this[props.type].setLinearLimit(props);
-  }
-
-  setMotorTarget (props) {
-    this[props.type].setMotorTarget(props);
   }
 
   setRestitution (props) {
@@ -623,24 +356,8 @@ class APEWorker {
     this[props.type].setDamping(props.uuid, props.linear, props.angular);
   }
 
-  setPiterations (props) {
-    this[props.type].setPiterations(props);
-  }
-
-  setViterations (props) {
-    this[props.type].setViterations(props);
-  }
-
   setCollisions (props) {
     this[props.type].setCollisions(props);
-  }
-
-  setStiffness (props) {
-    this[props.type].setStiffness(props);
-  }
-
-  setPressure (props) {
-    this[props.type].setPressure(props);
   }
 
   setFriction (props) {
@@ -653,34 +370,6 @@ class APEWorker {
 
   setMargin (props) {
     this[props.type].setMargin(props);
-  }
-
-  setLimit (props) {
-    this[props.type].setLimit(props);
-  }
-
-  enableAngularMotor (props) {
-    this[props.type].enableAngularMotor(props);
-  }
-
-  enableLinearMotor (props) {
-    this[props.type].enableLinearMotor(props);
-  }
-
-  disableAngularMotor (props) {
-    this[props.type].disableAngularMotor(props);
-  }
-
-  disableLinearMotor (props) {
-    this[props.type].disableLinearMotor(props);
-  }
-
-  disableMotor (props) {
-    this[props.type].disableMotor(props);
-  }
-
-  enableMotor (props) {
-    this[props.type].enableMotor(props);
   }
 
   enableBody (props) {
@@ -705,7 +394,7 @@ function onMessage (event) {
   if (physics) {
     physics[action](params);
   } else if (action === 'init') {
-    physics = new APEWorker(params[0], params[1]);
+    physics = new APEWorker(params[0]);
   } else {
     const array = typeof params === 'object';
     const args = params.length && array ? params.join(', ') : !array ? params : '';

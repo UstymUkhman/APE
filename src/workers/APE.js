@@ -1,18 +1,8 @@
 import APEWorker from 'worker-loader?name=./APE.worker.js!workers/APEWorker.js';
 
-import ConeTwistConstraints from '@/workers/ConeTwistConstraints';
-import GenericConstraints from '@/workers/GenericConstraints';
-import SliderConstraints from '@/workers/SliderConstraints';
-import HingeConstraints from '@/workers/HingeConstraints';
-import PointConstraints from '@/workers/PointConstraints';
-
 import KinematicBodies from '@/workers/KinematicBodies';
 import DynamicBodies from '@/workers/DynamicBodies';
 import StaticBodies from '@/workers/StaticBodies';
-
-import ClothBodies from '@/workers/ClothBodies';
-import SoftBodies from '@/workers/SoftBodies';
-import RopeBodies from '@/workers/RopeBodies';
 
 import { Clock } from 'three/src/core/Clock';
 import Raycaster from '@/workers/Raycaster';
@@ -33,33 +23,20 @@ class APE {
     this._worker.addEventListener('message', this._onMessage);
   }
 
-  init (soft = false, gravity = CONSTANTS.GRAVITY) {
-    this._soft = soft;
+  init (gravity = CONSTANTS.GRAVITY) {
     this._collisions = 0;
     this._gravity = gravity;
 
     this._worker.postMessage({
-      params: [soft, gravity],
+      params: [gravity],
       action: 'init'
     });
-
-    this.ConeTwist = new ConeTwistConstraints(this._worker);
-    this.Generic = new GenericConstraints(this._worker);
-    this.Slider = new SliderConstraints(this._worker);
-    this.Hinge = new HingeConstraints(this._worker);
-    this.Point = new PointConstraints(this._worker);
 
     this.Kinematic = new KinematicBodies(this._worker);
     this.Dynamic = new DynamicBodies(this._worker);
     this.Static = new StaticBodies(this._worker);
 
     this.Raycaster = new Raycaster(this._worker);
-
-    if (this._soft) {
-      this.Cloth = new ClothBodies(this._worker);
-      this.Rope = new RopeBodies(this._worker);
-      this.Soft = new SoftBodies(this._worker);
-    }
 
     return this;
   }
@@ -157,12 +134,6 @@ class APE {
     this._worker.removeEventListener('message', this._onMessage);
     this._worker.postMessage({ action: 'destroy' });
 
-    delete this.ConeTwist;
-    delete this.Generic;
-    delete this.Slider;
-    delete this.Hinge;
-    delete this.Point;
-
     delete this.Kinematic;
     delete this.Dynamic;
     delete this.Static;
@@ -170,12 +141,6 @@ class APE {
     delete this.Raycaster;
     delete this._worker;
     delete this._clock;
-
-    if (this._soft) {
-      delete this.Cloth;
-      delete this.Soft;
-      delete this.Rope;
-    }
   }
 
   set collisionReport (report) {
