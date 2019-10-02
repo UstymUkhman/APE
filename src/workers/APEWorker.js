@@ -360,10 +360,6 @@ class APEWorker {
     this[props.type].setCollisions(props);
   }
 
-  setFriction (props) {
-    this[props.type].setFriction(props);
-  }
-
   setDamping (props) {
     this[props.type].setDamping(props);
   }
