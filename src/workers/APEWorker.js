@@ -616,7 +616,11 @@ class APEWorker {
   }
 
   setFriction (props) {
-    this[props.type].setFriction(props.uuid, props.friction);
+    if (props.type !== 'Cloth' && props.type !== 'Rope') {
+      this[props.type].setFriction(props.uuid, props.friction);
+    } else {
+      this[props.type].setFriction(props);
+    }
   }
 
   setDamping (props) {
@@ -641,10 +645,6 @@ class APEWorker {
 
   setPressure (props) {
     this[props.type].setPressure(props);
-  }
-
-  setFriction (props) {
-    this[props.type].setFriction(props);
   }
 
   setDamping (props) {
