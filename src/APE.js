@@ -120,8 +120,8 @@ class APE {
     if (!target) {
       console.error(
         'Target body was not found.\n',
-        `Make sure to add one of the following bodies to your rope mesh [${targetUUID}]:\n`,
-        'dynamic (recommended), kinematic, static or soft.'
+        `Make sure to add one of the following bodies to your Rope mesh [${targetUUID}]:\n`,
+        'Dynamic (recommended), Kinematic, Static or Soft.'
       );
     } else {
       this.Rope.appendAnchor(target.body, rope);
@@ -135,13 +135,13 @@ class APE {
     if (!clothBody) {
       console.error(
         'Cloth body was not found.\n',
-        `Make sure your mesh [${cloth.uuid}] has a cloth collider.`
+        `Make sure your mesh [${cloth.uuid}] has a Cloth collider.`
       );
     } else if (!target) {
       console.error(
         'Target body was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${targetUUID}]:\n`,
-        'dynamic; kinematic or static.'
+        'Dynamic; Kinematic or Static.'
       );
     } else {
       this.Cloth.appendAnchor(target.body, cloth);
@@ -155,7 +155,7 @@ class APE {
       console.error(
         'PointConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       this.Point.attachBody(body.body, position);
@@ -170,12 +170,12 @@ class APE {
       console.error(
         'PointConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else if (!body1) {
       console.error(
         'PointConstraint body\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: Dynamic, Kinematic or Static;\n`,
         'or use \'APE.Point.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -190,7 +190,7 @@ class APE {
       console.error(
         'HingeConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
-        'dynamic (recommended), kinematic or static.'
+        'Dynamic (recommended), Kinematic or Static.'
       );
     } else {
       this.Hinge.hingeBody(body.body, position);
@@ -205,12 +205,12 @@ class APE {
       console.error(
         'HingeConstraint pin\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${pinUUID}]:\n`,
-        'static (recommended); kinematic or dynamic.'
+        'Static (recommended); Kinematic or Dynamic.'
       );
     } else if (!arm) {
       console.error(
         'HingeConstraint arm\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your arm mesh [${armUUID}]: dynamic (recommended), kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your arm mesh [${armUUID}]: Dynamic (recommended), Kinematic or Static;\n`,
         'or use \'APE.Hinge.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -225,7 +225,7 @@ class APE {
       console.error(
         'SliderConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       this.Slider.attachBody(body.body, pivot);
@@ -240,12 +240,12 @@ class APE {
       console.error(
         'SliderConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else if (!body1) {
       console.error(
         'SliderConstraint body\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: Dynamic, Kinematic or Static;\n`,
         'or use \'APE.Slider.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -260,7 +260,7 @@ class APE {
       console.error(
         'GenericConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${bodyUUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       this.Generic.attachBody(body.body, pivot);
@@ -275,12 +275,12 @@ class APE {
       console.error(
         'GenericConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else if (!body1) {
       console.error(
         'GenericConstraint body\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: dynamic, kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your mesh [${body1UUID}]: Dynamic, Kinematic or Static;\n`,
         'or use \'APE.Generic.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -296,13 +296,13 @@ class APE {
       console.error(
         'ConeTwistConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body0UUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else if (!body1) {
       console.error(
         'ConeTwistConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${body1UUID}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       this.ConeTwist.attachBodies(body0.body, body1.body, pivot);
@@ -312,14 +312,13 @@ class APE {
   checkCollisions () {
     const dispatcher = this._world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
+    const collisions = new Array(manifolds);
 
     const lastCollisions = {
-      kinematic: this.Kinematic.getCollisions(),
-      dynamic: this.Dynamic.getCollisions(),
-      static: this.Static.getCollisions()
+      Kinematic: this.Kinematic.getCollisions(),
+      Dynamic: this.Dynamic.getCollisions(),
+      Static: this.Static.getCollisions()
     };
-
-    const collisions = new Array(manifolds);
 
     this.Kinematic.resetCollisions();
     this.Dynamic.resetCollisions();

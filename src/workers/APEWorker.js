@@ -182,12 +182,12 @@ class APEWorker {
       console.error(
         `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body0}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else if (!body1) {
       console.error(
         `${type}Constraint body\'s collider was not found.\n`,
-        `Make sure to add one of the following bodies to your mesh [${props.body1}]: dynamic, kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your mesh [${props.body1}]: Dynamic, Kinematic or Static;\n`,
         `or use \'APE.${props.type}.addBody\' method if you want to constraint only one body.`
       );
     } else {
@@ -204,7 +204,7 @@ class APEWorker {
       console.error(
         `${type}Constraint body\'s collider was not found.\n`,
         `Make sure to add one of the following bodies to your mesh [${props.body}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       props.body = body.body;
@@ -219,12 +219,12 @@ class APEWorker {
       console.error(
         'HingeConstraint pin\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${props.pin}]:\n`,
-        'static (recommended), kinematic or dynamic.'
+        'Static (recommended), Kinematic or Dynamic.'
       );
     } else if (!arm) {
       console.error(
         'HingeConstraint arm\'s collider was not found.\n',
-        `Make sure to add one of the following bodies to your arm mesh [${props.arm}]: dynamic (recommended), kinematic or static;\n`,
+        `Make sure to add one of the following bodies to your arm mesh [${props.arm}]: Dynamic (recommended), Kinematic or Static;\n`,
         'or use \'APE.Hinge.addBody\' method if you want to constraint only one body.'
       );
     } else {
@@ -240,7 +240,7 @@ class APEWorker {
       console.error(
         'HingeConstraint body\'s collider was not found.\n',
         `Make sure to add one of the following bodies to your mesh [${props.body}]:\n`,
-        'dynamic (recommended), kinematic or static.'
+        'Dynamic (recommended), Kinematic or Static.'
       );
     } else {
       props.body = body.body;
@@ -257,8 +257,8 @@ class APEWorker {
     if (!target) {
       console.error(
         'Target body was not found.\n',
-        `Make sure to add one of the following bodies to your rope mesh [${props.target}]:\n`,
-        'dynamic (recommended), kinematic, static or soft.'
+        `Make sure to add one of the following bodies to your Rope mesh [${props.target}]:\n`,
+        'Dynamic (recommended), Kinematic, Static or Soft.'
       );
     } else {
       props.target = target.body;
@@ -273,13 +273,13 @@ class APEWorker {
     if (!cloth) {
       console.error(
         'Cloth body was not found.\n',
-        `Make sure your mesh [${props.uuid}] has a cloth collider.`
+        `Make sure your mesh [${props.uuid}] has a Cloth collider.`
       );
     } else if (!target) {
       console.error(
         'Target body was not found.\n',
         `Make sure to add one of the following bodies to your pin mesh [${props.target}]:\n`,
-        'dynamic, kinematic or static.'
+        'Dynamic, Kinematic or Static.'
       );
     } else {
       props.target = target.body;
@@ -302,9 +302,9 @@ class APEWorker {
     const collisions = new Array(manifolds);
 
     const lastCollisions = {
-      kinematic: this.Kinematic.getCollisions(),
-      dynamic: this.Dynamic.getCollisions(),
-      static: this.Static.getCollisions()
+      Kinematic: this.Kinematic.getCollisions(),
+      Dynamic: this.Dynamic.getCollisions(),
+      Static: this.Static.getCollisions()
     };
 
     this.Kinematic.resetCollisions();
