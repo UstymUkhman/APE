@@ -47,14 +47,13 @@ class APE {
   checkCollisions () {
     const dispatcher = this._world.getDispatcher();
     const manifolds = dispatcher.getNumManifolds();
+    const collisions = new Array(manifolds);
 
     const lastCollisions = {
-      kinematic: this.Kinematic.getCollisions(),
-      dynamic: this.Dynamic.getCollisions(),
-      static: this.Static.getCollisions()
+      Kinematic: this.Kinematic.getCollisions(),
+      Dynamic: this.Dynamic.getCollisions(),
+      Static: this.Static.getCollisions()
     };
-
-    const collisions = new Array(manifolds);
 
     this.Kinematic.resetCollisions();
     this.Dynamic.resetCollisions();

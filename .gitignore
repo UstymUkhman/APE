@@ -14,13 +14,6 @@ pids
 # Dependency directory:
 node_modules
 
-# Development source files:
-src/demos
-src/index.js
-build/base.js
-build/base.css
-build/index.html
-
 # IDE files:
 .lock-wscript
 .sublime-workspace

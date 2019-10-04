@@ -82,9 +82,9 @@ class APEWorker {
     const collisions = new Array(manifolds);
 
     const lastCollisions = {
-      kinematic: this.Kinematic.getCollisions(),
-      dynamic: this.Dynamic.getCollisions(),
-      static: this.Static.getCollisions()
+      Kinematic: this.Kinematic.getCollisions(),
+      Dynamic: this.Dynamic.getCollisions(),
+      Static: this.Static.getCollisions()
     };
 
     this.Kinematic.resetCollisions();
