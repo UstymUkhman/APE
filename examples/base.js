@@ -99,7 +99,8 @@ var renderer, stats;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    var rotate = window.location.href.includes('raycaster');
+    var collisions = window.location.href.includes('collisions');
+    var raycaster = window.location.href.includes('raycaster');
     window.addEventListener('resize', onResize, false);
 
     height = window.innerHeight;
@@ -107,13 +108,15 @@ var renderer, stats;
     ratio = width / height;
 
     createScene();
-    createCamera(rotate);
+    createCamera(raycaster);
     createLights();
     createGround();
 
     createRenderer();
     createStats();
 
-    if (!rotate) createControls();
+    if (!collisions && !raycaster) {
+      createControls();
+    }
   });
 })();

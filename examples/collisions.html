@@ -1,0 +1,392 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Collisions | APE</title>
+    <link rel="stylesheet" type="text/css" href="./base.css">
+
+    <script type="text/javascript" src="./lib/THREE.min.js"></script>
+    <script type="text/javascript" src="./lib/Stats.min.js"></script>
+    <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
+    <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
+
+    <script type="text/javascript" src="/APE/build/APE.Rigid.min.js"></script>
+    <script type="text/javascript" src="./base.js"></script>
+  </head>
+
+  <body></body>
+
+  <script type="text/javascript">
+    var velocity = new THREE.Vector3();
+    var vector0 = new THREE.Vector3();
+    var prevTime = performance.now();
+    var ball = null, ballUUID = '';
+    var isColliding = false;
+
+    var KINEMATIC_BODY = 0xd0cefb;
+    var DYNAMIC_BODY = 0x83cbef;
+    var STATIC_BODY = 0xfcf0da;
+
+    var move = {
+      backward: false,
+      forward: false,
+      right: false,
+      left: false
+    };
+
+    function createGround () {
+      // Static bodies default friction:
+      APE.Static.friction = 50.0;
+      APE.Static.addBox(ground);
+    }
+
+    function createBall () {
+      // Dynamic Ball:
+      ball = new THREE.Mesh(
+        new THREE.SphereGeometry(1.5, 32, 32),
+        new THREE.MeshPhongMaterial({
+          color: 0x222222
+        })
+      );
+
+      ball.castShadow = true;
+      ball.position.z = -25;
+      ball.position.y = 2;
+
+      APE.Dynamic.addSphere(ball, 50);
+      ballUUID = ball.uuid;
+      scene.add(ball);
+    }
+
+    function createStage () {
+      var rightWall = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 5, 75),
+        new THREE.MeshPhongMaterial({
+          color: STATIC_BODY
+        })
+      );
+
+      rightWall.position.x = -25;
+      rightWall.position.y = 2.5;
+
+      var leftWall = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 5, 75),
+        new THREE.MeshPhongMaterial({
+          color: STATIC_BODY
+        })
+      );
+
+      leftWall.position.y = 2.5;
+      leftWall.position.x = 25;
+
+      var frontWall = new THREE.Mesh(
+        new THREE.BoxGeometry(50, 5, 1),
+        new THREE.MeshPhongMaterial({
+          color: STATIC_BODY
+        })
+      );
+
+      frontWall.position.y = 2.5;
+      frontWall.position.z = 37;
+
+      var backWall = new THREE.Mesh(
+        new THREE.BoxGeometry(50, 5, 1),
+        new THREE.MeshPhongMaterial({
+          color: STATIC_BODY
+        })
+      );
+
+      backWall.position.z = -37;
+      backWall.position.y = 2.5;
+
+      APE.Static.addBox(frontWall);
+      APE.Static.addBox(rightWall);
+      APE.Static.addBox(leftWall);
+      APE.Static.addBox(backWall);
+
+      scene.add(frontWall);
+      scene.add(rightWall);
+      scene.add(leftWall);
+      scene.add(backWall);
+    }
+
+    function createRigidBodies () {
+      var plane0 = new THREE.Mesh(
+        new THREE.BoxGeometry(20, 3, 1),
+        new THREE.MeshPhongMaterial({
+          color: KINEMATIC_BODY
+        })
+      );
+
+      plane0.castShadow = true;
+      plane0.position.x = -14;
+      plane0.position.y = 1.5;
+      plane0.position.z = -20;
+
+      var plane1 = new THREE.Mesh(
+        new THREE.BoxGeometry(20, 3, 1),
+        new THREE.MeshPhongMaterial({
+          color: KINEMATIC_BODY
+        })
+      );
+
+      plane1.castShadow = true;
+      plane1.position.x = 14;
+      plane1.position.y = 1.5;
+      plane1.position.z = -20;
+
+      APE.Kinematic.addBox(plane0);
+      APE.Kinematic.addBox(plane1);
+
+      scene.add(plane0);
+      scene.add(plane1);
+
+      var box = null;
+      APE.Dynamic.margin = 0;
+
+      for (let i = 0, x = 6; i < 5; i++, x -= 3) {
+        box = new THREE.Mesh(
+          new THREE.BoxGeometry(2, 2, 2),
+          new THREE.MeshPhongMaterial({
+            color: DYNAMIC_BODY
+          })
+        );
+
+        box.castShadow = true;
+        box.position.x = x;
+        box.position.y = 1;
+
+        APE.Dynamic.addBox(box, 10);
+        scene.add(box);
+      }
+
+      for (let i = 0, x = 4.5; i < 4; i++, x -= 3) {
+        box = new THREE.Mesh(
+          new THREE.BoxGeometry(2, 2, 2),
+          new THREE.MeshPhongMaterial({
+            color: DYNAMIC_BODY
+          })
+        );
+
+        box.castShadow = true;
+        box.position.x = x;
+        box.position.y = 3;
+
+        APE.Dynamic.addBox(box, 10);
+        scene.add(box);
+      }
+
+      for (let i = 0, x = 3; i < 3; i++, x -= 3) {
+        box = new THREE.Mesh(
+          new THREE.BoxGeometry(2, 2, 2),
+          new THREE.MeshPhongMaterial({
+            color: DYNAMIC_BODY
+          })
+        );
+
+        box.castShadow = true;
+        box.position.x = x;
+        box.position.y = 5;
+
+        APE.Dynamic.addBox(box, 10);
+        scene.add(box);
+      }
+
+      for (let i = 0, x = 1.5; i < 2; i++, x -= 3) {
+        box = new THREE.Mesh(
+          new THREE.BoxGeometry(2, 2, 2),
+          new THREE.MeshPhongMaterial({
+            color: DYNAMIC_BODY
+          })
+        );
+
+        box.castShadow = true;
+        box.position.x = x;
+        box.position.y = 7;
+
+        APE.Dynamic.addBox(box, 10);
+        scene.add(box);
+      }
+
+      box = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshPhongMaterial({
+          color: DYNAMIC_BODY
+        })
+      );
+
+      box.castShadow = true;
+      box.position.x = 0;
+      box.position.y = 9;
+
+      APE.Dynamic.addBox(box, 10);
+      scene.add(box);
+    }
+
+    function createControls () {
+      document.addEventListener('keydown', function (event) {
+        keyHandler(event.keyCode, true);
+      }, false);
+
+      document.addEventListener('keyup', function (event) {
+        keyHandler(event.keyCode, false);
+      }, false);
+    }
+
+    function keyHandler (code, pressed) {
+      switch (code) {
+        case 40:
+          move.backward = pressed;
+          break;
+
+        case 38:
+          move.forward = pressed;
+          break;
+
+        case 39:
+          move.right = pressed;
+          break;
+        
+        case 37:
+          move.left = pressed;
+          break;
+      }
+    }
+
+    function setCollisionColor (body) {
+      if (body.mesh.uuid === ballUUID) {
+        return body.mesh.material.color.setHex(0x0d6aef);
+      }
+
+      if (body.type === 'Static') {
+        body.mesh.material.color.setHex(0xbe4645);
+      }
+
+      if (body.type === 'Dynamic') {
+        body.mesh.material.color.setHex(0x1fa942);
+      }
+
+      if (body.type === 'Kinematic') {
+        body.mesh.material.color.setHex(0xE9E868);
+      }
+    }
+
+    function resetCollisionColor (body) {
+      if (body.mesh.uuid === ballUUID) {
+        return body.mesh.material.color.setHex(0x222222);
+      }
+
+      if (body.type === 'Static') {
+        body.mesh.material.color.setHex(STATIC_BODY);
+      }
+
+      if (body.type === 'Dynamic') {
+        body.mesh.material.color.setHex(DYNAMIC_BODY);
+      }
+
+      if (body.type === 'Kinematic') {
+        body.mesh.material.color.setHex(KINEMATIC_BODY);
+      }
+    }
+
+    function toggleCollidingState (uuid0, type0, uuid1, type1, colliding) {
+      var isStatic = type0 === 'Static' || type1 === 'Static';
+
+      if ((uuid0 === ballUUID || uuid1 === ballUUID) && isStatic) {
+        isColliding = colliding;
+      }      
+    }
+
+    function onCollisionStart (body0, body1) {
+      var uuid0 = body0.mesh.uuid;
+      var uuid1 = body1.mesh.uuid;
+
+      if (uuid0 === ground.uuid || uuid1 === ground.uuid) {
+        return;
+      }
+
+      toggleCollidingState(uuid0, body0.type, uuid1, body1.type, true);
+
+      setCollisionColor(body0);
+      setCollisionColor(body1);
+    }
+
+    function onCollisionEnd (body0, body1) {
+      var uuid0 = body0.mesh.uuid;
+      var uuid1 = body1.mesh.uuid;
+
+      if (uuid0 === ground.uuid || uuid1 === ground.uuid) {
+        return;
+      }
+
+      toggleCollidingState(uuid0, body0.type, uuid1, body1.type, false);
+
+      resetCollisionColor(body0);
+      resetCollisionColor(body1);
+    }
+
+    function update () {
+      stats.begin();
+
+      var time = performance.now();
+      var delta = (time - prevTime) / 1000;
+
+      var acceleration = 150 * delta;
+      var deceleration = 10 * delta;
+
+      velocity.x -= velocity.x * deceleration;
+      velocity.y -= velocity.y * deceleration;
+      velocity.z -= velocity.z * deceleration;
+
+      if (isColliding) {
+        velocity.multiplyScalar(0.1);
+      }
+
+      if (move.backward) {
+        velocity.x -= acceleration;
+      }
+
+      if (move.forward) {
+        velocity.x += acceleration;
+      }
+
+      if (move.right) {
+        velocity.z += acceleration;
+      }
+
+      if (move.left) {
+        velocity.z -= acceleration;
+      }
+
+      APE.Dynamic.setAngularVelocity(ball, velocity);
+      APE.Dynamic.update();
+      APE.update();
+
+      prevTime = time;
+      renderer.render(scene, camera);
+
+      stats.end();
+      requestAnimationFrame(update);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      APE.init();
+
+      createGround();
+      createStage();
+      createBall();
+
+      createControls();
+      createRigidBodies();
+
+      APE.collisionReport = true;
+      APE.onCollisionEnd = onCollisionEnd;
+      APE.onCollisionStart = onCollisionStart;
+
+      requestAnimationFrame(update);
+    });
+  </script>
+</html>

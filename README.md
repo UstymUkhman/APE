@@ -7,6 +7,8 @@
 
 ## Demo: ##
 
+[Collisions](https://ustymukhman.github.io/APE/examples/collisions.html) [`source code`](https://github.com/UstymUkhman/APE/blob/master/examples/collisions.html)
+
 [Raycaster](https://ustymukhman.github.io/APE/examples/raycaster.html) [`source code`](https://github.com/UstymUkhman/APE/blob/master/examples/raycaster.html)
 
 
