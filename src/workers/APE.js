@@ -1,4 +1,4 @@
-import APEWorker from 'worker-loader?name=./APE.worker.js!workers/APEWorker.js';
+import APEWorker from 'worker-loader?name=./APE.Rigid.worker.js!workers/APEWorker.js';
 
 import KinematicBodies from '@/workers/KinematicBodies';
 import DynamicBodies from '@/workers/DynamicBodies';

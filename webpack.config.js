@@ -98,8 +98,8 @@ module.exports = {
   ],
 
   output: {
+    filename: `${config.name}${worker ? '.Rigid.worker' : '.Rigid'}${build ? '.min' : ''}.js`,
     globalObject: build ? 'typeof self !== \'undefined\' ? self : this' : 'window',
-    filename: `${config.name}${worker ? '.worker' : ''}${build ? '.min' : ''}.js`,
     publicPath: `${build ? '../build/' : '/'}`,
 
     libraryTarget: build ? 'umd' : 'var',
