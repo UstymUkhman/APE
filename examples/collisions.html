@@ -13,7 +13,7 @@
     <script type="text/javascript" src="./lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="./lib/OrbitControls.min.js"></script>
 
-    <script type="text/javascript" src="/APE/build/APE.Rigid.min.js"></script>
+    <script type="text/javascript" src="/APE/build/APE.Rigid.worker.min.js"></script>
     <script type="text/javascript" src="./base.js"></script>
   </head>
 
@@ -362,8 +362,8 @@
       }
 
       APE.Dynamic.setAngularVelocity(ball, velocity);
-      APE.Dynamic.update();
-      APE.update();
+      // APE.Dynamic.update();
+      // APE.update();
 
       prevTime = time;
       renderer.render(scene, camera);
