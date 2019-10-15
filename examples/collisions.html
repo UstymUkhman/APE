@@ -37,6 +37,10 @@
       left: false
     };
 
+    function clamp (value, min, max) {
+      return Math.max(min, Math.min(value, max))
+    }
+
     function createGround () {
       // Static bodies default friction:
       APE.Static.friction = 50.0;
@@ -296,8 +300,9 @@
       var isStatic = type0 === 'Static' || type1 === 'Static';
 
       if ((uuid0 === ballUUID || uuid1 === ballUUID) && isStatic) {
+        velocity.multiplyScalar(0.01);
         isColliding = colliding;
-      }      
+      }
     }
 
     function onCollisionStart (body0, body1) {
@@ -308,10 +313,12 @@
         return;
       }
 
-      toggleCollidingState(uuid0, body0.type, uuid1, body1.type, true);
+      if (uuid0 === ballUUID || uuid1 === ballUUID) {
+        toggleCollidingState(uuid0, body0.type, uuid1, body1.type, true);
 
-      setCollisionColor(body0);
-      setCollisionColor(body1);
+        setCollisionColor(body0);
+        setCollisionColor(body1);
+      }
     }
 
     function onCollisionEnd (body0, body1) {
@@ -338,12 +345,7 @@
       var deceleration = 10 * delta;
 
       velocity.x -= velocity.x * deceleration;
-      velocity.y -= velocity.y * deceleration;
       velocity.z -= velocity.z * deceleration;
-
-      if (isColliding) {
-        velocity.multiplyScalar(0.1);
-      }
 
       if (move.backward) {
         velocity.x -= acceleration;
@@ -359,6 +361,11 @@
 
       if (move.left) {
         velocity.z -= acceleration;
+      }
+
+      if (isColliding) {
+        velocity.x = clamp(velocity.x, -2.5, 2.5);
+        velocity.z = clamp(velocity.z, -2.5, 2.5);
       }
 
       APE.Dynamic.setAngularVelocity(ball, velocity);
